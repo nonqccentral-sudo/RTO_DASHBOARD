@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RTO Operations Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   TOKENS & RESET
+═══════════════════════════════════════════════════ */
+:root{
+  --bg:#0f1117;--surface:#1a1d2e;--surface2:#22263a;--surface3:#2c3050;
+  --border:#2e3250;--text:#e8eaf0;--text2:#9095b0;--text3:#6b718a;
+  --blue:#4c8bf5;--green:#34c47c;--amber:#f5a623;--red:#ff5252;
+  --purple:#9c6cfc;--teal:#26c6da;--orange:#ff6d00;
+  --pending:#4c8bf5;--recoverable:#ff5252;
+  --radius:10px;--card-p:20px;
+  font-size:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+a{color:var(--blue)}
+
+/* ═══════════════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════════════ */
+#app{display:flex;flex-direction:column;min-height:100vh}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
+.header h1 span{color:var(--amber)}
+.badge-live{background:var(--green);color:#000;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:.5px}
+
+/* Toggle */
+.toggle-group{display:flex;background:var(--surface2);border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.toggle-group button{padding:7px 18px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:13px;font-weight:600;transition:all .15s}
+.toggle-group button.active{background:var(--blue);color:#fff}
+
+/* Filter bar */
+.filter-bar{background:var(--surface2);padding:10px 24px;display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.filter-bar select,.filter-bar input{background:var(--surface3);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;cursor:pointer}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--blue)}
+.filter-bar label{color:var(--text2);font-size:11px;align-self:center}
+.btn-reset{background:var(--surface3);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;transition:all .15s}
+.btn-reset:hover{border-color:var(--red);color:var(--red)}
+
+/* Main content */
+.main{padding:20px 24px;flex:1}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+
+/* ═══════════════════════════════════════════════════
+   KPI CARDS
+═══════════════════════════════════════════════════ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:var(--card-p);position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--blue))}
+.kpi-card.pending::before{background:var(--pending)}
+.kpi-card.recoverable::before{background:var(--recoverable)}
+.kpi-card.amount::before{background:var(--green)}
+.kpi-card.total::before{background:var(--purple)}
+.kpi-card.breach::before{background:var(--amber)}
+.kpi-label{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:8px}
+.kpi-value{font-size:28px;font-weight:700;line-height:1}
+.kpi-sub{font-size:11px;color:var(--text2);margin-top:4px}
+.kpi-card.recoverable .kpi-value{color:var(--red)}
+.kpi-card.pending .kpi-value{color:var(--blue)}
+.kpi-card.amount .kpi-value{color:var(--green)}
+
+/* ═══════════════════════════════════════════════════
+   AGEING ROW
+═══════════════════════════════════════════════════ */
+.ageing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.ageing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center}
+.ageing-card .bucket-label{font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:6px}
+.ageing-card .bucket-count{font-size:24px;font-weight:700}
+.ageing-card .bucket-amt{font-size:12px;color:var(--text2);margin-top:2px}
+.ageing-card.r .bucket-count{color:var(--red)}
+.ageing-card.b .bucket-count{color:var(--blue)}
+.ageing-card.a .bucket-count{color:var(--amber)}
+
+/* ═══════════════════════════════════════════════════
+   CITY TILES
+═══════════════════════════════════════════════════ */
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.city-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;position:relative}
+.city-card:hover{border-color:var(--blue);transform:translateY(-2px);box-shadow:0 4px 20px rgba(76,139,245,.2)}
+.city-card.selected{border-color:var(--blue);background:var(--surface2)}
+.city-name{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)}
+.city-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:3px}
+.city-row span:last-child{color:var(--text);font-weight:600}
+.city-rec-badge{position:absolute;top:10px;right:10px;background:rgba(255,82,82,.15);color:var(--red);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+
+/* ═══════════════════════════════════════════════════
+   CITY DETAIL PANEL
+═══════════════════════════════════════════════════ */
+#city-detail{display:none;margin-bottom:24px}
+#city-detail.visible{display:block}
+.city-detail-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.city-detail-header h2{font-size:16px;font-weight:700}
+.btn-back{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+.btn-back:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ═══════════════════════════════════════════════════
+   CHARTS
+═══════════════════════════════════════════════════ */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:24px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.chart-card h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:14px}
+.chart-card canvas{max-height:220px}
+
+/* ═══════════════════════════════════════════════════
+   ORDER TABLE
+═══════════════════════════════════════════════════ */
+.table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{background:var(--surface2);padding:10px 12px;text-align:left;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);position:sticky;top:0}
+tbody tr{border-top:1px solid var(--border)}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:9px 12px;color:var(--text);white-space:nowrap}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge.pending{background:rgba(76,139,245,.15);color:var(--blue)}
+.badge.recoverable{background:rgba(255,82,82,.15);color:var(--red)}
+.badge.qc{background:rgba(52,196,124,.15);color:var(--green)}
+.badge.nonqc{background:rgba(156,108,252,.15);color:var(--purple)}
+.badge.inhouse{background:rgba(38,198,218,.15);color:var(--teal)}
+.badge.vendor{background:rgba(245,166,35,.15);color:var(--amber)}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;gap:8px;padding:12px 16px;justify-content:flex-end}
+.pagination button{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer}
+.pagination button:disabled{opacity:.4;cursor:default}
+.pagination button:not(:disabled):hover{border-color:var(--blue);color:var(--blue)}
+.page-info{font-size:12px;color:var(--text2)}
+
+/* Loading & error */
+#loading{display:flex;align-items:center;justify-content:center;height:80vh;flex-direction:column;gap:16px}
+.spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{background:rgba(255,82,82,.1);border:1px solid var(--red);border-radius:var(--radius);padding:16px 20px;color:var(--red);margin:20px}
+
+/* Misc */
+.empty-state{text-align:center;padding:40px;color:var(--text3);font-size:13px}
+.as-of{font-size:11px;color:var(--text3)}
+.highlight-red{color:var(--red)!important;font-weight:700}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ─── LOADING ─── -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <span style="color:var(--text2)">Loading RTO data…</span>
+  </div>
+
+  <!-- ─── MAIN DASHBOARD (hidden until data loads) ─── -->
+  <div id="dashboard" style="display:none">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>🚛 RTO <span>Operations</span> Dashboard</h1>
+      <span class="badge-live">LIVE</span>
+      <span class="as-of" id="as-of-label"></span>
+      <div style="flex:1"></div>
+      <div class="toggle-group" id="qc-toggle">
+        <button data-val="Overall" class="active" onclick="setQCFilter('Overall')">OVERALL</button>
+        <button data-val="QC"      onclick="setQCFilter('QC')">QC</button>
+        <button data-val="Non-QC"  onclick="setQCFilter('Non-QC')">NON-QC</button>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <label>City</label>
+      <select id="f-city" onchange="applyFilters()"><option value="">All Cities</option></select>
+      <label>Source</label>
+      <select id="f-source" onchange="applyFilters()">
+        <option value="">All</option>
+        <option>In-house</option>
+        <option>Vendor</option>
+      </select>
+      <label>Status</label>
+      <select id="f-status" onchange="applyFilters()">
+        <option value="">All</option>
+        <option>Pending</option>
+        <option>Recoverable</option>
+      </select>
+      <label>Ageing</label>
+      <select id="f-ageing" onchange="applyFilters()">
+        <option value="">All Buckets</option>
+        <option value="0-1">0–1 Days</option>
+        <option value="1-3">1–3 Days</option>
+        <option value="3-5">3–5 Days</option>
+        <option value="Recoverable">Recoverable (&gt;5)</option>
+      </select>
+      <label>Case Type</label>
+      <select id="f-case" onchange="applyFilters()"><option value="">All Cases</option></select>
+      <label>From</label>
+      <input type="date" id="f-date-from" onchange="applyFilters()"/>
+      <label>To</label>
+      <input type="date" id="f-date-to" onchange="applyFilters()"/>
+      <button class="btn-reset" onclick="resetFilters()">↺ Reset</button>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+      <!-- ── PAN INDIA KPIs ── -->
+      <div class="section-title">🇮🇳 PAN India Overview</div>
+      <div class="kpi-grid">
+        <div class="kpi-card total">
+          <div class="kpi-label">Total Active RTO</div>
+          <div class="kpi-value" id="k-total">—</div>
+          <div class="kpi-sub">Active orders</div>
+        </div>
+        <div class="kpi-card pending">
+          <div class="kpi-label">Pending (≤5 days)</div>
+          <div class="kpi-value" id="k-pending">—</div>
+          <div class="kpi-sub" id="k-pending-sub">—</div>
+        </div>
+        <div class="kpi-card recoverable">
+          <div class="kpi-label">⚠ Recoverable (&gt;5 days)</div>
+          <div class="kpi-value" id="k-recoverable">—</div>
+          <div class="kpi-sub" id="k-rec-sub">—</div>
+        </div>
+        <div class="kpi-card amount">
+          <div class="kpi-label">Total Active Amount</div>
+          <div class="kpi-value" id="k-amount">—</div>
+          <div class="kpi-sub">Total exposure</div>
+        </div>
+        <div class="kpi-card pending">
+          <div class="kpi-label">Pending Amount</div>
+          <div class="kpi-value" id="k-pamount">—</div>
+          <div class="kpi-sub">Pending ₹ exposure</div>
+        </div>
+        <div class="kpi-card recoverable">
+          <div class="kpi-label">Recoverable Amount</div>
+          <div class="kpi-value" id="k-ramount">—</div>
+          <div class="kpi-sub">Critical ₹ exposure</div>
+        </div>
+        <div class="kpi-card breach">
+          <div class="kpi-label">Expected Return Breach</div>
+          <div class="kpi-value" id="k-breach">—</div>
+          <div class="kpi-sub">Early warning</div>
+        </div>
+      </div>
+
+      <!-- ── AGEING BUCKETS ── -->
+      <div class="section-title">⏱ Ageing Breakdown</div>
+      <div class="ageing-grid">
+        <div class="ageing-card b">
+          <div class="bucket-label">0–1 Days</div>
+          <div class="bucket-count" id="a-01c">—</div>
+          <div class="bucket-amt" id="a-01a">—</div>
+        </div>
+        <div class="ageing-card b">
+          <div class="bucket-label">1–3 Days</div>
+          <div class="bucket-count" id="a-13c">—</div>
+          <div class="bucket-amt" id="a-13a">—</div>
+        </div>
+        <div class="ageing-card a">
+          <div class="bucket-label">3–5 Days</div>
+          <div class="bucket-count" id="a-35c">—</div>
+          <div class="bucket-amt" id="a-35a">—</div>
+        </div>
+        <div class="ageing-card r">
+          <div class="bucket-label">⚠ Recoverable &gt;5</div>
+          <div class="bucket-count" id="a-rc">—</div>
+          <div class="bucket-amt" id="a-ra">—</div>
+        </div>
+      </div>
+
+      <!-- ── CITY TILES ── -->
+      <div class="section-title" id="city-section-title">🏙 City Overview — Click a city to drill down</div>
+      <div class="city-grid" id="city-grid"></div>
+
+      <!-- ── CITY DETAIL ── -->
+      <div id="city-detail">
+        <div class="city-detail-header">
+          <button class="btn-back" onclick="closeCityDetail()">← Back to All Cities</button>
+          <h2 id="city-detail-name"></h2>
+        </div>
+        <div class="kpi-grid" id="city-kpis"></div>
+        <div class="ageing-grid" id="city-ageing"></div>
+        <div class="charts-grid" id="city-charts-grid"></div>
+      </div>
+
+      <!-- ── CHARTS ── -->
+      <div class="section-title">📊 Charts & Analytics</div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Ageing Distribution (Orders)</h3>
+          <canvas id="ch-ageing"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Pending vs Recoverable</h3>
+          <canvas id="ch-pvr"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Amount Exposure (₹)</h3>
+          <canvas id="ch-amount"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>QC vs Non-QC</h3>
+          <canvas id="ch-qc"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>In-house vs Vendor</h3>
+          <canvas id="ch-source"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Top Case Types</h3>
+          <canvas id="ch-cases"></canvas>
+        </div>
+        <div class="chart-card" style="grid-column:1/-1">
+          <h3>Backlog Trend (Last 30 Days)</h3>
+          <canvas id="ch-trend" style="max-height:200px"></canvas>
+        </div>
+      </div>
+
+      <!-- ── ORDER TABLE ── -->
+      <div class="section-title">📋 Order Details
+        <span id="table-count" style="font-size:11px;font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0;margin-left:8px"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="order-table">
+          <thead>
+            <tr>
+              <th>Cancellation Date</th><th>Order ID</th><th>Rider ID</th>
+              <th>Rider Name</th><th>Amount (₹)</th><th>City</th>
+              <th>QC Type</th><th>Source</th><th>Ageing (days)</th>
+              <th>Bucket</th><th>Status</th><th>Case Type</th><th>FC Remark</th>
+            </tr>
+          </thead>
+          <tbody id="order-tbody"></tbody>
+        </table>
+        <div id="empty-state" class="empty-state" style="display:none">No orders match the current filters.</div>
+      </div>
+      <div class="pagination">
+        <button id="btn-prev" onclick="changePage(-1)">← Prev</button>
+        <span class="page-info" id="page-info"></span>
+        <button id="btn-next" onclick="changePage(1)">Next →</button>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /dashboard -->
+</div><!-- /app -->
+
+<script>
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+let RAW        = [];     // all active orders from server
+let FILTERED   = [];     // after filters
+let TREND      = [];
+let CITY_STATS = {};
+let PAGE       = 1;
+const PAGE_SIZE= 50;
+let CHARTS     = {};
+let SELECTED_CITY = null;
+let QC_FILTER  = 'Overall';
+
+const fmt = n => '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0});
+const fmtK= n => n >= 100000 ? '₹'+( n/100000).toFixed(1)+'L' : n>=1000 ? '₹'+(n/1000).toFixed(1)+'K' : '₹'+n;
+
+// ═══════════════════════════════════════════════════
+//  BOOTSTRAP
+// ═══════════════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(data => onDataLoad(data))
+    .catch(err => onDataError(err.message));
+});
+
+function onDataLoad(payload) {
+  if (!payload.success) { onDataError(payload.error); return; }
+
+  RAW        = payload.orders || [];
+  TREND      = payload.trend  || [];
+  CITY_STATS = payload.cityStats || {};
+
+  document.getElementById('as-of-label').textContent = 'As of: ' + payload.asOf;
+
+  populateCityFilter();
+  populateCaseFilter();
+  applyFilters();
+
+  document.getElementById('loading').style.display   = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+function onDataError(err) {
+  document.getElementById('loading').innerHTML =
+    '<div class="error-box">❌ Failed to load RTO data: ' + (err||'Unknown error') + '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+//  FILTER LOGIC
+// ═══════════════════════════════════════════════════
+function setQCFilter(val) {
+  QC_FILTER = val;
+  document.querySelectorAll('#qc-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === val);
+  });
+  applyFilters();
+}
+
+function applyFilters() {
+  const city    = document.getElementById('f-city').value;
+  const source  = document.getElementById('f-source').value;
+  const status  = document.getElementById('f-status').value;
+  const ageing  = document.getElementById('f-ageing').value;
+  const caseT   = document.getElementById('f-case').value;
+  const dateFrom= document.getElementById('f-date-from').value;
+  const dateTo  = document.getElementById('f-date-to').value;
+
+  FILTERED = RAW.filter(o => {
+    if (QC_FILTER !== 'Overall' && o.qcType !== QC_FILTER) return false;
+    if (SELECTED_CITY && o.city !== SELECTED_CITY) return false;
+    if (city   && o.city   !== city)   return false;
+    if (source && o.source !== source) return false;
+    if (status && o.status !== status) return false;
+    if (ageing && o.ageingBucket !== ageing) return false;
+    if (caseT  && o.caseType !== caseT) return false;
+    if (dateFrom || dateTo) {
+      const d = new Date(o.cancellationDate.replace(/(\d+)-(\w+)-(\d+)/, '$1 $2 $3'));
+      if (dateFrom && d < new Date(dateFrom)) return false;
+      if (dateTo   && d > new Date(dateTo))   return false;
+    }
+    return true;
+  });
+
+  PAGE = 1;
+  renderKPIs();
+  renderAgeingRow();
+  renderCityTiles();
+  renderCharts();
+  renderTable();
+}
+
+function resetFilters() {
+  ['f-city','f-source','f-status','f-ageing','f-case'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-date-from').value = '';
+  document.getElementById('f-date-to').value   = '';
+  SELECTED_CITY = null;
+  setQCFilter('Overall');
+  document.querySelectorAll('.city-card').forEach(c => c.classList.remove('selected'));
+  closeCityDetail();
+}
+
+// ═══════════════════════════════════════════════════
+//  KPI CARDS
+// ═══════════════════════════════════════════════════
+function renderKPIs() {
+  const agg = aggregate(FILTERED);
+  set('k-total',     agg.totalOrders);
+  set('k-pending',   agg.pending.count);
+  set('k-pending-sub', fmt(agg.pending.amount));
+  set('k-recoverable', agg.recoverable.count);
+  set('k-rec-sub',   fmt(agg.recoverable.amount));
+  set('k-amount',    fmtK(agg.totalAmount));
+  set('k-pamount',   fmtK(agg.pending.amount));
+  set('k-ramount',   fmtK(agg.recoverable.amount));
+  set('k-breach',    agg.breachOrders);
+}
+
+function set(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
+
+// ═══════════════════════════════════════════════════
+//  AGEING ROW
+// ═══════════════════════════════════════════════════
+function renderAgeingRow() {
+  const agg = aggregate(FILTERED);
+  const b   = agg.ageing;
+  set('a-01c', b['0-1'].count);        set('a-01a', fmt(b['0-1'].amount));
+  set('a-13c', b['1-3'].count);        set('a-13a', fmt(b['1-3'].amount));
+  set('a-35c', b['3-5'].count);        set('a-35a', fmt(b['3-5'].amount));
+  set('a-rc',  b['Recoverable'].count);set('a-ra',  fmt(b['Recoverable'].amount));
+}
+
+// ═══════════════════════════════════════════════════
+//  CITY TILES
+// ═══════════════════════════════════════════════════
+function renderCityTiles() {
+  const grid = document.getElementById('city-grid');
+  // Build city-level agg from FILTERED (not from CITY_STATS, so QC toggle and filters are respected)
+  const cityMap = {};
+  FILTERED.forEach(o => {
+    if (!cityMap[o.city]) cityMap[o.city] = [];
+    cityMap[o.city].push(o);
+  });
+
+  grid.innerHTML = '';
+  const cities = Object.keys(cityMap).sort();
+  if (!cities.length) { grid.innerHTML = '<div class="empty-state">No data for current filters.</div>'; return; }
+
+  cities.forEach(city => {
+    const agg = aggregate(cityMap[city]);
+    const card = document.createElement('div');
+    card.className = 'city-card' + (SELECTED_CITY === city ? ' selected' : '');
+    card.onclick = () => openCityDetail(city);
+    card.innerHTML = `
+      <div class="city-name">${city}</div>
+      ${agg.recoverable.count > 0 ? `<div class="city-rec-badge">⚠ ${agg.recoverable.count} REC</div>` : ''}
+      <div class="city-row"><span>Total RTO</span><span>${agg.totalOrders}</span></div>
+      <div class="city-row"><span>Pending</span><span>${agg.pending.count}</span></div>
+      <div class="city-row"><span style="color:var(--red)">Recoverable</span><span class="${agg.recoverable.count>0?'highlight-red':''}">${agg.recoverable.count}</span></div>
+      <div class="city-row"><span>0–1 Days</span><span>${agg.ageing['0-1'].count}</span></div>
+      <div class="city-row"><span>1–3 Days</span><span>${agg.ageing['1-3'].count}</span></div>
+      <div class="city-row"><span>3–5 Days</span><span>${agg.ageing['3-5'].count}</span></div>
+      <div class="city-row"><span>Rec. Amount</span><span>${fmt(agg.recoverable.amount)}</span></div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  CITY DETAIL
+// ═══════════════════════════════════════════════════
+function openCityDetail(city) {
+  SELECTED_CITY = city;
+  document.getElementById('city-detail').classList.add('visible');
+  document.getElementById('city-detail-name').textContent = '📍 ' + city;
+  document.querySelectorAll('.city-card').forEach(c => {
+    c.classList.toggle('selected', c.querySelector('.city-name').textContent === city);
+  });
+  applyFilters();
+
+  const cityOrders = FILTERED; // already filtered to city via SELECTED_CITY
+  const agg        = aggregate(cityOrders);
+
+  // City KPIs
+  const kDiv = document.getElementById('city-kpis');
+  kDiv.innerHTML = `
+    <div class="kpi-card total"><div class="kpi-label">Total RTO</div><div class="kpi-value">${agg.totalOrders}</div></div>
+    <div class="kpi-card pending"><div class="kpi-label">Pending</div><div class="kpi-value">${agg.pending.count}</div><div class="kpi-sub">${fmt(agg.pending.amount)}</div></div>
+    <div class="kpi-card recoverable"><div class="kpi-label">⚠ Recoverable</div><div class="kpi-value">${agg.recoverable.count}</div><div class="kpi-sub">${fmt(agg.recoverable.amount)}</div></div>
+    <div class="kpi-card amount"><div class="kpi-label">Total Amount</div><div class="kpi-value">${fmtK(agg.totalAmount)}</div></div>
+  `;
+
+  // City ageing
+  const aDiv = document.getElementById('city-ageing');
+  const b    = agg.ageing;
+  aDiv.innerHTML = `
+    <div class="ageing-card b"><div class="bucket-label">0–1 Days</div><div class="bucket-count">${b['0-1'].count}</div><div class="bucket-amt">${fmt(b['0-1'].amount)}</div></div>
+    <div class="ageing-card b"><div class="bucket-label">1–3 Days</div><div class="bucket-count">${b['1-3'].count}</div><div class="bucket-amt">${fmt(b['1-3'].amount)}</div></div>
+    <div class="ageing-card a"><div class="bucket-label">3–5 Days</div><div class="bucket-count">${b['3-5'].count}</div><div class="bucket-amt">${fmt(b['3-5'].amount)}</div></div>
+    <div class="ageing-card r"><div class="bucket-label">Recoverable &gt;5</div><div class="bucket-count">${b['Recoverable'].count}</div><div class="bucket-amt">${fmt(b['Recoverable'].amount)}</div></div>
+  `;
+
+  // City mini-charts
+  const cGrid = document.getElementById('city-charts-grid');
+  cGrid.innerHTML = `
+    <div class="chart-card"><h3>QC vs Non-QC</h3><canvas id="city-ch-qc"></canvas></div>
+    <div class="chart-card"><h3>In-house vs Vendor</h3><canvas id="city-ch-src"></canvas></div>
+    <div class="chart-card"><h3>Case Types</h3><canvas id="city-ch-cases"></canvas></div>
+  `;
+
+  setTimeout(() => {
+    drawDoughnut('city-ch-qc',  ['QC','Non-QC'], [agg.qc.QC.count, agg.qc['Non-QC'].count], ['#34c47c','#9c6cfc']);
+    drawDoughnut('city-ch-src', ['In-house','Vendor'], [agg.source['In-house'].count, agg.source.Vendor.count], ['#26c6da','#f5a623']);
+    const topCases = Object.entries(agg.caseTypes).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    drawBar('city-ch-cases', topCases.map(c=>c[0].substring(0,20)), topCases.map(c=>c[1]), '#4c8bf5');
+  }, 100);
+}
+
+function closeCityDetail() {
+  SELECTED_CITY = null;
+  document.getElementById('city-detail').classList.remove('visible');
+  document.querySelectorAll('.city-card').forEach(c => c.classList.remove('selected'));
+  applyFilters();
+}
+
+// ═══════════════════════════════════════════════════
+//  CHARTS
+// ═══════════════════════════════════════════════════
+function renderCharts() {
+  const agg = aggregate(FILTERED);
+  const b   = agg.ageing;
+
+  // 1 — Ageing distribution
+  drawDoughnut('ch-ageing',
+    ['0–1 Days','1–3 Days','3–5 Days','Recoverable'],
+    [b['0-1'].count, b['1-3'].count, b['3-5'].count, b['Recoverable'].count],
+    ['#4c8bf5','#26c6da','#f5a623','#ff5252']
+  );
+
+  // 2 — Pending vs Recoverable
+  drawDoughnut('ch-pvr',
+    ['Pending','Recoverable'],
+    [agg.pending.count, agg.recoverable.count],
+    ['#4c8bf5','#ff5252']
+  );
+
+  // 3 — Amount exposure
+  drawBar('ch-amount',
+    ['Pending Amt','Recoverable Amt'],
+    [agg.pending.amount, agg.recoverable.amount],
+    ['#4c8bf5','#ff5252']
+  );
+
+  // 4 — QC vs Non-QC
+  drawDoughnut('ch-qc',
+    ['QC','Non-QC'],
+    [agg.qc.QC.count, agg.qc['Non-QC'].count],
+    ['#34c47c','#9c6cfc']
+  );
+
+  // 5 — In-house vs Vendor
+  drawDoughnut('ch-source',
+    ['In-house','Vendor'],
+    [agg.source['In-house'].count, agg.source.Vendor.count],
+    ['#26c6da','#f5a623']
+  );
+
+  // 6 — Case types
+  const topCases = Object.entries(agg.caseTypes).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  drawHBar('ch-cases', topCases.map(c=>c[0].substring(0,25)), topCases.map(c=>c[1]));
+
+  // 7 — Trend
+  drawTrend();
+}
+
+function destroyChart(id) {
+  if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; }
+}
+
+function chartDefaults() {
+  return {
+    color: '#9095b0',
+    plugins: { legend: { labels: { color: '#9095b0', font: { size: 11 } } } },
+  };
+}
+
+function drawDoughnut(id, labels, data, colors) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  CHARTS[id] = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: '#1a1d2e', borderWidth: 2 }] },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { position: 'right', labels: { color: '#9095b0', font: { size: 11 }, boxWidth: 12 } } },
+    },
+  });
+}
+
+function drawBar(id, labels, data, color) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  const colors = Array.isArray(color) ? color : data.map((_,i) => [color,'#26c6da','#f5a623'][i % 3]);
+  CHARTS[id] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderRadius: 4 }] },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+        y: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+      },
+    },
+  });
+}
+
+function drawHBar(id, labels, data) {
+  destroyChart(id);
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  CHARTS[id] = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data, backgroundColor: '#4c8bf5', borderRadius: 4 }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+        y: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+      },
+    },
+  });
+}
+
+function drawTrend() {
+  destroyChart('ch-trend');
+  const ctx = document.getElementById('ch-trend');
+  if (!ctx || !TREND.length) return;
+  const labels = TREND.map(r => r.date);
+  CHARTS['ch-trend'] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Active Orders', data: TREND.map(r => r.activeOrders),   borderColor: '#4c8bf5', backgroundColor: 'rgba(76,139,245,.1)', tension: .3, fill: true, pointRadius: 3 },
+        { label: 'Pending',       data: TREND.map(r => r.pendingOrders),   borderColor: '#26c6da', tension: .3, pointRadius: 3 },
+        { label: 'Recoverable',   data: TREND.map(r => r.recoverableOrders), borderColor: '#ff5252', tension: .3, pointRadius: 3 },
+      ],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { labels: { color: '#9095b0', font: { size: 11 } } } },
+      scales: {
+        x: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+        y: { ticks: { color: '#9095b0', font: { size: 10 } }, grid: { color: '#2e3250' } },
+      },
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  ORDER TABLE + PAGINATION
+// ═══════════════════════════════════════════════════
+function renderTable() {
+  const tbody     = document.getElementById('order-tbody');
+  const empty     = document.getElementById('empty-state');
+  const total     = FILTERED.length;
+  const totalPages= Math.max(1, Math.ceil(total / PAGE_SIZE));
+  PAGE = Math.min(PAGE, totalPages);
+
+  document.getElementById('table-count').textContent = `(${total} orders)`;
+  document.getElementById('page-info').textContent   = `Page ${PAGE} of ${totalPages}`;
+  document.getElementById('btn-prev').disabled = PAGE <= 1;
+  document.getElementById('btn-next').disabled = PAGE >= totalPages;
+
+  const slice = FILTERED.slice((PAGE-1)*PAGE_SIZE, PAGE*PAGE_SIZE);
+  if (!slice.length) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = slice.map(o => `
+    <tr>
+      <td>${o.cancellationDate}</td>
+      <td>${o.orderId}</td>
+      <td>${o.riderId}</td>
+      <td>${o.riderName}</td>
+      <td>${fmt(o.amount)}</td>
+      <td>${o.city}</td>
+      <td><span class="badge ${o.qcType==='QC'?'qc':'nonqc'}">${o.qcType}</span></td>
+      <td><span class="badge ${o.source==='In-house'?'inhouse':'vendor'}">${o.source}</span></td>
+      <td style="text-align:center">${o.ageing}</td>
+      <td>${bucketLabel(o.ageingBucket)}</td>
+      <td><span class="badge ${o.status.toLowerCase()}">${o.status}</span></td>
+      <td>${o.caseType||'—'}</td>
+      <td>${o.fcRemark||'—'}</td>
+    </tr>
+  `).join('');
+}
+
+function bucketLabel(b) {
+  return { '0-1':'0–1 Days','1-3':'1–3 Days','3-5':'3–5 Days','Recoverable':'⚠ Recoverable' }[b] || b;
+}
+
+function changePage(dir) {
+  PAGE += dir;
+  renderTable();
+  document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ═══════════════════════════════════════════════════
+//  AGGREGATE (client-side)
+// ═══════════════════════════════════════════════════
+function aggregate(orders) {
+  const r = {
+    totalOrders:0, totalAmount:0,
+    pending:{ count:0, amount:0 }, recoverable:{ count:0, amount:0 },
+    ageing:{ '0-1':{count:0,amount:0},'1-3':{count:0,amount:0},'3-5':{count:0,amount:0},'Recoverable':{count:0,amount:0} },
+    qc:{ 'QC':{count:0,amount:0},'Non-QC':{count:0,amount:0} },
+    source:{ 'In-house':{count:0,amount:0},'Vendor':{count:0,amount:0} },
+    caseTypes:{}, breachOrders:0,
+  };
+  orders.forEach(o => {
+    r.totalOrders++;
+    r.totalAmount += o.amount;
+    if (o.status === 'Pending') { r.pending.count++; r.pending.amount += o.amount; }
+    else { r.recoverable.count++; r.recoverable.amount += o.amount; }
+    if (r.ageing[o.ageingBucket]) { r.ageing[o.ageingBucket].count++; r.ageing[o.ageingBucket].amount += o.amount; }
+    const q = o.qcType === 'QC' ? 'QC' : 'Non-QC';
+    r.qc[q].count++; r.qc[q].amount += o.amount;
+    const s = o.source === 'In-house' ? 'In-house' : 'Vendor';
+    r.source[s].count++; r.source[s].amount += o.amount;
+    if (o.caseType) r.caseTypes[o.caseType] = (r.caseTypes[o.caseType]||0)+1;
+    if (o.status === 'Pending' && isBreachClient(o)) r.breachOrders++;
+  });
+  return r;
+}
+
+function isBreachClient(o) {
+  const a = o.ageing;
+  if (o.source === 'In-house') return o.qcType === 'QC' ? a > 0 : a > 1;
+  return a > 2;
+}
+
+// ═══════════════════════════════════════════════════
+//  FILTER DROPDOWNS POPULATION
+// ═══════════════════════════════════════════════════
+function populateCityFilter() {
+  const sel    = document.getElementById('f-city');
+  const cities = [...new Set(RAW.map(o => o.city))].sort();
+  cities.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+}
+
+function populateCaseFilter() {
+  const sel   = document.getElementById('f-case');
+  const cases = [...new Set(RAW.map(o => o.caseType).filter(Boolean))].sort();
+  cases.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+}
+</script>
+</body>
+</html>
