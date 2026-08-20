@@ -6,19 +6,23 @@
 <title>RTO Operations Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* ═══════════════════════ LIGHT THEME TOKENS ═══════════════════════ */
+/* ══════════════════════════════════════════
+   TOKENS — LIGHT THEME
+══════════════════════════════════════════ */
 :root{
   --bg:#f0f2f7;
   --surface:#ffffff;
   --surface2:#f7f8fc;
   --surface3:#eef0f6;
   --border:#e2e6f0;
-  --border2:#d0d5e8;
+  --border2:#cdd2e8;
   --text:#1a1f36;
   --text2:#5a6380;
   --text3:#9099b8;
   --blue:#3b6ff5;
+  --blue-d:#2952c4;
   --blue-light:#eef2ff;
   --green:#12b76a;
   --green-light:#ecfdf5;
@@ -30,318 +34,565 @@
   --purple-light:#f4f0ff;
   --teal:#06aed4;
   --teal-light:#ecfeff;
-  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-  --shadow-md:0 4px 16px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.04);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.1);
-  --radius:12px;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.07);
+  --shadow-md:0 4px 18px rgba(0,0,0,.09);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.13);
+  --radius:14px;
   --radius-sm:8px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;font-size:14px}
-
-/* ═══════════════════════ HEADER ═══════════════════════ */
-.header{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:0 28px;
-  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
-  position:sticky;top:0;z-index:100;
-  box-shadow:var(--shadow-sm);
-  height:60px;
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+  min-height:100vh;font-size:15px;line-height:1.5;
 }
-.header-brand{display:flex;align-items:center;gap:10px}
-.header-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--blue),#6b96ff);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(59,111,245,.3)}
-.header h1{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.2px}
-.header h1 span{color:var(--blue)}
-.badge-live{background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.8px;box-shadow:0 0 0 3px var(--green-light)}
-.as-of{font-size:11px;color:var(--text3);background:var(--surface2);padding:4px 10px;border-radius:20px;border:1px solid var(--border)}
-.header-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+
+/* ══════════════════════════════════════════ LOADING OVERLAY */
+#loading-overlay{
+  position:fixed;inset:0;background:rgba(240,242,247,.92);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:9999;gap:18px;backdrop-filter:blur(4px);
+  transition:opacity .3s;
+}
+#loading-overlay.hidden{opacity:0;pointer-events:none}
+.loader-ring{
+  width:56px;height:56px;border-radius:50%;
+  border:4px solid var(--border2);
+  border-top-color:var(--blue);
+  animation:spin .75s linear infinite;
+}
+.loader-dots{display:flex;gap:6px}
+.loader-dots span{
+  width:8px;height:8px;border-radius:50%;background:var(--blue);
+  animation:bounce .8s ease-in-out infinite;
+}
+.loader-dots span:nth-child(2){animation-delay:.15s;background:var(--amber)}
+.loader-dots span:nth-child(3){animation-delay:.3s;background:var(--red)}
+.loader-msg{font-size:14px;color:var(--text2);font-weight:500;letter-spacing:.2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+
+/* ══════════════════════════════════════════ HEADER */
+.header{
+  background:var(--surface);border-bottom:2px solid var(--border);
+  padding:0 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  position:sticky;top:0;z-index:200;box-shadow:var(--shadow-sm);height:64px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,#3b6ff5,#7c5cfc);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:0 3px 10px rgba(59,111,245,.35);
+}
+.brand-title{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+.brand-title span{color:var(--blue)}
+.badge-live{
+  background:var(--green);color:#fff;font-size:10px;font-weight:700;
+  padding:3px 9px;border-radius:20px;letter-spacing:.8px;
+  box-shadow:0 0 0 3px var(--green-light);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--green-light)}50%{box-shadow:0 0 0 6px var(--green-light)}}
+.as-of{
+  font-size:12px;color:var(--text3);
+  background:var(--surface2);padding:4px 12px;
+  border-radius:20px;border:1px solid var(--border);
+}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
 
 /* QC Toggle */
-.toggle-group{display:flex;background:var(--surface2);border-radius:8px;overflow:hidden;border:1px solid var(--border);padding:3px;gap:2px}
-.toggle-group button{padding:6px 16px;background:none;border:none;color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;border-radius:6px;transition:all .15s;letter-spacing:.2px}
-.toggle-group button.active{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(59,111,245,.3)}
+.toggle-group{
+  display:flex;background:var(--surface2);border-radius:10px;
+  overflow:hidden;border:1px solid var(--border);padding:3px;gap:3px;
+}
+.toggle-group button{
+  padding:7px 20px;background:none;border:none;color:var(--text2);
+  cursor:pointer;font-size:13px;font-weight:700;border-radius:7px;
+  transition:all .15s;letter-spacing:.2px;
+}
+.toggle-group button.active{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(59,111,245,.35)}
 .toggle-group button:not(.active):hover{background:var(--border);color:var(--text)}
 
-/* ═══════════════════════ FILTER BAR ═══════════════════════ */
+/* ══════════════════════════════════════════ FILTER BAR */
 .filter-bar{
-  background:var(--surface);
-  padding:10px 28px;
+  background:var(--surface);padding:10px 28px;
   display:flex;gap:8px;flex-wrap:wrap;align-items:center;
   border-bottom:1px solid var(--border);
 }
-.filter-group{display:flex;align-items:center;gap:5px}
-.filter-bar label{color:var(--text2);font-size:11px;font-weight:600;white-space:nowrap}
+.fg{display:flex;align-items:center;gap:5px}
+.fg label{color:var(--text2);font-size:12px;font-weight:600;white-space:nowrap}
 .filter-bar select,.filter-bar input[type="date"]{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;
-  transition:border .15s;min-width:100px;
+  background:var(--surface2);border:1.5px solid var(--border);color:var(--text);
+  padding:6px 10px;border-radius:7px;font-size:13px;cursor:pointer;
+  transition:border .15s;min-width:110px;font-weight:500;
 }
-.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,245,.1)}
-.filter-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
-.btn-reset{
-  background:var(--red-light);border:1px solid #fda29b;color:var(--red);
-  padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
-  transition:all .15s;white-space:nowrap;
+.filter-bar select:focus,.filter-bar input:focus{
+  outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,245,.1);
 }
-.btn-reset:hover{background:var(--red);color:#fff}
-.btn-refresh{
-  background:var(--blue-light);border:1px solid #b9ceff;color:var(--blue);
-  padding:5px 12px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
-  transition:all .15s;display:flex;align-items:center;gap:4px;
+.divider{width:1px;height:24px;background:var(--border);margin:0 4px}
+.btn{
+  padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;
+  cursor:pointer;border:1.5px solid;transition:all .15s;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;
 }
-.btn-refresh:hover{background:var(--blue);color:#fff}
+.btn-reset{background:var(--red-light);border-color:#fca5a5;color:var(--red)}
+.btn-reset:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-refresh{background:var(--blue-light);border-color:#bfdbfe;color:var(--blue)}
+.btn-refresh:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 .btn-refresh.spinning svg{animation:spin .6s linear infinite}
 
-/* ═══════════════════════ MAIN ═══════════════════════ */
-.main{padding:22px 28px;flex:1}
-.section-header{display:flex;align-items:center;gap:8px;margin-bottom:14px}
-.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text2)}
-.section-line{flex:1;height:1px;background:var(--border)}
-
-/* ═══════════════════════ KPI CARDS ═══════════════════════ */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin-bottom:24px}
-.kpi-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:18px 20px;position:relative;overflow:hidden;
-  box-shadow:var(--shadow-sm);transition:box-shadow .2s,transform .2s;
+/* ══════════════════════════════════════════ CACHE BANNER */
+.cache-banner{
+  background:var(--amber-light);border-bottom:1px solid #fde68a;
+  padding:7px 28px;font-size:12px;color:#92400e;
+  display:flex;align-items:center;gap:8px;
 }
-.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.kpi-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--accent-color,var(--blue))}
-.kpi-card.c-blue{--accent-color:var(--blue)}
-.kpi-card.c-red{--accent-color:var(--red)}
-.kpi-card.c-green{--accent-color:var(--green)}
-.kpi-card.c-amber{--accent-color:var(--amber)}
-.kpi-card.c-purple{--accent-color:var(--purple)}
-.kpi-card.c-teal{--accent-color:var(--teal)}
-.kpi-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
-.kpi-card.c-blue .kpi-icon{background:var(--blue-light)}
-.kpi-card.c-red .kpi-icon{background:var(--red-light)}
-.kpi-card.c-green .kpi-icon{background:var(--green-light)}
-.kpi-card.c-amber .kpi-icon{background:var(--amber-light)}
-.kpi-card.c-purple .kpi-icon{background:var(--purple-light)}
-.kpi-card.c-teal .kpi-icon{background:var(--teal-light)}
-.kpi-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:6px}
-.kpi-value{font-size:30px;font-weight:800;line-height:1;color:var(--text);letter-spacing:-1px}
-.kpi-card.c-red .kpi-value{color:var(--red)}
-.kpi-card.c-green .kpi-value{color:var(--green)}
-.kpi-sub{font-size:11px;color:var(--text3);margin-top:5px;display:flex;align-items:center;gap:4px}
+.cache-banner.hidden{display:none}
+.cache-banner a{color:var(--amber);font-weight:700}
 
-/* ═══════════════════════ AGEING STRIP ═══════════════════════ */
-.ageing-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.ageing-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:16px 18px;display:flex;align-items:center;gap:14px;
+/* ══════════════════════════════════════════ MAIN */
+.main{padding:22px 28px;flex:1}
+.sec{margin-bottom:28px}
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sec-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2)}
+.sec-line{flex:1;height:1px;background:var(--border)}
+.sec-note{font-size:12px;color:var(--text3);white-space:nowrap;margin-left:6px}
+
+/* ══════════════════════════════════════════ KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.kpi-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:20px 22px;position:relative;
+  overflow:hidden;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s,transform .2s;
+}
+.kpi-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.kpi-card::after{
+  content:'';position:absolute;top:0;left:0;bottom:0;width:4px;
+  background:var(--ac,var(--blue));border-radius:0 2px 2px 0;
+}
+.kpi-card.c-blue{--ac:var(--blue)}.kpi-card.c-red{--ac:var(--red)}
+.kpi-card.c-green{--ac:var(--green)}.kpi-card.c-amber{--ac:var(--amber)}
+.kpi-card.c-purple{--ac:var(--purple)}.kpi-card.c-teal{--ac:var(--teal)}
+.kpi-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
+.c-blue .kpi-icon{background:var(--blue-light)}
+.c-red .kpi-icon{background:var(--red-light)}
+.c-green .kpi-icon{background:var(--green-light)}
+.c-amber .kpi-icon{background:var(--amber-light)}
+.c-purple .kpi-icon{background:var(--purple-light)}
+.c-teal .kpi-icon{background:var(--teal-light)}
+.kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text2);margin-bottom:5px}
+.kpi-value{font-size:32px;font-weight:900;line-height:1;color:var(--text);letter-spacing:-1.5px}
+.c-red .kpi-value{color:var(--red)}
+.c-green .kpi-value{color:var(--green)}
+.c-amber .kpi-value{color:var(--amber)}
+.kpi-sub{font-size:12px;color:var(--text3);margin-top:5px}
+
+/* HIGH AGEING card — clickable */
+.kpi-card.clickable{cursor:pointer}
+.kpi-card.clickable:hover{border-color:var(--red);box-shadow:0 0 0 3px rgba(240,68,56,.1),var(--shadow-md)}
+.kpi-card .click-hint{font-size:10px;color:var(--text3);margin-top:6px;display:flex;align-items:center;gap:3px}
+
+/* ══════════════════════════════════════════ HIGH AGEING MODAL */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(26,31,54,.45);
+  z-index:500;display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(3px);padding:20px;
+}
+.modal-bg.hidden{display:none}
+.modal{
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);width:100%;max-width:780px;
+  max-height:85vh;display:flex;flex-direction:column;overflow:hidden;
+}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px;border-bottom:1px solid var(--border);
+}
+.modal-header h2{font-size:16px;font-weight:800;color:var(--text)}
+.modal-header h2 span{color:var(--red)}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;border:1.5px solid var(--border);
+  background:var(--surface2);color:var(--text2);font-size:16px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;
+}
+.modal-close:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.modal-body{overflow-y:auto;padding:18px 22px;flex:1}
+.modal-city-block{margin-bottom:20px}
+.modal-city-name{
+  font-size:14px;font-weight:800;color:var(--text);margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.modal-city-name .city-count{
+  font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;
+  background:var(--red-light);color:var(--red);border:1px solid #fca5a5;
+}
+.modal-order-list{display:flex;flex-direction:column;gap:6px}
+.modal-order-row{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;
+  background:var(--surface2);border-radius:8px;border:1px solid var(--border);
+  transition:background .15s;cursor:pointer;
+}
+.modal-order-row:hover{background:var(--red-light);border-color:#fca5a5}
+.modal-order-id{font-size:13px;font-weight:700;color:var(--text);min-width:110px}
+.modal-order-meta{flex:1;font-size:12px;color:var(--text2)}
+.modal-order-ageing{
+  font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;
+  background:var(--red-light);color:var(--red);border:1px solid #fca5a5;white-space:nowrap;
+}
+.modal-order-case{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* ══════════════════════════════════════════ AGEING STRIP */
+.ageing-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ag-card{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:16px 18px;
+  display:flex;align-items:center;gap:14px;
   box-shadow:var(--shadow-sm);transition:box-shadow .2s;
 }
-.ageing-card:hover{box-shadow:var(--shadow-md)}
-.ageing-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
-.ageing-card.b .ageing-dot{background:var(--blue-light);color:var(--blue)}
-.ageing-card.a .ageing-dot{background:var(--amber-light);color:var(--amber)}
-.ageing-card.r .ageing-dot{background:var(--red-light);color:var(--red)}
-.ageing-info{flex:1;min-width:0}
-.ageing-bucket{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:2px}
-.ageing-count{font-size:22px;font-weight:800;line-height:1;color:var(--text)}
-.ageing-card.r .ageing-count{color:var(--red)}
-.ageing-card.b .ageing-count{color:var(--blue)}
-.ageing-card.a .ageing-count{color:var(--amber)}
-.ageing-amt{font-size:11px;color:var(--text3);margin-top:2px}
-.ageing-bar{height:3px;border-radius:2px;margin-top:8px;background:var(--border)}
-.ageing-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
-.ageing-card.b .ageing-bar-fill{background:var(--blue)}
-.ageing-card.a .ageing-bar-fill{background:var(--amber)}
-.ageing-card.r .ageing-bar-fill{background:var(--red)}
+.ag-card:hover{box-shadow:var(--shadow-md)}
+.ag-dot{
+  width:48px;height:48px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;
+}
+.ag-card.b .ag-dot{background:var(--blue-light);color:var(--blue)}
+.ag-card.a .ag-dot{background:var(--amber-light);color:var(--amber)}
+.ag-card.r .ag-dot{background:var(--red-light);color:var(--red)}
+.ag-info{flex:1;min-width:0}
+.ag-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);margin-bottom:2px}
+.ag-count{font-size:24px;font-weight:900;line-height:1}
+.ag-card.b .ag-count{color:var(--blue)}
+.ag-card.a .ag-count{color:var(--amber)}
+.ag-card.r .ag-count{color:var(--red)}
+.ag-amt{font-size:12px;color:var(--text3);margin-top:2px}
+.ag-bar{height:4px;border-radius:2px;margin-top:8px;background:var(--border);overflow:hidden}
+.ag-bar-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.ag-card.b .ag-bar-fill{background:var(--blue)}
+.ag-card.a .ag-bar-fill{background:var(--amber)}
+.ag-card.r .ag-bar-fill{background:var(--red)}
 
-/* ═══════════════════════ CITY TILES ═══════════════════════ */
-.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-bottom:24px}
+/* ══════════════════════════════════════════ CITY TILES */
+.city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
 .city-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:16px 18px;cursor:pointer;transition:all .2s;position:relative;
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:18px;cursor:pointer;
+  transition:all .2s;position:relative;box-shadow:var(--shadow-sm);
+}
+.city-card:hover{border-color:var(--blue);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.city-card.selected{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 3px rgba(59,111,245,.15),var(--shadow-md)}
+.city-card.flag-red{border-color:#fca5a5;background:var(--red-light)}
+.city-card.flag-amber{border-color:#fde68a;background:var(--amber-light)}
+.city-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.city-name-text{font-size:15px;font-weight:800;color:var(--text)}
+.city-rec-badge{
+  background:var(--red-light);color:var(--red);
+  font-size:10px;font-weight:700;padding:3px 9px;
+  border-radius:20px;border:1px solid #fca5a5;
+}
+.city-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.cs{background:var(--surface2);border-radius:8px;padding:8px 10px}
+.cs-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:1px}
+.cs-value{font-size:15px;font-weight:800;color:var(--text)}
+.cs.red .cs-value{color:var(--red)}
+.cs.blue .cs-value{color:var(--blue)}
+.city-prog-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:10px}
+.city-prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px;transition:width .6s}
+.city-prog-lbl{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:3px}
+.city-actions{display:flex;gap:6px;margin-top:10px}
+.city-btn{
+  flex:1;padding:6px 0;border-radius:6px;font-size:11px;font-weight:700;
+  cursor:pointer;border:1.5px solid;text-align:center;transition:all .15s;
+}
+.city-btn-dl{background:var(--blue-light);border-color:#bfdbfe;color:var(--blue)}
+.city-btn-dl:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.city-btn-ul{background:var(--green-light);border-color:#a7f3d0;color:var(--green)}
+.city-btn-ul:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.city-btn-ap{background:var(--red-light);border-color:#fca5a5;color:var(--red)}
+.city-btn-ap:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ══════════════════════════════════════════ CITY DETAIL */
+#city-detail{display:none;margin-bottom:28px}
+#city-detail.visible{display:block}
+.city-detail-hdr{
+  display:flex;align-items:center;gap:14px;margin-bottom:20px;
+  padding:16px 22px;background:var(--surface);
+  border-radius:var(--radius);border:1.5px solid var(--border);
   box-shadow:var(--shadow-sm);
 }
-.city-card:hover{border-color:var(--blue);box-shadow:var(--shadow-md);transform:translateY(-2px)}
-.city-card.selected{border-color:var(--blue);background:var(--blue-light);box-shadow:0 0 0 3px rgba(59,111,245,.12)}
-.city-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.city-name{font-size:13px;font-weight:700;color:var(--text)}
-.city-rec-badge{background:var(--red-light);color:var(--red);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;border:1px solid #fda29b}
-.city-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.city-stat{background:var(--surface2);border-radius:6px;padding:7px 9px}
-.city-stat-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:1px}
-.city-stat-value{font-size:14px;font-weight:700;color:var(--text)}
-.city-stat.red .city-stat-value{color:var(--red)}
-.city-stat.blue .city-stat-value{color:var(--blue)}
-.city-progress{margin-top:10px}
-.city-progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.city-progress-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px;transition:width .5s}
-.city-progress-label{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:3px}
-
-/* ═══════════════════════ CITY DETAIL ═══════════════════════ */
-#city-detail{display:none;margin-bottom:24px}
-#city-detail.visible{display:block}
-.city-detail-header{
-  display:flex;align-items:center;gap:12px;margin-bottom:18px;
-  padding:14px 18px;background:var(--surface);border-radius:var(--radius);
-  border:1px solid var(--border);box-shadow:var(--shadow-sm);
-}
-.city-detail-header h2{font-size:16px;font-weight:700;color:var(--text)}
 .btn-back{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text2);
-  padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;
-  display:flex;align-items:center;gap:5px;transition:all .15s;
+  padding:9px 20px;border-radius:8px;border:2px solid var(--blue);
+  background:var(--blue-light);color:var(--blue);
+  font-size:14px;font-weight:800;cursor:pointer;
+  display:flex;align-items:center;gap:6px;transition:all .15s;
+  letter-spacing:.2px;
 }
-.btn-back:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.btn-back:hover{background:var(--blue);color:#fff;box-shadow:0 3px 10px rgba(59,111,245,.3)}
+.city-detail-name{font-size:20px;font-weight:900;color:var(--text)}
+.city-detail-badges{display:flex;gap:6px;margin-left:auto}
 
-/* ═══════════════════════ CHARTS ═══════════════════════ */
-.charts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
-.charts-grid .span2{grid-column:span 2}
+/* Action pending filter bar inside city detail */
+.action-filter-bar{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  padding:10px 16px;background:var(--amber-light);border-radius:10px;
+  border:1.5px solid #fde68a;
+}
+.action-filter-bar label{font-size:13px;font-weight:700;color:#92400e}
+.action-filter-toggle{
+  padding:6px 16px;border-radius:7px;border:1.5px solid #fde68a;
+  background:var(--surface);color:#92400e;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;
+}
+.action-filter-toggle.active{background:#f79009;color:#fff;border-color:#f79009}
+.action-count-badge{
+  background:var(--red-light);color:var(--red);font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:20px;border:1px solid #fca5a5;
+}
+
+/* ══════════════════════════════════════════ UPLOAD MODAL */
+.upload-modal{
+  background:var(--surface);border-radius:var(--radius);
+  box-shadow:var(--shadow-lg);width:100%;max-width:580px;
+  overflow:hidden;
+}
+.upload-modal .modal-header{padding:16px 22px}
+.upload-body{padding:22px}
+.upload-drop{
+  border:2px dashed var(--border2);border-radius:10px;
+  padding:36px;text-align:center;cursor:pointer;
+  transition:all .2s;background:var(--surface2);
+}
+.upload-drop:hover,.upload-drop.drag{border-color:var(--blue);background:var(--blue-light)}
+.upload-drop-icon{font-size:36px;margin-bottom:10px}
+.upload-drop-text{font-size:14px;font-weight:600;color:var(--text2)}
+.upload-drop-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.upload-errors{
+  margin-top:14px;background:var(--red-light);border:1.5px solid #fca5a5;
+  border-radius:10px;padding:14px 16px;
+}
+.upload-errors-title{font-size:13px;font-weight:800;color:var(--red);margin-bottom:8px}
+.upload-error-row{font-size:12px;color:#991b1b;margin-bottom:4px;padding:6px 8px;background:rgba(255,255,255,.6);border-radius:6px}
+.upload-success{
+  margin-top:14px;background:var(--green-light);border:1.5px solid #a7f3d0;
+  border-radius:10px;padding:14px 16px;font-size:13px;font-weight:700;color:var(--green);
+}
+.upload-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.btn-primary{background:var(--blue);color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-primary:hover{background:var(--blue-d)}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1.5px solid var(--border);padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+.btn-secondary:hover{border-color:var(--text2);color:var(--text)}
+
+/* ══════════════════════════════════════════ CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .charts-grid .span3{grid-column:1/-1}
 .chart-card{
-  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:18px 20px;box-shadow:var(--shadow-sm);
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);
 }
-.chart-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.chart-card-header h3{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text2)}
-.chart-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
-.chart-card canvas{max-height:200px}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.chart-hdr h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--text2)}
+.chart-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.chart-card canvas{max-height:210px}
 
-/* ═══════════════════════ TABLE ═══════════════════════ */
-.table-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:24px}
-.table-section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border)}
-.table-section-header h3{font-size:13px;font-weight:700;color:var(--text)}
-.table-meta{font-size:11px;color:var(--text3);background:var(--surface2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;font-size:12px}
+/* ══════════════════════════════════════════ TABLE */
+.tbl-section{
+  background:var(--surface);border:1.5px solid var(--border);
+  border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden;
+}
+.tbl-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.tbl-hdr h3{font-size:15px;font-weight:800;color:var(--text)}
+.tbl-meta{font-size:12px;color:var(--text3);background:var(--surface);padding:3px 12px;border-radius:20px;border:1px solid var(--border)}
+.tbl-wrap{overflow-x:auto;max-height:520px;overflow-y:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
 thead th{
-  background:var(--surface2);padding:10px 14px;text-align:left;white-space:nowrap;
-  font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text2);font-weight:700;
-  border-bottom:2px solid var(--border);position:sticky;top:0;
+  background:var(--surface2);padding:11px 14px;text-align:left;
+  white-space:nowrap;font-size:11px;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--text2);font-weight:800;
+  border-bottom:2px solid var(--border);position:sticky;top:0;z-index:10;
 }
 tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-tbody tr:hover{background:#f5f7ff}
+tbody tr:hover{background:#f0f4ff}
 tbody tr:last-child{border-bottom:none}
-tbody td{padding:10px 14px;color:var(--text);white-space:nowrap}
-.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;gap:3px}
-.badge.pending{background:var(--blue-light);color:var(--blue);border:1px solid #b9ceff}
-.badge.recoverable{background:var(--red-light);color:var(--red);border:1px solid #fda29b}
-.badge.qc{background:var(--green-light);color:var(--green);border:1px solid #a6f4c5}
-.badge.nonqc{background:var(--purple-light);color:var(--purple);border:1px solid #d1c0ff}
+tbody tr.row-red{background:var(--red-light)}
+tbody tr.row-red:hover{background:#fee2e2}
+tbody tr.row-amber{background:var(--amber-light)}
+tbody tr.row-amber:hover{background:#fef3c7}
+tbody td{padding:11px 14px;color:var(--text);white-space:nowrap;font-size:13px}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;gap:3px}
+.badge.pending{background:var(--blue-light);color:var(--blue);border:1px solid #bfdbfe}
+.badge.recoverable{background:var(--red-light);color:var(--red);border:1px solid #fca5a5}
+.badge.qc{background:var(--green-light);color:var(--green);border:1px solid #a7f3d0}
+.badge.nonqc{background:var(--purple-light);color:var(--purple);border:1px solid #d4b9ff}
 .badge.inhouse{background:var(--teal-light);color:var(--teal);border:1px solid #a5f0fc}
-.badge.vendor{background:var(--amber-light);color:var(--amber);border:1px solid #fedf89}
-.ageing-chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;background:var(--surface2);color:var(--text2)}
+.badge.vendor{background:var(--amber-light);color:var(--amber);border:1px solid #fde68a}
+.badge.action{background:var(--red-light);color:var(--red);border:1px solid #fca5a5;animation:flash 1.5s infinite}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.5}}
+.ag-chip{display:inline-block;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:700;background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.cn-btn{
+  padding:4px 10px;border-radius:6px;background:var(--green-light);
+  color:var(--green);border:1.5px solid #a7f3d0;font-size:11px;font-weight:700;
+  cursor:pointer;transition:all .15s;
+}
+.cn-btn:hover{background:var(--green);color:#fff;border-color:var(--green)}
+.cn-done{color:var(--green);font-size:12px;font-weight:700}
 
 /* Pagination */
-.pagination{display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--border);justify-content:flex-end;background:var(--surface2)}
-.pagination button{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:5px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.pagination{
+  display:flex;align-items:center;gap:8px;padding:12px 20px;
+  border-top:1px solid var(--border);justify-content:flex-end;
+  background:var(--surface2);
+}
+.pagination button{
+  background:var(--surface);border:1.5px solid var(--border);
+  color:var(--text2);padding:7px 16px;border-radius:7px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
+}
 .pagination button:disabled{opacity:.4;cursor:default}
 .pagination button:not(:disabled):hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
-.page-info{font-size:12px;color:var(--text2);padding:0 6px}
+.page-info{font-size:13px;color:var(--text2);padding:0 8px;font-weight:600}
 
-/* Loading */
-#loading{display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;background:var(--bg)}
-.spinner-ring{width:48px;height:48px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.load-text{font-size:13px;color:var(--text2);font-weight:500}
-.error-box{background:var(--red-light);border:1px solid #fda29b;border-radius:var(--radius);padding:18px 22px;color:var(--red);margin:24px;font-weight:500}
-
-/* Empty state */
-.empty-state{text-align:center;padding:48px;color:var(--text3);font-size:13px}
-.empty-state-icon{font-size:32px;margin-bottom:8px}
-
-/* Misc */
-.highlight-red{color:var(--red)!important;font-weight:700}
+/* ══════════════════════════════════════════ MISC */
+.empty-state{text-align:center;padding:56px;color:var(--text3);font-size:14px}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.error-box{background:var(--red-light);border:1.5px solid #fca5a5;border-radius:var(--radius);padding:20px 24px;color:var(--red);margin:24px;font-weight:600;font-size:15px}
 #app{display:flex;flex-direction:column;min-height:100vh}
-
-/* Cache notice */
-.cache-banner{background:var(--amber-light);border-bottom:1px solid #fedf89;padding:6px 28px;font-size:11px;color:var(--amber);display:flex;align-items:center;gap:8px}
-.cache-banner.hidden{display:none}
+input[type="file"]{display:none}
+.sla-bar{display:flex;align-items:center;gap:6px}
+.sla-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.sla-ok{background:var(--green-light);color:var(--green)}
+.sla-warn{background:var(--amber-light);color:var(--amber)}
+.sla-breach{background:var(--red-light);color:var(--red)}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <!-- LOADING -->
-  <div id="loading">
-    <div class="spinner-ring"></div>
-    <div class="load-text">Fetching RTO data…</div>
+<!-- ══════ LOADING OVERLAY ══════ -->
+<div id="loading-overlay">
+  <div class="loader-ring"></div>
+  <div class="loader-dots"><span></span><span></span><span></span></div>
+  <div class="loader-msg" id="loader-msg">Fetching RTO data…</div>
+</div>
+
+<!-- ══════ HIGH AGEING MODAL ══════ -->
+<div class="modal-bg hidden" id="ha-modal" onclick="closeHAModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>🔴 High Ageing Orders <span>(&gt;10 days)</span></h2>
+      <button class="modal-close" onclick="closeHAModalBtn()">✕</button>
+    </div>
+    <div class="modal-body" id="ha-modal-body"></div>
+  </div>
+</div>
+
+<!-- ══════ UPLOAD MODAL ══════ -->
+<div class="modal-bg hidden" id="upload-modal" onclick="closeUploadModal(event)">
+  <div class="upload-modal">
+    <div class="modal-header">
+      <h2 id="upload-modal-title">📤 Upload City Data</h2>
+      <button class="modal-close" onclick="closeUploadModalBtn()">✕</button>
+    </div>
+    <div class="upload-body">
+      <div class="upload-drop" id="upload-drop"
+        ondragover="event.preventDefault();this.classList.add('drag')"
+        ondragleave="this.classList.remove('drag')"
+        ondrop="handleFileDrop(event)"
+        onclick="document.getElementById('file-input').click()">
+        <div class="upload-drop-icon">📂</div>
+        <div class="upload-drop-text">Drop your Excel file here or click to browse</div>
+        <div class="upload-drop-sub">Only editable columns: Case Type, FC Remark, CN Received</div>
+      </div>
+      <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleFileSelect(event)"/>
+      <div id="upload-result"></div>
+      <div class="upload-actions">
+        <button class="btn-secondary" onclick="closeUploadModalBtn()">Cancel</button>
+        <button class="btn-primary" id="btn-do-upload" style="display:none" onclick="doUpload()">Upload & Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DASHBOARD ══════ -->
+<div id="dashboard" style="display:none">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-icon">🚛</div>
+      <div class="brand-title">RTO <span>Operations</span> Dashboard</div>
+      <span class="badge-live">LIVE</span>
+    </div>
+    <span class="as-of" id="as-of-label"></span>
+    <div class="header-right">
+      <div class="toggle-group" id="qc-toggle">
+        <button data-val="Overall" class="active" onclick="setQC('Overall')">Overall</button>
+        <button data-val="QC"      onclick="setQC('QC')">QC</button>
+        <button data-val="Non-QC"  onclick="setQC('Non-QC')">Non-QC</button>
+      </div>
+    </div>
   </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" style="display:none">
+  <!-- CACHE BANNER -->
+  <div class="cache-banner hidden" id="cache-banner">
+    ⚡ Showing cached data · <span id="cache-age"></span> ·
+    <a href="#" onclick="forceRefresh();return false">Refresh now</a>
+  </div>
 
-    <!-- HEADER -->
-    <div class="header">
-      <div class="header-brand">
-        <div class="header-icon">🚛</div>
-        <h1>RTO <span>Operations</span> Dashboard</h1>
-        <span class="badge-live">LIVE</span>
-      </div>
-      <span class="as-of" id="as-of-label"></span>
-      <div class="header-right">
-        <div class="toggle-group" id="qc-toggle">
-          <button data-val="Overall" class="active" onclick="setQCFilter('Overall')">Overall</button>
-          <button data-val="QC"      onclick="setQCFilter('QC')">QC</button>
-          <button data-val="Non-QC"  onclick="setQCFilter('Non-QC')">Non-QC</button>
-        </div>
-      </div>
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="fg"><label>City</label>
+      <select id="f-city" onchange="applyFilters()"><option value="">All Cities</option></select>
     </div>
-
-    <!-- CACHE NOTICE -->
-    <div class="cache-banner hidden" id="cache-banner">
-      ⚡ Showing cached data · <span id="cache-age"></span> · <a href="#" onclick="forceRefresh();return false">Refresh now</a>
+    <div class="fg"><label>Source</label>
+      <select id="f-source" onchange="applyFilters()">
+        <option value="">All</option><option>In-house</option><option>Vendor</option><option>3PL</option><option>PSP</option>
+      </select>
     </div>
-
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
-      <div class="filter-group"><label>City</label>
-        <select id="f-city" onchange="applyFilters()"><option value="">All Cities</option></select>
-      </div>
-      <div class="filter-group"><label>Source</label>
-        <select id="f-source" onchange="applyFilters()">
-          <option value="">All</option><option>In-house</option><option>Vendor</option>
-        </select>
-      </div>
-      <div class="filter-group"><label>Status</label>
-        <select id="f-status" onchange="applyFilters()">
-          <option value="">All</option><option>Pending</option><option>Recoverable</option>
-        </select>
-      </div>
-      <div class="filter-group"><label>Ageing</label>
-        <select id="f-ageing" onchange="applyFilters()">
-          <option value="">All Buckets</option>
-          <option value="0-1">0–1 Days</option>
-          <option value="1-3">1–3 Days</option>
-          <option value="3-5">3–5 Days</option>
-          <option value="Recoverable">Recoverable (&gt;5)</option>
-        </select>
-      </div>
-      <div class="filter-group"><label>Case</label>
-        <select id="f-case" onchange="applyFilters()"><option value="">All Cases</option></select>
-      </div>
-      <div class="filter-divider"></div>
-      <div class="filter-group"><label>From</label>
-        <input type="date" id="f-date-from" onchange="applyFilters()"/>
-      </div>
-      <div class="filter-group"><label>To</label>
-        <input type="date" id="f-date-to" onchange="applyFilters()"/>
-      </div>
-      <div class="filter-divider"></div>
-      <button class="btn-reset" onclick="resetFilters()">✕ Reset</button>
-      <button class="btn-refresh" id="btn-refresh" onclick="forceRefresh()">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-        Refresh
-      </button>
+    <div class="fg"><label>Status</label>
+      <select id="f-status" onchange="applyFilters()">
+        <option value="">All</option><option>Pending</option><option>Recoverable</option>
+      </select>
     </div>
+    <div class="fg"><label>Ageing</label>
+      <select id="f-ageing" onchange="applyFilters()">
+        <option value="">All</option>
+        <option value="0-1">0–1 Days</option>
+        <option value="1-3">1–3 Days</option>
+        <option value="3-5">3–5 Days</option>
+        <option value="Recoverable">&gt;5 Days</option>
+      </select>
+    </div>
+    <div class="fg"><label>Case</label>
+      <select id="f-case" onchange="applyFilters()"><option value="">All Cases</option></select>
+    </div>
+    <div class="divider"></div>
+    <div class="fg"><label>From</label><input type="date" id="f-from" onchange="applyFilters()"/></div>
+    <div class="fg"><label>To</label><input type="date" id="f-to" onchange="applyFilters()"/></div>
+    <div class="divider"></div>
+    <button class="btn btn-reset" onclick="resetFilters()">✕ Reset</button>
+    <button class="btn btn-refresh" id="btn-refresh" onclick="forceRefresh()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+      </svg>
+      Refresh
+    </button>
+  </div>
 
-    <!-- MAIN -->
-    <div class="main">
+  <!-- MAIN -->
+  <div class="main">
 
-      <!-- ── PAN INDIA KPIs ── -->
-      <div class="section-header">
-        <span class="section-title">🇮🇳 PAN India Overview</span>
-        <div class="section-line"></div>
+    <!-- ── PAN INDIA KPIs ── -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">🇮🇳 PAN India Overview</span>
+        <div class="sec-line"></div>
       </div>
-      <!-- Row 1: Total | Recoverable Amount | Pending | Pending Amt | Total Active Amt -->
-      <div class="kpi-grid" style="grid-template-columns:repeat(auto-fill,minmax(190px,1fr))">
+      <div class="kpi-grid">
         <div class="kpi-card c-blue">
           <div class="kpi-icon">📦</div>
           <div class="kpi-label">Total Active Orders</div>
@@ -352,7 +603,7 @@ tbody td{padding:10px 14px;color:var(--text);white-space:nowrap}
           <div class="kpi-icon">⚠️</div>
           <div class="kpi-label">Recoverable Amount</div>
           <div class="kpi-value" id="k-ramount">—</div>
-          <div class="kpi-sub" id="k-rec-count-sub">— orders &gt;5 days</div>
+          <div class="kpi-sub" id="k-rec-sub">— orders &gt;5 days</div>
         </div>
         <div class="kpi-card c-amber">
           <div class="kpi-icon">⏳</div>
@@ -364,7 +615,7 @@ tbody td{padding:10px 14px;color:var(--text);white-space:nowrap}
           <div class="kpi-icon">💰</div>
           <div class="kpi-label">Pending Amount</div>
           <div class="kpi-value" id="k-pamount">—</div>
-          <div class="kpi-sub">Amount at risk ≤5 days</div>
+          <div class="kpi-sub">≤5 days exposure</div>
         </div>
         <div class="kpi-card c-purple">
           <div class="kpi-icon">📊</div>
@@ -372,134 +623,161 @@ tbody td{padding:10px 14px;color:var(--text);white-space:nowrap}
           <div class="kpi-value" id="k-amount">—</div>
           <div class="kpi-sub">Total ₹ exposure</div>
         </div>
-        <div class="kpi-card c-teal">
-          <div class="kpi-icon">🔔</div>
-          <div class="kpi-label">Breach Warning</div>
-          <div class="kpi-value" id="k-breach">—</div>
-          <div class="kpi-sub">Past expected return window</div>
+        <!-- HIGH AGEING — clickable -->
+        <div class="kpi-card c-red clickable" onclick="openHAModal()" id="ha-card">
+          <div class="kpi-icon">🔴</div>
+          <div class="kpi-label">High Ageing (&gt;10 days)</div>
+          <div class="kpi-value" id="k-ha">—</div>
+          <div class="kpi-sub" id="k-ha-sub">—</div>
+          <div class="click-hint">👆 Click to view city-wise list</div>
         </div>
       </div>
+    </div>
 
-      <!-- ── AGEING BREAKDOWN ── -->
-      <div class="section-header">
-        <span class="section-title">⏱ Ageing Breakdown</span>
-        <div class="section-line"></div>
+    <!-- ── AGEING BREAKDOWN ── -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">⏱ Ageing Breakdown</span>
+        <div class="sec-line"></div>
       </div>
-      <div class="ageing-strip" id="ageing-strip">
-        <div class="ageing-card b">
-          <div class="ageing-dot" id="a-01-pct">—</div>
-          <div class="ageing-info">
-            <div class="ageing-bucket">0–1 Days</div>
-            <div class="ageing-count" id="a-01c">—</div>
-            <div class="ageing-amt" id="a-01a">—</div>
-            <div class="ageing-bar"><div class="ageing-bar-fill" id="a-01-bar" style="width:0%"></div></div>
+      <div class="ageing-strip">
+        <div class="ag-card b">
+          <div class="ag-dot" id="a01p">—</div>
+          <div class="ag-info">
+            <div class="ag-label">0–1 Days</div>
+            <div class="ag-count" id="a01c">—</div>
+            <div class="ag-amt" id="a01a">—</div>
+            <div class="ag-bar"><div class="ag-bar-fill" id="a01b" style="width:0"></div></div>
           </div>
         </div>
-        <div class="ageing-card b">
-          <div class="ageing-dot" id="a-13-pct">—</div>
-          <div class="ageing-info">
-            <div class="ageing-bucket">1–3 Days</div>
-            <div class="ageing-count" id="a-13c">—</div>
-            <div class="ageing-amt" id="a-13a">—</div>
-            <div class="ageing-bar"><div class="ageing-bar-fill" id="a-13-bar" style="width:0%"></div></div>
+        <div class="ag-card b">
+          <div class="ag-dot" id="a13p">—</div>
+          <div class="ag-info">
+            <div class="ag-label">1–3 Days</div>
+            <div class="ag-count" id="a13c">—</div>
+            <div class="ag-amt" id="a13a">—</div>
+            <div class="ag-bar"><div class="ag-bar-fill" id="a13b" style="width:0"></div></div>
           </div>
         </div>
-        <div class="ageing-card a">
-          <div class="ageing-dot" id="a-35-pct">—</div>
-          <div class="ageing-info">
-            <div class="ageing-bucket">3–5 Days</div>
-            <div class="ageing-count" id="a-35c">—</div>
-            <div class="ageing-amt" id="a-35a">—</div>
-            <div class="ageing-bar"><div class="ageing-bar-fill" id="a-35-bar" style="width:0%"></div></div>
+        <div class="ag-card a">
+          <div class="ag-dot" id="a35p">—</div>
+          <div class="ag-info">
+            <div class="ag-label">3–5 Days</div>
+            <div class="ag-count" id="a35c">—</div>
+            <div class="ag-amt" id="a35a">—</div>
+            <div class="ag-bar"><div class="ag-bar-fill" id="a35b" style="width:0"></div></div>
           </div>
         </div>
-        <div class="ageing-card r">
-          <div class="ageing-dot" id="a-r-pct">—</div>
-          <div class="ageing-info">
-            <div class="ageing-bucket">⚠ Recoverable &gt;5</div>
-            <div class="ageing-count" id="a-rc">—</div>
-            <div class="ageing-amt" id="a-ra">—</div>
-            <div class="ageing-bar"><div class="ageing-bar-fill" id="a-r-bar" style="width:0%"></div></div>
+        <div class="ag-card r">
+          <div class="ag-dot" id="arcp">—</div>
+          <div class="ag-info">
+            <div class="ag-label">⚠ Recoverable &gt;5</div>
+            <div class="ag-count" id="arcc">—</div>
+            <div class="ag-amt" id="arca">—</div>
+            <div class="ag-bar"><div class="ag-bar-fill" id="arcb" style="width:0"></div></div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- ── CITY TILES ── -->
-      <div class="section-header">
-        <span class="section-title">🏙 City-wise Performance</span>
-        <div class="section-line"></div>
-        <span style="font-size:11px;color:var(--text3);white-space:nowrap;margin-left:8px">Click a city to drill down</span>
+    <!-- ── CITY TILES ── -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">🏙 City-wise Performance</span>
+        <div class="sec-line"></div>
+        <span class="sec-note">Click a city tile to drill down · 🔴 Red = high ageing / no updates · 🟡 Amber = most recoverables</span>
       </div>
       <div class="city-grid" id="city-grid"></div>
+    </div>
 
-      <!-- ── CITY DETAIL ── -->
-      <div id="city-detail">
-        <div class="city-detail-header">
-          <button class="btn-back" onclick="closeCityDetail()">← All Cities</button>
-          <h2 id="city-detail-name"></h2>
-          <div style="margin-left:auto;display:flex;gap:8px" id="city-detail-badges"></div>
-        </div>
-        <div class="kpi-grid" id="city-kpis"></div>
-        <div class="ageing-strip" id="city-ageing"></div>
-        <div class="charts-grid" id="city-charts-grid" style="grid-template-columns:repeat(3,1fr)"></div>
+    <!-- ── CITY DETAIL ── -->
+    <div id="city-detail">
+      <div class="city-detail-hdr">
+        <button class="btn-back" onclick="closeCityDetail()">
+          ← All Cities
+        </button>
+        <div class="city-detail-name" id="city-detail-name"></div>
+        <div class="city-detail-badges" id="city-detail-badges"></div>
       </div>
 
-      <!-- ── CHARTS ── -->
-      <div class="section-header">
-        <span class="section-title">📊 Analytics</span>
-        <div class="section-line"></div>
+      <!-- Action pending filter -->
+      <div class="action-filter-bar" id="action-filter-bar">
+        <label>⚠ Action Pending Filter</label>
+        <button class="action-filter-toggle" id="ap-toggle" onclick="toggleAPFilter()">Show Only Action Pending</button>
+        <span class="action-count-badge" id="ap-count">0 pending</span>
+        <div style="flex:1"></div>
+        <button class="btn city-btn city-btn-dl" style="min-width:120px" onclick="downloadCityExcel()">⬇ Download Excel</button>
+        <button class="btn city-btn city-btn-ul" style="min-width:120px" onclick="openUploadModal()">⬆ Upload Excel</button>
+      </div>
+
+      <div class="kpi-grid" id="city-kpis" style="margin-bottom:16px"></div>
+      <div class="ageing-strip" id="city-ageing" style="margin-bottom:16px"></div>
+      <div class="charts-grid" id="city-charts-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"></div>
+    </div>
+
+    <!-- ── CHARTS ── -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">📊 Analytics</span>
+        <div class="sec-line"></div>
       </div>
       <div class="charts-grid">
         <div class="chart-card">
-          <div class="chart-card-header"><h3>Ageing Distribution</h3><span class="chart-badge" id="ch-ageing-total">— orders</span></div>
+          <div class="chart-hdr"><h3>Ageing Distribution</h3><span class="chart-badge" id="ch-ag-total">—</span></div>
           <canvas id="ch-ageing"></canvas>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><h3>Pending vs Recoverable</h3></div>
+          <div class="chart-hdr"><h3>Pending vs Recoverable</h3></div>
           <canvas id="ch-pvr"></canvas>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><h3>Amount Exposure (₹)</h3></div>
+          <div class="chart-hdr"><h3>Amount Exposure (₹)</h3></div>
           <canvas id="ch-amount"></canvas>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><h3>QC vs Non-QC</h3></div>
+          <div class="chart-hdr"><h3>QC vs Non-QC</h3></div>
           <canvas id="ch-qc"></canvas>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><h3>In-house vs Vendor</h3></div>
+          <div class="chart-hdr"><h3>In-house vs Vendor</h3></div>
           <canvas id="ch-source"></canvas>
         </div>
         <div class="chart-card">
-          <div class="chart-card-header"><h3>Top Case Types</h3></div>
+          <div class="chart-hdr"><h3>Case Type Breakdown</h3></div>
           <canvas id="ch-cases"></canvas>
         </div>
         <div class="chart-card span3">
-          <div class="chart-card-header"><h3>30-Day Backlog Trend</h3><span class="chart-badge">Last 30 days</span></div>
-          <canvas id="ch-trend" style="max-height:180px"></canvas>
+          <div class="chart-hdr"><h3>30-Day Backlog Trend</h3><span class="chart-badge">Last 30 days</span></div>
+          <canvas id="ch-trend" style="max-height:190px"></canvas>
         </div>
       </div>
+    </div>
 
-      <!-- ── ORDER TABLE ── -->
-      <div class="table-section">
-        <div class="table-section-header">
-          <h3>📋 Order Details</h3>
-          <span class="table-meta" id="table-count">— orders</span>
+    <!-- ── ORDER TABLE ── -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">📋 Order Details</span>
+        <div class="sec-line"></div>
+      </div>
+      <div class="tbl-section">
+        <div class="tbl-hdr">
+          <h3>Active Orders</h3>
+          <span class="tbl-meta" id="tbl-count">— orders</span>
         </div>
-        <div class="table-wrap">
-          <table id="order-table">
+        <div class="tbl-wrap">
+          <table>
             <thead>
               <tr>
                 <th>Cancellation Date</th><th>Order ID</th><th>Rider</th>
                 <th>Amount</th><th>City</th><th>QC</th><th>Source</th>
                 <th>Ageing</th><th>Bucket</th><th>Status</th>
-                <th>Case Type</th><th>FC Remark</th>
+                <th>Case Type</th><th>SLA</th><th>FC Remark</th><th>Action</th>
               </tr>
             </thead>
             <tbody id="order-tbody"></tbody>
           </table>
           <div id="empty-state" class="empty-state" style="display:none">
-            <div class="empty-state-icon">🔍</div>
+            <div class="empty-icon">🔍</div>
             No orders match the current filters.
           </div>
         </div>
@@ -509,597 +787,734 @@ tbody td{padding:10px 14px;color:var(--text);white-space:nowrap}
           <button id="btn-next" onclick="changePage(1)">Next →</button>
         </div>
       </div>
+    </div>
 
-    </div><!-- /main -->
-  </div><!-- /dashboard -->
+  </div><!-- /main -->
+</div><!-- /dashboard -->
 </div><!-- /app -->
 
 <script>
 Chart.register(ChartDataLabels);
 
-// ═══════════════════════════════════════════════════
-//  CONFIG & STATE
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
 const API_URL   = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CACHE_KEY = 'rto_dashboard_cache';
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_KEY = 'rto_v3_cache';
+const CACHE_TTL = 5 * 60 * 1000;
 
-let RAW          = [];
-let FILTERED     = [];
-let TREND        = [];
-let PAGE         = 1;
-const PAGE_SIZE  = 50;
-let CHARTS       = {};
-let SELECTED_CITY= null;
-let QC_FILTER    = 'Overall';
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let RAW = [], FILTERED = [], TREND = [], HA_DATA = {}, AP_DATA = {};
+let MASTER_CASES = [];
+let PAGE = 1, PAGE_SIZE = 50;
+let CHARTS = {};
+let QC_FILTER = 'Overall';
+let SELECTED_CITY = null;
+let AP_FILTER_ON = false;
+let UPLOAD_CITY = null;
+let UPLOAD_ROWS = null;
 
-// ── Formatters ──
-const fmt  = n => '₹' + Number(n).toLocaleString('en-IN', {maximumFractionDigits:0});
+// ══════════════════════════════════════════
+//  FORMATTERS
+// ══════════════════════════════════════════
+const fmt  = n => '₹' + Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
 const fmtK = n => {
-  if (n >= 10000000) return '₹' + (n/10000000).toFixed(1) + 'Cr';
-  if (n >= 100000)   return '₹' + (n/100000).toFixed(1) + 'L';
-  if (n >= 1000)     return '₹' + (n/1000).toFixed(1) + 'K';
-  return '₹' + n;
+  if(n>=10000000) return '₹'+(n/10000000).toFixed(1)+'Cr';
+  if(n>=100000)   return '₹'+(n/100000).toFixed(1)+'L';
+  if(n>=1000)     return '₹'+(n/1000).toFixed(1)+'K';
+  return '₹'+n;
 };
 const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+const set = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
 
-// ═══════════════════════════════════════════════════
-//  BOOTSTRAP + CACHE
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
+//  BOOTSTRAP
+// ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', loadData);
 
-function loadData(forceNetwork = false) {
-  if (!forceNetwork) {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const { data, ts } = JSON.parse(cached);
-        const age = Date.now() - ts;
-        if (age < CACHE_TTL) {
-          onDataLoad(data);
-          showCacheBanner(age);
+function setLoaderMsg(msg){ set('loader-msg', msg); }
+
+function showLoader(){
+  document.getElementById('loading-overlay').classList.remove('hidden');
+}
+function hideLoader(){
+  document.getElementById('loading-overlay').classList.add('hidden');
+}
+
+function loadData(force=false){
+  showLoader(); setLoaderMsg('Fetching RTO data…');
+
+  if(!force){
+    try{
+      const c = localStorage.getItem(CACHE_KEY);
+      if(c){
+        const {data,ts} = JSON.parse(c);
+        if(Date.now()-ts < CACHE_TTL){
+          setLoaderMsg('Loading from cache…');
+          setTimeout(()=>{ onLoad(data); showCacheBanner(Date.now()-ts); },200);
           return;
         }
       }
-    } catch(e) {}
+    }catch(e){}
   }
-  document.getElementById('loading').style.display = 'flex';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('cache-banner').classList.add('hidden');
 
+  setLoaderMsg('Connecting to Google Sheets…');
   fetch(API_URL)
-    .then(r => r.json())
-    .then(data => {
-      try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() })); } catch(e) {}
-      onDataLoad(data);
+    .then(r=>{ setLoaderMsg('Processing data…'); return r.json(); })
+    .then(data=>{
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({data,ts:Date.now()})); }catch(e){}
+      onLoad(data);
+      document.getElementById('cache-banner').classList.add('hidden');
     })
-    .catch(err => {
-      // fallback to stale cache
-      try {
-        const cached = localStorage.getItem(CACHE_KEY);
-        if (cached) {
-          const { data, ts } = JSON.parse(cached);
-          onDataLoad(data);
-          showCacheBanner(Date.now() - ts, true);
-          return;
-        }
-      } catch(e2) {}
-      onDataError(err.message);
+    .catch(err=>{
+      try{
+        const c = localStorage.getItem(CACHE_KEY);
+        if(c){ const {data,ts}=JSON.parse(c); onLoad(data); showCacheBanner(Date.now()-ts,true); return; }
+      }catch(e2){}
+      hideLoader();
+      document.getElementById('loading-overlay').innerHTML =
+        '<div class="error-box">❌ Failed to load: '+(err.message||'Unknown error')+'<br><br><button onclick="forceRefresh()" style="margin-top:8px;padding:8px 20px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Retry</button></div>';
     });
 }
 
-function forceRefresh() {
-  const btn = document.getElementById('btn-refresh');
-  btn.classList.add('spinning');
-  setTimeout(() => btn.classList.remove('spinning'), 1500);
+function forceRefresh(){
+  const b = document.getElementById('btn-refresh');
+  b.classList.add('spinning');
+  setTimeout(()=>b.classList.remove('spinning'),1500);
   loadData(true);
 }
 
-function showCacheBanner(ageMs, stale = false) {
-  const banner = document.getElementById('cache-banner');
-  const mins   = Math.round(ageMs / 60000);
-  const label  = mins < 1 ? 'just now' : mins + ' min ago';
-  document.getElementById('cache-age').textContent = (stale ? '⚠ Stale · ' : '') + 'Loaded ' + label;
-  banner.classList.remove('hidden');
-}
+function onLoad(payload){
+  if(!payload.success){ hideLoader(); document.getElementById('loading-overlay').innerHTML='<div class="error-box">❌ '+payload.error+'</div>'; return; }
+  RAW          = payload.orders || [];
+  TREND        = payload.trend  || [];
+  HA_DATA      = payload.highAgeingOrders || {};
+  AP_DATA      = payload.actionPendingByCity || {};
+  MASTER_CASES = payload.masterCases || [];
 
-function onDataLoad(payload) {
-  if (!payload.success) { onDataError(payload.error); return; }
-  RAW   = payload.orders || [];
-  TREND = payload.trend  || [];
-  document.getElementById('as-of-label').textContent = 'As of ' + payload.asOf;
-  populateCityFilter();
-  populateCaseFilter();
+  set('as-of-label','As of '+payload.asOf);
+  populateFilters();
   applyFilters();
-  document.getElementById('loading').style.display   = 'none';
-  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('dashboard').style.display='block';
+  hideLoader();
 }
 
-function onDataError(err) {
-  document.getElementById('loading').innerHTML =
-    '<div class="error-box">❌ Failed to load data: ' + (err || 'Unknown error') + '<br><br><button onclick="forceRefresh()" style="margin-top:8px;padding:6px 14px;background:var(--red);color:#fff;border:none;border-radius:6px;cursor:pointer">Retry</button></div>';
+function showCacheBanner(ageMs, stale=false){
+  const mins = Math.round(ageMs/60000);
+  const lbl  = mins<1?'just now':mins+' min ago';
+  set('cache-age',(stale?'⚠ Stale · ':'')+lbl);
+  document.getElementById('cache-banner').classList.remove('hidden');
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  FILTERS
-// ═══════════════════════════════════════════════════
-function setQCFilter(val) {
-  QC_FILTER = val;
-  document.querySelectorAll('#qc-toggle button').forEach(b =>
-    b.classList.toggle('active', b.dataset.val === val)
-  );
+// ══════════════════════════════════════════
+function setQC(val){
+  QC_FILTER=val;
+  document.querySelectorAll('#qc-toggle button').forEach(b=>b.classList.toggle('active',b.dataset.val===val));
   applyFilters();
 }
 
-function applyFilters() {
-  const city    = document.getElementById('f-city').value;
-  const source  = document.getElementById('f-source').value;
-  const status  = document.getElementById('f-status').value;
-  const ageing  = document.getElementById('f-ageing').value;
-  const caseT   = document.getElementById('f-case').value;
-  const dfrom   = document.getElementById('f-date-from').value;
-  const dto     = document.getElementById('f-date-to').value;
+function applyFilters(){
+  const city   = document.getElementById('f-city').value;
+  const source = document.getElementById('f-source').value;
+  const status = document.getElementById('f-status').value;
+  const ageing = document.getElementById('f-ageing').value;
+  const caseT  = document.getElementById('f-case').value;
+  const dfrom  = document.getElementById('f-from').value;
+  const dto    = document.getElementById('f-to').value;
 
-  FILTERED = RAW.filter(o => {
-    if (QC_FILTER !== 'Overall' && o.qcType !== QC_FILTER) return false;
-    if (SELECTED_CITY && o.city !== SELECTED_CITY) return false;
-    if (city   && o.city   !== city)   return false;
-    if (source && o.source !== source) return false;
-    if (status && o.status !== status) return false;
-    if (ageing && o.ageingBucket !== ageing) return false;
-    if (caseT  && o.caseType !== caseT) return false;
-    if (dfrom || dto) {
-      const d = parseDate(o.cancellationDate);
-      if (dfrom && d < new Date(dfrom)) return false;
-      if (dto   && d > new Date(dto))   return false;
+  FILTERED = RAW.filter(o=>{
+    if(QC_FILTER!=='Overall' && o.qcType!==QC_FILTER) return false;
+    if(SELECTED_CITY && o.city!==SELECTED_CITY) return false;
+    if(city   && o.city!==city) return false;
+    if(source && o.source!==source) return false;
+    if(status && o.status!==status) return false;
+    if(ageing && o.ageingBucket!==ageing) return false;
+    if(caseT  && o.caseType!==caseT) return false;
+    if(dfrom||dto){
+      const d=parseD(o.cancellationDate);
+      if(dfrom && d<new Date(dfrom)) return false;
+      if(dto   && d>new Date(dto))   return false;
     }
+    if(AP_FILTER_ON && !o.actionPending) return false;
     return true;
   });
 
-  PAGE = 1;
-  renderKPIs();
-  renderAgeingStrip();
-  renderCityTiles();
-  renderCharts();
-  renderTable();
+  PAGE=1;
+  renderKPIs(); renderAgeing(); renderCityTiles(); renderCharts(); renderTable();
 }
 
-function parseDate(str) {
-  return new Date(str.replace(/(\d+)-(\w+)-(\d+)/, '$1 $2 $3'));
-}
-
-function resetFilters() {
-  ['f-city','f-source','f-status','f-ageing','f-case'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-date-from').value = '';
-  document.getElementById('f-date-to').value   = '';
-  SELECTED_CITY = null;
-  setQCFilter('Overall');
+function resetFilters(){
+  ['f-city','f-source','f-status','f-ageing','f-case'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-from').value='';
+  document.getElementById('f-to').value='';
+  SELECTED_CITY=null; AP_FILTER_ON=false;
+  setQC('Overall');
   closeCityDetail();
 }
 
-// ═══════════════════════════════════════════════════
-//  KPI CARDS
-// ═══════════════════════════════════════════════════
-function renderKPIs() {
-  const a = aggregate(FILTERED);
-  const recPct = pct(a.recoverable.count, a.totalOrders);
+function parseD(s){ return new Date(s.replace(/(\d+)-(\w+)-(\d+)/,'$1 $2 $3')); }
 
-  set('k-total',      a.totalOrders);
-  set('k-total-sub',  fmt(a.totalAmount) + ' total exposure');
-  set('k-ramount',    fmtK(a.recoverable.amount));
-  set('k-rec-count-sub', a.recoverable.count + ' orders >5 days');
-  set('k-pending',    a.pending.count);
-  set('k-pending-sub', fmt(a.pending.amount) + ' at risk');
-  set('k-pamount',    fmtK(a.pending.amount));
-  set('k-amount',     fmtK(a.totalAmount));
-  set('k-breach',     a.breachOrders);
+// ══════════════════════════════════════════
+//  KPI CARDS
+// ══════════════════════════════════════════
+function renderKPIs(){
+  const a = agg(FILTERED);
+  set('k-total',    a.totalOrders);
+  set('k-total-sub',fmt(a.totalAmount)+' total');
+  set('k-ramount',  fmtK(a.recoverable.amount));
+  set('k-rec-sub',  a.recoverable.count+' orders >5 days');
+  set('k-pending',  a.pending.count);
+  set('k-pending-sub',fmt(a.pending.amount)+' at risk');
+  set('k-pamount',  fmtK(a.pending.amount));
+  set('k-amount',   fmtK(a.totalAmount));
+  // High ageing
+  const haCount = FILTERED.filter(o=>o.highAgeing).length;
+  const haAmt   = FILTERED.filter(o=>o.highAgeing).reduce((s,o)=>s+o.amount,0);
+  set('k-ha',     haCount);
+  set('k-ha-sub', fmt(haAmt)+' exposure');
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  AGEING STRIP
-// ═══════════════════════════════════════════════════
-function renderAgeingStrip() {
-  const a   = aggregate(FILTERED);
-  const b   = a.ageing;
-  const tot = a.totalOrders || 1;
-
-  const buckets = [
-    { key:'0-1', cId:'a-01c', aId:'a-01a', barId:'a-01-bar', pctId:'a-01-pct' },
-    { key:'1-3', cId:'a-13c', aId:'a-13a', barId:'a-13-bar', pctId:'a-13-pct' },
-    { key:'3-5', cId:'a-35c', aId:'a-35a', barId:'a-35-bar', pctId:'a-35-pct' },
-    { key:'Recoverable', cId:'a-rc', aId:'a-ra', barId:'a-r-bar', pctId:'a-r-pct' },
+// ══════════════════════════════════════════
+function renderAgeing(){
+  const a = agg(FILTERED);
+  const b = a.ageing, tot=a.totalOrders||1;
+  const bkts=[
+    {key:'0-1', pc:'a01p',cc:'a01c',ac:'a01a',bc:'a01b'},
+    {key:'1-3', pc:'a13p',cc:'a13c',ac:'a13a',bc:'a13b'},
+    {key:'3-5', pc:'a35p',cc:'a35c',ac:'a35a',bc:'a35b'},
+    {key:'Recoverable',pc:'arcp',cc:'arcc',ac:'arca',bc:'arcb'},
   ];
-
-  buckets.forEach(bk => {
-    const cnt = b[bk.key].count;
-    const p   = pct(cnt, tot);
-    set(bk.cId,   cnt);
-    set(bk.aId,   fmt(b[bk.key].amount));
-    set(bk.pctId, p + '%');
-    const bar = document.getElementById(bk.barId);
-    if (bar) bar.style.width = p + '%';
+  bkts.forEach(bk=>{
+    const p=pct(b[bk.key].count,tot);
+    set(bk.pc,p+'%'); set(bk.cc,b[bk.key].count);
+    set(bk.ac,fmt(b[bk.key].amount));
+    const el=document.getElementById(bk.bc); if(el) el.style.width=p+'%';
   });
 }
 
-// ═══════════════════════════════════════════════════
-//  CITY TILES
-// ═══════════════════════════════════════════════════
-function renderCityTiles() {
-  const grid   = document.getElementById('city-grid');
-  const cityMap = {};
-  FILTERED.forEach(o => { if (!cityMap[o.city]) cityMap[o.city] = []; cityMap[o.city].push(o); });
+// ══════════════════════════════════════════
+//  CITY TILES — flag logic
+// ══════════════════════════════════════════
+function renderCityTiles(){
+  const grid=document.getElementById('city-grid');
+  const cityMap=groupBy(FILTERED,'city');
+  const cities=Object.keys(cityMap).sort();
+  grid.innerHTML='';
+  if(!cities.length){ grid.innerHTML='<div class="empty-state"><div class="empty-icon">🏙</div>No city data.</div>'; return; }
 
-  const cities = Object.keys(cityMap).sort();
-  grid.innerHTML = '';
+  // Compute city recoverables to find amber city (most recoverables)
+  const cityRecCount = cities.map(c=>({ city:c, rec:agg(cityMap[c]).recoverable.count }));
+  const maxRec = Math.max(...cityRecCount.map(x=>x.rec));
 
-  if (!cities.length) {
-    grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏙</div>No city data for current filters.</div>';
-    return;
-  }
+  cities.forEach(city=>{
+    const a   = agg(cityMap[city]);
+    const recP= pct(a.recoverable.count,a.totalOrders);
+    // Red: highest ageing or no updates
+    const haCount= cityMap[city].filter(o=>o.highAgeing).length;
+    const apCount= cityMap[city].filter(o=>o.actionPending).length;
+    const isRed  = haCount>0 || apCount>0;
+    // Amber: most recoverables among cities
+    const isAmber= !isRed && a.recoverable.count>0 && a.recoverable.count===maxRec;
 
-  cities.forEach(city => {
-    const a   = aggregate(cityMap[city]);
-    const recP= pct(a.recoverable.count, a.totalOrders);
-    const card = document.createElement('div');
-    card.className = 'city-card' + (SELECTED_CITY === city ? ' selected' : '');
-    card.onclick   = () => openCityDetail(city);
-    card.innerHTML = `
-      <div class="city-card-top">
-        <div class="city-name">📍 ${city}</div>
-        ${a.recoverable.count > 0 ? `<div class="city-rec-badge">⚠ ${a.recoverable.count} REC</div>` : ''}
+    const card=document.createElement('div');
+    card.className='city-card'+(SELECTED_CITY===city?' selected':'')+(isRed?' flag-red':isAmber?' flag-amber':'');
+    card.innerHTML=`
+      <div class="city-top">
+        <div class="city-name-text">📍 ${city}</div>
+        ${a.recoverable.count>0?`<div class="city-rec-badge">⚠ ${a.recoverable.count} REC</div>`:''}
       </div>
-      <div class="city-stats">
-        <div class="city-stat"><div class="city-stat-label">Total RTO</div><div class="city-stat-value">${a.totalOrders}</div></div>
-        <div class="city-stat blue"><div class="city-stat-label">Pending</div><div class="city-stat-value">${a.pending.count}</div></div>
-        <div class="city-stat red"><div class="city-stat-label">Recoverable</div><div class="city-stat-value">${a.recoverable.count}</div></div>
-        <div class="city-stat"><div class="city-stat-label">Rec. Amount</div><div class="city-stat-value" style="font-size:12px">${fmtK(a.recoverable.amount)}</div></div>
+      <div class="city-stats-grid">
+        <div class="cs"><div class="cs-label">Total RTO</div><div class="cs-value">${a.totalOrders}</div></div>
+        <div class="cs blue"><div class="cs-label">Pending</div><div class="cs-value">${a.pending.count}</div></div>
+        <div class="cs red"><div class="cs-label">Recoverable</div><div class="cs-value">${a.recoverable.count}</div></div>
+        <div class="cs"><div class="cs-label">Rec. Amount</div><div class="cs-value" style="font-size:13px">${fmtK(a.recoverable.amount)}</div></div>
       </div>
-      <div class="city-progress">
-        <div class="city-progress-bar"><div class="city-progress-fill" style="width:${recP}%"></div></div>
-        <div class="city-progress-label"><span>${recP}% recoverable</span><span>${fmt(a.totalAmount)}</span></div>
+      <div class="city-prog-bar"><div class="city-prog-fill" style="width:${recP}%"></div></div>
+      <div class="city-prog-lbl"><span>${recP}% recoverable</span><span>${isRed?'🔴 '+haCount+' high ageing':isAmber?'🟡 Most recoverables':''}</span></div>
+      <div class="city-actions">
+        <button class="city-btn city-btn-dl" onclick="event.stopPropagation();downloadCityExcelFor('${city}')">⬇ Download</button>
+        <button class="city-btn city-btn-ul" onclick="event.stopPropagation();openUploadModalFor('${city}')">⬆ Upload</button>
+        ${apCount>0?`<button class="city-btn city-btn-ap" onclick="event.stopPropagation();openCityAPFilter('${city}')">⚠ ${apCount} Action</button>`:''}
       </div>`;
+    card.onclick=()=>openCityDetail(city);
     grid.appendChild(card);
   });
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
+//  HIGH AGEING MODAL
+// ══════════════════════════════════════════
+function openHAModal(){
+  const modal=document.getElementById('ha-modal');
+  const body =document.getElementById('ha-modal-body');
+  // Build from FILTERED
+  const haMap={};
+  FILTERED.forEach(o=>{
+    if(!o.highAgeing) return;
+    if(!haMap[o.city]) haMap[o.city]=[];
+    haMap[o.city].push(o);
+  });
+  const cities=Object.keys(haMap).sort();
+  if(!cities.length){ body.innerHTML='<div class="empty-state"><div class="empty-icon">✅</div>No high ageing orders in current filter.</div>'; }
+  else{
+    body.innerHTML=cities.map(city=>{
+      const orders=haMap[city].sort((a,b)=>b.ageing-a.ageing);
+      return `
+        <div class="modal-city-block">
+          <div class="modal-city-name">
+            ${city}
+            <span class="city-count">${orders.length} order${orders.length>1?'s':''}</span>
+          </div>
+          <div class="modal-order-list">
+            ${orders.map(o=>`
+              <div class="modal-order-row" onclick="jumpToOrder('${o.orderId}')">
+                <div class="modal-order-id">${o.orderId}</div>
+                <div class="modal-order-meta">
+                  ${o.riderName||'—'} · ${fmt(o.amount)}
+                  <div class="modal-order-case">${o.caseType||'No case type'}</div>
+                </div>
+                <div class="modal-order-ageing">${o.ageing}d</div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+    }).join('');
+  }
+  modal.classList.remove('hidden');
+}
+
+function closeHAModal(e){ if(e.target===document.getElementById('ha-modal')) closeHAModalBtn(); }
+function closeHAModalBtn(){ document.getElementById('ha-modal').classList.add('hidden'); }
+
+function jumpToOrder(orderId){
+  closeHAModalBtn();
+  // Set city filter if needed, scroll to table
+  const order=RAW.find(o=>o.orderId===orderId);
+  if(order && order.city !== SELECTED_CITY){
+    openCityDetail(order.city);
+  }
+  setTimeout(()=>{
+    const idx=FILTERED.findIndex(o=>o.orderId===orderId);
+    if(idx>=0){
+      PAGE=Math.floor(idx/PAGE_SIZE)+1;
+      renderTable();
+    }
+    document.querySelector('.tbl-section')?.scrollIntoView({behavior:'smooth',block:'start'});
+    setTimeout(()=>{
+      const rows=document.querySelectorAll('#order-tbody tr');
+      const localIdx=idx%PAGE_SIZE;
+      if(rows[localIdx]){
+        rows[localIdx].style.outline='3px solid var(--red)';
+        rows[localIdx].style.borderRadius='4px';
+        setTimeout(()=>{ rows[localIdx].style.outline=''; },2500);
+      }
+    },400);
+  },300);
+}
+
+// ══════════════════════════════════════════
 //  CITY DETAIL
-// ═══════════════════════════════════════════════════
-function openCityDetail(city) {
-  SELECTED_CITY = city;
+// ══════════════════════════════════════════
+function openCityDetail(city){
+  SELECTED_CITY=city; AP_FILTER_ON=false;
   document.getElementById('city-detail').classList.add('visible');
-  document.getElementById('city-detail-name').textContent = city;
-  document.querySelectorAll('.city-card').forEach(c =>
-    c.classList.toggle('selected', c.querySelector('.city-name')?.textContent?.includes(city))
+  set('city-detail-name','📍 '+city);
+  document.querySelectorAll('.city-card').forEach(c=>
+    c.classList.toggle('selected', c.querySelector('.city-name-text')?.textContent?.includes(city))
   );
   applyFilters();
-
-  const a = aggregate(FILTERED);
-
-  // KPIs
-  document.getElementById('city-kpis').innerHTML = `
+  const a=agg(FILTERED);
+  const apCount=FILTERED.filter(o=>o.actionPending).length;
+  set('ap-count',apCount+' action pending');
+  // City KPIs
+  document.getElementById('city-kpis').innerHTML=`
     <div class="kpi-card c-blue"><div class="kpi-icon">📦</div><div class="kpi-label">Total RTO</div><div class="kpi-value">${a.totalOrders}</div><div class="kpi-sub">${fmt(a.totalAmount)}</div></div>
     <div class="kpi-card c-amber"><div class="kpi-icon">⏳</div><div class="kpi-label">Pending</div><div class="kpi-value">${a.pending.count}</div><div class="kpi-sub">${fmt(a.pending.amount)}</div></div>
     <div class="kpi-card c-red"><div class="kpi-icon">⚠️</div><div class="kpi-label">Recoverable</div><div class="kpi-value">${a.recoverable.count}</div><div class="kpi-sub">${fmt(a.recoverable.amount)}</div></div>
-    <div class="kpi-card c-teal"><div class="kpi-icon">🔔</div><div class="kpi-label">Breach Warning</div><div class="kpi-value">${a.breachOrders}</div><div class="kpi-sub">Early alerts</div></div>
+    <div class="kpi-card c-red clickable" onclick="openHAModal()"><div class="kpi-icon">🔴</div><div class="kpi-label">High Ageing &gt;10d</div><div class="kpi-value">${FILTERED.filter(o=>o.highAgeing).length}</div><div class="click-hint">👆 Click to view</div></div>
   `;
-
-  // Ageing
-  const b   = a.ageing;
-  const tot = a.totalOrders || 1;
-  document.getElementById('city-ageing').innerHTML = `
-    <div class="ageing-card b">
-      <div class="ageing-dot">${pct(b['0-1'].count,tot)}%</div>
-      <div class="ageing-info"><div class="ageing-bucket">0–1 Days</div><div class="ageing-count">${b['0-1'].count}</div><div class="ageing-amt">${fmt(b['0-1'].amount)}</div>
-      <div class="ageing-bar"><div class="ageing-bar-fill" style="width:${pct(b['0-1'].count,tot)}%"></div></div></div>
-    </div>
-    <div class="ageing-card b">
-      <div class="ageing-dot">${pct(b['1-3'].count,tot)}%</div>
-      <div class="ageing-info"><div class="ageing-bucket">1–3 Days</div><div class="ageing-count">${b['1-3'].count}</div><div class="ageing-amt">${fmt(b['1-3'].amount)}</div>
-      <div class="ageing-bar"><div class="ageing-bar-fill" style="width:${pct(b['1-3'].count,tot)}%"></div></div></div>
-    </div>
-    <div class="ageing-card a">
-      <div class="ageing-dot">${pct(b['3-5'].count,tot)}%</div>
-      <div class="ageing-info"><div class="ageing-bucket">3–5 Days</div><div class="ageing-count">${b['3-5'].count}</div><div class="ageing-amt">${fmt(b['3-5'].amount)}</div>
-      <div class="ageing-bar"><div class="ageing-bar-fill" style="width:${pct(b['3-5'].count,tot)}%"></div></div></div>
-    </div>
-    <div class="ageing-card r">
-      <div class="ageing-dot">${pct(b['Recoverable'].count,tot)}%</div>
-      <div class="ageing-info"><div class="ageing-bucket">⚠ Recoverable</div><div class="ageing-count">${b['Recoverable'].count}</div><div class="ageing-amt">${fmt(b['Recoverable'].amount)}</div>
-      <div class="ageing-bar"><div class="ageing-bar-fill" style="width:${pct(b['Recoverable'].count,tot)}%"></div></div></div>
-    </div>
+  // City ageing
+  const b=a.ageing,tot=a.totalOrders||1;
+  document.getElementById('city-ageing').innerHTML=`
+    <div class="ag-card b"><div class="ag-dot">${pct(b['0-1'].count,tot)}%</div><div class="ag-info"><div class="ag-label">0–1 Days</div><div class="ag-count">${b['0-1'].count}</div><div class="ag-amt">${fmt(b['0-1'].amount)}</div><div class="ag-bar"><div class="ag-bar-fill" style="width:${pct(b['0-1'].count,tot)}%"></div></div></div></div>
+    <div class="ag-card b"><div class="ag-dot">${pct(b['1-3'].count,tot)}%</div><div class="ag-info"><div class="ag-label">1–3 Days</div><div class="ag-count">${b['1-3'].count}</div><div class="ag-amt">${fmt(b['1-3'].amount)}</div><div class="ag-bar"><div class="ag-bar-fill" style="width:${pct(b['1-3'].count,tot)}%"></div></div></div></div>
+    <div class="ag-card a"><div class="ag-dot">${pct(b['3-5'].count,tot)}%</div><div class="ag-info"><div class="ag-label">3–5 Days</div><div class="ag-count">${b['3-5'].count}</div><div class="ag-amt">${fmt(b['3-5'].amount)}</div><div class="ag-bar"><div class="ag-bar-fill" style="width:${pct(b['3-5'].count,tot)}%"></div></div></div></div>
+    <div class="ag-card r"><div class="ag-dot">${pct(b['Recoverable'].count,tot)}%</div><div class="ag-info"><div class="ag-label">⚠ Recoverable</div><div class="ag-count">${b['Recoverable'].count}</div><div class="ag-amt">${fmt(b['Recoverable'].amount)}</div><div class="ag-bar"><div class="ag-bar-fill" style="width:${pct(b['Recoverable'].count,tot)}%"></div></div></div></div>
   `;
-
-  // City charts
-  const cg = document.getElementById('city-charts-grid');
-  cg.innerHTML = `
-    <div class="chart-card"><div class="chart-card-header"><h3>QC vs Non-QC</h3></div><canvas id="city-ch-qc"></canvas></div>
-    <div class="chart-card"><div class="chart-card-header"><h3>In-house vs Vendor</h3></div><canvas id="city-ch-src"></canvas></div>
-    <div class="chart-card"><div class="chart-card-header"><h3>Top Case Types</h3></div><canvas id="city-ch-cases"></canvas></div>
+  // City mini charts
+  const cg=document.getElementById('city-charts-grid');
+  cg.innerHTML=`
+    <div class="chart-card"><div class="chart-hdr"><h3>QC vs Non-QC</h3></div><canvas id="c-qc"></canvas></div>
+    <div class="chart-card"><div class="chart-hdr"><h3>In-house vs Vendor</h3></div><canvas id="c-src"></canvas></div>
+    <div class="chart-card"><div class="chart-hdr"><h3>Case Types</h3></div><canvas id="c-cases"></canvas></div>
   `;
-  setTimeout(() => {
-    drawDoughnut('city-ch-qc',
-      ['QC (' + a.qc.QC.count + ')','Non-QC (' + a.qc['Non-QC'].count + ')'],
-      [a.qc.QC.count, a.qc['Non-QC'].count],
-      ['#12b76a','#7c5cfc']
-    );
-    drawDoughnut('city-ch-src',
-      ['In-house (' + a.source['In-house'].count + ')','Vendor (' + a.source.Vendor.count + ')'],
-      [a.source['In-house'].count, a.source.Vendor.count],
-      ['#06aed4','#f79009']
-    );
-    const top = Object.entries(a.caseTypes).sort((x,y)=>y[1]-x[1]).slice(0,6);
-    drawHBar('city-ch-cases', top.map(c=>c[0].substring(0,22)), top.map(c=>c[1]));
-  }, 80);
+  setTimeout(()=>{
+    drawDoughnut('c-qc',['QC ('+a.qc.QC.count+')','Non-QC ('+a.qc['Non-QC'].count+')'],[a.qc.QC.count,a.qc['Non-QC'].count],['#12b76a','#7c5cfc']);
+    drawDoughnut('c-src',['In-house ('+a.source['In-house'].count+')','Vendor ('+a.source.Vendor.count+')'],[a.source['In-house'].count,a.source.Vendor.count],['#06aed4','#f79009']);
+    const top=Object.entries(a.caseTypes).sort((x,y)=>y[1]-x[1]).slice(0,6);
+    drawHBar('c-cases',top.map(c=>c[0].substring(0,20)),top.map(c=>c[1]));
+  },80);
+  document.getElementById('city-detail').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function closeCityDetail() {
-  SELECTED_CITY = null;
+function closeCityDetail(){
+  SELECTED_CITY=null; AP_FILTER_ON=false;
   document.getElementById('city-detail').classList.remove('visible');
-  document.querySelectorAll('.city-card').forEach(c => c.classList.remove('selected'));
+  document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('selected'));
   applyFilters();
 }
 
-// ═══════════════════════════════════════════════════
-//  CHARTS
-// ═══════════════════════════════════════════════════
-function renderCharts() {
-  const a = aggregate(FILTERED);
-  const b = a.ageing;
+function toggleAPFilter(){
+  AP_FILTER_ON=!AP_FILTER_ON;
+  document.getElementById('ap-toggle').classList.toggle('active',AP_FILTER_ON);
+  applyFilters();
+}
 
-  set('ch-ageing-total', a.totalOrders + ' orders');
+function openCityAPFilter(city){
+  openCityDetail(city);
+  setTimeout(()=>{ AP_FILTER_ON=true; document.getElementById('ap-toggle').classList.add('active'); applyFilters(); },300);
+}
+
+// ══════════════════════════════════════════
+//  DOWNLOAD / UPLOAD
+// ══════════════════════════════════════════
+function downloadCityExcel(){ if(SELECTED_CITY) downloadCityExcelFor(SELECTED_CITY); }
+
+function downloadCityExcelFor(city){
+  showLoader(); setLoaderMsg('Preparing Excel for '+city+'…');
+  fetch(API_URL+'?action=downloadCity&city='+encodeURIComponent(city))
+    .then(r=>r.json())
+    .then(payload=>{
+      hideLoader();
+      if(!payload.success){ alert('Download failed: '+(payload.error||'Unknown error')); return; }
+      const ws = XLSX.utils.json_to_sheet(payload.rows);
+      // Lock note row
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,city.substring(0,31));
+      // Add master cases sheet
+      const masterWs = XLSX.utils.json_to_sheet(payload.masterCases.map(c=>({'Valid Case Types':c})));
+      XLSX.utils.book_append_sheet(wb,masterWs,'Valid Case Types');
+      XLSX.writeFile(wb,'RTO_'+city+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    })
+    .catch(err=>{ hideLoader(); alert('Download error: '+err.message); });
+}
+
+function openUploadModal(){ if(SELECTED_CITY) openUploadModalFor(SELECTED_CITY); }
+function openUploadModalFor(city){
+  UPLOAD_CITY=city; UPLOAD_ROWS=null;
+  set('upload-modal-title','📤 Upload Data — '+city);
+  document.getElementById('upload-result').innerHTML='';
+  document.getElementById('btn-do-upload').style.display='none';
+  document.getElementById('file-input').value='';
+  document.getElementById('upload-modal').classList.remove('hidden');
+}
+function closeUploadModal(e){ if(e.target===document.getElementById('upload-modal')) closeUploadModalBtn(); }
+function closeUploadModalBtn(){ document.getElementById('upload-modal').classList.add('hidden'); }
+
+function handleFileDrop(e){
+  e.preventDefault();
+  document.getElementById('upload-drop').classList.remove('drag');
+  const file=e.dataTransfer.files[0];
+  if(file) readUploadFile(file);
+}
+function handleFileSelect(e){ const file=e.target.files[0]; if(file) readUploadFile(file); }
+
+function readUploadFile(file){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const wb=XLSX.read(ev.target.result,{type:'array'});
+    const ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws);
+    UPLOAD_ROWS=rows;
+    document.getElementById('upload-result').innerHTML=
+      '<div class="upload-success">✅ '+rows.length+' rows loaded from "'+file.name+'". Click Upload to proceed.</div>';
+    document.getElementById('btn-do-upload').style.display='block';
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function doUpload(){
+  if(!UPLOAD_ROWS||!UPLOAD_CITY){ alert('No file loaded.'); return; }
+  showLoader(); setLoaderMsg('Validating and uploading…');
+  closeUploadModalBtn();
+  fetch(API_URL,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({ action:'uploadCity', city:UPLOAD_CITY, rows:UPLOAD_ROWS }),
+  })
+  .then(r=>r.json())
+  .then(res=>{
+    hideLoader();
+    if(res.success){
+      showToast('✅ '+res.message,'green');
+      loadData(true);
+    } else {
+      // Show error modal
+      const errHtml=res.errors.map(e=>
+        `<div class="upload-error-row">Row ${e.row} · Order <strong>${e.orderId}</strong> · ${e.field}: "<em>${e.value}</em>" is not a valid case type. Check the "Valid Case Types" sheet.</div>`
+      ).join('');
+      openUploadModalFor(UPLOAD_CITY);
+      document.getElementById('upload-result').innerHTML=`
+        <div class="upload-errors">
+          <div class="upload-errors-title">❌ Upload Failed — ${res.errors.length} invalid row(s)</div>
+          ${errHtml}
+        </div>`;
+      document.getElementById('btn-do-upload').style.display='none';
+    }
+  })
+  .catch(err=>{ hideLoader(); alert('Upload error: '+err.message); });
+}
+
+function showToast(msg,color='blue'){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:28px;right:28px;background:'+(color==='green'?'var(--green)':'var(--blue)')+';color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .4s';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),400); },3000);
+}
+
+// ══════════════════════════════════════════
+//  CHARTS
+// ══════════════════════════════════════════
+function renderCharts(){
+  const a=agg(FILTERED), b=a.ageing;
+  set('ch-ag-total',a.totalOrders+' orders');
 
   drawDoughnut('ch-ageing',
-    ['0–1 Days (' + b['0-1'].count + ')','1–3 Days (' + b['1-3'].count + ')','3–5 Days (' + b['3-5'].count + ')','Recoverable (' + b['Recoverable'].count + ')'],
-    [b['0-1'].count, b['1-3'].count, b['3-5'].count, b['Recoverable'].count],
+    ['0–1 Days ('+b['0-1'].count+')','1–3 Days ('+b['1-3'].count+')','3–5 Days ('+b['3-5'].count+')','Recoverable ('+b['Recoverable'].count+')'],
+    [b['0-1'].count,b['1-3'].count,b['3-5'].count,b['Recoverable'].count],
     ['#3b6ff5','#06aed4','#f79009','#f04438']
   );
-
   drawDoughnut('ch-pvr',
-    ['Pending (' + a.pending.count + ')','Recoverable (' + a.recoverable.count + ')'],
-    [a.pending.count, a.recoverable.count],
-    ['#3b6ff5','#f04438']
+    ['Pending ('+a.pending.count+')','Recoverable ('+a.recoverable.count+')'],
+    [a.pending.count,a.recoverable.count],['#3b6ff5','#f04438']
   );
-
-  drawBar('ch-amount',
-    ['Pending Amount','Recoverable Amount'],
-    [a.pending.amount, a.recoverable.amount],
-    ['#3b6ff5','#f04438'],
-    true
-  );
-
+  drawBar('ch-amount',['Pending','Recoverable'],[a.pending.amount,a.recoverable.amount],['#3b6ff5','#f04438'],true);
   drawDoughnut('ch-qc',
-    ['QC (' + a.qc.QC.count + ')','Non-QC (' + a.qc['Non-QC'].count + ')'],
-    [a.qc.QC.count, a.qc['Non-QC'].count],
-    ['#12b76a','#7c5cfc']
+    ['QC ('+a.qc.QC.count+')','Non-QC ('+a.qc['Non-QC'].count+')'],
+    [a.qc.QC.count,a.qc['Non-QC'].count],['#12b76a','#7c5cfc']
   );
-
   drawDoughnut('ch-source',
-    ['In-house (' + a.source['In-house'].count + ')','Vendor (' + a.source.Vendor.count + ')'],
-    [a.source['In-house'].count, a.source.Vendor.count],
-    ['#06aed4','#f79009']
+    ['In-house ('+a.source['In-house'].count+')','Vendor ('+a.source.Vendor.count+')','3PL ('+a.source['3PL'].count+')','PSP ('+a.source.PSP.count+')'],
+    [a.source['In-house'].count,a.source.Vendor.count,a.source['3PL'].count,a.source.PSP.count],
+    ['#06aed4','#f79009','#7c5cfc','#f04438']
   );
-
-  const top = Object.entries(a.caseTypes).sort((x,y)=>y[1]-x[1]).slice(0,8);
-  drawHBar('ch-cases', top.map(c=>c[0].substring(0,24)), top.map(c=>c[1]));
-
+  const top=Object.entries(a.caseTypes).sort((x,y)=>y[1]-x[1]).slice(0,8);
+  drawHBar('ch-cases',top.map(c=>c[0].substring(0,26)),top.map(c=>c[1]));
   drawTrend();
 }
 
-function destroyChart(id) {
-  if (CHARTS[id]) { CHARTS[id].destroy(); delete CHARTS[id]; }
-}
+function destroyChart(id){ if(CHARTS[id]){ CHARTS[id].destroy(); delete CHARTS[id]; }}
 
-// Shared chart scale/plugin config
-const SCALES = {
-  x: { ticks:{ color:'#5a6380', font:{size:10} }, grid:{ color:'#e2e6f0' } },
-  y: { ticks:{ color:'#5a6380', font:{size:10} }, grid:{ color:'#e2e6f0' } },
+const SCALES={
+  x:{ticks:{color:'#5a6380',font:{size:11}},grid:{color:'#e8ebf4'}},
+  y:{ticks:{color:'#5a6380',font:{size:11}},grid:{color:'#e8ebf4'}},
 };
 
-function drawDoughnut(id, labels, data, colors) {
+function drawDoughnut(id,labels,data,colors){
   destroyChart(id);
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  const total = data.reduce((s,v) => s+v, 0) || 1;
-  CHARTS[id] = new Chart(ctx, {
-    type: 'doughnut',
-    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor:'#fff', borderWidth:3, hoverBorderWidth:4 }] },
-    options: {
-      responsive:true, maintainAspectRatio:true, cutout:'60%',
-      plugins: {
-        legend:{ position:'right', labels:{ color:'#5a6380', font:{size:11}, boxWidth:12, padding:10 } },
-        datalabels:{
-          color:'#fff', font:{ size:11, weight:'bold' },
-          formatter:(val) => val > 0 ? Math.round(val/total*100) + '%' : '',
-          display: ctx => ctx.dataset.data[ctx.dataIndex] > 0,
-        },
-        tooltip:{
-          callbacks:{ label: ctx => ' ' + ctx.label.split('(')[0].trim() + ': ' + ctx.parsed + ' (' + Math.round(ctx.parsed/total*100) + '%)' }
-        }
-      },
-    },
-    plugins:[ChartDataLabels],
-  });
-}
-
-function drawBar(id, labels, data, colors, isAmount = false) {
-  destroyChart(id);
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  const max = Math.max(...data) || 1;
-  CHARTS[id] = new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets:[{ data, backgroundColor:colors, borderRadius:6, borderSkipped:false }] },
-    options: {
-      responsive:true, maintainAspectRatio:true,
+  const ctx=document.getElementById(id); if(!ctx) return;
+  const total=data.reduce((s,v)=>s+v,0)||1;
+  CHARTS[id]=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},
+    options:{
+      responsive:true,maintainAspectRatio:true,cutout:'58%',
       plugins:{
-        legend:{ display:false },
+        legend:{position:'right',labels:{color:'#5a6380',font:{size:12},boxWidth:13,padding:10}},
         datalabels:{
-          anchor:'end', align:'top', color:'#1a1f36', font:{ size:10, weight:'700' },
-          formatter: v => isAmount ? fmtK(v) : v,
+          color:'#fff',font:{size:11,weight:'bold'},
+          formatter:v=>v>0?Math.round(v/total*100)+'%':'',
+          display:ctx=>ctx.dataset.data[ctx.dataIndex]>0,
         },
-        tooltip:{ callbacks:{ label: ctx => isAmount ? ' ' + fmt(ctx.parsed.y) : ' ' + ctx.parsed.y } }
-      },
-      scales: {
-        x:{ ...SCALES.x },
-        y:{ ...SCALES.y, max: Math.ceil(max * 1.25) },
+        tooltip:{callbacks:{label:ctx=>' '+ctx.label.split('(')[0].trim()+': '+ctx.parsed+' ('+Math.round(ctx.parsed/total*100)+'%)'}}
       },
     },
     plugins:[ChartDataLabels],
   });
 }
 
-function drawHBar(id, labels, data) {
+function drawBar(id,labels,data,colors,isAmt=false){
   destroyChart(id);
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  const colors = data.map((_,i) => ['#3b6ff5','#f04438','#f79009','#12b76a','#7c5cfc','#06aed4','#3b6ff5','#f04438'][i % 8]);
-  CHARTS[id] = new Chart(ctx, {
-    type: 'bar',
-    data: { labels, datasets:[{ data, backgroundColor:colors, borderRadius:4, borderSkipped:false }] },
-    options: {
-      indexAxis:'y', responsive:true, maintainAspectRatio:true,
+  const ctx=document.getElementById(id); if(!ctx) return;
+  const max=Math.max(...data)||1;
+  CHARTS[id]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:7,borderSkipped:false}]},
+    options:{
+      responsive:true,maintainAspectRatio:true,
       plugins:{
-        legend:{ display:false },
-        datalabels:{
-          anchor:'end', align:'right', color:'#1a1f36', font:{ size:10, weight:'700' },
-          formatter: v => v,
-        }
+        legend:{display:false},
+        datalabels:{anchor:'end',align:'top',color:'#1a1f36',font:{size:11,weight:'700'},formatter:v=>isAmt?fmtK(v):v},
+        tooltip:{callbacks:{label:ctx=>isAmt?' '+fmt(ctx.parsed.y):' '+ctx.parsed.y}},
       },
-      scales:{
-        x:{ ...SCALES.x, max: Math.ceil(Math.max(...data) * 1.25) },
-        y:{ ...SCALES.y, ticks:{ color:'#5a6380', font:{size:10}, maxTicksLimit:10 } },
-      },
+      scales:{x:{...SCALES.x},y:{...SCALES.y,max:Math.ceil(max*1.3)}},
     },
     plugins:[ChartDataLabels],
   });
 }
 
-function drawTrend() {
+function drawHBar(id,labels,data){
+  destroyChart(id);
+  const ctx=document.getElementById(id); if(!ctx) return;
+  const colors=data.map((_,i)=>['#3b6ff5','#f04438','#f79009','#12b76a','#7c5cfc','#06aed4','#3b6ff5','#f04438'][i%8]);
+  CHARTS[id]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:false}]},
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{display:false},
+        datalabels:{anchor:'end',align:'right',color:'#1a1f36',font:{size:11,weight:'700'},formatter:v=>v},
+      },
+      scales:{x:{...SCALES.x,max:Math.ceil(Math.max(...data)*1.3)},y:{...SCALES.y}},
+    },
+    plugins:[ChartDataLabels],
+  });
+}
+
+function drawTrend(){
   destroyChart('ch-trend');
-  const ctx = document.getElementById('ch-trend');
-  if (!ctx || !TREND.length) return;
-  CHARTS['ch-trend'] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: TREND.map(r => r.date),
-      datasets: [
-        { label:'Active Orders', data:TREND.map(r=>r.activeOrders),      borderColor:'#3b6ff5', backgroundColor:'rgba(59,111,245,.08)', tension:.35, fill:true, pointRadius:4, pointBackgroundColor:'#3b6ff5', borderWidth:2 },
-        { label:'Pending',       data:TREND.map(r=>r.pendingOrders),      borderColor:'#f79009', backgroundColor:'transparent', tension:.35, pointRadius:3, pointBackgroundColor:'#f79009', borderWidth:2 },
-        { label:'Recoverable',   data:TREND.map(r=>r.recoverableOrders),  borderColor:'#f04438', backgroundColor:'transparent', tension:.35, pointRadius:3, pointBackgroundColor:'#f04438', borderWidth:2 },
+  const ctx=document.getElementById('ch-trend'); if(!ctx||!TREND.length) return;
+  CHARTS['ch-trend']=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:TREND.map(r=>r.date),
+      datasets:[
+        {label:'Active Orders',data:TREND.map(r=>r.activeOrders),borderColor:'#3b6ff5',backgroundColor:'rgba(59,111,245,.09)',tension:.35,fill:true,pointRadius:4,pointBackgroundColor:'#3b6ff5',borderWidth:2.5},
+        {label:'Pending',      data:TREND.map(r=>r.pendingOrders),borderColor:'#f79009',tension:.35,pointRadius:3,pointBackgroundColor:'#f79009',borderWidth:2},
+        {label:'Recoverable',  data:TREND.map(r=>r.recoverableOrders),borderColor:'#f04438',tension:.35,pointRadius:3,pointBackgroundColor:'#f04438',borderWidth:2},
       ],
     },
-    options: {
-      responsive:true, maintainAspectRatio:true,
+    options:{
+      responsive:true,maintainAspectRatio:true,
       plugins:{
-        legend:{ labels:{ color:'#5a6380', font:{size:11}, usePointStyle:true, pointStyleWidth:8 } },
-        datalabels:{ display:false },
+        legend:{labels:{color:'#5a6380',font:{size:12},usePointStyle:true,pointStyleWidth:9}},
+        datalabels:{display:false},
       },
-      scales:{ x:{...SCALES.x}, y:{...SCALES.y} },
+      scales:{x:{...SCALES.x},y:{...SCALES.y}},
     },
     plugins:[ChartDataLabels],
   });
 }
 
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  ORDER TABLE
-// ═══════════════════════════════════════════════════
-function renderTable() {
-  const tbody = document.getElementById('order-tbody');
-  const empty = document.getElementById('empty-state');
-  const total = FILTERED.length;
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  PAGE = Math.min(PAGE, pages);
+// ══════════════════════════════════════════
+function renderTable(){
+  const tbody=document.getElementById('order-tbody');
+  const empty=document.getElementById('empty-state');
+  const total=FILTERED.length;
+  const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  PAGE=Math.min(PAGE,pages);
+  set('tbl-count',total+' orders');
+  set('page-info','Page '+PAGE+' of '+pages);
+  document.getElementById('btn-prev').disabled=PAGE<=1;
+  document.getElementById('btn-next').disabled=PAGE>=pages;
 
-  set('table-count',  total + ' orders');
-  set('page-info',    'Page ' + PAGE + ' of ' + pages);
-  document.getElementById('btn-prev').disabled = PAGE <= 1;
-  document.getElementById('btn-next').disabled = PAGE >= pages;
+  const slice=FILTERED.slice((PAGE-1)*PAGE_SIZE,PAGE*PAGE_SIZE);
+  if(!slice.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
 
-  const slice = FILTERED.slice((PAGE-1)*PAGE_SIZE, PAGE*PAGE_SIZE);
-  if (!slice.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
-  empty.style.display = 'none';
-
-  tbody.innerHTML = slice.map(o => `
-    <tr>
+  tbody.innerHTML=slice.map(o=>{
+    const rowCls = o.actionPending||o.highAgeing?'row-red':o.slaBreached?'row-amber':'';
+    const slaPill = o.slaDays==null?'—':o.actionPending
+      ?'<span class="sla-pill sla-breach">⚠ Action Pending</span>'
+      :o.slaBreached
+        ?'<span class="sla-pill sla-warn">SLA Breached</span>'
+        :'<span class="sla-pill sla-ok">Within SLA</span>';
+    const actionCell = o.caseType==='CN to be Received' && !o.cnReceived
+      ?`<button class="cn-btn" onclick="markCNReceived('${o.orderId}',this)">Mark Received</button>`
+      :o.cnReceived
+        ?'<span class="cn-done">✅ Received</span>'
+        :'—';
+    return `<tr class="${rowCls}" id="row-${o.orderId}">
       <td>${o.cancellationDate}</td>
       <td><strong>${o.orderId}</strong></td>
-      <td>${o.riderName}<br><span style="font-size:10px;color:var(--text3)">${o.riderId}</span></td>
+      <td>${o.riderName||'—'}<br><span style="font-size:11px;color:var(--text3)">${o.riderId||''}</span></td>
       <td><strong>${fmt(o.amount)}</strong></td>
       <td>${o.city}</td>
       <td><span class="badge ${o.qcType==='QC'?'qc':'nonqc'}">${o.qcType}</span></td>
       <td><span class="badge ${o.source==='In-house'?'inhouse':'vendor'}">${o.source}</span></td>
-      <td style="text-align:center;font-weight:700;color:${o.ageing>5?'var(--red)':o.ageing>=3?'var(--amber)':'var(--text)'}">${o.ageing}d</td>
-      <td><span class="ageing-chip">${bucketLabel(o.ageingBucket)}</span></td>
+      <td style="text-align:center;font-weight:800;color:${o.ageing>10?'var(--red)':o.ageing>5?'#b54708':'var(--text)'}">${o.ageing}d</td>
+      <td><span class="ag-chip">${bucketLbl(o.ageingBucket)}</span></td>
       <td><span class="badge ${o.status.toLowerCase()}">${o.status==='Recoverable'?'⚠ ':''} ${o.status}</span></td>
-      <td style="max-width:200px;white-space:normal;font-size:11px">${o.caseType||'—'}</td>
-      <td style="font-size:11px;color:var(--text2)">${o.fcRemark||'—'}</td>
-    </tr>`).join('');
+      <td style="max-width:180px;white-space:normal;font-size:12px">${o.caseType||'—'}</td>
+      <td>${slaPill}</td>
+      <td style="font-size:12px;color:var(--text2);max-width:160px;white-space:normal">${o.fcRemark||'—'}</td>
+      <td>${actionCell}</td>
+    </tr>`;
+  }).join('');
 }
 
-function bucketLabel(b) {
-  return {'0-1':'0–1 Days','1-3':'1–3 Days','3-5':'3–5 Days','Recoverable':'> 5 Days'}[b] || b;
+function bucketLbl(b){ return{'0-1':'0–1d','1-3':'1–3d','3-5':'3–5d','Recoverable':'>5d'}[b]||b; }
+
+function changePage(dir){ PAGE+=dir; renderTable(); document.querySelector('.tbl-section')?.scrollIntoView({behavior:'smooth',block:'start'}); }
+
+function markCNReceived(orderId, btn){
+  btn.disabled=true; btn.textContent='Updating…';
+  fetch(API_URL+'?action=markCNReceived&orderId='+encodeURIComponent(orderId))
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.success){
+        btn.parentElement.innerHTML='<span class="cn-done">✅ Received</span>';
+        showToast('CN Received marked for '+orderId,'green');
+        const o=RAW.find(x=>x.orderId===orderId);
+        if(o){ o.cnReceived=true; o.actionPending=false; o.slaBreached=false; }
+        renderKPIs(); renderAgeing(); renderCityTiles();
+      } else {
+        btn.disabled=false; btn.textContent='Mark Received';
+        alert('Error: '+(res.error||'Unknown'));
+      }
+    })
+    .catch(()=>{ btn.disabled=false; btn.textContent='Mark Received'; });
 }
 
-function changePage(dir) {
-  PAGE += dir;
-  renderTable();
-  document.querySelector('.table-section').scrollIntoView({ behavior:'smooth', block:'start' });
-}
-
-// ═══════════════════════════════════════════════════
+// ══════════════════════════════════════════
 //  AGGREGATE
-// ═══════════════════════════════════════════════════
-function aggregate(orders) {
-  const r = {
-    totalOrders:0, totalAmount:0,
-    pending:{count:0,amount:0}, recoverable:{count:0,amount:0},
+// ══════════════════════════════════════════
+function agg(orders){
+  const r={
+    totalOrders:0,totalAmount:0,
+    pending:{count:0,amount:0},recoverable:{count:0,amount:0},
     ageing:{'0-1':{count:0,amount:0},'1-3':{count:0,amount:0},'3-5':{count:0,amount:0},'Recoverable':{count:0,amount:0}},
     qc:{'QC':{count:0,amount:0},'Non-QC':{count:0,amount:0}},
-    source:{'In-house':{count:0,amount:0},'Vendor':{count:0,amount:0}},
-    caseTypes:{}, breachOrders:0,
+    source:{'In-house':{count:0,amount:0},'Vendor':{count:0,amount:0},'3PL':{count:0,amount:0},'PSP':{count:0,amount:0}},
+    caseTypes:{},
   };
-  orders.forEach(o => {
-    r.totalOrders++; r.totalAmount += o.amount;
-    if (o.status==='Pending'){ r.pending.count++; r.pending.amount+=o.amount; }
-    else { r.recoverable.count++; r.recoverable.amount+=o.amount; }
-    if (r.ageing[o.ageingBucket]){ r.ageing[o.ageingBucket].count++; r.ageing[o.ageingBucket].amount+=o.amount; }
-    const q = o.qcType==='QC'?'QC':'Non-QC';
-    r.qc[q].count++; r.qc[q].amount+=o.amount;
-    const s = o.source==='In-house'?'In-house':'Vendor';
-    r.source[s].count++; r.source[s].amount+=o.amount;
-    if (o.caseType) r.caseTypes[o.caseType]=(r.caseTypes[o.caseType]||0)+1;
-    if (o.status==='Pending' && isBreachClient(o)) r.breachOrders++;
+  orders.forEach(o=>{
+    r.totalOrders++; r.totalAmount+=o.amount;
+    if(o.status==='Pending'){r.pending.count++;r.pending.amount+=o.amount;}
+    else{r.recoverable.count++;r.recoverable.amount+=o.amount;}
+    if(r.ageing[o.ageingBucket]){r.ageing[o.ageingBucket].count++;r.ageing[o.ageingBucket].amount+=o.amount;}
+    const q=o.qcType==='QC'?'QC':'Non-QC';
+    r.qc[q].count++;r.qc[q].amount+=o.amount;
+    const sk=['In-house','Vendor','3PL','PSP'].includes(o.source)?o.source:'Vendor';
+    r.source[sk].count++;r.source[sk].amount+=o.amount;
+    if(o.caseType) r.caseTypes[o.caseType]=(r.caseTypes[o.caseType]||0)+1;
   });
   return r;
 }
 
-function isBreachClient(o) {
-  const a = o.ageing;
-  if (o.source==='In-house') return o.qcType==='QC' ? a>0 : a>1;
-  return a>2;
-}
+function groupBy(arr,key){ return arr.reduce((m,i)=>{ const k=i[key]||'Unknown'; if(!m[k]) m[k]=[]; m[k].push(i); return m; },{}); }
 
-// ═══════════════════════════════════════════════════
-//  POPULATE DROPDOWNS
-// ═══════════════════════════════════════════════════
-function populateCityFilter() {
-  const sel = document.getElementById('f-city');
-  [...new Set(RAW.map(o=>o.city))].sort().forEach(c => {
-    const opt = document.createElement('option'); opt.value=c; opt.textContent=c; sel.appendChild(opt);
+// ══════════════════════════════════════════
+//  POPULATE FILTER DROPDOWNS
+// ══════════════════════════════════════════
+function populateFilters(){
+  const citySel=document.getElementById('f-city');
+  [...new Set(RAW.map(o=>o.city))].sort().forEach(c=>{
+    const opt=document.createElement('option'); opt.value=c; opt.textContent=c; citySel.appendChild(opt);
   });
-}
-
-function populateCaseFilter() {
-  const sel = document.getElementById('f-case');
-  [...new Set(RAW.map(o=>o.caseType).filter(Boolean))].sort().forEach(c => {
-    const opt = document.createElement('option'); opt.value=c; opt.textContent=c; sel.appendChild(opt);
+  const caseSel=document.getElementById('f-case');
+  MASTER_CASES.forEach(c=>{
+    const opt=document.createElement('option'); opt.value=c; opt.textContent=c; caseSel.appendChild(opt);
   });
-}
-
-function set(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = val;
 }
 </script>
 </body>
