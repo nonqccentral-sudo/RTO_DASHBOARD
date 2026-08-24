@@ -8,355 +8,779 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root{
-  --bg:#f0f2f7;--sf:#fff;--sf2:#f7f8fc;--bd:#e2e6f0;--bd2:#cdd2e8;
-  --tx:#1a1f36;--tx2:#5a6380;--tx3:#9099b8;
-  --blue:#3b6ff5;--bld:#2952c4;--bll:#eef2ff;
-  --green:#12b76a;--grl:#ecfdf5;
-  --red:#f04438;--rdl:#fef3f2;
-  --amb:#f79009;--aml:#fffaeb;
-  --pur:#7c5cfc;--prl:#f4f0ff;
-  --tel:#06aed4;--tll:#ecfeff;
-  --org:#e56a00;--orl:#fff4ed;
-  --ss:0 1px 4px rgba(0,0,0,.07);--sm:0 4px 18px rgba(0,0,0,.1);--sl:0 8px 32px rgba(0,0,0,.14);
-  --r:12px;
+/* ── DESIGN TOKENS ─────────────────────────────────────── */
+:root {
+  /* Neutrals */
+  --bg:       #F8F9FB;
+  --surface:  #FFFFFF;
+  --surf-2:   #F2F4F8;
+  --surf-3:   #E8ECF2;
+  --border:   #DDE1EB;
+  --border-2: #C8CDD9;
+
+  /* Text */
+  --t1: #111827;   /* primary */
+  --t2: #4B5563;   /* secondary */
+  --t3: #9CA3AF;   /* muted */
+
+  /* Brand */
+  --blue:    #2563EB;
+  --blue-l:  #EFF6FF;
+  --blue-d:  #1D4ED8;
+
+  /* Status */
+  --green:   #059669;
+  --green-l: #ECFDF5;
+  --red:     #DC2626;
+  --red-l:   #FEF2F2;
+  --amber:   #D97706;
+  --amber-l: #FFFBEB;
+  --purple:  #7C3AED;
+  --purple-l:#F5F3FF;
+  --teal:    #0891B2;
+  --teal-l:  #ECFEFF;
+  --slate:   #475569;
+
+  /* Shadows */
+  --sh-xs: 0 1px 2px rgba(0,0,0,.05);
+  --sh-sm: 0 1px 6px rgba(0,0,0,.07);
+  --sh-md: 0 4px 16px rgba(0,0,0,.08);
+  --sh-lg: 0 8px 32px rgba(0,0,0,.12);
+
+  /* Radius */
+  --r-sm: 6px;
+  --r:    10px;
+  --r-lg: 14px;
+
+  /* Type */
+  --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--tx);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;font-size:15px;line-height:1.5}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#1a1f36,#2d3561);display:flex;align-items:center;justify-content:center;z-index:1000}
-#login-screen.hide{display:none}
-.login-box{background:#fff;border-radius:16px;padding:40px 44px;width:100%;max-width:420px;box-shadow:var(--sl)}
-.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
-.login-icon{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,#3b6ff5,#7c5cfc);display:flex;align-items:center;justify-content:center;font-size:22px}
-.login-title{font-size:20px;font-weight:800;color:var(--tx)}
-.login-title span{color:var(--blue)}
-.login-sub{font-size:13px;color:var(--tx2);margin-bottom:28px}
-.finp{width:100%;background:var(--sf2);border:1.5px solid var(--bd);color:var(--tx);padding:11px 14px;border-radius:8px;font-size:14px;margin-bottom:14px;transition:border .15s}
-.finp:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(59,111,245,.1)}
-.login-btn{width:100%;background:var(--blue);color:#fff;border:none;padding:12px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;margin-top:6px}
-.login-btn:hover{background:var(--bld)}
-.login-btn:disabled{opacity:.6;cursor:default}
-.login-err{color:var(--red);font-size:13px;margin-top:10px;text-align:center;min-height:20px}
-.login-hint{font-size:11px;color:var(--tx3);text-align:center;margin-top:14px}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* OVERLAY */
-#ov{position:fixed;inset:0;background:rgba(240,242,247,.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(4px);transition:opacity .3s}
-#ov.hide{opacity:0;pointer-events:none}
-.ring{width:52px;height:52px;border:4px solid var(--bd2);border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite}
-.dots{display:flex;gap:7px}
-.dots span{width:9px;height:9px;border-radius:50%;background:var(--blue);animation:bob .8s ease-in-out infinite}
-.dots span:nth-child(2){animation-delay:.15s;background:var(--amb)}
-.dots span:nth-child(3){animation-delay:.3s;background:var(--red)}
-.lmsg{font-size:14px;color:var(--tx2);font-weight:600}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--t1);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
 
-/* HEADER */
-.hdr{background:var(--sf);border-bottom:2px solid var(--bd);padding:0 28px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:200;box-shadow:var(--ss);height:64px}
-.brand{display:flex;align-items:center;gap:10px}
-.bicon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3b6ff5,#7c5cfc);display:flex;align-items:center;justify-content:center;font-size:18px}
-.btitle{font-size:17px;font-weight:800;letter-spacing:-.3px}
-.btitle span{color:var(--blue)}
-.lbdg{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.8px}
-.user-chip{background:var(--bll);border:1.5px solid #bfdbfe;color:var(--blue);font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;display:flex;align-items:center;gap:5px}
-.hrgt{margin-left:auto;display:flex;align-items:center;gap:10px}
-.tgl{display:flex;background:var(--sf2);border-radius:10px;border:1px solid var(--bd);padding:3px;gap:3px}
-.tgl button{padding:7px 20px;background:none;border:none;color:var(--tx2);cursor:pointer;font-size:13px;font-weight:700;border-radius:7px;transition:all .15s}
-.tgl button.on{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(59,111,245,.35)}
-.tgl button:not(.on):hover{background:var(--bd);color:var(--tx)}
-.logout-btn{background:var(--sf2);border:1.5px solid var(--bd);color:var(--tx2);padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.logout-btn:hover{border-color:var(--red);color:var(--red)}
+/* ── LOGIN ────────────────────────────────────────────── */
+#login-screen {
+  position: fixed; inset: 0; z-index: 1000;
+  background: linear-gradient(140deg, #1E3A5F 0%, #1D4ED8 50%, #2563EB 100%);
+  display: flex; align-items: center; justify-content: center;
+}
+#login-screen.hide { display: none; }
+.login-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 40px 44px;
+  width: 100%; max-width: 400px;
+  box-shadow: var(--sh-lg);
+}
+.login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+.login-logo {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--blue); display: flex; align-items: center;
+  justify-content: center; font-size: 20px;
+}
+.login-name { font-size: 18px; font-weight: 700; color: var(--t1); }
+.login-sub { font-size: 13px; color: var(--t2); margin-bottom: 28px; margin-top: 4px; }
+.field-label { font-size: 12px; font-weight: 600; color: var(--t2); margin-bottom: 5px; letter-spacing: .3px; }
+.field-input {
+  width: 100%; padding: 10px 13px; border-radius: var(--r-sm);
+  border: 1.5px solid var(--border); background: var(--surf-2);
+  font-size: 14px; color: var(--t1); margin-bottom: 14px;
+  transition: border .15s, box-shadow .15s;
+}
+.field-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.12); background: #fff; }
+.login-submit {
+  width: 100%; padding: 11px; border-radius: var(--r-sm);
+  background: var(--blue); color: #fff; border: none;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: background .15s; margin-top: 4px;
+}
+.login-submit:hover { background: var(--blue-d); }
+.login-submit:disabled { opacity: .6; cursor: default; }
+.login-err { font-size: 12px; color: var(--red); text-align: center; min-height: 18px; margin-top: 10px; }
+.login-hint { font-size: 11px; color: var(--t3); text-align: center; margin-top: 16px; }
 
-/* HOME BTN — fixed floating */
-#home-btn{position:fixed;bottom:28px;left:28px;background:var(--blue);color:#fff;border:none;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(59,111,245,.4);z-index:300;display:none;align-items:center;gap:6px;transition:all .15s}
-#home-btn:hover{background:var(--bld);transform:translateY(-2px)}
-#home-btn.vis{display:flex}
+/* ── OVERLAY ─────────────────────────────────────────── */
+#ov {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(248,249,251,.92);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; backdrop-filter: blur(4px); transition: opacity .25s;
+}
+#ov.hide { opacity: 0; pointer-events: none; }
+.ov-ring {
+  width: 44px; height: 44px;
+  border: 3px solid var(--border-2); border-top-color: var(--blue);
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+.ov-dots { display: flex; gap: 6px; }
+.ov-dots span {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--blue);
+  animation: bob .7s ease-in-out infinite;
+}
+.ov-dots span:nth-child(2) { animation-delay: .14s; background: var(--amber); }
+.ov-dots span:nth-child(3) { animation-delay: .28s; background: var(--red); }
+.ov-msg { font-size: 13px; color: var(--t2); font-weight: 500; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+/* ── HEADER ──────────────────────────────────────────── */
+.hdr {
+  height: 58px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: var(--sh-xs);
+}
+.hdr-brand { display: flex; align-items: center; gap: 9px; }
+.hdr-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--blue); display: flex; align-items: center;
+  justify-content: center; font-size: 15px;
+}
+.hdr-title { font-size: 15px; font-weight: 700; color: var(--t1); }
+.hdr-title span { color: var(--blue); }
+.live-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: .6px;
+  background: var(--green); color: #fff;
+  padding: 2px 8px; border-radius: 20px;
+}
+.hdr-asof {
+  font-size: 11px; color: var(--t3);
+  background: var(--surf-2); border: 1px solid var(--border);
+  padding: 3px 10px; border-radius: 20px;
+}
+.hdr-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* QC tabs */
+.qc-tabs {
+  display: flex; background: var(--surf-2);
+  border: 1px solid var(--border); border-radius: 8px;
+  padding: 2px; gap: 2px;
+}
+.qc-tabs button {
+  padding: 5px 16px; border: none; background: none;
+  color: var(--t2); font-size: 12px; font-weight: 600;
+  border-radius: 6px; cursor: pointer; transition: all .12s;
+}
+.qc-tabs button.on { background: var(--blue); color: #fff; }
+.qc-tabs button:not(.on):hover { background: var(--surf-3); color: var(--t1); }
+
+.hdr-btn {
+  padding: 5px 13px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surf-2);
+  font-size: 12px; font-weight: 600; color: var(--t2);
+  cursor: pointer; transition: all .12s; white-space: nowrap;
+}
+.hdr-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-l); }
+.hdr-btn.danger:hover { border-color: var(--red); color: var(--red); background: var(--red-l); }
+.user-pill {
+  font-size: 11px; font-weight: 600; color: var(--blue);
+  background: var(--blue-l); border: 1px solid #BFDBFE;
+  padding: 3px 10px; border-radius: 20px;
+}
+
+/* CACHE BAR */
+.cache-bar {
+  background: #FFFBEB; border-bottom: 1px solid #FDE68A;
+  padding: 6px 24px; font-size: 12px; color: var(--amber);
+  display: flex; align-items: center; gap: 8px;
+}
+.cache-bar.hide { display: none; }
+.cache-bar a { color: var(--amber); font-weight: 600; }
 
 /* FILTER BAR */
-.fb{background:var(--sf);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--bd)}
-.fg{display:flex;align-items:center;gap:5px}
-.fg label{color:var(--tx2);font-size:12px;font-weight:600;white-space:nowrap}
-.fb select,.fb input[type=date]{background:var(--sf2);border:1.5px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:7px;font-size:13px;cursor:pointer;min-width:110px;font-weight:500}
-.fb select:focus,.fb input:focus{outline:none;border-color:var(--blue)}
-.dvd{width:1px;height:24px;background:var(--bd);margin:0 4px}
-.btn{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid;transition:all .15s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
-.brst{background:var(--rdl);border-color:#fca5a5;color:var(--red)}
-.brst:hover{background:var(--red);color:#fff;border-color:var(--red)}
-.bref{background:var(--bll);border-color:#bfdbfe;color:var(--blue)}
-.bref:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-.bref.sp svg{animation:spin .6s linear infinite}
+.filter-bar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 8px 24px; display: flex; gap: 6px;
+  flex-wrap: wrap; align-items: center;
+}
+.fg { display: flex; align-items: center; gap: 4px; }
+.fg label { font-size: 11px; font-weight: 600; color: var(--t3); white-space: nowrap; }
+.fg select, .fg input[type=date] {
+  padding: 5px 9px; border-radius: var(--r-sm);
+  border: 1px solid var(--border); background: var(--surf-2);
+  font-size: 12px; color: var(--t1); cursor: pointer; min-width: 105px;
+}
+.fg select:focus, .fg input:focus { outline: none; border-color: var(--blue); }
+.fbar-div { width: 1px; height: 20px; background: var(--border); margin: 0 2px; }
+.fbar-btn {
+  padding: 5px 12px; border-radius: var(--r-sm);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1px solid; transition: all .12s; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.btn-reset { background: var(--red-l); border-color: #FECACA; color: var(--red); }
+.btn-reset:hover { background: var(--red); color: #fff; }
+.btn-refresh { background: var(--blue-l); border-color: #BFDBFE; color: var(--blue); }
+.btn-refresh:hover { background: var(--blue); color: #fff; }
+.btn-refresh.sp svg { animation: spin .6s linear infinite; }
 
-/* CACHE */
-.cbar{background:var(--aml);border-bottom:1px solid #fde68a;padding:7px 28px;font-size:12px;color:#92400e;display:flex;align-items:center;gap:8px}
-.cbar.hide{display:none}
-.cbar a{color:var(--amb);font-weight:700;text-decoration:none}
+/* FLOATING HOME */
+#home-btn {
+  position: fixed; bottom: 24px; left: 24px; z-index: 300;
+  background: var(--blue); color: #fff; border: none;
+  padding: 9px 18px; border-radius: 24px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(37,99,235,.35);
+  display: none; align-items: center; gap: 5px;
+  transition: all .15s;
+}
+#home-btn.vis { display: flex; }
+#home-btn:hover { background: var(--blue-d); transform: translateY(-1px); }
 
-/* MAIN */
-.main{padding:22px 28px}
-.sec{margin-bottom:28px}
-.sechdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.sectit{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx2);white-space:nowrap}
-.secln{flex:1;height:1px;background:var(--bd)}
-.secnt{font-size:11px;color:var(--tx3);margin-left:6px;white-space:nowrap}
+/* ── MAIN LAYOUT ─────────────────────────────────────── */
+.main { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
 
-/* KPI */
-.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
-.kc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:20px 22px;position:relative;overflow:hidden;box-shadow:var(--ss);transition:box-shadow .2s,transform .2s}
-.kc:hover{box-shadow:var(--sm);transform:translateY(-2px)}
-.kc::after{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;background:var(--ac,var(--blue));border-radius:0 2px 2px 0}
-.kc.cb{--ac:var(--blue)}.kc.cr{--ac:var(--red)}.kc.cg{--ac:var(--green)}.kc.ca{--ac:var(--amb)}.kc.cp{--ac:var(--pur)}.kc.co{--ac:var(--org)}
-.ki{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:12px}
-.cb .ki{background:var(--bll)}.cr .ki{background:var(--rdl)}.cg .ki{background:var(--grl)}.ca .ki{background:var(--aml)}.cp .ki{background:var(--prl)}.co .ki{background:var(--orl)}
-.kl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--tx2);margin-bottom:5px}
-.kv{font-size:32px;font-weight:900;line-height:1;color:var(--tx);letter-spacing:-1.5px}
-.cr .kv{color:var(--red)}.cg .kv{color:var(--green)}.ca .kv{color:var(--amb)}.co .kv{color:var(--org)}
-.ks{font-size:12px;color:var(--tx3);margin-top:5px}
-.kc.cl{cursor:pointer}
-.kc.cl:hover{border-color:var(--red)}
-.cht{font-size:10px;color:var(--tx3);margin-top:6px}
+.sec { margin-bottom: 32px; }
+.sec-head {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+}
+.sec-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 1px; color: var(--t2); white-space: nowrap;
+}
+.sec-line { flex: 1; height: 1px; background: var(--border); }
+.sec-note { font-size: 11px; color: var(--t3); white-space: nowrap; }
 
-/* AGEING STRIP */
-.agstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
-.agc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:18px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--ss)}
-.agdot{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0}
-.agc.p .agdot{background:var(--bll);color:var(--blue)}
-.agc.rv .agdot{background:var(--aml);color:var(--amb)}
-.agc.ha .agdot{background:var(--rdl);color:var(--red)}
-.aglb{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tx2);margin-bottom:3px}
-.agcnt{font-size:26px;font-weight:900;line-height:1}
-.agc.p .agcnt{color:var(--blue)}.agc.rv .agcnt{color:var(--amb)}.agc.ha .agcnt{color:var(--red)}
-.agamt{font-size:12px;color:var(--tx3);margin-top:3px}
-.agbar{height:4px;border-radius:2px;margin-top:10px;background:var(--bd);overflow:hidden}
-.agbf{height:100%;border-radius:2px;transition:width .6s}
-.agc.p .agbf{background:var(--blue)}.agc.rv .agbf{background:var(--amb)}.agc.ha .agbf{background:var(--red)}
-.ha-note{font-size:10px;color:var(--tx3);margin-top:4px;font-style:italic}
+/* ── KPI CARDS ───────────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+  gap: 12px;
+}
+.kpi {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px 20px;
+  position: relative; overflow: hidden;
+  box-shadow: var(--sh-xs); transition: box-shadow .2s, transform .15s;
+}
+.kpi:hover { box-shadow: var(--sh-sm); transform: translateY(-1px); }
+.kpi::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--accent, var(--blue));
+  border-radius: var(--r) var(--r) 0 0;
+}
+.kpi.a-blue  { --accent: var(--blue); }
+.kpi.a-red   { --accent: var(--red); }
+.kpi.a-green { --accent: var(--green); }
+.kpi.a-amber { --accent: var(--amber); }
+.kpi.a-purple{ --accent: var(--purple); }
+.kpi.a-teal  { --accent: var(--teal); }
+.kpi.a-slate { --accent: var(--slate); }
 
-/* CITY */
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.ctile{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;box-shadow:var(--ss)}
-.ctile:hover{border-color:var(--blue);box-shadow:var(--sm);transform:translateY(-3px)}
-.ctile.sel{border-color:var(--blue);background:var(--bll)}
-.ctile.frd{border-color:#fca5a5;background:var(--rdl)}
-.ctile.fam{border-color:#fde68a;background:var(--aml)}
-.ctop{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.cnam{font-size:15px;font-weight:800}
-.crec{background:var(--rdl);color:var(--red);font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid #fca5a5}
-.cst{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.cs{background:var(--sf2);border-radius:8px;padding:8px 10px}
-.csl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:1px}
-.csv{font-size:15px;font-weight:800}
-.cs.rd .csv{color:var(--red)}.cs.bl .csv{color:var(--blue)}.cs.am .csv{color:var(--amb)}
-.cpb{height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:10px}
-.cpbf{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px}
-.cpl{display:flex;justify-content:space-between;font-size:10px;color:var(--tx3);margin-top:3px}
-.cbtns{display:flex;gap:6px;margin-top:10px}
-.cbt{flex:1;padding:6px 0;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid;text-align:center;transition:all .15s}
-.cdl{background:var(--bll);border-color:#bfdbfe;color:var(--blue)}
-.cdl:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-.cap{background:var(--rdl);border-color:#fca5a5;color:var(--red)}
-.cap:hover{background:var(--red);color:#fff;border-color:var(--red)}
-.readonly-badge{font-size:10px;color:var(--tx3);background:var(--sf2);border:1px solid var(--bd);padding:2px 7px;border-radius:20px;margin-top:8px;text-align:center}
+.kpi-icon {
+  width: 34px; height: 34px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; margin-bottom: 10px;
+}
+.a-blue  .kpi-icon { background: var(--blue-l); }
+.a-red   .kpi-icon { background: var(--red-l); }
+.a-green .kpi-icon { background: var(--green-l); }
+.a-amber .kpi-icon { background: var(--amber-l); }
+.a-purple.kpi-icon { background: var(--purple-l); }
+.a-teal  .kpi-icon { background: var(--teal-l); }
+.a-slate .kpi-icon { background: var(--surf-2); }
 
-/* CITY DETAIL */
-#cdet{display:none;margin-bottom:28px}
-#cdet.vis{display:block}
-.cdhdr{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:16px 22px;background:var(--sf);border-radius:var(--r);border:1.5px solid var(--bd);box-shadow:var(--ss)}
-.bbk{padding:9px 22px;border-radius:8px;border:2.5px solid var(--blue);background:var(--bll);color:var(--blue);font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .15s}
-.bbk:hover{background:var(--blue);color:#fff}
-.cdtit{font-size:20px;font-weight:900}
-.apbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:12px 18px;background:var(--aml);border-radius:10px;border:1.5px solid #fde68a}
-.apl{font-size:13px;font-weight:700;color:#92400e}
-.aptog{padding:6px 16px;border-radius:7px;border:1.5px solid #fde68a;background:var(--sf);color:#92400e;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
-.aptog.on{background:var(--amb);color:#fff;border-color:var(--amb)}
-.apcnt{background:var(--rdl);color:var(--red);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid #fca5a5}
+.kpi-label {
+  font-size: 11px; font-weight: 600; color: var(--t3);
+  text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
+}
+.kpi-value {
+  font-size: 28px; font-weight: 800; line-height: 1;
+  color: var(--t1); letter-spacing: -1px;
+}
+.a-red .kpi-value   { color: var(--red); }
+.a-green .kpi-value { color: var(--green); }
+.a-amber .kpi-value { color: var(--amber); }
+.kpi-sub { font-size: 11px; color: var(--t3); margin-top: 4px; }
+.kpi.clickable { cursor: pointer; }
+.kpi.clickable:hover { border-color: var(--red); }
+.kpi-hint { font-size: 10px; color: var(--t3); margin-top: 6px; }
 
-/* CHARTS */
-.chgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.chgrid .sp3{grid-column:1/-1}
-.chc{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);padding:20px;box-shadow:var(--ss)}
-.chh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.chh h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--tx2)}
-.chbdg{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--sf2);color:var(--tx2);border:1px solid var(--bd)}
-.chc canvas{max-height:210px}
+/* ── AGEING STRIP ────────────────────────────────────── */
+.age-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.age-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--sh-xs); transition: box-shadow .15s;
+}
+.age-card:hover { box-shadow: var(--sh-sm); }
+.age-ring {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.age-card.p  .age-ring { background: var(--blue-l);   color: var(--blue); }
+.age-card.rv .age-ring { background: var(--amber-l);  color: var(--amber); }
+.age-card.ha .age-ring { background: var(--red-l);    color: var(--red); }
+.age-info { flex: 1; min-width: 0; }
+.age-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .5px; color: var(--t3); margin-bottom: 2px;
+}
+.age-count { font-size: 22px; font-weight: 800; line-height: 1; }
+.age-card.p  .age-count { color: var(--blue); }
+.age-card.rv .age-count { color: var(--amber); }
+.age-card.ha .age-count { color: var(--red); }
+.age-amt { font-size: 11px; color: var(--t3); margin-top: 2px; }
+.age-bar { height: 3px; background: var(--surf-3); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.age-bar-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+.age-card.p  .age-bar-fill { background: var(--blue); }
+.age-card.rv .age-bar-fill { background: var(--amber); }
+.age-card.ha .age-bar-fill { background: var(--red); }
+.age-note { font-size: 10px; color: var(--t3); margin-top: 3px; font-style: italic; }
 
-/* TABLE */
-.two{background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--r);box-shadow:var(--ss);overflow:hidden}
-.twh{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bd);background:var(--sf2);gap:10px;flex-wrap:wrap}
-.twh h3{font-size:15px;font-weight:800}
-.twhr{display:flex;align-items:center;gap:8px}
-.twmeta{font-size:12px;color:var(--tx3);background:var(--sf);padding:3px 12px;border-radius:20px;border:1px solid var(--bd)}
-.apbtn{background:var(--rdl);border:1.5px solid #fca5a5;color:var(--red);padding:6px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
-.apbtn:hover,.apbtn.on{background:var(--red);color:#fff;border-color:var(--red)}
-.apbdg{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;min-width:20px;text-align:center}
-.tscr{overflow-x:auto;max-height:560px;overflow-y:auto}
-table{width:100%;border-collapse:collapse;font-size:13px}
-thead th{background:var(--sf2);padding:11px 14px;text-align:left;white-space:nowrap;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--tx2);font-weight:800;border-bottom:2px solid var(--bd);position:sticky;top:0;z-index:10}
-tbody tr{border-bottom:1px solid var(--bd);transition:background .1s}
-tbody tr:hover{background:#f0f4ff}
-tbody tr.rg{background:#f0fdf4}
-tbody tr.rr{background:var(--rdl)}
-tbody tr.ra{background:var(--aml)}
-tbody td{padding:11px 14px;color:var(--tx);white-space:nowrap;font-size:13px;vertical-align:middle}
-.bdg{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.bap{background:var(--rdl);color:var(--red);border:1px solid #fca5a5}
-.bCL{background:var(--grl);color:var(--green);border:1px solid #a7f3d0}
-.bqc{background:var(--bll);color:var(--blue);border:1px solid #bfdbfe}
-.bnq{background:var(--prl);color:var(--pur);border:1px solid #d4b9ff}
-.b3p{background:var(--orl);color:var(--org);border:1px solid #fed7aa}
-.bps{background:var(--prl);color:var(--pur);border:1px solid #d4b9ff}
-.brt{background:var(--tll);color:var(--tel);border:1px solid #a5f0fc}
-.bih{background:var(--grl);color:var(--green);border:1px solid #a7f3d0}
-.bpd{background:var(--bll);color:var(--blue);border:1px solid #bfdbfe}
-.brv{background:var(--aml);color:var(--amb);border:1px solid #fde68a}
-.bha{background:var(--rdl);color:var(--red);border:1px solid #fca5a5}
-.isel{background:var(--sf2);border:1.5px solid var(--bd);color:var(--tx);padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer;max-width:185px}
-.isel:focus{outline:none;border-color:var(--blue)}
-.isel:disabled{opacity:.5;cursor:default}
-.lfld{display:flex;gap:4px;margin-top:5px}
-.linp{background:var(--sf2);border:1.5px solid var(--bd);color:var(--tx);padding:4px 8px;border-radius:6px;font-size:11px;width:100px}
-.linp:focus{outline:none;border-color:var(--red)}
-.loss-display{color:var(--red);font-size:12px;font-weight:700;margin-top:4px}
-.sok{background:var(--grl);color:var(--green);border:1px solid #a7f3d0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
-.swn{background:var(--aml);color:var(--amb);border:1px solid #fde68a;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block}
-.sbr{background:var(--rdl);color:var(--red);border:1px solid #fca5a5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;display:inline-block;animation:fl 1.4s infinite}
-@keyframes fl{0%,100%{opacity:1}50%{opacity:.4}}
-.agok{color:var(--tx);font-weight:700}
-.agrv{color:var(--amb);font-weight:800}
-.agha{color:var(--red);font-weight:900}
+/* ── CITY GRID ───────────────────────────────────────── */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.city-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 18px;
+  cursor: pointer; transition: all .15s; box-shadow: var(--sh-xs);
+}
+.city-card:hover { border-color: var(--blue); box-shadow: var(--sh-md); transform: translateY(-2px); }
+.city-card.sel { border-color: var(--blue); background: var(--blue-l); }
+.city-card.flag-r { border-color: #FECACA; background: var(--red-l); }
+.city-card.flag-a { border-color: #FDE68A; background: var(--amber-l); }
+.city-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.city-name { font-size: 14px; font-weight: 700; color: var(--t1); }
+.city-rec-badge {
+  font-size: 10px; font-weight: 700; color: var(--red);
+  background: var(--red-l); border: 1px solid #FECACA;
+  padding: 2px 8px; border-radius: 20px;
+}
+.city-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.cstat { background: var(--surf-2); border-radius: 6px; padding: 7px 9px; }
+.cstat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--t3); margin-bottom: 1px; }
+.cstat-val { font-size: 14px; font-weight: 800; color: var(--t1); }
+.cstat.rd .cstat-val { color: var(--red); }
+.cstat.bl .cstat-val { color: var(--blue); }
+.cstat.am .cstat-val { color: var(--amber); }
+.city-prog { margin-top: 10px; }
+.city-prog-bar { height: 3px; background: var(--surf-3); border-radius: 2px; overflow: hidden; }
+.city-prog-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--red)); border-radius: 2px; }
+.city-prog-lbl { display: flex; justify-content: space-between; font-size: 10px; color: var(--t3); margin-top: 3px; }
+.city-actions { display: flex; gap: 5px; margin-top: 10px; }
+.city-action-btn {
+  flex: 1; padding: 5px; border-radius: 6px; font-size: 10px;
+  font-weight: 700; cursor: pointer; border: 1px solid; text-align: center; transition: all .12s;
+}
+.cab-dl { background: var(--blue-l); border-color: #BFDBFE; color: var(--blue); }
+.cab-dl:hover { background: var(--blue); color: #fff; }
+.cab-ap { background: var(--red-l); border-color: #FECACA; color: var(--red); }
+.cab-ap:hover { background: var(--red); color: #fff; }
+.city-ro-note { font-size: 10px; color: var(--t3); text-align: center; margin-top: 7px; }
 
-/* BATCH SAVE BAR */
-.save-bar{position:sticky;bottom:0;background:var(--sf);border-top:2px solid var(--blue);padding:12px 20px;display:flex;align-items:center;gap:12px;z-index:50;box-shadow:0 -4px 16px rgba(0,0,0,.1)}
-.save-bar.hide{display:none}
-.save-count{font-size:13px;font-weight:700;color:var(--blue)}
-.save-all-btn{background:var(--blue);color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:8px}
-.save-all-btn:hover{background:var(--bld)}
-.save-all-btn:disabled{opacity:.5;cursor:default}
-.save-status{font-size:12px;color:var(--tx2)}
+/* ── CITY DETAIL ─────────────────────────────────────── */
+#city-det { display: none; margin-bottom: 32px; }
+#city-det.vis { display: block; }
+.cd-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px; padding: 14px 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--sh-xs);
+}
+.btn-back {
+  padding: 7px 18px; border-radius: var(--r-sm);
+  border: 2px solid var(--blue); background: var(--blue-l);
+  color: var(--blue); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: all .12s; display: flex; align-items: center; gap: 5px;
+}
+.btn-back:hover { background: var(--blue); color: #fff; }
+.cd-title { font-size: 18px; font-weight: 800; color: var(--t1); }
+.cd-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+.ap-filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; background: #FFFBEB;
+  border: 1px solid #FDE68A; border-radius: var(--r); margin-bottom: 14px;
+}
+.ap-filter-bar label { font-size: 12px; font-weight: 600; color: var(--amber); }
+.ap-filter-btn {
+  padding: 5px 14px; border-radius: 6px; border: 1px solid #FDE68A;
+  background: #fff; color: var(--amber); font-size: 11px; font-weight: 700; cursor: pointer;
+  transition: all .12s;
+}
+.ap-filter-btn.on { background: var(--amber); color: #fff; border-color: var(--amber); }
+.ap-badge-count {
+  background: var(--red-l); color: var(--red); border: 1px solid #FECACA;
+  font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px;
+}
 
-/* Pagination */
-.pag{display:flex;align-items:center;gap:8px;padding:12px 20px;border-top:1px solid var(--bd);justify-content:flex-end;background:var(--sf2)}
-.pag button{background:var(--sf);border:1.5px solid var(--bd);color:var(--tx2);padding:7px 16px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s}
-.pag button:disabled{opacity:.4;cursor:default}
-.pag button:not(:disabled):hover{border-color:var(--blue);color:var(--blue);background:var(--bll)}
-.pgi{font-size:13px;color:var(--tx2);padding:0 8px;font-weight:600}
+/* ── CHARTS ──────────────────────────────────────────── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.chart-grid .span3 { grid-column: 1 / -1; }
+.chart-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 18px 20px; box-shadow: var(--sh-xs);
+}
+.chart-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.chart-head h3 {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .7px; color: var(--t2);
+}
+.chart-badge {
+  font-size: 10px; font-weight: 600; padding: 2px 8px;
+  border-radius: 20px; background: var(--surf-2);
+  color: var(--t3); border: 1px solid var(--border);
+}
+.chart-card canvas { max-height: 200px; }
+
+/* ── TABLE ───────────────────────────────────────────── */
+.table-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); box-shadow: var(--sh-xs); overflow: hidden;
+}
+.table-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: var(--surf-2);
+  border-bottom: 1px solid var(--border); gap: 10px; flex-wrap: wrap;
+}
+.table-head h3 { font-size: 14px; font-weight: 700; color: var(--t1); }
+.table-head-right { display: flex; align-items: center; gap: 8px; }
+.table-meta {
+  font-size: 11px; color: var(--t3); background: var(--surface);
+  padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border);
+}
+.ap-table-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;
+  cursor: pointer; transition: all .12s;
+  border: 1px solid #FECACA; background: var(--red-l); color: var(--red);
+}
+.ap-table-btn:hover, .ap-table-btn.on { background: var(--red); color: #fff; border-color: var(--red); }
+.ap-num {
+  background: var(--red); color: #fff; font-size: 10px; font-weight: 700;
+  padding: 1px 6px; border-radius: 20px; min-width: 18px; text-align: center;
+}
+.ap-table-btn.on .ap-num { background: rgba(255,255,255,.3); }
+.queue-btn {
+  padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700;
+  cursor: pointer; border: 1px solid #D8B4FE; background: var(--purple-l); color: var(--purple);
+  transition: all .12s;
+}
+.queue-btn:hover { background: var(--purple); color: #fff; }
+
+.tbl-scroll { overflow-x: auto; max-height: 520px; overflow-y: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+thead th {
+  background: var(--surf-2); padding: 10px 14px;
+  text-align: left; white-space: nowrap;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: .6px; color: var(--t2); font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  position: sticky; top: 0; z-index: 10;
+}
+
+tbody tr { border-bottom: 1px solid var(--border); transition: background .08s; }
+tbody tr:hover { background: #F0F5FF; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr.tr-green  { background: #F0FDF4; }
+tbody tr.tr-red    { background: #FEF2F2; }
+tbody tr.tr-amber  { background: #FFFBEB; }
+tbody tr.tr-green:hover  { background: #DCFCE7; }
+tbody tr.tr-red:hover    { background: #FEE2E2; }
+tbody tr.tr-amber:hover  { background: #FEF3C7; }
+
+tbody td { padding: 10px 14px; color: var(--t1); vertical-align: middle; white-space: nowrap; }
+tbody td.td-main { font-weight: 700; font-size: 13px; }
+tbody td.td-sub  { font-size: 11px; color: var(--t2); }
+
+/* BADGES */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 9px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; gap: 3px;
+  white-space: nowrap;
+}
+.b-blue   { background: var(--blue-l);   color: var(--blue);   border: 1px solid #BFDBFE; }
+.b-green  { background: var(--green-l);  color: var(--green);  border: 1px solid #A7F3D0; }
+.b-red    { background: var(--red-l);    color: var(--red);    border: 1px solid #FECACA; }
+.b-amber  { background: var(--amber-l);  color: var(--amber);  border: 1px solid #FDE68A; }
+.b-purple { background: var(--purple-l); color: var(--purple); border: 1px solid #D8B4FE; }
+.b-teal   { background: var(--teal-l);   color: var(--teal);   border: 1px solid #A5F0FC; }
+.b-slate  { background: var(--surf-2);   color: var(--slate);  border: 1px solid var(--border); }
+.b-flash  { animation: flash 1.4s infinite; }
+@keyframes flash { 0%,100% { opacity: 1; } 50% { opacity: .45; } }
+
+/* SLA pills */
+.sla-ok  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--green-l);  color: var(--green);  border: 1px solid #A7F3D0; display: inline-block; }
+.sla-wn  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--amber-l); color: var(--amber);  border: 1px solid #FDE68A; display: inline-block; }
+.sla-br  { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--red-l);   color: var(--red);    border: 1px solid #FECACA; display: inline-block; animation: flash 1.4s infinite; }
+
+/* Ageing value */
+.age-val { font-weight: 800; }
+.age-val.p  { color: var(--t1); }
+.age-val.rv { color: var(--amber); }
+.age-val.ha { color: var(--red); }
+
+/* Inline selects */
+.isel {
+  padding: 5px 8px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surf-2);
+  font-size: 12px; color: var(--t1); cursor: pointer; max-width: 190px;
+}
+.isel:focus { outline: none; border-color: var(--blue); }
+.isel:disabled { opacity: .5; cursor: default; }
+.loss-field { display: flex; gap: 4px; margin-top: 4px; }
+.loss-inp {
+  padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--surf-2); font-size: 11px; color: var(--t1); width: 100px;
+}
+.loss-inp:focus { outline: none; border-color: var(--red); }
+.loss-display { font-size: 11px; font-weight: 700; color: var(--red); margin-top: 3px; }
+
+/* SAVE BAR */
+.save-bar {
+  position: sticky; bottom: 0; z-index: 50;
+  background: var(--surface); border-top: 2px solid var(--blue);
+  padding: 10px 20px; display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+}
+.save-bar.hide { display: none; }
+.save-count { font-size: 13px; font-weight: 600; color: var(--blue); }
+.save-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 22px; border-radius: 7px;
+  background: var(--blue); color: #fff; border: none;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all .12s;
+}
+.save-btn:hover { background: var(--blue-d); }
+.save-btn:disabled { opacity: .5; cursor: default; }
+.save-status { font-size: 12px; color: var(--t2); }
+
+/* PAGINATION */
+.pag {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-top: 1px solid var(--border);
+  justify-content: flex-end; background: var(--surf-2);
+}
+.pag button {
+  padding: 5px 14px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--t2); font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: all .12s;
+}
+.pag button:disabled { opacity: .4; cursor: default; }
+.pag button:not(:disabled):hover { border-color: var(--blue); color: var(--blue); background: var(--blue-l); }
+.pag-info { font-size: 12px; color: var(--t2); font-weight: 600; padding: 0 6px; }
 
 /* MODALS */
-.mbg{position:fixed;inset:0;background:rgba(26,31,54,.45);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);padding:20px}
-.mbg.hide{display:none}
-.modal{background:var(--sf);border-radius:var(--r);box-shadow:var(--sl);width:100%;max-width:780px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
-.mhdr{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bd)}
-.mhdr h2{font-size:16px;font-weight:800}
-.mhdr h2 span{color:var(--red)}
-.mcls{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--bd);background:var(--sf2);color:var(--tx2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.mcls:hover{background:var(--red);color:#fff;border-color:var(--red)}
-.mbdy{overflow-y:auto;padding:18px 22px;flex:1}
-.mcb{margin-bottom:22px}
-.mcn{font-size:14px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:8px}
-.mcc{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--rdl);color:var(--red);border:1px solid #fca5a5}
-.mol{display:flex;flex-direction:column;gap:6px}
-.mor{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--sf2);border-radius:8px;border:1px solid var(--bd);cursor:pointer;transition:background .15s}
-.mor:hover{background:var(--rdl);border-color:#fca5a5}
-.moid{font-size:13px;font-weight:700;min-width:110px}
-.momt{flex:1;font-size:12px;color:var(--tx2)}
-.moct{font-size:11px;color:var(--tx3);margin-top:1px}
-.moag{font-size:12px;font-weight:800;padding:3px 10px;border-radius:20px;background:var(--rdl);color:var(--red);border:1px solid #fca5a5;white-space:nowrap}
-.toast{position:fixed;bottom:28px;right:28px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .4s;color:#fff}
-.emp{text-align:center;padding:56px;color:var(--tx3);font-size:14px}
-.eic{font-size:36px;margin-bottom:10px}
-.ebox{background:var(--rdl);border:1.5px solid #fca5a5;border-radius:var(--r);padding:20px 24px;color:var(--red);margin:24px;font-weight:600}
-input[type=file]{display:none}
+.modal-bg {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(17,24,39,.4); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-bg.hide { display: none; }
+.modal {
+  background: var(--surface); border-radius: var(--r-lg);
+  box-shadow: var(--sh-lg); width: 100%; max-width: 740px;
+  max-height: 82vh; display: flex; flex-direction: column; overflow: hidden;
+}
+.modal-hdr {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 22px; border-bottom: 1px solid var(--border);
+}
+.modal-hdr h2 { font-size: 15px; font-weight: 700; color: var(--t1); }
+.modal-hdr h2 span { color: var(--red); }
+.modal-close {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surf-2);
+  color: var(--t2); font-size: 15px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--red); color: #fff; border-color: var(--red); }
+.modal-body { overflow-y: auto; padding: 18px 22px; flex: 1; }
+.modal-city-block { margin-bottom: 20px; }
+.modal-city-name {
+  font-size: 13px; font-weight: 700; color: var(--t1);
+  margin-bottom: 8px; display: flex; align-items: center; gap: 7px;
+}
+.modal-city-ct {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+  background: var(--red-l); color: var(--red); border: 1px solid #FECACA;
+}
+.modal-order-list { display: flex; flex-direction: column; gap: 5px; }
+.modal-order-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 13px; background: var(--surf-2);
+  border-radius: 8px; border: 1px solid var(--border);
+  cursor: pointer; transition: all .1s;
+}
+.modal-order-row:hover { background: var(--red-l); border-color: #FECACA; }
+.mor-id { font-size: 12px; font-weight: 700; color: var(--t1); min-width: 105px; }
+.mor-meta { flex: 1; font-size: 11px; color: var(--t2); }
+.mor-case { font-size: 10px; color: var(--t3); margin-top: 1px; }
+.mor-age {
+  font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 20px;
+  background: var(--red-l); color: var(--red); border: 1px solid #FECACA;
+}
+
+/* MISC */
+.emp { text-align: center; padding: 48px; color: var(--t3); font-size: 13px; }
+.emp-icon { font-size: 32px; margin-bottom: 8px; }
+.err-box {
+  background: var(--red-l); border: 1px solid #FECACA;
+  border-radius: var(--r); padding: 20px 24px;
+  color: var(--red); font-weight: 600; margin: 24px;
+}
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  padding: 11px 20px; border-radius: 9px;
+  font-size: 13px; font-weight: 600; z-index: 9999;
+  box-shadow: var(--sh-md); transition: opacity .35s; color: #fff;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  .main { padding: 14px 14px; }
+  .hdr { padding: 0 14px; gap: 8px; }
+  .hdr-title { font-size: 13px; }
+  .filter-bar { padding: 8px 14px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .kpi { padding: 14px 16px; }
+  .kpi-value { font-size: 24px; }
+  .age-strip { grid-template-columns: 1fr; gap: 8px; }
+  .city-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .chart-grid { grid-template-columns: 1fr; }
+  .chart-grid .span3 { grid-column: 1; }
+  table { font-size: 12px; }
+  thead th, tbody td { padding: 8px 10px; }
+}
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .city-grid { grid-template-columns: 1fr 1fr; }
+  .qc-tabs button { padding: 5px 10px; font-size: 11px; }
+  .hdr-asof { display: none; }
+}
 </style>
 </head>
 <body>
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-icon">&#128667;</div>
-      <div class="login-title">RTO <span>Dashboard</span></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo">&#128667;</div>
+      <div class="login-name">RTO Dashboard</div>
     </div>
-    <div class="login-sub">Enter your city email and password to continue</div>
-    <input class="finp" type="email" id="l-email" placeholder="Email address" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <input class="finp" type="password" id="l-pwd" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-btn" id="l-btn" onclick="doLogin()">Sign In</button>
+    <div class="login-sub">Sign in with your city credentials</div>
+    <div class="field-label">Email address</div>
+    <input class="field-input" type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="field-label">Password</div>
+    <input class="field-input" type="password" id="l-pwd" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-submit" id="l-btn" onclick="doLogin()">Sign In</button>
     <div class="login-err" id="l-err"></div>
-    <div class="login-hint">Forgot your password? Contact your admin.</div>
+    <div class="login-hint">Forgot password? Contact your admin.</div>
   </div>
 </div>
 
 <!-- OVERLAY -->
 <div id="ov" class="hide">
-  <div class="ring"></div>
-  <div class="dots"><span></span><span></span><span></span></div>
-  <div class="lmsg" id="lmsg">Loading&hellip;</div>
+  <div class="ov-ring"></div>
+  <div class="ov-dots"><span></span><span></span><span></span></div>
+  <div class="ov-msg" id="ov-msg">Loading&hellip;</div>
 </div>
 
-<!-- HIGH AGEING MODAL -->
-<div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
+<!-- MODALS -->
+<div class="modal-bg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
   <div class="modal">
-    <div class="mhdr"><h2>&#128308; High Ageing <span>(&gt;5 days)</span></h2><button class="mcls" onclick="closeHA()">&#10005;</button></div>
-    <div class="mbdy" id="ha-body"></div>
+    <div class="modal-hdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="modal-close" onclick="closeHA()">&#10005;</button></div>
+    <div class="modal-body" id="ha-body"></div>
+  </div>
+</div>
+<div class="modal-bg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
+  <div class="modal" style="max-width:860px">
+    <div class="modal-hdr"><h2>Action Pending Queue</h2><button class="modal-close" onclick="closeAP()">&#10005;</button></div>
+    <div class="modal-body" id="ap-body"></div>
   </div>
 </div>
 
-<!-- ACTION PENDING MODAL -->
-<div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
-  <div class="modal" style="max-width:900px">
-    <div class="mhdr"><h2>&#9888; Action Pending Queue</h2><button class="mcls" onclick="closeAP()">&#10005;</button></div>
-    <div class="mbdy" id="ap-body"></div>
-  </div>
-</div>
-
-<!-- FLOATING HOME BUTTON -->
+<!-- FLOATING HOME -->
 <button id="home-btn" onclick="scrollToTop()">&#8593; Home</button>
 
 <!-- DASHBOARD -->
 <div id="dash" style="display:none">
 
+  <!-- HEADER -->
   <div class="hdr">
-    <div class="brand">
-      <div class="bicon">&#128667;</div>
-      <div class="btitle">RTO <span>Operations</span></div>
-      <span class="lbdg">LIVE</span>
+    <div class="hdr-brand">
+      <div class="hdr-icon">&#128667;</div>
+      <div class="hdr-title">RTO <span>Operations</span></div>
+      <span class="live-pill">LIVE</span>
     </div>
-    <span id="user-chip" class="user-chip"></span>
-    <div class="hrgt">
-      <div class="tgl" id="qtgl">
+    <span class="hdr-asof" id="asof"></span>
+    <div class="hdr-right">
+      <span class="user-pill" id="user-pill"></span>
+      <div class="qc-tabs" id="qc-tabs">
         <button data-v="Overall" class="on" onclick="setQC('Overall')">Overall</button>
         <button data-v="QC" onclick="setQC('QC')">QC</button>
         <button data-v="Non-QC" onclick="setQC('Non-QC')">Non-QC</button>
       </div>
-      <button class="logout-btn" onclick="logout()">Sign Out</button>
+      <button class="hdr-btn" onclick="scrollToTop()">&#8962; Home</button>
+      <button class="hdr-btn danger" onclick="logout()">Sign Out</button>
     </div>
   </div>
 
-  <div class="cbar hide" id="cbar">&#9889; Cached &middot; <span id="cage"></span> &middot; <a href="#" onclick="fref();return false">Refresh now</a></div>
+  <!-- CACHE BAR -->
+  <div class="cache-bar hide" id="cache-bar">
+    &#9889; Cached &middot; <span id="cache-age"></span> &middot;
+    <a href="#" onclick="fref();return false">Refresh now</a>
+  </div>
 
-  <div class="fb">
-    <div class="fg"><label>City</label><select id="fc" onchange="apF()"><option value="">All Cities</option></select></div>
-    <div class="fg"><label>Order Type</label>
-      <select id="fot" onchange="apF()"><option value="">All</option><option>3PL</option><option>PSP</option><option>Retail</option><option>In-house</option></select>
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="fg"><label>City</label><select id="f-city" onchange="apF()"><option value="">All Cities</option></select></div>
+    <div class="fg"><label>Type</label>
+      <select id="f-type" onchange="apF()"><option value="">All</option><option>3PL</option><option>PSP</option><option>Retail</option><option>In-house</option></select>
     </div>
     <div class="fg"><label>Ageing</label>
-      <select id="fag" onchange="apF()">
+      <select id="f-age" onchange="apF()">
         <option value="">All</option>
-        <option value="Pending">Pending (0&ndash;2d)</option>
-        <option value="Recoverable">Recoverable (&gt;2&ndash;5d)</option>
+        <option value="Pending">Pending (0-2d)</option>
+        <option value="Recoverable">Recoverable (&gt;2-5d)</option>
         <option value="High Ageing">High Ageing (&gt;5d)</option>
       </select>
     </div>
-    <div class="fg"><label>Action</label><select id="fac" onchange="apF()"><option value="">All Actions</option></select></div>
-    <div class="dvd"></div>
-    <div class="fg"><label>From</label><input type="date" id="fdf" onchange="apF()"/></div>
-    <div class="fg"><label>To</label><input type="date" id="fdt" onchange="apF()"/></div>
-    <div class="dvd"></div>
-    <button class="btn brst" onclick="rstF()">&#10005; Reset</button>
-    <button class="btn bref" id="bref" onclick="fref()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
-      Refresh
+    <div class="fg"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
+    <div class="fbar-div"></div>
+    <div class="fg"><label>From</label><input type="date" id="f-from" onchange="apF()"/></div>
+    <div class="fg"><label>To</label><input type="date" id="f-to" onchange="apF()"/></div>
+    <div class="fbar-div"></div>
+    <button class="fbar-btn btn-reset" onclick="rstF()">&#10005; Reset</button>
+    <button class="fbar-btn btn-refresh" id="btn-ref" onclick="fref()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+      </svg>Refresh
     </button>
   </div>
 
@@ -364,90 +788,151 @@ input[type=file]{display:none}
 
     <!-- KPIs -->
     <div class="sec">
-      <div class="sechdr"><span class="sectit">&#127470;&#127475; PAN India Overview</span><div class="secln"></div></div>
-      <div class="kgrid">
-        <div class="kc ca"><div class="ki">&#9203;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&#8212;</div><div class="ks">Need immediate update</div></div>
-        <div class="kc cb"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">&#8212;</div><div class="ks" id="k-tot-s">&#8212;</div></div>
-        <div class="kc cb"><div class="ki">&#8987;</div><div class="kl">Pending (0&ndash;2d)</div><div class="kv" id="k-pd">&#8212;</div><div class="ks" id="k-pd-s">&#8212;</div></div>
-        <div class="kc ca"><div class="ki">&#128200;</div><div class="kl">Recoverable (&gt;2d)</div><div class="kv" id="k-rv">&#8212;</div><div class="ks" id="k-rv-s">&#8212;</div></div>
-        <div class="kc cr cl" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing (&gt;5d)</div><div class="kv" id="k-ha">&#8212;</div><div class="ks" id="k-ha-s">&#8212;</div><div class="cht">&#128070; Sub-bracket of Recoverable &middot; Click to view</div></div>
-        <div class="kc cg"><div class="ki">&#9989;</div><div class="kl">Green / Closing</div><div class="kv" id="k-gr">&#8212;</div><div class="ks">CLOSED &middot; visible 24h</div></div>
-        <div class="kc co"><div class="ki">&#128176;</div><div class="kl">Loss Amount</div><div class="kv" id="k-ls">&#8212;</div><div class="ks" id="k-ls-s">&#8212;</div></div>
+      <div class="sec-head"><span class="sec-title">PAN India Overview</span><div class="sec-line"></div></div>
+      <div class="kpi-grid">
+        <div class="kpi a-amber">
+          <div class="kpi-icon">&#9888;</div>
+          <div class="kpi-label">Action Pending</div>
+          <div class="kpi-value" id="k-ap">-</div>
+          <div class="kpi-sub">Need immediate update</div>
+        </div>
+        <div class="kpi a-blue">
+          <div class="kpi-icon">&#128230;</div>
+          <div class="kpi-label">Total Active RTO</div>
+          <div class="kpi-value" id="k-tot">-</div>
+          <div class="kpi-sub" id="k-tot-s">-</div>
+        </div>
+        <div class="kpi a-blue">
+          <div class="kpi-icon">&#8987;</div>
+          <div class="kpi-label">Pending (0-2d)</div>
+          <div class="kpi-value" id="k-pd">-</div>
+          <div class="kpi-sub" id="k-pd-s">-</div>
+        </div>
+        <div class="kpi a-amber">
+          <div class="kpi-icon">&#128200;</div>
+          <div class="kpi-label">Recoverable (&gt;2d)</div>
+          <div class="kpi-value" id="k-rv">-</div>
+          <div class="kpi-sub" id="k-rv-s">-</div>
+        </div>
+        <div class="kpi a-red clickable" onclick="openHA()">
+          <div class="kpi-icon">&#128308;</div>
+          <div class="kpi-label">High Ageing (&gt;5d)</div>
+          <div class="kpi-value" id="k-ha">-</div>
+          <div class="kpi-sub" id="k-ha-s">-</div>
+          <div class="kpi-hint">Sub-bracket of Recoverable &middot; Click to view</div>
+        </div>
+        <div class="kpi a-green">
+          <div class="kpi-icon">&#9989;</div>
+          <div class="kpi-label">Green / Closed</div>
+          <div class="kpi-value" id="k-gr">-</div>
+          <div class="kpi-sub">Visible 24h then removed</div>
+        </div>
+        <div class="kpi a-red">
+          <div class="kpi-icon">&#128176;</div>
+          <div class="kpi-label">Loss Amount</div>
+          <div class="kpi-value" id="k-ls">-</div>
+          <div class="kpi-sub" id="k-ls-s">-</div>
+        </div>
       </div>
     </div>
 
-    <!-- AGEING -->
+    <!-- AGEING STRIP -->
     <div class="sec">
-      <div class="sechdr"><span class="sectit">&#9203; Ageing Breakdown</span><div class="secln"></div><span class="secnt">From Shipment Received date (or Cancellation date)</span></div>
-      <div class="agstrip">
-        <div class="agc p">
-          <div class="agdot" id="ag-p-pct">&#8212;</div>
-          <div style="flex:1"><div class="aglb">Pending (0&ndash;2 days)</div><div class="agcnt" id="ag-p-c">&#8212;</div><div class="agamt" id="ag-p-a">&#8212;</div><div class="agbar"><div class="agbf" id="ag-p-b" style="width:0"></div></div></div>
+      <div class="sec-head">
+        <span class="sec-title">Ageing Breakdown</span><div class="sec-line"></div>
+        <span class="sec-note">From Shipment Received date (or Cancellation date)</span>
+      </div>
+      <div class="age-strip">
+        <div class="age-card p">
+          <div class="age-ring" id="ag-p-p">-</div>
+          <div class="age-info">
+            <div class="age-label">Pending (0-2 days)</div>
+            <div class="age-count" id="ag-p-c">-</div>
+            <div class="age-amt" id="ag-p-a">-</div>
+            <div class="age-bar"><div class="age-bar-fill" id="ag-p-b" style="width:0"></div></div>
+          </div>
         </div>
-        <div class="agc rv">
-          <div class="agdot" id="ag-r-pct">&#8212;</div>
-          <div style="flex:1"><div class="aglb">Recoverable (&gt;2 days)</div><div class="agcnt" id="ag-r-c">&#8212;</div><div class="agamt" id="ag-r-a">&#8212;</div><div class="agbar"><div class="agbf" id="ag-r-b" style="width:0"></div></div><div class="ha-note" id="ag-r-ha"></div></div>
+        <div class="age-card rv">
+          <div class="age-ring" id="ag-r-p">-</div>
+          <div class="age-info">
+            <div class="age-label">Recoverable (&gt;2 days)</div>
+            <div class="age-count" id="ag-r-c">-</div>
+            <div class="age-amt" id="ag-r-a">-</div>
+            <div class="age-bar"><div class="age-bar-fill" id="ag-r-b" style="width:0"></div></div>
+            <div class="age-note" id="ag-r-n">-</div>
+          </div>
         </div>
-        <div class="agc ha">
-          <div class="agdot" id="ag-h-pct">&#8212;</div>
-          <div style="flex:1"><div class="aglb">High Ageing (&gt;5d) &mdash; sub-bracket</div><div class="agcnt" id="ag-h-c">&#8212;</div><div class="agamt" id="ag-h-a">&#8212;</div><div class="agbar"><div class="agbf" id="ag-h-b" style="width:0"></div></div></div>
+        <div class="age-card ha">
+          <div class="age-ring" id="ag-h-p">-</div>
+          <div class="age-info">
+            <div class="age-label">High Ageing (&gt;5d) &mdash; sub-bracket</div>
+            <div class="age-count" id="ag-h-c">-</div>
+            <div class="age-amt" id="ag-h-a">-</div>
+            <div class="age-bar"><div class="age-bar-fill" id="ag-h-b" style="width:0"></div></div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- CITY -->
     <div class="sec">
-      <div class="sechdr"><span class="sectit">&#127961; City-wise Performance</span><div class="secln"></div><span class="secnt">Click to drill down &middot; &#128308; High ageing/AP &middot; &#127825; Most recoverable</span></div>
-      <div class="cgrid" id="cgrid"></div>
+      <div class="sec-head">
+        <span class="sec-title">City-wise Performance</span><div class="sec-line"></div>
+        <span class="sec-note">Click to drill down</span>
+      </div>
+      <div class="city-grid" id="city-grid"></div>
     </div>
 
     <!-- CITY DETAIL -->
-    <div id="cdet">
-      <div class="cdhdr">
-        <button class="bbk" onclick="closeCDet()">&#8592; All Cities</button>
-        <div class="cdtit" id="cdtit"></div>
-        <div style="margin-left:auto;display:flex;gap:8px;align-items:center" id="cdbdg">
-          <button class="cbt cdl" style="padding:6px 14px" onclick="dlCity()">&#11015; Download</button>
+    <div id="city-det">
+      <div class="cd-header">
+        <button class="btn-back" onclick="closeDet()">&#8592; All Cities</button>
+        <div class="cd-title" id="cd-title"></div>
+        <div class="cd-right">
+          <button class="fbar-btn btn-refresh" onclick="dlCity()" style="font-size:12px">&#11015; Download</button>
         </div>
       </div>
-      <div class="apbar">
-        <label class="apl">&#9888; Action Pending</label>
-        <button class="aptog" id="aptog" onclick="togAP()">Show Only Action Pending</button>
-        <span class="apcnt" id="apcnt">0 pending</span>
+      <div class="ap-filter-bar">
+        <label>Action Pending Filter</label>
+        <button class="ap-filter-btn" id="ap-tog" onclick="togAP()">Show Only Action Pending</button>
+        <span class="ap-badge-count" id="ap-cnt">0 pending</span>
       </div>
-      <div class="kgrid" id="cdkpis" style="margin-bottom:16px"></div>
-      <div class="chgrid" id="cdcharts" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"></div>
+      <div class="kpi-grid" id="cd-kpis" style="margin-bottom:16px"></div>
+      <div class="chart-grid" id="cd-charts" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"></div>
     </div>
 
     <!-- CHARTS -->
     <div class="sec">
-      <div class="sechdr"><span class="sectit">&#128202; Analytics</span><div class="secln"></div></div>
-      <div class="chgrid">
-        <div class="chc"><div class="chh"><h3>Ageing Brackets</h3></div><canvas id="ch-ag"></canvas></div>
-        <div class="chc"><div class="chh"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
-        <div class="chc"><div class="chh"><h3>Order Type</h3></div><canvas id="ch-ot"></canvas></div>
-        <div class="chc"><div class="chh"><h3>QC vs Non-QC</h3></div><canvas id="ch-qc"></canvas></div>
-        <div class="chc"><div class="chh"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
-        <div class="chc"><div class="chh"><h3>QC Split by Order Type</h3></div><canvas id="ch-qcot"></canvas></div>
-        <div class="chc sp3"><div class="chh"><h3>30-Day Trend</h3><span class="chbdg">Last 30 days</span></div><canvas id="ch-tr" style="max-height:190px"></canvas></div>
+      <div class="sec-head"><span class="sec-title">Analytics</span><div class="sec-line"></div></div>
+      <div class="chart-grid">
+        <div class="chart-card"><div class="chart-head"><h3>Ageing Brackets</h3></div><canvas id="ch-ag"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>Order Type</h3></div><canvas id="ch-ot"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>QC vs Non-QC</h3></div><canvas id="ch-qc"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>QC by Order Type</h3></div><canvas id="ch-qcot"></canvas></div>
+        <div class="chart-card span3">
+          <div class="chart-head"><h3>30-Day Trend</h3><span class="chart-badge">Last 30 days</span></div>
+          <canvas id="ch-tr" style="max-height:180px"></canvas>
+        </div>
       </div>
     </div>
 
     <!-- TABLE -->
     <div class="sec">
-      <div class="sechdr"><span class="sectit">&#128203; Order Details</span><div class="secln"></div></div>
-      <div class="two">
-        <div class="twh">
+      <div class="sec-head"><span class="sec-title">Order Details</span><div class="sec-line"></div></div>
+      <div class="table-wrap">
+        <div class="table-head">
           <h3>Active Orders</h3>
-          <div class="twhr">
-            <button class="apbtn" id="gapbtn" onclick="togGAP()">
-              &#9888; Action Pending <span class="apbdg" id="gapc">0</span>
+          <div class="table-head-right">
+            <button class="ap-table-btn" id="gapbtn" onclick="togGAP()">
+              Action Pending <span class="ap-num" id="gapc">0</span>
             </button>
-            <button class="apbtn" onclick="openAPModal()" style="background:var(--prl);border-color:#d4b9ff;color:var(--pur)">&#128203; View Queue</button>
-            <span class="twmeta" id="twcnt">&#8212; orders</span>
+            <button class="queue-btn" onclick="openAPModal()">View Queue</button>
+            <span class="table-meta" id="tbl-cnt">- orders</span>
           </div>
         </div>
-        <div class="tscr">
+        <div class="tbl-scroll">
           <table>
             <thead>
               <tr>
@@ -455,74 +940,90 @@ input[type=file]{display:none}
                 <th>Type</th><th>QC</th><th>Rider</th>
                 <th>Amount</th><th>Ageing</th><th>Bracket</th>
                 <th>Deadline</th><th>SLA</th><th>Status</th>
-                <th style="min-width:195px">Action</th>
-                <th style="min-width:185px">Update / Details</th>
+                <th style="min-width:185px">Action</th>
+                <th style="min-width:175px">Update</th>
               </tr>
             </thead>
-            <tbody id="tbdy"></tbody>
+            <tbody id="tbl-body"></tbody>
           </table>
-          <div id="emp" class="emp" style="display:none"><div class="eic">&#128269;</div>No orders match current filters.</div>
+          <div id="tbl-emp" class="emp" style="display:none">
+            <div class="emp-icon">&#128269;</div>No orders match the current filters.
+          </div>
         </div>
-        <!-- BATCH SAVE BAR -->
+        <!-- SAVE BAR -->
         <div class="save-bar hide" id="save-bar">
-          <span class="save-count" id="save-count">0 changes pending</span>
-          <button class="save-all-btn" id="save-all-btn" onclick="saveAll()">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          <span class="save-count" id="save-cnt">0 changes pending</span>
+          <button class="save-btn" id="save-btn" onclick="saveAll()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
             Save All Changes
           </button>
-          <span class="save-status" id="save-status"></span>
+          <span class="save-status" id="save-st"></span>
         </div>
         <div class="pag">
-          <button id="bpv" onclick="chPg(-1)">&#8592; Prev</button>
-          <span class="pgi" id="pgi">Page 1 of 1</span>
-          <button id="bnx" onclick="chPg(1)">Next &#8594;</button>
+          <button id="btn-pv" onclick="chPg(-1)">&#8592; Prev</button>
+          <span class="pag-info" id="pg-info">Page 1 of 1</span>
+          <button id="btn-nx" onclick="chPg(1)">Next &#8594;</button>
         </div>
       </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /main -->
+</div><!-- /dash -->
 
 <script>
 Chart.register(ChartDataLabels);
-const API='https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CK='rto_v8',CTTL=5*60*1000;
-let RAW=[],FLT=[],TRD=[],AM={};
-let PG=1,PSZ=50,CHS={};
-let QF='Overall',SCITY=null,APF=false,GAP=false;
-let USER=null; // {city, role, isAdmin, email}
-let PENDING_CHANGES={}; // shipmentId -> {action, update, lossAmt, lossOid}
+const API   = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
+const DASH_URL = 'https://nonqccentral-sudo.github.io/RTO_DASHBOARD/';
+const CK    = 'rto_v8';
+const CTTL  = 5 * 60 * 1000;
 
-const fmt=n=>'Rs.'+Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
-const fmtK=n=>{if(!n)return 'Rs.0';if(n>=10000000)return 'Rs.'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return 'Rs.'+(n/100000).toFixed(1)+'L';if(n>=1000)return 'Rs.'+(n/1000).toFixed(1)+'K';return 'Rs.'+n;};
-const pct=(a,b)=>b?Math.round(a/b*100):0;
-const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+let RAW=[], FLT=[], TRD=[], AM={};
+let PG=1, PSZ=50, CHS={};
+let QF='Overall', SCITY=null, APF=false, GAP=false;
+let USER=null, CHANGES={};
 
-// ── LOGIN ──
-function doLogin(){
-  const email=document.getElementById('l-email').value.trim();
-  const pwd=document.getElementById('l-pwd').value.trim();
-  if(!email||!pwd){$('l-err','Please enter email and password');return;}
-  const btn=document.getElementById('l-btn');
-  btn.disabled=true;btn.textContent='Signing in...';$('l-err','');
+const fmtN = n => 'Rs.' + Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
+const fmtK = n => {
+  if(!n) return 'Rs.0';
+  if(n>=10000000) return 'Rs.'+(n/10000000).toFixed(1)+'Cr';
+  if(n>=100000)   return 'Rs.'+(n/100000).toFixed(1)+'L';
+  if(n>=1000)     return 'Rs.'+(n/1000).toFixed(1)+'K';
+  return 'Rs.'+n;
+};
+const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+const $   = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+// ── LOGIN ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {});
+
+function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pwd   = document.getElementById('l-pwd').value.trim();
+  if (!email || !pwd) { $('l-err','Enter email and password'); return; }
+  const btn = document.getElementById('l-btn');
+  btn.disabled=true; btn.textContent='Signing in...'; $('l-err','');
   fetch(API+'?action=login&email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pwd))
     .then(r=>r.json())
     .then(res=>{
       if(res.success){
-        USER=res;
+        USER = res;
         document.getElementById('login-screen').classList.add('hide');
-        document.getElementById('user-chip').textContent=(res.isAdmin?'&#128081; Admin':('&#128205; '+res.city));
+        $('user-pill', res.isAdmin ? 'Admin' : res.city);
         loadData();
       } else {
-        $('l-err',res.error||'Invalid credentials');
-        btn.disabled=false;btn.textContent='Sign In';
+        $('l-err', res.error||'Invalid credentials');
+        btn.disabled=false; btn.textContent='Sign In';
       }
     })
-    .catch(()=>{$('l-err','Network error. Try again.');btn.disabled=false;btn.textContent='Sign In';});
+    .catch(()=>{ $('l-err','Network error'); btn.disabled=false; btn.textContent='Sign In'; });
 }
 
-function logout(){
-  USER=null;PENDING_CHANGES={};
+function logout() {
+  USER=null; CHANGES={};
   document.getElementById('dash').style.display='none';
   document.getElementById('login-screen').classList.remove('hide');
   document.getElementById('l-email').value='';
@@ -533,395 +1034,494 @@ function logout(){
   localStorage.removeItem(CK);
 }
 
-// ── DATA LOAD ──
-function msg(m){$('lmsg',m);}
-function showOv(){document.getElementById('ov').classList.remove('hide');}
-function hideOv(){document.getElementById('ov').classList.add('hide');}
+// ── DATA ─────────────────────────────────────────────────
+function omsg(m){ $('ov-msg',m); }
+function showOv(){ document.getElementById('ov').classList.remove('hide'); }
+function hideOv(){ document.getElementById('ov').classList.add('hide'); }
 
 function loadData(force=false){
-  showOv();msg('Fetching RTO data...');
+  showOv(); omsg('Fetching data...');
   if(!force){
-    try{const c=localStorage.getItem(CK);if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<CTTL){msg('Loading from cache...');setTimeout(()=>{onLoad(data);showCB(Date.now()-ts);},200);return;}}}catch(e){}
+    try{
+      const c=localStorage.getItem(CK);
+      if(c){ const{data,ts}=JSON.parse(c); if(Date.now()-ts<CTTL){ omsg('Loading from cache...'); setTimeout(()=>{ onLoad(data); showCB(Date.now()-ts); },150); return; } }
+    }catch(e){}
   }
-  msg('Connecting to Google Sheets...');
-  fetch(API).then(r=>{msg('Processing...');return r.json();}).then(d=>{
-    try{localStorage.setItem(CK,JSON.stringify({data:d,ts:Date.now()}));}catch(e){}
-    onLoad(d);document.getElementById('cbar').classList.add('hide');
-  }).catch(e=>{
-    try{const c=localStorage.getItem(CK);if(c){const{data,ts}=JSON.parse(c);onLoad(data);showCB(Date.now()-ts,true);return;}}catch(e2){}
-    hideOv();document.getElementById('ov').innerHTML='<div class="ebox">Failed: '+(e.message||'Unknown')+'<br><button onclick="loadData(true)" style="margin-top:8px;padding:8px 20px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer">Retry</button></div>';
-  });
+  omsg('Connecting to Google Sheets...');
+  fetch(API)
+    .then(r=>{ omsg('Processing...'); return r.json(); })
+    .then(d=>{
+      try{ localStorage.setItem(CK,JSON.stringify({data:d,ts:Date.now()})); }catch(e){}
+      onLoad(d);
+      document.getElementById('cache-bar').classList.add('hide');
+    })
+    .catch(e=>{
+      try{ const c=localStorage.getItem(CK); if(c){ const{data,ts}=JSON.parse(c); onLoad(data); showCB(Date.now()-ts,true); return; }}catch(e2){}
+      hideOv();
+      document.getElementById('ov').innerHTML='<div class="err-box">Failed: '+(e.message||'Unknown')+'<br><button onclick="loadData(true)" style="margin-top:10px;padding:8px 18px;background:var(--red);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer">Retry</button></div>';
+    });
 }
 
-function fref(){const b=document.getElementById('bref');b.classList.add('sp');setTimeout(()=>b.classList.remove('sp'),1500);loadData(true);}
+function fref(){ const b=document.getElementById('btn-ref'); b.classList.add('sp'); setTimeout(()=>b.classList.remove('sp'),1500); loadData(true); }
 
 function onLoad(p){
-  if(!p.success){hideOv();document.getElementById('ov').innerHTML='<div class="ebox">'+p.error+'</div>';return;}
-  RAW=p.orders||[];TRD=p.trend||[];AM=p.actionMap||{};
-  popFilters();apF();
-  document.getElementById('dash').style.display='block';hideOv();
+  if(!p.success){ hideOv(); document.getElementById('ov').innerHTML='<div class="err-box">'+p.error+'</div>'; return; }
+  RAW=p.orders||[]; TRD=p.trend||[]; AM=p.actionMap||{};
+  $('asof','As of '+p.asOf);
+  popFilters(); apF();
+  document.getElementById('dash').style.display='block'; hideOv();
 }
 
-function showCB(age,stale=false){const m=Math.round(age/60000),l=m<1?'just now':m+' min ago';$('cage',(stale?'Stale - ':'')+l);document.getElementById('cbar').classList.remove('hide');}
+function showCB(age,stale=false){
+  const m=Math.round(age/60000), l=m<1?'just now':m+' min ago';
+  $('cache-age',(stale?'Stale · ':'')+l);
+  document.getElementById('cache-bar').classList.remove('hide');
+}
 
-// ── HOME BUTTON ──
-function scrollToTop(){document.getElementById('main-top').scrollIntoView({behavior:'smooth',block:'start'});}
+// ── SCROLL / HOME ─────────────────────────────────────────
+function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
 window.addEventListener('scroll',()=>{
-  const btn=document.getElementById('home-btn');
-  const det=document.getElementById('cdet');
-  btn.classList.toggle('vis',det.classList.contains('vis')&&window.scrollY>200);
+  const det=document.getElementById('city-det');
+  document.getElementById('home-btn').classList.toggle('vis', det.classList.contains('vis') && window.scrollY>180);
 });
 
-// ── QC / FILTERS ──
-function setQC(v){QF=v;document.querySelectorAll('#qtgl button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));apF();}
+// ── FILTERS ──────────────────────────────────────────────
+function setQC(v){
+  QF=v;
+  document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  apF();
+}
 
 function apF(){
-  const city=document.getElementById('fc').value;
-  const ot=document.getElementById('fot').value;
-  const ag=document.getElementById('fag').value;
-  const ac=document.getElementById('fac').value;
-  const df=document.getElementById('fdf').value;
-  const dt=document.getElementById('fdt').value;
-  FLT=RAW.filter(o=>{
-    if(QF!=='Overall'){const m=QF==='QC'?!o.shipmentType.includes('Non'):o.shipmentType.includes('Non');if(!m)return false;}
-    if(SCITY&&o.city!==SCITY)return false;
-    if(city&&o.city!==city)return false;
-    if(ot&&o.orderType!==ot)return false;
-    if(ag&&o.ageingBracket!==ag)return false;
-    if(ac&&o.currentAction!==ac)return false;
-    if(df||dt){const d=o.cancellationDate?new Date(o.cancellationDate.replace(/(\d+)-(\w+)-(\d+)/,'$1 $2 $3')):null;if(d){if(df&&d<new Date(df))return false;if(dt&&d>new Date(dt))return false;}}
-    if(APF&&!o.actionPending)return false;
-    if(GAP&&!o.actionPending)return false;
+  const city=document.getElementById('f-city').value;
+  const type=document.getElementById('f-type').value;
+  const age =document.getElementById('f-age').value;
+  const act =document.getElementById('f-act').value;
+  const df  =document.getElementById('f-from').value;
+  const dt  =document.getElementById('f-to').value;
+
+  FLT = RAW.filter(o=>{
+    if(QF!=='Overall'){ const m=QF==='QC'?!o.shipmentType.includes('Non'):o.shipmentType.includes('Non'); if(!m) return false; }
+    if(SCITY && o.city!==SCITY) return false;
+    if(city  && o.city!==city)  return false;
+    if(type  && o.orderType!==type) return false;
+    if(age   && o.ageingBracket!==age) return false;
+    if(act   && o.currentAction!==act) return false;
+    if(df||dt){
+      const d=o.cancellationDate ? new Date(o.cancellationDate.replace(/(\d+)-(\w+)-(\d+)/,'$1 $2 $3')) : null;
+      if(d){ if(df&&d<new Date(df)) return false; if(dt&&d>new Date(dt)) return false; }
+    }
+    if(APF && !o.actionPending) return false;
+    if(GAP && !o.actionPending) return false;
     return true;
   });
-  PG=1;rdKPI();rdAgeing();rdCities();rdCharts();rdTbl();
+  PG=1; rdKPI(); rdAgeing(); rdCities(); rdCharts(); rdTbl();
 }
 
-function rstF(){['fc','fot','fag','fac'].forEach(id=>document.getElementById(id).value='');document.getElementById('fdf').value='';document.getElementById('fdt').value='';SCITY=null;APF=false;GAP=false;document.getElementById('gapbtn').classList.remove('on');setQC('Overall');closeCDet();}
-function togAP(){APF=!APF;document.getElementById('aptog').classList.toggle('on',APF);apF();}
-function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);apF();}
+function rstF(){
+  ['f-city','f-type','f-age','f-act'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-from').value=''; document.getElementById('f-to').value='';
+  SCITY=null; APF=false; GAP=false;
+  document.getElementById('gapbtn').classList.remove('on');
+  setQC('Overall'); closeDet();
+}
 
-// ── KPIs ──
+function togAP(){ APF=!APF; document.getElementById('ap-tog').classList.toggle('on',APF); apF(); }
+function togGAP(){ GAP=!GAP; document.getElementById('gapbtn').classList.toggle('on',GAP); apF(); }
+
+// ── KPI ──────────────────────────────────────────────────
 function rdKPI(){
-  const a=agg(FLT);
-  $('k-ap', a.actionPending);
-  $('k-tot',a.total);$('k-tot-s',fmt(a.totalAmount)+' total');
-  $('k-pd', a.pending.count);$('k-pd-s',fmt(a.pending.amount)+' at risk');
-  $('k-rv', a.recoverable.count);$('k-rv-s',fmt(a.recoverable.amount)+' at risk (incl. high ageing)');
-  $('k-ha', a.highAgeing.count);$('k-ha-s',fmt(a.highAgeing.amount)+' exposure');
-  $('k-gr', a.green);
-  $('k-ls', fmtK(a.lossTotal));$('k-ls-s','In-house: '+a.inhouseLoss+' cases');
-  $('gapc', RAW.filter(o=>o.actionPending).length);
+  const a = agg(FLT);
+  $('k-ap',  a.actionPending);
+  $('k-tot', a.total);       $('k-tot-s', fmtN(a.totalAmount)+' total');
+  $('k-pd',  a.pending.count); $('k-pd-s', fmtN(a.pending.amount)+' at risk');
+  $('k-rv',  a.recoverable.count); $('k-rv-s', fmtN(a.recoverable.amount)+' (incl. high ageing)');
+  $('k-ha',  a.highAgeing.count); $('k-ha-s', fmtN(a.highAgeing.amount)+' exposure');
+  $('k-gr',  a.green);
+  $('k-ls',  fmtK(a.lossTotal)); $('k-ls-s', 'In-house: '+a.inhouseLoss+' cases');
+  $('gapc',  RAW.filter(o=>o.actionPending).length);
 }
 
-// ── AGEING STRIP ──
+// ── AGEING ───────────────────────────────────────────────
 function rdAgeing(){
-  const a=agg(FLT),t=a.total||1;
-  const pp=pct(a.pending.count,t),rp=pct(a.recoverable.count,t),hp=pct(a.highAgeing.count,t);
-  $('ag-p-pct',pp+'%');$('ag-p-c',a.pending.count);$('ag-p-a',fmt(a.pending.amount));
-  document.getElementById('ag-p-b').style.width=pp+'%';
-  $('ag-r-pct',rp+'%');$('ag-r-c',a.recoverable.count);$('ag-r-a',fmt(a.recoverable.amount));
-  document.getElementById('ag-r-b').style.width=rp+'%';
-  $('ag-r-ha','incl. '+a.highAgeing.count+' high ageing (>5d)');
-  $('ag-h-pct',hp+'%');$('ag-h-c',a.highAgeing.count);$('ag-h-a',fmt(a.highAgeing.amount));
-  document.getElementById('ag-h-b').style.width=hp+'%';
-}
-
-// ── ROLE CHECK ──
-function canEdit(city){
-  if(!USER) return false;
-  if(USER.isAdmin) return true;
-  return USER.city===city;
-}
-
-// ── CITY TILES ──
-function rdCities(){
-  const grid=document.getElementById('cgrid');
-  const cm=grpBy(FLT,'city');const cities=Object.keys(cm).sort();
-  grid.innerHTML='';
-  if(!cities.length){grid.innerHTML='<div class="emp"><div class="eic">No data</div></div>';return;}
-  const maxR=Math.max(...cities.map(c=>agg(cm[c]).recoverable.count));
-  cities.forEach(city=>{
-    const a=agg(cm[city]),rp=pct(a.recoverable.count,a.total);
-    const haC=cm[city].filter(o=>o.isHighAgeing).length;
-    const apC=cm[city].filter(o=>o.actionPending).length;
-    const isR=haC>0||apC>0,isA=!isR&&a.recoverable.count>0&&a.recoverable.count===maxR;
-    const editable=canEdit(city);
-    const d=document.createElement('div');
-    d.className='ctile'+(SCITY===city?' sel':'')+(isR?' frd':isA?' fam':'');
-    const apBtn=apC>0&&editable?`<button class="cbt cap" onclick="event.stopPropagation();openCityAP('${city}')">Action Pending (${apC})</button>`:'';
-    d.innerHTML=`<div class="ctop"><div class="cnam">&#128205; ${city}</div>${a.recoverable.count>0?`<div class="crec">${a.recoverable.count} REC</div>`:''}</div>
-      <div class="cst">
-        <div class="cs bl"><div class="csl">Total</div><div class="csv">${a.total}</div></div>
-        <div class="cs rd"><div class="csl">Recoverable</div><div class="csv">${a.recoverable.count}</div></div>
-        <div class="cs am"><div class="csl">High Ageing</div><div class="csv">${haC}</div></div>
-        <div class="cs"><div class="csl">Action Pending</div><div class="csv">${apC}</div></div>
-      </div>
-      <div class="cpb"><div class="cpbf" style="width:${rp}%"></div></div>
-      <div class="cpl"><span>${rp}% recoverable</span><span>${isR?haC+' high age':isA?'Most rec.':''}</span></div>
-      <div class="cbtns">
-        <button class="cbt cdl" onclick="event.stopPropagation();dlCityFor('${city}')">&#11015; Download</button>
-        ${apBtn}
-      </div>
-      ${!editable?'<div class="readonly-badge">&#128274; View Only</div>':''}`;
-    d.onclick=()=>openCDet(city);grid.appendChild(d);
+  const a=agg(FLT), t=a.total||1;
+  const pp=pct(a.pending.count,t), rp=pct(a.recoverable.count,t), hp=pct(a.highAgeing.count,t);
+  $('ag-p-p',pp+'%'); $('ag-p-c',a.pending.count);    $('ag-p-a',fmtN(a.pending.amount));
+  $('ag-r-p',rp+'%'); $('ag-r-c',a.recoverable.count); $('ag-r-a',fmtN(a.recoverable.amount));
+  $('ag-h-p',hp+'%'); $('ag-h-c',a.highAgeing.count);  $('ag-h-a',fmtN(a.highAgeing.amount));
+  $('ag-r-n','incl. '+a.highAgeing.count+' high ageing (>5d)');
+  ['ag-p-b','ag-r-b','ag-h-b'].forEach((id,i)=>{
+    const w=[pp,rp,hp][i];
+    const el=document.getElementById(id); if(el) el.style.width=w+'%';
   });
 }
 
-// ── CITY DETAIL ──
-function openCDet(city){
-  SCITY=city;APF=false;
-  document.getElementById('cdet').classList.add('vis');
-  $('cdtit','&#128205; '+city+(canEdit(city)?'':' (View Only)'));
-  document.querySelectorAll('.ctile').forEach(c=>{const n=c.querySelector('.cnam');c.classList.toggle('sel',n&&n.textContent.trim().endsWith(city));});
+// ── ROLE CHECK ───────────────────────────────────────────
+function canEdit(city){ return USER && (USER.isAdmin || USER.city===city); }
+
+// ── CITIES ───────────────────────────────────────────────
+function rdCities(){
+  const grid=document.getElementById('city-grid');
+  const cm=grpBy(FLT,'city'); const cities=Object.keys(cm).sort();
+  grid.innerHTML='';
+  if(!cities.length){ grid.innerHTML='<div class="emp"><div class="emp-icon">&#127961;</div>No city data.</div>'; return; }
+  const maxR=Math.max(...cities.map(c=>agg(cm[c]).recoverable.count));
+  cities.forEach(city=>{
+    const a=agg(cm[city]);
+    const haC=cm[city].filter(o=>o.isHighAgeing).length;
+    const apC=cm[city].filter(o=>o.actionPending).length;
+    const rp =pct(a.recoverable.count,a.total);
+    const isR=haC>0||apC>0, isA=!isR&&a.recoverable.count>0&&a.recoverable.count===maxR;
+    const editable=canEdit(city);
+    const el=document.createElement('div');
+    el.className='city-card'+(SCITY===city?' sel':'')+(isR?' flag-r':isA?' flag-a':'');
+    el.innerHTML=`
+      <div class="city-top">
+        <div class="city-name">${city}</div>
+        ${a.recoverable.count>0?`<div class="city-rec-badge">${a.recoverable.count} REC</div>`:''}
+      </div>
+      <div class="city-stats">
+        <div class="cstat bl"><div class="cstat-label">Total</div><div class="cstat-val">${a.total}</div></div>
+        <div class="cstat rd"><div class="cstat-label">Recoverable</div><div class="cstat-val">${a.recoverable.count}</div></div>
+        <div class="cstat am"><div class="cstat-label">High Ageing</div><div class="cstat-val">${haC}</div></div>
+        <div class="cstat"><div class="cstat-label">Action Pending</div><div class="cstat-val">${apC}</div></div>
+      </div>
+      <div class="city-prog">
+        <div class="city-prog-bar"><div class="city-prog-fill" style="width:${rp}%"></div></div>
+        <div class="city-prog-lbl"><span>${rp}% recoverable</span><span>${isR?haC+' high age':isA?'Most rec.':''}</span></div>
+      </div>
+      <div class="city-actions">
+        <button class="city-action-btn cab-dl" onclick="event.stopPropagation();dlCityFor('${city}')">&#11015; Download</button>
+        ${apC>0&&editable?`<button class="city-action-btn cab-ap" onclick="event.stopPropagation();openCityAP('${city}')">Action Pending (${apC})</button>`:''}
+      </div>
+      ${!editable?'<div class="city-ro-note">View Only</div>':''}`;
+    el.onclick=()=>openDet(city);
+    grid.appendChild(el);
+  });
+}
+
+// ── CITY DETAIL ───────────────────────────────────────────
+function openDet(city){
+  SCITY=city; APF=false;
+  document.getElementById('city-det').classList.add('vis');
+  $('cd-title', city + (canEdit(city)?'':' — View Only'));
+  document.querySelectorAll('.city-card').forEach(c=>{
+    const n=c.querySelector('.city-name'); c.classList.toggle('sel',n&&n.textContent.trim()===city);
+  });
   apF();
   const apC=FLT.filter(o=>o.actionPending).length;
-  $('apcnt',apC+' action pending');
+  $('ap-cnt', apC+' action pending');
   const a=agg(FLT);
-  document.getElementById('cdkpis').innerHTML=`
-    <div class="kc cr"><div class="ki">!</div><div class="kl">Recoverable</div><div class="kv">${a.recoverable.count}</div><div class="ks">${fmt(a.recoverable.amount)}</div></div>
-    <div class="kc cb"><div class="ki">*</div><div class="kl">Total</div><div class="kv">${a.total}</div><div class="ks">${fmt(a.totalAmount)}</div></div>
-    <div class="kc ca"><div class="ki">!</div><div class="kl">Action Pending</div><div class="kv">${a.actionPending}</div></div>
-    <div class="kc cr cl" onclick="openHA()"><div class="ki">!</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${a.highAgeing.count}</div><div class="cht">Click to view</div></div>
-  `;
-  const cg=document.getElementById('cdcharts');
-  cg.innerHTML=`<div class="chc"><div class="chh"><h3>Order Type</h3></div><canvas id="cd-ot"></canvas></div><div class="chc"><div class="chh"><h3>QC vs Non-QC</h3></div><canvas id="cd-qc"></canvas></div><div class="chc"><div class="chh"><h3>Action Split</h3></div><canvas id="cd-ac"></canvas></div>`;
+  document.getElementById('cd-kpis').innerHTML=`
+    <div class="kpi a-red"><div class="kpi-icon">&#9888;</div><div class="kpi-label">Recoverable</div><div class="kpi-value">${a.recoverable.count}</div><div class="kpi-sub">${fmtN(a.recoverable.amount)}</div></div>
+    <div class="kpi a-blue"><div class="kpi-icon">&#128230;</div><div class="kpi-label">Total</div><div class="kpi-value">${a.total}</div><div class="kpi-sub">${fmtN(a.totalAmount)}</div></div>
+    <div class="kpi a-amber"><div class="kpi-icon">&#9203;</div><div class="kpi-label">Action Pending</div><div class="kpi-value">${a.actionPending}</div><div class="kpi-sub">Need update</div></div>
+    <div class="kpi a-red clickable" onclick="openHA()"><div class="kpi-icon">&#128308;</div><div class="kpi-label">High Ageing &gt;5d</div><div class="kpi-value">${a.highAgeing.count}</div><div class="kpi-hint">Click to view</div></div>`;
+  const cg=document.getElementById('cd-charts');
+  cg.innerHTML=`<div class="chart-card"><div class="chart-head"><h3>Order Type</h3></div><canvas id="cd-ot"></canvas></div><div class="chart-card"><div class="chart-head"><h3>QC Split</h3></div><canvas id="cd-qc"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
   setTimeout(()=>{
-    drawDn('cd-ot',Object.keys(a.byOrderType).map(k=>k+' ('+a.byOrderType[k]+')'),Object.values(a.byOrderType),['#e56a00','#7c5cfc','#06aed4','#12b76a']);
-    drawDn('cd-qc',Object.keys(a.byShipmentType).map(k=>k+' ('+a.byShipmentType[k]+')'),Object.values(a.byShipmentType),['#3b6ff5','#7c5cfc']);
-    const top=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,6);drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
+    drawDn('cd-ot',Object.keys(a.byOrderType),Object.values(a.byOrderType),['#2563EB','#7C3AED','#0891B2','#059669']);
+    drawDn('cd-qc',Object.keys(a.byShipmentType),Object.values(a.byShipmentType),['#2563EB','#7C3AED']);
+    const top=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,6);
+    drawHB('cd-ac',top.map(c=>c[0].substring(0,20)),top.map(c=>c[1]));
   },80);
-  document.getElementById('cdet').scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('city-det').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function closeCDet(){SCITY=null;APF=false;document.getElementById('cdet').classList.remove('vis');document.querySelectorAll('.ctile').forEach(c=>c.classList.remove('sel'));document.getElementById('home-btn').classList.remove('vis');apF();}
-function openCityAP(city){openCDet(city);setTimeout(()=>{APF=true;document.getElementById('aptog').classList.add('on');apF();},300);}
+function closeDet(){
+  SCITY=null; APF=false;
+  document.getElementById('city-det').classList.remove('vis');
+  document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('home-btn').classList.remove('vis');
+  apF();
+}
 
-// ── MODALS ──
+function openCityAP(city){ openDet(city); setTimeout(()=>{ APF=true; document.getElementById('ap-tog').classList.add('on'); apF(); },250); }
+
+// ── MODALS ────────────────────────────────────────────────
 function openHA(){
   const body=document.getElementById('ha-body');
-  const hm={};FLT.forEach(o=>{if(!o.isHighAgeing)return;if(!hm[o.city])hm[o.city]=[];hm[o.city].push(o);});
+  const hm={};
+  FLT.forEach(o=>{ if(!o.isHighAgeing) return; if(!hm[o.city]) hm[o.city]=[]; hm[o.city].push(o); });
   const cities=Object.keys(hm).sort();
-  body.innerHTML=!cities.length?'<div class="emp"><div class="eic">No high ageing orders</div></div>':
-    cities.map(city=>{const ords=hm[city].sort((a,b)=>b.ageing-a.ageing);
-      return `<div class="mcb"><div class="mcn">${city}<span class="mcc">${ords.length} order(s)</span></div>
-        <div class="mol">${ords.map(o=>`<div class="mor" onclick="jumpTo('${o.shipmentId}')">
-          <div class="moid">${o.shipmentId}</div>
-          <div class="momt">${o.riderName||'-'} &middot; ${fmt(o.amount||0)}<div class="moct">${o.currentAction||'No action'}${o.currentUpdate?' &rarr; '+o.currentUpdate:''}</div></div>
-          <div class="moag">${o.ageing}d</div></div>`).join('')}</div></div>`;}).join('');
+  if(!cities.length){ body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No high ageing orders.</div>'; }
+  else{
+    body.innerHTML=cities.map(city=>{
+      const ords=hm[city].sort((a,b)=>b.ageing-a.ageing);
+      return `<div class="modal-city-block">
+        <div class="modal-city-name">${city}<span class="modal-city-ct">${ords.length} order${ords.length>1?'s':''}</span></div>
+        <div class="modal-order-list">${ords.map(o=>`
+          <div class="modal-order-row" onclick="jumpTo('${o.shipmentId}')">
+            <div class="mor-id">${o.shipmentId}</div>
+            <div class="mor-meta">${o.riderName||'—'} &middot; ${fmtN(o.amount||0)}<div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' &rarr; '+o.currentUpdate:''}</div></div>
+            <div class="mor-age">${o.ageing}d</div>
+          </div>`).join('')}
+        </div></div>`;
+    }).join('');
+  }
   document.getElementById('ha-modal').classList.remove('hide');
 }
-function closeHA(){document.getElementById('ha-modal').classList.add('hide');}
+function closeHA(){ document.getElementById('ha-modal').classList.add('hide'); }
 
 function openAPModal(){
   const body=document.getElementById('ap-body');
   const ap=FLT.filter(o=>o.actionPending).sort((a,b)=>b.ageing-a.ageing);
-  body.innerHTML=!ap.length?'<div class="emp"><div class="eic">No action pending</div></div>':`
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <thead><tr style="background:var(--sf2)">
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd);text-align:left">Shipment</th>
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd);text-align:left">City</th>
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd);text-align:left">Current Action</th>
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd);text-align:left;color:var(--red)">Required Update</th>
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd)">Ageing</th>
-        <th style="padding:10px 14px;border-bottom:2px solid var(--bd)">Bracket</th>
-      </tr></thead>
-      <tbody>${ap.map(o=>`<tr style="border-bottom:1px solid var(--bd);cursor:pointer" onclick="jumpTo('${o.shipmentId}')">
-        <td style="padding:10px 14px"><strong>${o.shipmentId}</strong></td>
-        <td style="padding:10px 14px">${o.city}</td>
-        <td style="padding:10px 14px">${o.currentAction||'&mdash;'}</td>
-        <td style="padding:10px 14px;color:var(--red);font-weight:700">${o.pendingReason||'&mdash;'}</td>
-        <td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amb)'}">${o.ageing}d</td>
-        <td style="padding:10px 14px;text-align:center"><span class="bdg ${o.isHighAgeing?'bha':'brv'}">${o.ageingBracket}</span></td>
-      </tr>`).join('')}</tbody>
-    </table>`;
+  if(!ap.length){ body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No action pending.</div>'; }
+  else{
+    body.innerHTML=`
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="background:var(--surf-2)">
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Shipment</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">City</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Current Action</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--red)">Required Update</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Age</th>
+        </tr></thead>
+        <tbody>${ap.map(o=>`<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="jumpTo('${o.shipmentId}')">
+          <td style="padding:10px 14px;font-weight:700">${o.shipmentId}</td>
+          <td style="padding:10px 14px;color:var(--t2)">${o.city}</td>
+          <td style="padding:10px 14px;color:var(--t2)">${o.currentAction||'—'}</td>
+          <td style="padding:10px 14px;font-weight:600;color:var(--red)">${o.pendingReason||'—'}</td>
+          <td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'}">${o.ageing}d</td>
+        </tr>`).join('')}</tbody>
+      </table>`;
+  }
   document.getElementById('ap-modal').classList.remove('hide');
 }
-function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
+function closeAP(){ document.getElementById('ap-modal').classList.add('hide'); }
 
 function jumpTo(sid){
-  closeHA();closeAP();
+  closeHA(); closeAP();
   const idx=FLT.findIndex(o=>o.shipmentId===sid);
-  if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}
-  document.querySelector('.two')?.scrollIntoView({behavior:'smooth',block:'start'});
-  setTimeout(()=>{const rows=document.querySelectorAll('#tbdy tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='3px solid var(--red)';rows[li].style.borderRadius='4px';setTimeout(()=>{rows[li].style.outline='';},2500);}},400);
+  if(idx>=0){ PG=Math.floor(idx/PSZ)+1; rdTbl(); }
+  document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('#tbl-body tr');
+    const li=idx%PSZ;
+    if(rows[li]){ rows[li].style.outline='2px solid var(--red)'; rows[li].style.borderRadius='4px'; setTimeout(()=>{rows[li].style.outline='';},2500); }
+  },400);
 }
 
-// ── CHARTS ──
+// ── CHARTS ───────────────────────────────────────────────
 function rdCharts(){
   const a=agg(FLT);
-  // Ageing brackets (names only, no counts)
   drawDn('ch-ag',['Pending','Recoverable','High Ageing'],
-    [a.pending.count,a.recoverable.count-a.highAgeing.count,a.highAgeing.count],
-    ['#3b6ff5','#f79009','#f04438']);
-  drawDn('ch-st',['Action Pending','Green/Closed','Other'],
+    [a.pending.count, a.recoverable.count-a.highAgeing.count, a.highAgeing.count],
+    ['#2563EB','#D97706','#DC2626']);
+  drawDn('ch-st',['Action Pending','Closed/Green','Other'],
     [a.actionPending,a.green,Math.max(0,a.total-a.actionPending-a.green)],
-    ['#f79009','#12b76a','#9099b8']);
-  drawDn('ch-ot',Object.keys(a.byOrderType).map(k=>k),Object.values(a.byOrderType),['#e56a00','#7c5cfc','#06aed4','#12b76a']);
-  drawDn('ch-qc',Object.keys(a.byShipmentType).map(k=>k),Object.values(a.byShipmentType),['#3b6ff5','#7c5cfc']);
+    ['#D97706','#059669','#9CA3AF']);
+  drawDn('ch-ot',Object.keys(a.byOrderType),Object.values(a.byOrderType),['#2563EB','#7C3AED','#0891B2','#059669']);
+  drawDn('ch-qc',Object.keys(a.byShipmentType),Object.values(a.byShipmentType),['#2563EB','#7C3AED']);
   const topA=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,8);
-  drawHB('ch-ac',topA.map(c=>c[0].substring(0,26)),topA.map(c=>c[1]));
-  // QC split by order type
-  const cm=grpBy(FLT,'orderType');
-  const otKeys=Object.keys(AM);
-  const qcData=otKeys.map(ot=>(cm[ot]||[]).filter(o=>!o.shipmentType.includes('Non')).length);
-  const nqcData=otKeys.map(ot=>(cm[ot]||[]).filter(o=>o.shipmentType.includes('Non')).length);
-  drawStackedBar('ch-qcot',otKeys,qcData,nqcData);
+  drawHB('ch-ac',topA.map(c=>c[0].substring(0,24)),topA.map(c=>c[1]));
+  const cm=grpBy(FLT,'orderType'), otK=Object.keys(AM);
+  const qcD=otK.map(ot=>(cm[ot]||[]).filter(o=>!o.shipmentType.includes('Non')).length);
+  const nqD=otK.map(ot=>(cm[ot]||[]).filter(o=>o.shipmentType.includes('Non')).length);
+  drawSB('ch-qcot',otK,qcD,nqD);
   drawTrend();
 }
 
-function dCH(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
-const SC={x:{ticks:{color:'#5a6380',font:{size:11}},grid:{color:'#e8ebf4'}},y:{ticks:{color:'#5a6380',font:{size:11}},grid:{color:'#e8ebf4'}}};
+function dC(id){ if(CHS[id]){ CHS[id].destroy(); delete CHS[id]; } }
+
+const SC = {
+  x: { ticks:{ color:'#6B7280',font:{size:10} }, grid:{ color:'#F3F4F6' } },
+  y: { ticks:{ color:'#6B7280',font:{size:10} }, grid:{ color:'#F3F4F6' } },
+};
 
 function drawDn(id,labels,data,colors){
-  dCH(id);const ctx=document.getElementById(id);if(!ctx)return;
+  dC(id); const ctx=document.getElementById(id); if(!ctx) return;
   const tot=data.reduce((s,v)=>s+v,0)||1;
-  CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},
-    options:{responsive:true,maintainAspectRatio:true,cutout:'58%',plugins:{legend:{position:'right',labels:{color:'#5a6380',font:{size:11},boxWidth:12,padding:10}},datalabels:{color:'#fff',font:{size:11,weight:'bold'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}},plugins:[ChartDataLabels]});
+  CHS[id]=new Chart(ctx,{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},
+    options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{
+      legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},
+      datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},
+      tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}},
+    plugins:[ChartDataLabels]
+  });
 }
 
 function drawHB(id,labels,data){
-  dCH(id);const ctx=document.getElementById(id);if(!ctx)return;
-  const colors=data.map((_,i)=>['#3b6ff5','#f04438','#f79009','#12b76a','#7c5cfc','#06aed4','#e56a00','#f04438'][i%8]);
-  CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:colors,borderRadius:5,borderSkipped:false}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#1a1f36',font:{size:11,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.3)},y:{...SC.y}}},plugins:[ChartDataLabels]});
+  dC(id); const ctx=document.getElementById(id); if(!ctx) return;
+  const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2','#2563EB','#DC2626'][i%8]);
+  CHS[id]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{
+      legend:{display:false},
+      datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},
+      scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}},
+    plugins:[ChartDataLabels]
+  });
 }
 
-function drawStackedBar(id,labels,qcData,nqcData){
-  dCH(id);const ctx=document.getElementById(id);if(!ctx)return;
-  CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[
-    {label:'QC',data:qcData,backgroundColor:'#3b6ff5',borderRadius:4},
-    {label:'Non-QC',data:nqcData,backgroundColor:'#7c5cfc',borderRadius:4},
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#5a6380',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}},plugins:[ChartDataLabels]});
+function drawSB(id,labels,qcD,nqD){
+  dC(id); const ctx=document.getElementById(id); if(!ctx) return;
+  CHS[id]=new Chart(ctx,{
+    type:'bar',
+    data:{labels,datasets:[
+      {label:'QC',    data:qcD,backgroundColor:'#2563EB',borderRadius:3},
+      {label:'Non-QC',data:nqD,backgroundColor:'#7C3AED',borderRadius:3},
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{
+      legend:{labels:{color:'#4B5563',font:{size:11}}},
+      datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},
+      scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}},
+    plugins:[ChartDataLabels]
+  });
 }
 
 function drawTrend(){
-  dCH('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx||!TRD.length)return;
-  CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:TRD.map(r=>r.date),datasets:[
-    {label:'Total',data:TRD.map(r=>r.total),borderColor:'#3b6ff5',backgroundColor:'rgba(59,111,245,.08)',tension:.35,fill:true,pointRadius:4,borderWidth:2.5},
-    {label:'Pending',data:TRD.map(r=>r.pending),borderColor:'#9099b8',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[4,2]},
-    {label:'Recoverable',data:TRD.map(r=>r.recoverable),borderColor:'#f79009',tension:.35,pointRadius:3,borderWidth:2},
-    {label:'High Ageing',data:TRD.map(r=>r.highAgeing),borderColor:'#f04438',tension:.35,pointRadius:3,borderWidth:2},
-    {label:'Action Pending',data:TRD.map(r=>r.actionPending),borderColor:'#7c5cfc',tension:.35,pointRadius:3,borderWidth:2,borderDash:[3,2]},
-  ]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#5a6380',font:{size:11},usePointStyle:true}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}},plugins:[ChartDataLabels]});
+  dC('ch-tr'); const ctx=document.getElementById('ch-tr'); if(!ctx||!TRD.length) return;
+  CHS['ch-tr']=new Chart(ctx,{
+    type:'line',
+    data:{labels:TRD.map(r=>r.date),datasets:[
+      {label:'Total',        data:TRD.map(r=>r.total),          borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},
+      {label:'Recoverable',  data:TRD.map(r=>r.recoverable),    borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},
+      {label:'High Ageing',  data:TRD.map(r=>r.highAgeing),     borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},
+      {label:'Action Pending',data:TRD.map(r=>r.actionPending), borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{
+      legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},
+      datalabels:{display:false}},
+      scales:{x:{...SC.x},y:{...SC.y}}},
+    plugins:[ChartDataLabels]
+  });
 }
 
-// ── TABLE ──
+// ── TABLE ─────────────────────────────────────────────────
 function rdTbl(){
-  const tbody=document.getElementById('tbdy'),emp=document.getElementById('emp');
-  const tot=FLT.length,pages=Math.max(1,Math.ceil(tot/PSZ));
+  const tbody=document.getElementById('tbl-body');
+  const emp  =document.getElementById('tbl-emp');
+  const tot  =FLT.length, pages=Math.max(1,Math.ceil(tot/PSZ));
   PG=Math.min(PG,pages);
-  $('twcnt',tot+' orders');$('pgi','Page '+PG+' of '+pages);
-  document.getElementById('bpv').disabled=PG<=1;document.getElementById('bnx').disabled=PG>=pages;
+  $('tbl-cnt',tot+' orders'); $('pg-info','Page '+PG+' of '+pages);
+  document.getElementById('btn-pv').disabled=PG<=1;
+  document.getElementById('btn-nx').disabled=PG>=pages;
+
   const sl=FLT.slice((PG-1)*PSZ,PG*PSZ);
-  if(!sl.length){tbody.innerHTML='';emp.style.display='block';return;}
+  if(!sl.length){ tbody.innerHTML=''; emp.style.display='block'; return; }
   emp.style.display='none';
 
   tbody.innerHTML=sl.map((o,i)=>{
     const gi=(PG-1)*PSZ+i;
     const editable=canEdit(o.city);
-    const rCls=o.isGreen?'rg':o.actionPending?'rr':o.deadlineBreach?'ra':'';
-    const stBdg=o.isGreen?'<span class="bdg bCL">&#9989; CLOSED</span>':'<span class="bdg bap">'+o.closureStatus+'</span>';
-    const agCls=o.isHighAgeing?'agha':o.isRecoverable?'agrv':'agok';
-    const agBdg=o.isHighAgeing?'bha':o.isRecoverable?'brv':'bpd';
-    const slaPill=!o.deadlineDate?'&mdash;':o.deadlineBreach?'<span class="sbr">Overdue</span>':o.actionPending?'<span class="swn">Pending</span>':'<span class="sok">On Track</span>';
-    const otBdg=o.orderType==='3PL'?'b3p':o.orderType==='PSP'?'bps':o.orderType==='Retail'?'brt':'bih';
-    const stBd=(o.shipmentType||'').includes('Non')?'bnq':'bqc';
-    const oa=(AM[o.orderType]||AM['In-house']||{actions:[],updates:{}});
-    // Get pending change if exists
-    const pc=PENDING_CHANGES[o.shipmentId]||{};
-    const selAct=pc.action||o.currentAction||'';
-    const selUpd=pc.update||o.currentUpdate||'';
-    const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
-    const curU=(selAct&&oa.updates[selAct])||[];
-    const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-    const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
-    const isPrepaid=selAct==='LOSS (Delivery Prepaid)'&&selUpd==='Loss';
-    const hasCOD=selAct==='Delivery COD';
+    const trCls=o.isGreen?'tr-green':o.actionPending?'tr-red':o.deadlineBreach?'tr-amber':'';
 
-    let updateCell='';
+    // Status badge
+    const stBdg=o.isGreen
+      ?`<span class="badge b-green">&#9989; Closed</span>`
+      :o.actionPending
+        ?`<span class="badge b-red b-flash">&#9888; Action Pending</span>`
+        :`<span class="badge b-slate">${o.closureStatus}</span>`;
+
+    // Ageing
+    const agCls=o.isHighAgeing?'ha':o.isRecoverable?'rv':'p';
+    const agBdg=o.isHighAgeing?'b-red':o.isRecoverable?'b-amber':'b-blue';
+
+    // Order type badge
+    const otBdg=o.orderType==='3PL'?'b-amber':o.orderType==='PSP'?'b-purple':o.orderType==='Retail'?'b-teal':'b-green';
+    const stypeBdg=(o.shipmentType||'').includes('Non')?'b-purple':'b-blue';
+
+    // SLA
+    const slaPill=!o.deadlineDate?'—':o.deadlineBreach?'<span class="sla-br">Overdue</span>':o.actionPending?'<span class="sla-wn">Pending</span>':'<span class="sla-ok">On Track</span>';
+
+    // Action/Update cells
+    let actCell, updCell;
     if(!editable){
-      // View only
-      updateCell=`<span style="font-size:12px;color:var(--tx2)">${o.currentUpdate||'&mdash;'}</span>`;
-    } else if(o.abscondedFollowup&&o.abscondedFollowup.length){
-      updateCell=`<div style="font-size:11px;color:var(--amb);font-weight:700;margin-bottom:4px">Follow-up:</div>
-        <select class="isel" id="upd-${gi}" onchange="onUpdChange(${gi},'${o.shipmentId}','${o.orderType}')">
-          <option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
-        </select>
-        ${isLoss?`<div class="loss-display">Loss: ${fmt(o.amount||0)}</div>`:''}`
-    } else if(isPrepaid){
-      // Delivery prepaid + Loss: show amount in red, no text box
-      updateCell=`<select class="isel" id="upd-${gi}" onchange="onUpdChange(${gi},'${o.shipmentId}','${o.orderType}')">
-        <option value="">Select Update</option>${uOpts}
-      </select>
-      ${selUpd==='Loss'?`<div class="loss-display">&#9888; Loss: ${fmt(o.amount||0)}</div>`:''}`;
+      actCell=`<span style="font-size:12px;color:var(--t2)">${o.currentAction||'—'}</span>`;
+      updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span>`;
     } else {
-      updateCell=`<select class="isel" id="upd-${gi}" onchange="onUpdChange(${gi},'${o.shipmentId}','${o.orderType}')">
-        <option value="">Select Update</option>${uOpts}
-      </select>
-      ${isLoss&&!isPrepaid?`<div class="lfld"><input class="linp" type="number" placeholder="Loss Amount" id="la-${gi}" value="${pc.lossAmt||o.amount||''}"/><input class="linp" type="text" placeholder="Order ID" id="lo-${gi}" value="${pc.lossOid||o.lossOrderId||''}"/></div>`:''}`;
+      const oa=(AM[o.orderType]||AM['In-house']||{actions:[],updates:{}});
+      const pc=CHANGES[o.shipmentId]||{};
+      const selAct=pc.action!==undefined?pc.action:o.currentAction||'';
+      const selUpd=pc.update!==undefined?pc.update:o.currentUpdate||'';
+      const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
+      const curU=(selAct&&oa.updates[selAct])||[];
+      const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
+      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
+      const isPrepaidLoss=selAct==='LOSS (Delivery Prepaid)'&&selUpd==='Loss';
+
+      actCell=`<select class="isel" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}')"><option value="">Select Action</option>${aOpts}</select>`;
+
+      if(o.abscondedFollowup&&o.abscondedFollowup.length){
+        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">Follow-up required</div>
+          <select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')">
+            <option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
+          </select>
+          ${isLoss?`<div class="loss-display">Loss: ${fmtN(o.amount||0)}</div>`:''}`;
+      } else if(isPrepaidLoss){
+        updCell=`<select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')"><option value="">Select Update</option>${uOpts}</select>
+          ${selUpd==='Loss'?`<div class="loss-display">Loss: ${fmtN(o.amount||0)}</div>`:''}`;
+      } else {
+        updCell=`<select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')"><option value="">Select Update</option>${uOpts}</select>
+          ${isLoss&&!isPrepaidLoss?`<div class="loss-field"><input class="loss-inp" type="number" placeholder="Amount" id="la-${gi}" value="${pc.lossAmt||o.amount||''}"/><input class="loss-inp" type="text" placeholder="Order ID" id="lo-${gi}" value="${pc.lossOid||o.lossOrderId||''}"/></div>`:''}`;
+      }
     }
 
-    return `<tr class="${rCls}" id="row-${o.shipmentId}">
-      <td><strong>${o.shipmentId}</strong></td>
-      <td style="font-size:11px;color:var(--tx2)">${o.orderId}</td>
-      <td>${o.city}</td>
-      <td><span class="bdg ${otBdg}">${o.orderType}</span></td>
-      <td><span class="bdg ${stBd}">${o.shipmentType}</span></td>
-      <td>${o.riderName||'&mdash;'}<br><span style="font-size:10px;color:var(--tx3)">${o.riderType||''}</span></td>
-      <td><strong>${fmt(o.amount||0)}</strong></td>
-      <td class="${agCls}">${o.ageing}d</td>
-      <td><span class="bdg ${agBdg}">${o.ageingBracket}</span></td>
-      <td style="font-size:11px">${o.deadlineDate||'&mdash;'}</td>
+    return `<tr class="${trCls}" id="row-${o.shipmentId}">
+      <td class="td-main">${o.shipmentId}</td>
+      <td class="td-sub">${o.orderId}</td>
+      <td style="font-weight:600">${o.city}</td>
+      <td><span class="badge ${otBdg}">${o.orderType}</span></td>
+      <td><span class="badge ${stypeBdg}">${o.shipmentType}</span></td>
+      <td style="font-size:12px">
+        <div style="font-weight:600">${o.riderName||'—'}</div>
+        <div style="color:var(--t3);font-size:11px">${o.riderType||''}</div>
+      </td>
+      <td style="font-weight:700">${fmtN(o.amount||0)}</td>
+      <td><span class="age-val ${agCls}">${o.ageing}d</span></td>
+      <td><span class="badge ${agBdg}">${o.ageingBracket}</span></td>
+      <td style="font-size:11px;color:var(--t2)">${o.deadlineDate||'—'}</td>
       <td>${slaPill}</td>
       <td>${stBdg}</td>
-      <td>${editable?`<select class="isel" id="act-${gi}" onchange="onActChange(${gi},'${o.shipmentId}','${o.orderType}')"><option value="">Select Action</option>${aOpts}</select>`:`<span style="font-size:12px;color:var(--tx2)">${o.currentAction||'&mdash;'}</span>`}</td>
-      <td>${updateCell}</td>
+      <td>${actCell}</td>
+      <td>${updCell}</td>
     </tr>`;
   }).join('');
-  updateSaveBar();
+  updSaveBar();
 }
 
-function onActChange(idx,sid,ot){
-  const as=document.getElementById('act-'+idx),us=document.getElementById('upd-'+idx);
-  if(!as)return;
+function onAct(idx,sid,ot){
+  const as=document.getElementById('act-'+idx);
+  const us=document.getElementById('upd-'+idx);
+  if(!as) return;
   const oa=(AM[ot]||AM['In-house']||{updates:{}});
   const upds=(as.value&&oa.updates[as.value])||[];
   if(us) us.innerHTML='<option value="">Select Update</option>'+upds.map(u=>`<option value="${u}">${u}</option>`).join('');
-  // Track change
-  if(!PENDING_CHANGES[sid]) PENDING_CHANGES[sid]={};
-  PENDING_CHANGES[sid].action=as.value;
-  PENDING_CHANGES[sid].update='';
-  updateSaveBar();
+  if(!CHANGES[sid]) CHANGES[sid]={};
+  CHANGES[sid].action=as.value;
+  CHANGES[sid].update='';
+  updSaveBar();
 }
 
-function onUpdChange(idx,sid,ot){
+function onUpd(idx,sid){
   const us=document.getElementById('upd-'+idx);
-  if(!us)return;
-  if(!PENDING_CHANGES[sid]) PENDING_CHANGES[sid]={};
-  PENDING_CHANGES[sid].update=us.value;
-  updateSaveBar();
+  if(!us) return;
+  if(!CHANGES[sid]) CHANGES[sid]={};
+  CHANGES[sid].update=us.value;
+  updSaveBar();
 }
 
-function updateSaveBar(){
-  const count=Object.keys(PENDING_CHANGES).filter(k=>PENDING_CHANGES[k].action).length;
+function updSaveBar(){
+  const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;
   const bar=document.getElementById('save-bar');
-  bar.classList.toggle('hide',count===0);
-  $('save-count',count+' change'+(count===1?'':'s')+' pending');
-  $('save-status','');
+  bar.classList.toggle('hide',n===0);
+  $('save-cnt',n+' change'+(n===1?'':'s')+' pending');
+  $('save-st','');
 }
 
 async function saveAll(){
-  const btn=document.getElementById('save-all-btn');
-  const sids=Object.keys(PENDING_CHANGES).filter(k=>PENDING_CHANGES[k].action);
+  const btn=document.getElementById('save-btn');
+  const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
   if(!sids.length) return;
-
   btn.disabled=true;
-  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Saving...';
-  btn.style.animation='spin .8s linear infinite';
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Saving...';
 
   const updates=sids.map(sid=>{
-    const ch=PENDING_CHANGES[sid];
+    const ch=CHANGES[sid];
     const gi=FLT.findIndex(o=>o.shipmentId===sid);
     const lossAmt=gi>=0?document.getElementById('la-'+((PG-1)*PSZ+gi))?.value||0:0;
     const lossOid=gi>=0?document.getElementById('lo-'+((PG-1)*PSZ+gi))?.value||'':'';
@@ -930,81 +1530,83 @@ async function saveAll(){
 
   try{
     const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchUpdate',updates})}).then(r=>r.json());
-    btn.style.animation='';
-    const ok=res.results?res.results.filter(r=>r.success).length:0;
-    const fail=res.results?res.results.filter(r=>!r.success).length:0;
-    // Show completed animation
+    const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
     btn.innerHTML='&#10003; Completed!';
     btn.style.background='var(--green)';
-    $('save-status',ok+' saved'+(fail?' · '+fail+' failed':''));
-    toast(ok+' orders updated','grn');
-    PENDING_CHANGES={};
+    $('save-st',ok+' saved');
+    toast(ok+' orders updated','green');
+    CHANGES={};
     setTimeout(()=>{
       btn.disabled=false;
-      btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';
+      btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';
       btn.style.background='';
       loadData(true);
     },2000);
   }catch(e){
-    btn.style.animation='';
     btn.disabled=false;
     btn.innerHTML='Save All Changes';
     toast('Save failed: '+e.message,'red');
   }
 }
 
-function chPg(d){PG+=d;rdTbl();document.querySelector('.two')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function chPg(d){ PG+=d; rdTbl(); document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'}); }
 
-// ── DOWNLOAD ──
-function dlCity(){if(SCITY)dlCityFor(SCITY);}
+// ── DOWNLOAD ──────────────────────────────────────────────
+function dlCity(){ if(SCITY) dlCityFor(SCITY); }
 function dlCityFor(city){
-  showOv();msg('Preparing Excel for '+city+'...');
-  fetch(API+'?action=downloadCity&city='+encodeURIComponent(city)).then(r=>r.json()).then(p=>{
-    hideOv();if(!p.success){toast(p.error,'red');return;}
-    const ws=XLSX.utils.json_to_sheet(p.rows),wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,city.substring(0,31));
-    if(p.actionRef){XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.actionRef),'Action-Update Reference');}
-    const noteWs=XLSX.utils.json_to_sheet([{'NOTE':'This file is for REFERENCE only.'},{'NOTE':'All updates must be made in the RTO Dashboard.'},{'NOTE':'Upload is not supported.'}]);
-    XLSX.utils.book_append_sheet(wb,noteWs,'READ ME');
-    XLSX.writeFile(wb,'RTO_'+city+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  }).catch(e=>{hideOv();toast(e.message,'red');});
+  showOv(); omsg('Preparing Excel for '+city+'...');
+  fetch(API+'?action=downloadCity&city='+encodeURIComponent(city))
+    .then(r=>r.json())
+    .then(p=>{
+      hideOv();
+      if(!p.success){ toast(p.error,'red'); return; }
+      const ws=XLSX.utils.json_to_sheet(p.rows);
+      const wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,city.substring(0,31));
+      if(p.actionRef){ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.actionRef),'Action-Update Reference'); }
+      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{'NOTE':'Reference only. All updates via dashboard.'}]),'READ ME');
+      XLSX.writeFile(wb,'RTO_'+city+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    })
+    .catch(e=>{ hideOv(); toast(e.message,'red'); });
 }
 
-// ── AGGREGATE ──
+// ── AGGREGATE ─────────────────────────────────────────────
 function agg(orders){
   const r={total:0,totalAmount:0,pending:{count:0,amount:0},recoverable:{count:0,amount:0},highAgeing:{count:0,amount:0},actionPending:0,green:0,srnPending:0,lossTotal:0,inhouseLoss:0,byOrderType:{'3PL':0,'PSP':0,'Retail':0,'In-house':0},byShipmentType:{'QC':0,'Non-QC':0},byAction:{}};
   orders.forEach(o=>{
-    r.total++;r.totalAmount+=o.amount||0;
-    if(o.isPending){r.pending.count++;r.pending.amount+=o.amount||0;}
-    if(o.isRecoverable){r.recoverable.count++;r.recoverable.amount+=o.amount||0;}
-    if(o.isHighAgeing){r.highAgeing.count++;r.highAgeing.amount+=o.amount||0;}
-    if(o.isGreen)r.green++;
-    if(o.actionPending)r.actionPending++;
-    if(!o.srnCreated)r.srnPending++;
-    if(o.lossType){r.lossTotal+=o.amount||0;if(o.lossType==='In-house Rider Loss')r.inhouseLoss++;}
-    const ot=o.orderType||'In-house';if(r.byOrderType[ot]!==undefined)r.byOrderType[ot]++;
-    const st=(o.shipmentType||'').includes('Non')?'Non-QC':'QC';r.byShipmentType[st]++;
-    const a=o.currentAction||'No Action';r.byAction[a]=(r.byAction[a]||0)+1;
+    r.total++; r.totalAmount+=o.amount||0;
+    if(o.isPending){    r.pending.count++;    r.pending.amount    +=o.amount||0; }
+    if(o.isRecoverable){r.recoverable.count++; r.recoverable.amount+=o.amount||0; }
+    if(o.isHighAgeing){ r.highAgeing.count++;  r.highAgeing.amount +=o.amount||0; }
+    if(o.isGreen)         r.green++;
+    if(o.actionPending)   r.actionPending++;
+    if(!o.srnCreated)     r.srnPending++;
+    if(o.lossType){ r.lossTotal+=o.amount||0; if(o.lossType==='In-house Rider Loss') r.inhouseLoss++; }
+    const ot=o.orderType||'In-house'; if(r.byOrderType[ot]!==undefined) r.byOrderType[ot]++;
+    const st=(o.shipmentType||'').includes('Non')?'Non-QC':'QC'; r.byShipmentType[st]++;
+    const a=o.currentAction||'No Action'; r.byAction[a]=(r.byAction[a]||0)+1;
   });
   return r;
 }
 
-function grpBy(arr,k){return arr.reduce((m,i)=>{const v=i[k]||'Unknown';if(!m[v])m[v]=[];m[v].push(i);return m;},{});}
+function grpBy(arr,k){ return arr.reduce((m,i)=>{ const v=i[k]||'?'; if(!m[v]) m[v]=[]; m[v].push(i); return m; },{}); }
 
+// ── POPULATE FILTERS ──────────────────────────────────────
 function popFilters(){
-  const cs=document.getElementById('fc');
-  [...new Set(RAW.map(o=>o.city))].sort().forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;cs.appendChild(op);});
-  const as=document.getElementById('fac');
-  const al=new Set();Object.values(AM).forEach(m=>m.actions.forEach(a=>al.add(a)));
-  [...al].sort().forEach(a=>{const op=document.createElement('option');op.value=a;op.textContent=a;as.appendChild(op);});
+  const cs=document.getElementById('f-city');
+  [...new Set(RAW.map(o=>o.city))].sort().forEach(c=>{ const op=document.createElement('option'); op.value=c; op.textContent=c; cs.appendChild(op); });
+  const as=document.getElementById('f-act');
+  const al=new Set(); Object.values(AM).forEach(m=>m.actions.forEach(a=>al.add(a)));
+  [...al].sort().forEach(a=>{ const op=document.createElement('option'); op.value=a; op.textContent=a; as.appendChild(op); });
 }
 
-function toast(msg,type='grn'){
+// ── TOAST ─────────────────────────────────────────────────
+function toast(msg,type='green'){
   const t=document.createElement('div');
-  const bg=type==='grn'?'var(--green)':type==='amb'?'var(--amb)':'var(--red)';
-  t.className='toast';t.style.background=bg;t.textContent=msg;
+  const bg=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)';
+  t.className='toast'; t.style.background=bg; t.textContent=msg;
   document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},3000);
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),350); },3000);
 }
 </script>
 </body>
