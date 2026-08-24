@@ -1023,6 +1023,7 @@ function doLogin() {
 }
 
 function logout() {
+  if(!confirm('Are you sure you want to sign out?')) return;
   USER=null; CHANGES={};
   document.getElementById('dash').style.display='none';
   document.getElementById('login-screen').classList.remove('hide');
