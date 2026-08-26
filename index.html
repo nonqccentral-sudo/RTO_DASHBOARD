@@ -1542,7 +1542,9 @@ async function saveAll(){
   });
 
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchUpdate',updates})}).then(r=>r.json());
+    // Use GET with encoded payload to avoid CORS issues with Apps Script
+    const encoded = encodeURIComponent(JSON.stringify(updates));
+    const res=await fetch(API+'?action=batchSave&updates='+encoded).then(r=>r.json());
     const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
     btn.innerHTML='&#10003; Completed!';
     btn.style.background='var(--green)';
