@@ -924,6 +924,10 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
       <div class="table-wrap">
         <div class="table-head">
           <h3>Active Orders</h3>
+          <input type="text" id="tbl-search" placeholder="Search Shipment ID / Order ID / Rider..." 
+            oninput="apF()"
+            style="padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:var(--surf-2);font-size:12px;color:var(--t1);width:270px;outline:none;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"/>
           <div class="table-head-right">
             <button class="ap-table-btn" id="gapbtn" onclick="togGAP()">
               Action Pending <span class="ap-num" id="gapc">0</span>
@@ -1101,6 +1105,7 @@ function apF(){
   const df  =document.getElementById('f-from').value;
   const dt  =document.getElementById('f-to').value;
 
+  const srch = (document.getElementById('tbl-search')?.value||'').trim().toLowerCase();
   FLT = RAW.filter(o=>{
     if(QF!=='Overall'){ const m=QF==='QC'?!o.shipmentType.includes('Non'):o.shipmentType.includes('Non'); if(!m) return false; }
     if(SCITY && o.city!==SCITY) return false;
@@ -1114,6 +1119,10 @@ function apF(){
     }
     if(APF && !o.actionPending) return false;
     if(GAP && !o.actionPending) return false;
+    if(srch){
+      const hay=(o.shipmentId+' '+o.orderId+' '+(o.riderName||'')+' '+(o.city||'')).toLowerCase();
+      if(!hay.includes(srch)) return false;
+    }
     return true;
   });
   PG=1; rdKPI(); rdAgeing(); rdCities(); rdCharts(); rdTbl();
@@ -1122,6 +1131,7 @@ function apF(){
 function rstF(){
   ['f-city','f-type','f-age','f-act'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-from').value=''; document.getElementById('f-to').value='';
+  const ts=document.getElementById('tbl-search'); if(ts) ts.value='';
   SCITY=null; APF=false; GAP=false;
   document.getElementById('gapbtn').classList.remove('on');
   setQC('Overall'); closeDet();
