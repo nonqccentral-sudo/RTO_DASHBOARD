@@ -745,7 +745,7 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
         <button data-v="QC" onclick="setQC('QC')">QC</button>
         <button data-v="Non-QC" onclick="setQC('Non-QC')">Non-QC</button>
       </div>
-      <button class="hdr-btn" onclick="scrollToTop()">&#8962; Home</button>
+      <button class="hdr-btn" onclick="scrollToTop()" id="hdr-home-btn">&#8962; Home</button>
       <button class="hdr-btn danger" onclick="logout()">Sign Out</button>
     </div>
   </div>
@@ -875,7 +875,7 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
     </div>
 
     <!-- CITY -->
-    <div class="sec">
+    <div class="sec" id="city-section">
       <div class="sec-head">
         <span class="sec-title">City-wise Performance</span><div class="sec-line"></div>
         <span class="sec-note">Click to drill down</span>
@@ -886,7 +886,7 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
     <!-- CITY DETAIL -->
     <div id="city-det">
       <div class="cd-header">
-        <button class="btn-back" onclick="closeDet()">&#8592; All Cities</button>
+
         <div class="cd-title" id="cd-title"></div>
         <div class="cd-right">
           <button class="fbar-btn btn-refresh" onclick="dlCity()" style="font-size:12px">&#11015; Download</button>
@@ -1084,7 +1084,10 @@ function showCB(age,stale=false){
 }
 
 // ── SCROLL / HOME ─────────────────────────────────────────
-function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }
+function scrollToTop(){
+  if(SCITY){ closeDet(); return; }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 window.addEventListener('scroll',()=>{
   const det=document.getElementById('city-det');
   document.getElementById('home-btn').classList.toggle('vis', det.classList.contains('vis') && window.scrollY>180);
@@ -1150,7 +1153,7 @@ function rdKPI(){
   $('k-ha',  a.highAgeing.count); $('k-ha-s', fmtN(a.highAgeing.amount)+' exposure');
   $('k-gr',  a.green);
   $('k-ls',  fmtK(a.lossTotal)); $('k-ls-s', 'In-house: '+a.inhouseLoss+' cases');
-  $('gapc',  RAW.filter(o=>o.actionPending).length);
+  $('gapc', FLT.filter(o=>o.actionPending).length);
 }
 
 // ── AGEING ───────────────────────────────────────────────
@@ -1245,6 +1248,8 @@ function closeDet(){
   document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('sel'));
   document.getElementById('home-btn').classList.remove('vis');
   apF();
+  // scroll to city grid
+  setTimeout(()=>document.getElementById('city-section').scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
 function openCityAP(city){ openDet(city); setTimeout(()=>{ APF=true; document.getElementById('ap-tog').classList.add('on'); apF(); },250); }
@@ -1452,8 +1457,8 @@ function rdTbl(){
       const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
-      const isPrepaidLoss=selAct==='LOSS (Delivery Prepaid)'&&selUpd==='Loss';
+      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order lost';
+      const isPrepaidLoss=(selAct==='Delivery prepaid'&&selUpd==='Loss')||selAct==='Lost';
 
       actCell=`<select class="isel" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}')"><option value="">Select Action</option>${aOpts}</select>`;
 
@@ -1462,13 +1467,10 @@ function rdTbl(){
           <select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')">
             <option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
           </select>
-          ${isLoss?`<div class="loss-display">Loss: ${fmtN(o.amount||0)}</div>`:''}`;
-      } else if(isPrepaidLoss){
-        updCell=`<select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')"><option value="">Select Update</option>${uOpts}</select>
-          ${selUpd==='Loss'?`<div class="loss-display">Loss: ${fmtN(o.amount||0)}</div>`:''}`;
+          ${isLoss?`<div class="loss-display" style="color:var(--red);font-weight:700;font-size:12px;margin-top:4px">Loss amount: ${fmtN(o.amount||0)}</div>`:''}`;
       } else {
         updCell=`<select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')"><option value="">Select Update</option>${uOpts}</select>
-          ${isLoss&&!isPrepaidLoss?`<div class="loss-field"><input class="loss-inp" type="number" placeholder="Amount" id="la-${gi}" value="${pc.lossAmt||o.amount||''}"/><input class="loss-inp" type="text" placeholder="Order ID" id="lo-${gi}" value="${pc.lossOid||o.lossOrderId||''}"/></div>`:''}`;
+          ${(isLoss||isPrepaidLoss||selAct==='Lost')?`<div class="loss-display" style="color:var(--red);font-weight:700;font-size:12px;margin-top:4px">Loss amount: ${fmtN(o.amount||0)}</div>`:''}`;
       }
     }
 
