@@ -68,27 +68,134 @@ body {
 }
 
 /* ── LOGIN ────────────────────────────────────────────── */
+/* Background */
+.login-bg {
+  position: absolute; inset: 0; overflow: hidden;
+}
+.login-bg-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Floating order cards */
+.float-card {
+  position: absolute;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(8px);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 10px;
+  animation: floatY 6s ease-in-out infinite;
+  pointer-events: none;
+}
+.fc1 { top:12%;  left:4%;  animation-delay:0s;    width:200px; }
+.fc2 { top:25%;  right:5%; animation-delay:1.2s;  width:210px; }
+.fc3 { bottom:30%; left:3%; animation-delay:2.4s; width:195px; }
+.fc4 { bottom:18%; right:4%;animation-delay:.8s;  width:220px; }
+.fc5 { top:55%;  left:6%;  animation-delay:1.8s;  width:200px; }
+@keyframes floatY {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.fc-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.fc-dot.red   { background:#F87171; }
+.fc-dot.green { background:#34D399; }
+.fc-dot.amber { background:#FBBF24; }
+.fc-dot.blue  { background:#60A5FA; }
+.fc-lines { flex:1; }
+.fcl { height:3px; border-radius:2px; background:rgba(255,255,255,.25); margin-bottom:5px; }
+.fcl:last-child { margin-bottom:0; }
+.w60{width:60%}.w40{width:40%}.w70{width:70%}.w50{width:50%}
+.w55{width:55%}.w35{width:35%}.w65{width:65%}.w45{width:45%}.w30{width:30%}
+.fc-badge {
+  font-size:10px; font-weight:700; padding:2px 8px;
+  border-radius:20px; white-space:nowrap;
+  background:rgba(239,68,68,.25); color:#FCA5A5;
+  border: 1px solid rgba(239,68,68,.3);
+}
+.fc-badge.green  { background:rgba(52,211,153,.2);  color:#6EE7B7; border-color:rgba(52,211,153,.3); }
+.fc-badge.amber  { background:rgba(251,191,36,.2);  color:#FDE68A; border-color:rgba(251,191,36,.3); }
+.fc-badge.blue   { background:rgba(96,165,250,.2);  color:#BAD0FF; border-color:rgba(96,165,250,.3); }
+
+/* Floating stats */
+.float-stat {
+  position: absolute;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(8px);
+  border-radius: 12px; padding: 14px 20px;
+  text-align: center; pointer-events: none;
+  animation: floatY 7s ease-in-out infinite;
+}
+.fs1 { top:8%;   right:18%; animation-delay:.5s; }
+.fs2 { bottom:22%; left:18%; animation-delay:2s; }
+.fs3 { top:45%;  right:16%; animation-delay:1.3s; }
+.fst-num { font-size:22px; font-weight:800; color:#fff; line-height:1; }
+.fst-lbl { font-size:10px; color:rgba(255,255,255,.6); margin-top:3px; font-weight:600; letter-spacing:.5px; }
+
+/* 1mg branding */
+.login-1mg {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 22px;
+}
+.logo-1mg {
+  font-size: 20px; font-weight: 900; line-height: 1;
+  letter-spacing: -1px;
+}
+.logo-1mg .l1  { color: var(--blue); }
+.logo-1mg .lmg { color: #E11D48; }
+.logo-div { width:1px; height:22px; background:var(--border); }
+.logo-ops { font-size:12px; font-weight:600; color:var(--t3); letter-spacing:.5px; text-transform:uppercase; }
+
+/* Title block */
+.login-icon-wrap {
+  width:44px; height:44px; border-radius:12px;
+  background:var(--blue-l); border:1.5px solid #BFDBFE;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.login-title-block { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.login-title-main  { font-size:18px; font-weight:800; color:var(--t1); line-height:1.2; }
+.login-title-sub   { font-size:12px; color:var(--t3); margin-top:3px; }
+
+.login-divider { height:1px; background:var(--border); margin-bottom:20px; }
+
+/* City strip */
+.city-strip {
+  display:flex; gap:6px; flex-wrap:wrap;
+  margin-top:20px; padding-top:16px;
+  border-top:1px solid var(--border);
+  justify-content:center;
+}
+.city-strip span {
+  font-size:10px; font-weight:700; letter-spacing:.5px;
+  color:var(--t3); background:var(--surf-2);
+  border:1px solid var(--border); border-radius:5px;
+  padding:3px 8px;
+}
+/* End new login styles */
 #login-screen {
   position: fixed; inset: 0; z-index: 1000;
-  background: linear-gradient(140deg, #1E3A5F 0%, #1D4ED8 50%, #2563EB 100%);
+  background: linear-gradient(140deg, #0F172A 0%, #1E3A5F 40%, #1D4ED8 100%);
   display: flex; align-items: center; justify-content: center;
 }
 #login-screen.hide { display: none; }
 .login-card {
   background: var(--surface);
   border-radius: var(--r-lg);
-  padding: 40px 44px;
+  padding: 36px 40px;
   width: 100%; max-width: 400px;
-  box-shadow: var(--sh-lg);
+  box-shadow: 0 24px 64px rgba(0,0,0,.4);
+  position: relative; z-index: 10;
 }
-.login-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .login-logo {
   width: 42px; height: 42px; border-radius: 10px;
   background: var(--blue); display: flex; align-items: center;
   justify-content: center; font-size: 20px;
 }
-.login-name { font-size: 18px; font-weight: 700; color: var(--t1); }
-.login-sub { font-size: 13px; color: var(--t2); margin-bottom: 28px; margin-top: 4px; }
 .field-label { font-size: 12px; font-weight: 600; color: var(--t2); margin-bottom: 5px; letter-spacing: .3px; }
 .field-input {
   width: 100%; padding: 10px 13px; border-radius: var(--r-sm);
@@ -550,6 +657,12 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
 }
 .isel:focus { outline: none; border-color: var(--blue); }
 .isel:disabled { opacity: .5; cursor: default; }
+.isel.changed { border-color: var(--amber) !important; background: #FFFBEB; }
+.row-spinner {
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11px; color:var(--amber); font-weight:600; margin-top:4px;
+}
+.row-spinner svg { animation:spin .7s linear infinite; }
 .loss-field { display: flex; gap: 4px; margin-top: 4px; }
 .loss-inp {
   padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);
@@ -687,19 +800,78 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
 
 <!-- LOGIN -->
 <div id="login-screen">
-  <div class="login-card">
-    <div class="login-brand">
-      <div class="login-logo">&#128667;</div>
-      <div class="login-name">RTO Dashboard</div>
+
+  <!-- Animated background particles -->
+  <div class="login-bg">
+    <div class="login-bg-grid"></div>
+    <!-- Floating order cards -->
+    <div class="float-card fc1">
+      <div class="fc-dot red"></div>
+      <div class="fc-lines"><div class="fcl w60"></div><div class="fcl w40"></div></div>
+      <div class="fc-badge">High Ageing</div>
     </div>
-    <div class="login-sub">Sign in with your city credentials</div>
+    <div class="float-card fc2">
+      <div class="fc-dot green"></div>
+      <div class="fc-lines"><div class="fcl w70"></div><div class="fcl w50"></div></div>
+      <div class="fc-badge green">CN received</div>
+    </div>
+    <div class="float-card fc3">
+      <div class="fc-dot amber"></div>
+      <div class="fc-lines"><div class="fcl w55"></div><div class="fcl w35"></div></div>
+      <div class="fc-badge amber">Recoverable</div>
+    </div>
+    <div class="float-card fc4">
+      <div class="fc-dot blue"></div>
+      <div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div>
+      <div class="fc-badge blue">Pending with rider</div>
+    </div>
+    <div class="float-card fc5">
+      <div class="fc-dot green"></div>
+      <div class="fc-lines"><div class="fcl w50"></div><div class="fcl w30"></div></div>
+      <div class="fc-badge green">COD collected</div>
+    </div>
+    <!-- Stats floating -->
+    <div class="float-stat fs1"><div class="fst-num">247</div><div class="fst-lbl">Active RTOs</div></div>
+    <div class="float-stat fs2"><div class="fst-num">Rs.1.2L</div><div class="fst-lbl">Recoverable</div></div>
+    <div class="float-stat fs3"><div class="fst-num">18</div><div class="fst-lbl">Action Pending</div></div>
+  </div>
+
+  <!-- Login card -->
+  <div class="login-card">
+    <!-- 1mg branding -->
+    <div class="login-1mg">
+      <div class="logo-1mg">
+        <span class="l1">1</span><span class="lmg">mg</span>
+      </div>
+      <div class="logo-div"></div>
+      <div class="logo-ops">Operations</div>
+    </div>
+
+    <div class="login-title-block">
+      <div class="login-icon-wrap">
+        <span style="font-size:22px">&#128667;</span>
+      </div>
+      <div>
+        <div class="login-title-main">RTO Dashboard</div>
+        <div class="login-title-sub">Return to Origin Control Tower</div>
+      </div>
+    </div>
+
+    <div class="login-divider"></div>
+
     <div class="field-label">Email address</div>
-    <input class="field-input" type="email" id="l-email" placeholder="you@example.com" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <input class="field-input" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/>
     <div class="field-label">Password</div>
-    <input class="field-input" type="password" id="l-pwd" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button class="login-submit" id="l-btn" onclick="doLogin()">Sign In</button>
+    <input class="field-input" type="password" id="l-pwd" placeholder="Your city password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-submit" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
     <div class="login-err" id="l-err"></div>
     <div class="login-hint">Forgot password? Contact your admin.</div>
+
+    <!-- Cities strip -->
+    <div class="city-strip">
+      <span>DEL</span><span>MUM</span><span>BLR</span><span>HYD</span>
+      <span>CHD</span><span>JAI</span><span>PUN</span><span>KOL</span>
+    </div>
   </div>
 </div>
 
@@ -759,7 +931,7 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
   <!-- FILTER BAR -->
   <div class="filter-bar">
     <div class="fg"><label>City</label><select id="f-city" onchange="apF()"><option value="">All Cities</option></select></div>
-    <div class="fg"><label>Type</label>
+    <div class="fg"><label>Order Type</label>
       <select id="f-type" onchange="apF()"><option value="">All</option><option>3PL</option><option>PSP</option><option>Retail</option><option>In-house</option></select>
     </div>
     <div class="fg"><label>Ageing</label>
@@ -908,9 +1080,9 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
         <div class="chart-card"><div class="chart-head"><h3>Ageing Brackets</h3></div><canvas id="ch-ag"></canvas></div>
         <div class="chart-card"><div class="chart-head"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
         <div class="chart-card"><div class="chart-head"><h3>Order Type</h3></div><canvas id="ch-ot"></canvas></div>
-        <div class="chart-card"><div class="chart-head"><h3>QC vs Non-QC</h3></div><canvas id="ch-qc"></canvas></div>
+
         <div class="chart-card"><div class="chart-head"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
-        <div class="chart-card"><div class="chart-head"><h3>QC by Order Type</h3></div><canvas id="ch-qcot"></canvas></div>
+        <div class="chart-card"><div class="chart-head"><h3>Service type by order split</h3></div><canvas id="ch-qcot"></canvas></div>
         <div class="chart-card span3">
           <div class="chart-head"><h3>30-Day Trend</h3><span class="chart-badge">Last 30 days</span></div>
           <canvas id="ch-tr" style="max-height:180px"></canvas>
@@ -1328,7 +1500,6 @@ function rdCharts(){
     [a.actionPending,a.green,Math.max(0,a.total-a.actionPending-a.green)],
     ['#D97706','#059669','#9CA3AF']);
   drawDn('ch-ot',Object.keys(a.byOrderType),Object.values(a.byOrderType),['#2563EB','#7C3AED','#0891B2','#059669']);
-  drawDn('ch-qc',Object.keys(a.byShipmentType),Object.values(a.byShipmentType),['#2563EB','#7C3AED']);
   const topA=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,8);
   drawHB('ch-ac',topA.map(c=>c[0].substring(0,24)),topA.map(c=>c[1]));
   const cm=grpBy(FLT,'orderType'), otK=Object.keys(AM);
@@ -1460,7 +1631,7 @@ function rdTbl(){
       const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order lost';
       const isPrepaidLoss=(selAct==='Delivery prepaid'&&selUpd==='Loss')||selAct==='Lost';
 
-      actCell=`<select class="isel" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}')"><option value="">Select Action</option>${aOpts}</select>`;
+      actCell=`<select class="isel" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}')" style="transition:border-color .2s"><option value="">Select Action</option>${aOpts}</select>`;
 
       if(o.abscondedFollowup&&o.abscondedFollowup.length){
         updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">Follow-up required</div>
@@ -1507,6 +1678,9 @@ function onAct(idx,sid,ot){
   if(!CHANGES[sid]) CHANGES[sid]={};
   CHANGES[sid].action=as.value;
   CHANGES[sid].update='';
+  as.classList.add('changed');
+  if(us) us.classList.remove('changed');
+  showChangePulse(idx);
   updSaveBar();
 }
 
@@ -1515,14 +1689,33 @@ function onUpd(idx,sid){
   if(!us) return;
   if(!CHANGES[sid]) CHANGES[sid]={};
   CHANGES[sid].update=us.value;
+  if(us) us.classList.add('changed');
+  showChangePulse(idx);
   updSaveBar();
+}
+
+function showChangePulse(idx){
+  // Show spinner in last td of the row
+  const row=document.getElementById('act-'+idx)?.closest('tr');
+  if(!row) return;
+  // Remove old spinner if exists
+  const existing=row.querySelector('.row-spinner');
+  if(existing) existing.remove();
+  // Add spinner to last cell
+  const lastTd=row.querySelector('td:last-child');
+  if(lastTd){
+    const sp=document.createElement('div');
+    sp.className='row-spinner';
+    sp.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Change pending`;
+    lastTd.appendChild(sp);
+  }
 }
 
 function updSaveBar(){
   const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;
   const bar=document.getElementById('save-bar');
   bar.classList.toggle('hide',n===0);
-  $('save-cnt',n+' change'+(n===1?'':'s')+' pending');
+  $('save-cnt',n+' change'+(n===1?'':'s')+' pending — ready to save');
   $('save-st','');
 }
 
@@ -1551,6 +1744,9 @@ async function saveAll(){
     $('save-st',ok+' saved');
     toast(ok+' orders updated','green');
     CHANGES={};
+    // Clear all changed indicators
+    document.querySelectorAll('.isel.changed').forEach(el=>el.classList.remove('changed'));
+    document.querySelectorAll('.row-spinner').forEach(el=>el.remove());
     setTimeout(()=>{
       btn.disabled=false;
       btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';
