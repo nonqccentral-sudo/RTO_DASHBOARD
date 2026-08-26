@@ -142,14 +142,7 @@ body {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 22px;
 }
-.logo-1mg {
-  font-size: 20px; font-weight: 900; line-height: 1;
-  letter-spacing: -1px;
-}
-.logo-1mg .l1  { color: var(--blue); }
-.logo-1mg .lmg { color: #E11D48; }
-.logo-div { width:1px; height:22px; background:var(--border); }
-.logo-ops { font-size:12px; font-weight:600; color:var(--t3); letter-spacing:.5px; text-transform:uppercase; }
+
 
 /* Title block */
 .login-icon-wrap {
@@ -176,6 +169,76 @@ body {
   border:1px solid var(--border); border-radius:5px;
   padding:3px 8px;
 }
+/* Tata 1mg background watermark */
+.bg-logo-wrap {
+  position: absolute;
+  bottom: 40px; right: 48px;
+  opacity: .1;
+  pointer-events: none;
+  user-select: none;
+}
+.bg-tata1mg {
+  display: flex; align-items: center; gap: 10px;
+}
+.bg-tata {
+  font-size: 64px; font-weight: 900; letter-spacing: 4px;
+  color: #fff; font-family: Arial Black, sans-serif;
+}
+.bg-onemg {
+  position: relative; display: inline-flex;
+  align-items: center; padding-bottom: 6px;
+}
+.bg-one { font-size: 68px; font-weight: 900; color: #fff; font-family: Arial Black, sans-serif; line-height:1; }
+.bg-mg  { font-size: 68px; font-weight: 900; color: #fff; font-family: Arial Black, sans-serif; line-height:1; text-decoration: overline; text-decoration-thickness: 4px; }
+.bg-underline { position:absolute; bottom:0; left:0; right:0; height:4px; background:#fff; border-radius:2px; }
+.bg-tagline { font-size: 18px; color: #fff; font-weight: 500; margin-top: 8px; letter-spacing: .3px; }
+
+/* Tata 1mg branding */
+.tata1mg-brand {
+  margin-bottom: 20px;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+}
+.tata1mg-logo {
+  display: flex; align-items: center; gap: 8px;
+}
+.tata-text {
+  font-size: 22px; font-weight: 900; letter-spacing: 2px;
+  color: var(--t1); font-family: Arial Black, sans-serif;
+}
+.onemg-wrap {
+  position: relative; display: inline-flex; align-items: center;
+  padding-bottom: 4px;
+}
+.one-text {
+  font-size: 24px; font-weight: 900; color: var(--t1);
+  font-family: Arial Black, sans-serif; line-height: 1;
+}
+.mg-text {
+  font-size: 24px; font-weight: 900; color: var(--t1);
+  font-family: Arial Black, sans-serif; line-height: 1;
+  text-decoration: overline;
+  text-decoration-thickness: 3px;
+}
+.mg-underline {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--t1); border-radius: 1px;
+}
+.tata1mg-tagline {
+  font-size: 12px; color: var(--t2); letter-spacing: .2px;
+}
+.tata1mg-tagline strong { color: var(--t1); }
+
+/* Update login title sub */
+.login-title-sub { font-size: 12px; color: var(--t3); margin-top: 3px; }
+
+/* login icon wrap — text not emoji span */
+.login-icon-wrap {
+  width: 42px; height: 42px; border-radius: 11px;
+  background: var(--blue-l); border: 1.5px solid #BFDBFE;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+
 /* End new login styles */
 #login-screen {
   position: fixed; inset: 0; z-index: 1000;
@@ -803,6 +866,17 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
 
   <!-- Animated background particles -->
   <div class="login-bg">
+    <!-- Tata 1mg watermark in background -->
+    <div class="bg-logo-wrap">
+      <div class="bg-tata1mg">
+        <span class="bg-tata">TATA</span>
+        <span class="bg-onemg">
+          <span class="bg-one">1</span><span class="bg-mg">mg</span>
+          <div class="bg-underline"></div>
+        </span>
+      </div>
+      <div class="bg-tagline">Together bringing trust to healthcare</div>
+    </div>
     <div class="login-bg-grid"></div>
     <!-- Floating order cards -->
     <div class="float-card fc1">
@@ -838,22 +912,11 @@ tbody td.td-sub  { font-size: 11px; color: var(--t2); }
 
   <!-- Login card -->
   <div class="login-card">
-    <!-- 1mg branding -->
-    <div class="login-1mg">
-      <div class="logo-1mg">
-        <span class="l1">1</span><span class="lmg">mg</span>
-      </div>
-      <div class="logo-div"></div>
-      <div class="logo-ops">Operations</div>
-    </div>
-
     <div class="login-title-block">
-      <div class="login-icon-wrap">
-        <span style="font-size:22px">&#128667;</span>
-      </div>
+      <div class="login-icon-wrap">&#128667;</div>
       <div>
         <div class="login-title-main">RTO Dashboard</div>
-        <div class="login-title-sub">Return to Origin Control Tower</div>
+        <div class="login-title-sub">Update your RTO orders here</div>
       </div>
     </div>
 
@@ -1617,13 +1680,19 @@ function rdTbl(){
 
     // Action/Update cells
     let actCell, updCell;
-    if(!editable){
+    
+    // CLOSED orders — freeze, show what was done
+    if(o.isGreen){
+      actCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentAction||'—'}</span>`;
+      updCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentUpdate||'—'}</span>`;
+    } else if(!editable){
       actCell=`<span style="font-size:12px;color:var(--t2)">${o.currentAction||'—'}</span>`;
       updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span>`;
     } else {
       const oa=(AM[o.orderType]||AM['In-house']||{actions:[],updates:{}});
       const pc=CHANGES[o.shipmentId]||{};
-      const selAct=pc.action!==undefined?pc.action:o.currentAction||'';
+      // Use defaultAction (auto-derived from order type) if no action set yet
+      const selAct=pc.action!==undefined?pc.action:(o.currentAction||o.defaultAction||'');
       const selUpd=pc.update!==undefined?pc.update:o.currentUpdate||'';
       const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
       const curU=(selAct&&oa.updates[selAct])||[];
@@ -1672,9 +1741,13 @@ function onAct(idx,sid,ot){
   const as=document.getElementById('act-'+idx);
   const us=document.getElementById('upd-'+idx);
   if(!as) return;
-  const oa=(AM[ot]||AM['In-house']||{updates:{}});
+  const oa=(AM[ot]||AM['In-house']||{actions:[],updates:{}});
   const upds=(as.value&&oa.updates[as.value])||[];
-  if(us) us.innerHTML='<option value="">Select Update</option>'+upds.map(u=>`<option value="${u}">${u}</option>`).join('');
+  // Always rebuild update dropdown with correct options
+  if(us){
+    us.innerHTML='<option value="">Select Update</option>'+upds.map(u=>`<option value="${u}">${u}</option>`).join('');
+    us.disabled = upds.length===0;
+  }
   if(!CHANGES[sid]) CHANGES[sid]={};
   CHANGES[sid].action=as.value;
   CHANGES[sid].update='';
