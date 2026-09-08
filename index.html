@@ -113,12 +113,14 @@ body { font-family: var(--font); background: var(--bg); color: var(--t1); font-s
 .fg label{font-size:11px;font-weight:600;color:var(--t3);white-space:nowrap}
 .fg select,.fg input[type=date]{padding:5px 9px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--surf-2);font-size:12px;color:var(--t1);cursor:pointer;min-width:105px}
 .fg select:focus,.fg input:focus{outline:none;border-color:var(--blue)}
-/* Sub-dropdown for In-house */
+/* Sub-dropdown for In-house type */
 .fg-sub{display:flex;align-items:center;gap:4px;transition:all .15s}
 .fg-sub.hide{display:none}
 .fg-sub select{padding:5px 9px;border-radius:var(--r-sm);border:1px solid var(--amber);background:var(--amber-l);font-size:12px;color:var(--amber);cursor:pointer;min-width:100px;font-weight:600}
 .fg-sub select:focus{outline:none;border-color:var(--amber)}
 .fg-sub-arrow{font-size:11px;color:var(--t3)}
+/* Stage filter pill */
+.fg-stage select{border-color:var(--purple)!important;background:var(--purple-l)!important;color:var(--purple)!important;font-weight:600}
 .fbar-div{width:1px;height:20px;background:var(--border);margin:0 2px}
 .fbar-btn{padding:5px 12px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1px solid;transition:all .12s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
 .btn-reset{background:var(--red-l);border-color:#FECACA;color:var(--red)}.btn-reset:hover{background:var(--red);color:#fff}
@@ -229,18 +231,24 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
 .b-amber{background:var(--amber-l);color:var(--amber);border:1px solid #FDE68A}
 .b-purple{background:var(--purple-l);color:var(--purple);border:1px solid #D8B4FE}
 .b-slate{background:var(--surf-2);color:var(--slate);border:1px solid var(--border)}
+.b-teal{background:var(--teal-l);color:var(--teal);border:1px solid #A5F3FC}
 .b-flash{animation:flash 1.4s infinite}
 @keyframes flash{0%,100%{opacity:1}50%{opacity:.45}}
 .sla-ok{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-l);color:var(--green);border:1px solid #A7F3D0;display:inline-block}
 .sla-wn{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--amber-l);color:var(--amber);border:1px solid #FDE68A;display:inline-block}
 .sla-br{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--red-l);color:var(--red);border:1px solid #FECACA;display:inline-block;animation:flash 1.4s infinite}
 .age-val{font-weight:800}.age-val.p{color:var(--t1)}.age-val.rv{color:var(--amber)}.age-val.ha{color:var(--red)}
+/* Stage pill */
+.stage-pill{font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;white-space:nowrap}
+.stage-pre{background:var(--purple-l);color:var(--purple);border:1px solid #D8B4FE}
+.stage-post{background:var(--teal-l);color:var(--teal);border:1px solid #A5F3FC}
 
 /* INLINE SELECTS */
-.isel{padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surf-2);font-size:12px;color:var(--t1);cursor:pointer;max-width:190px}
+.isel{padding:5px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surf-2);font-size:12px;color:var(--t1);cursor:pointer;max-width:200px}
 .isel:focus{outline:none;border-color:var(--blue)}.isel:disabled{opacity:.5;cursor:default}.isel.changed{border-color:var(--amber)!important;background:#FFFBEB}
 .row-spinner{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--amber);font-weight:600;margin-top:4px}
 .row-spinner svg{animation:spin .7s linear infinite}
+/* Loss amount display — shown in red when action is Lost/Loss */
 .loss-display{font-size:11px;font-weight:700;color:var(--red);margin-top:3px}
 
 /* SAVE BAR */
@@ -308,7 +316,7 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
     <div class="float-card fc1"><div class="fc-dot red"></div><div class="fc-lines"><div class="fcl w60"></div><div class="fcl w40"></div></div><div class="fc-badge">High Ageing</div></div>
     <div class="float-card fc2"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w70"></div><div class="fcl w50"></div></div><div class="fc-badge green">CN received</div></div>
     <div class="float-card fc3"><div class="fc-dot amber"></div><div class="fc-lines"><div class="fcl w55"></div><div class="fcl w35"></div></div><div class="fc-badge amber">Recoverable</div></div>
-    <div class="float-card fc4"><div class="fc-dot blue"></div><div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div><div class="fc-badge blue">Pending with rider</div></div>
+    <div class="float-card fc4"><div class="fc-dot blue"></div><div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div><div class="fc-badge blue">Handover to FC Done</div></div>
     <div class="float-card fc5"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w50"></div><div class="fcl w30"></div></div><div class="fc-badge green">COD collected</div></div>
     <div class="float-stat fs1"><div class="fst-num">247</div><div class="fst-lbl">Active RTOs</div></div>
     <div class="float-stat fs2"><div class="fst-num">Rs.1.2L</div><div class="fst-lbl">Recoverable</div></div>
@@ -346,7 +354,7 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
   </div>
 </div>
 <div class="modal-bg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
-  <div class="modal" style="max-width:860px">
+  <div class="modal" style="max-width:900px">
     <div class="modal-hdr"><h2>Action Pending Queue</h2><button class="modal-close" onclick="closeAP()">&#10005;</button></div>
     <div class="modal-body" id="ap-body"></div>
   </div>
@@ -404,6 +412,16 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
         <option value="">All In-house</option>
         <option value="FC">FC</option>
         <option value="Retail">Retail</option>
+      </select>
+    </div>
+
+    <!-- Cancellation Stage filter -->
+    <div class="fg fg-stage">
+      <label>Stage</label>
+      <select id="f-stage" onchange="apF()">
+        <option value="">All Stages</option>
+        <option value="Pre MDQ">Pre MDQ</option>
+        <option value="Post MDQ">Post MDQ</option>
       </select>
     </div>
 
@@ -509,11 +527,11 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
           <table>
             <thead>
               <tr>
-                <th>Order ID</th><th>City</th><th>Type</th><th>QC</th>
+                <th>Order ID</th><th>City</th><th>Type</th><th>Stage</th><th>QC</th>
                 <th>Rider</th><th>GMV</th><th>Ageing</th><th>Bracket</th>
                 <th>Deadline</th><th>SLA</th><th>Status</th>
-                <th style="min-width:185px">Action</th>
-                <th style="min-width:175px">Update</th>
+                <th style="min-width:200px">Action</th>
+                <th style="min-width:185px">Update</th>
               </tr>
             </thead>
             <tbody id="tbl-body"></tbody>
@@ -542,7 +560,7 @@ tbody td.td-main{font-weight:700;font-size:13px}tbody td.td-sub{font-size:11px;c
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CK   = 'rto_v9';
+const CK   = 'rto_v12';
 const CTTL = 5 * 60 * 1000;
 
 let RAW=[], FLT=[], TRD=[], AM={};
@@ -554,6 +572,26 @@ const fmtN = n => 'Rs.' + Number(n).toLocaleString('en-IN',{maximumFractionDigit
 const fmtK = n => { if(!n) return 'Rs.0'; if(n>=10000000) return 'Rs.'+(n/10000000).toFixed(1)+'Cr'; if(n>=100000) return 'Rs.'+(n/100000).toFixed(1)+'L'; if(n>=1000) return 'Rs.'+(n/1000).toFixed(1)+'K'; return 'Rs.'+n; };
 const pct = (a,b) => b ? Math.round(a/b*100) : 0;
 const $   = (id,v) => { const e=document.getElementById(id); if(e) e.textContent=v; };
+
+// ─────────────────────────────────────────────────────────────────
+// STAGE-AWARE ACTION SET RESOLVER (mirrors Code.gs _getActionSet)
+//
+// AM (actionMap) from backend has this structure:
+//   PSP / Retail: { stageIndependent:true, actions:[], updates:{} }
+//   FC  / 3PL:    { stageIndependent:false, byStage:{ 'Pre MDQ':{...}, 'Post MDQ':{...} } }
+//
+// This helper returns the correct {actions, updates} for a given
+// orderType + cancellationStage, so action/update dropdowns only
+// show options that are valid for that specific order.
+// ─────────────────────────────────────────────────────────────────
+function getActionSet(orderType, stage) {
+  const cfg = AM[orderType];
+  if (!cfg) return { actions: [], updates: {} };
+  if (cfg.stageIndependent) return cfg;
+  // Stage-specific (FC, 3PL)
+  const s = stage || 'Post MDQ';
+  return (cfg.byStage && cfg.byStage[s]) || cfg.byStage['Post MDQ'] || { actions: [], updates: {} };
+}
 
 // ── LOGIN ────────────────────────────────────────────────
 function doLogin(){
@@ -572,10 +610,10 @@ function doLogin(){
         loadData();
       } else {
         $('l-err', res.error||'Invalid credentials');
-        btn.disabled=false; btn.textContent='Sign In';
+        btn.disabled=false; btn.textContent='Sign In \u2192';
       }
     })
-    .catch(()=>{ $('l-err','Network error'); btn.disabled=false; btn.textContent='Sign In'; });
+    .catch(()=>{ $('l-err','Network error'); btn.disabled=false; btn.textContent='Sign In \u2192'; });
 }
 
 function logout(){
@@ -587,11 +625,11 @@ function logout(){
   document.getElementById('l-pwd').value='';
   $('l-err','');
   document.getElementById('l-btn').disabled=false;
-  document.getElementById('l-btn').textContent='Sign In';
+  document.getElementById('l-btn').textContent='Sign In \u2192';
   localStorage.removeItem(CK);
 }
 
-// ── DATA ─────────────────────────────────────────────────
+// ── DATA ─────────────────────────────────────────────────────────
 function omsg(m){ $('ov-msg',m); }
 function showOv(){ document.getElementById('ov').classList.remove('hide'); }
 function hideOv(){ document.getElementById('ov').classList.add('hide'); }
@@ -669,6 +707,7 @@ function apF(){
   const city  = document.getElementById('f-city').value;
   const type  = document.getElementById('f-type').value;
   const iSub  = document.getElementById('f-inhouse-sub').value; // 'FC' | 'Retail' | ''
+  const stageF= document.getElementById('f-stage').value;       // 'Pre MDQ' | 'Post MDQ' | ''
   const age   = document.getElementById('f-age').value;
   const act   = document.getElementById('f-act').value;
   const df    = document.getElementById('f-from').value;
@@ -677,7 +716,11 @@ function apF(){
 
   FLT = RAW.filter(o=>{
     // QC toggle
-    if(QF!=='Overall'){ const m=QF==='QC'?!o.shipmentType.includes('Non'):o.shipmentType.includes('Non'); if(!m) return false; }
+    if(QF!=='Overall'){
+      const isQC = !o.shipmentType.includes('Non');
+      if(QF==='QC' && !isQC) return false;
+      if(QF==='Non-QC' && isQC) return false;
+    }
     // City drill-down
     if(SCITY && o.city!==SCITY) return false;
     if(city  && o.city!==city)  return false;
@@ -687,11 +730,12 @@ function apF(){
       if(type==='PSP'    && o.orderType!=='PSP')    return false;
       if(type==='Inhouse'){
         if(o.orderType!=='FC' && o.orderType!=='Retail') return false;
-        // Sub-filter
         if(iSub==='FC'     && o.orderType!=='FC')    return false;
         if(iSub==='Retail' && o.orderType!=='Retail') return false;
       }
     }
+    // Cancellation Stage filter
+    if(stageF && o.cancellationStage !== stageF) return false;
     if(age && o.ageingBracket!==age) return false;
     if(act && o.currentAction!==act) return false;
     if(df||dt){
@@ -710,7 +754,7 @@ function apF(){
 }
 
 function rstF(){
-  ['f-city','f-type','f-age','f-act'].forEach(id=>document.getElementById(id).value='');
+  ['f-city','f-type','f-age','f-act','f-stage'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-from').value=''; document.getElementById('f-to').value='';
   document.getElementById('f-inhouse-sub').value='';
   document.getElementById('fg-inhouse').classList.add('hide');
@@ -812,10 +856,12 @@ function openDet(city){
   const cg=document.getElementById('cd-charts');
   cg.innerHTML=`<div class="chart-card"><div class="chart-head"><h3>Order Type</h3></div><canvas id="cd-ot"></canvas></div><div class="chart-card"><div class="chart-head"><h3>QC Split</h3></div><canvas id="cd-qc"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
   setTimeout(()=>{
-    drawDn('cd-ot',Object.keys(a.byOrderType),Object.values(a.byOrderType),['#2563EB','#7C3AED','#059669','#059669']);
+    drawDn('cd-ot',['3PL','PSP','In-house FC','In-house Retail'],
+      [a.byOrderType['3PL']||0,a.byOrderType['PSP']||0,a.byOrderType['FC']||0,a.byOrderType['Retail']||0],
+      ['#D97706','#7C3AED','#059669','#0891B2']);
     drawDn('cd-qc',Object.keys(a.byShipmentType),Object.values(a.byShipmentType),['#2563EB','#7C3AED']);
     const top=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,6);
-    drawHB('cd-ac',top.map(c=>c[0].substring(0,20)),top.map(c=>c[1]));
+    drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
   },80);
   document.getElementById('city-det').scrollIntoView({behavior:'smooth',block:'start'});
 }
@@ -846,7 +892,9 @@ function openHA(){
         <div class="modal-order-list">${ords.map(o=>`
           <div class="modal-order-row" onclick="jumpTo('${o.shipmentId}')">
             <div class="mor-id">${o.shipmentId}</div>
-            <div class="mor-meta">${o.riderName||'—'} &middot; ${fmtN(o.gmv||0)}<div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' &rarr; '+o.currentUpdate:''}</div></div>
+            <div class="mor-meta">${o.riderName||'—'} &middot; ${fmtN(o.gmv||0)}
+              <div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' &rarr; '+o.currentUpdate:''}</div>
+            </div>
             <div class="mor-age">${o.ageing}d</div>
           </div>`).join('')}
         </div></div>`;
@@ -866,14 +914,20 @@ function openAPModal(){
         <thead><tr style="background:var(--surf-2)">
           <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Order ID</th>
           <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">City</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Type</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Stage</th>
           <th style="padding:10px 14px;border-bottom:2px solid var(--border);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Current Action</th>
           <th style="padding:10px 14px;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Age</th>
+          <th style="padding:10px 14px;border-bottom:2px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--t2)">Reason</th>
         </tr></thead>
         <tbody>${ap.map(o=>`<tr style="border-bottom:1px solid var(--border);cursor:pointer" onclick="jumpTo('${o.shipmentId}')">
           <td style="padding:10px 14px;font-weight:700">${o.shipmentId}</td>
           <td style="padding:10px 14px;color:var(--t2)">${o.city}</td>
+          <td style="padding:10px 14px;color:var(--t2)">${o.partnerLabel}</td>
+          <td style="padding:10px 14px;color:var(--t2)">${o.cancellationStage}</td>
           <td style="padding:10px 14px;color:var(--t2)">${o.currentAction||'—'}</td>
           <td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'}">${o.ageing}d</td>
+          <td style="padding:10px 14px;font-size:11px;color:var(--amber);font-weight:600">${o.pendingReason||'—'}</td>
         </tr>`).join('')}</tbody>
       </table>`;
   }
@@ -902,11 +956,10 @@ function rdCharts(){
   drawDn('ch-st',['Action Pending','Closed/Green','Other'],
     [a.actionPending, a.green, Math.max(0,a.total-a.actionPending-a.green)],
     ['#D97706','#059669','#9CA3AF']);
-  // Order type chart: 3PL, PSP, In-house FC, In-house Retail
   drawDn('ch-ot',
     ['3PL','PSP','In-house FC','In-house Retail'],
     [a.byOrderType['3PL']||0, a.byOrderType['PSP']||0, a.byOrderType['FC']||0, a.byOrderType['Retail']||0],
-    ['#D97706','#7C3AED','#059669','#059669']);
+    ['#D97706','#7C3AED','#059669','#0891B2']);
   const topA=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,8);
   drawHB('ch-ac',topA.map(c=>c[0].substring(0,24)),topA.map(c=>c[1]));
   const cm=grpBy(FLT,'orderType');
@@ -978,7 +1031,7 @@ function drawTrend(){
       {label:'Total',         data:TRD.map(r=>r.total),         borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},
       {label:'Recoverable',   data:TRD.map(r=>r.recoverable),   borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},
       {label:'High Ageing',   data:TRD.map(r=>r.highAgeing),    borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},
-      {label:'Action Pending',data:TRD.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]},
+      {label:'Action Pending',data:TRD.map(r=>r.actionPending), borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]},
     ]},
     options:{responsive:true,maintainAspectRatio:true,plugins:{
       legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},
@@ -1017,40 +1070,89 @@ function rdTbl(){
     const agCls=o.isHighAgeing?'ha':o.isRecoverable?'rv':'p';
     const agBdg=o.isHighAgeing?'b-red':o.isRecoverable?'b-amber':'b-blue';
 
-    // Partner type badge — In-house FC / In-house Retail both green, 3PL amber, PSP purple
-    const ptBdg=o.orderType==='3PL'?'b-amber':o.orderType==='PSP'?'b-purple':'b-green';
+    // Partner type badge
+    const ptBdg = o.orderType==='3PL'   ? 'b-amber'
+                : o.orderType==='PSP'   ? 'b-purple'
+                : o.orderType==='FC'    ? 'b-green'
+                : /* Retail */            'b-teal';
+
     const stypeBdg=(o.shipmentType||'').includes('Non')?'b-purple':'b-blue';
-    const slaPill=!o.deadlineDate?'—':o.deadlineBreach?'<span class="sla-br">Overdue</span>':o.actionPending?'<span class="sla-wn">Pending</span>':'<span class="sla-ok">On Track</span>';
+
+    // Stage pill
+    const stagePill = o.cancellationStage==='Pre MDQ'
+      ? '<span class="stage-pill stage-pre">Pre MDQ</span>'
+      : '<span class="stage-pill stage-post">Post MDQ</span>';
+
+    const slaPill=!o.deadlineDate?'—':o.deadlineBreach
+      ?'<span class="sla-br">Overdue</span>'
+      :o.actionPending
+        ?'<span class="sla-wn">Pending</span>'
+        :'<span class="sla-ok">On Track</span>';
 
     let actCell, updCell;
 
     if(o.isGreen){
+      // Closed row — frozen, no dropdowns
       actCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentAction||'—'}</span>`;
       updCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentUpdate||'—'}</span>`;
+
+    } else if(o.isPostMDQNonActionable){
+      // 3PL Post MDQ — non-actionable, fully locked display-only
+      actCell=`<span style="font-size:12px;color:var(--t3);font-style:italic">${o.currentAction||'3PL Post MDQ – no action'}</span>`;
+      updCell=`<span style="font-size:12px;color:var(--t3);font-style:italic">${o.currentUpdate||'—'}</span>`;
+
     } else if(!editable){
+      // View Only city
       actCell=`<span style="font-size:12px;color:var(--t2)">${o.currentAction||'—'}</span>`;
       updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span>`;
+
     } else {
-      const oa=(AM[o.orderType]||{actions:[],updates:{}});
-      const pc=CHANGES[o.shipmentId]||{};
-      const selAct=pc.action!==undefined?pc.action:(o.currentAction||o.defaultAction||'');
-      const selUpd=pc.update!==undefined?pc.update:o.currentUpdate||'';
-      const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
-      const curU=(selAct&&oa.updates[selAct])||[];
-      const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order lost';
+      // ── CRITICAL: resolve action set using BOTH orderType AND cancellationStage ──
+      // This is the fix that makes FC Pre MDQ show only its restricted actions,
+      // and 3PL Pre MDQ / Post MDQ show only their appropriate actions.
+      const om = getActionSet(o.orderType, o.cancellationStage);
 
-      actCell=`<select class="isel" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}')"><option value="">Select Action</option>${aOpts}</select>`;
+      const pc = CHANGES[o.shipmentId] || {};
+      const selAct = pc.action !== undefined ? pc.action : (o.currentAction || o.defaultAction || '');
+      const selUpd = pc.update !== undefined ? pc.update : (o.currentUpdate || '');
 
-      if(o.abscondedFollowup&&o.abscondedFollowup.length){
-        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">Follow-up required</div>
+      // Build Action dropdown
+      const aOpts = om.actions.map(a =>
+        `<option value="${a}"${selAct===a?' selected':''}>${a}</option>`
+      ).join('');
+
+      // Build Update dropdown — dependent on selected action
+      const curU = (selAct && om.updates[selAct]) || [];
+      const uOpts = curU.map(u =>
+        `<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`
+      ).join('');
+
+      // Loss display — show GMV in red when action/update is a loss case
+      const LOSS_ACT = new Set(['Lost','Loss']);
+      const LOSS_UPD = new Set(['Loss','Order lost']);
+      const isLoss = LOSS_ACT.has(selAct) || LOSS_UPD.has(selUpd);
+      const lossHtml = isLoss
+        ? `<div class="loss-display">Loss amount: ${fmtN(o.gmv||0)}</div>`
+        : '';
+
+      actCell = `<select class="isel${pc.action!==undefined?' changed':''}" id="act-${gi}" onchange="onAct(${gi},'${o.shipmentId}','${o.orderType}','${o.cancellationStage}')">
+        <option value="">Select Action</option>${aOpts}
+      </select>`;
+
+      // Rider absconded follow-up overrides normal update dropdown
+      if(o.abscondedFollowup && o.abscondedFollowup.length){
+        updCell = `<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">Follow-up required</div>
           <select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')">
-            <option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
-          </select>
-          ${isLoss?`<div class="loss-display">Loss amount: ${fmtN(o.gmv||0)}</div>`:''}`;
+            <option value="">Select follow-up</option>
+            ${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
+          </select>${lossHtml}`;
+      } else if(curU.length===0){
+        // No updates available for this action (e.g. Lost, Handover to FC Done)
+        updCell = `<span style="font-size:11px;color:var(--t3);font-style:italic">No update required</span>${lossHtml}`;
       } else {
-        updCell=`<select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')"><option value="">Select Update</option>${uOpts}</select>
-          ${isLoss?`<div class="loss-display">Loss amount: ${fmtN(o.gmv||0)}</div>`:''}`;
+        updCell = `<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}" onchange="onUpd(${gi},'${o.shipmentId}')">
+          <option value="">Select Update</option>${uOpts}
+        </select>${lossHtml}`;
       }
     }
 
@@ -1058,6 +1160,7 @@ function rdTbl(){
       <td class="td-main">${o.orderId}</td>
       <td style="font-weight:600">${o.city}</td>
       <td><span class="badge ${ptBdg}">${o.partnerLabel}</span></td>
+      <td>${stagePill}</td>
       <td><span class="badge ${stypeBdg}">${o.shipmentType}</span></td>
       <td style="font-size:12px;font-weight:600">${o.riderName||'—'}</td>
       <td style="font-weight:700">${fmtN(o.gmv||0)}</td>
@@ -1073,83 +1176,136 @@ function rdTbl(){
   updSaveBar();
 }
 
-function onAct(idx,sid,ot){
-  const as=document.getElementById('act-'+idx);
-  const us=document.getElementById('upd-'+idx);
+// ── ACTION CHANGE HANDLER ─────────────────────────────────
+// Now takes orderType AND stage to resolve the correct update list
+function onAct(idx, sid, orderType, stage){
+  const as = document.getElementById('act-'+idx);
+  const us = document.getElementById('upd-'+idx);
   if(!as) return;
-  const oa=(AM[ot]||{actions:[],updates:{}});
-  const upds=(as.value&&oa.updates[as.value])||[];
+
+  // Resolve updates for the newly selected action, respecting stage
+  const om = getActionSet(orderType, stage);
+  const upds = (as.value && om.updates[as.value]) || [];
+
   if(us){
-    us.innerHTML='<option value="">Select Update</option>'+upds.map(u=>`<option value="${u}">${u}</option>`).join('');
-    us.disabled=upds.length===0;
+    if(upds.length === 0){
+      // Replace update dropdown with "no update required" text
+      us.outerHTML = `<span id="upd-${idx}" style="font-size:11px;color:var(--t3);font-style:italic">No update required</span>`;
+    } else {
+      // Ensure it's a select (might have been replaced by span)
+      const existEl = document.getElementById('upd-'+idx);
+      if(existEl && existEl.tagName !== 'SELECT'){
+        existEl.outerHTML = `<select class="isel" id="upd-${idx}" onchange="onUpd(${idx},'${sid}')"><option value="">Select Update</option></select>`;
+      }
+      const us2 = document.getElementById('upd-'+idx);
+      if(us2){
+        us2.innerHTML = '<option value="">Select Update</option>' +
+          upds.map(u=>`<option value="${u}">${u}</option>`).join('');
+        us2.disabled = false;
+        us2.classList.remove('changed');
+      }
+    }
   }
+
+  // Loss display
+  const LOSS_ACT = new Set(['Lost','Loss']);
+  const isLoss = LOSS_ACT.has(as.value);
+  const row = as.closest('tr');
+  let ld = row ? row.querySelector('.loss-display') : null;
+  const lastTd = row ? row.querySelector('td:last-child') : null;
+  if(isLoss && lastTd && !ld){
+    const div = document.createElement('div');
+    div.className = 'loss-display';
+    const ord = FLT.find(o=>o.shipmentId===sid);
+    div.textContent = 'Loss amount: ' + fmtN(ord?ord.gmv||0:0);
+    lastTd.appendChild(div);
+  } else if(!isLoss && ld){ ld.remove(); }
+
   if(!CHANGES[sid]) CHANGES[sid]={};
-  CHANGES[sid].action=as.value;
-  CHANGES[sid].update='';
+  CHANGES[sid].action = as.value;
+  CHANGES[sid].update = '';
   as.classList.add('changed');
-  if(us) us.classList.remove('changed');
   showChangePulse(idx);
   updSaveBar();
 }
 
-function onUpd(idx,sid){
-  const us=document.getElementById('upd-'+idx);
+function onUpd(idx, sid){
+  const us = document.getElementById('upd-'+idx);
   if(!us) return;
   if(!CHANGES[sid]) CHANGES[sid]={};
-  CHANGES[sid].update=us.value;
+  CHANGES[sid].update = us.value;
   us.classList.add('changed');
+
+  // Loss display update when update changes (e.g. Loss under Delivery Prepaid)
+  const LOSS_UPD = new Set(['Loss','Order lost']);
+  const isLoss = LOSS_UPD.has(us.value);
+  const row = us.closest('tr');
+  let ld = row ? row.querySelector('.loss-display') : null;
+  const lastTd = row ? row.querySelector('td:last-child') : null;
+  if(isLoss && lastTd && !ld){
+    const div = document.createElement('div');
+    div.className = 'loss-display';
+    const ord = FLT.find(o=>o.shipmentId===sid);
+    div.textContent = 'Loss amount: ' + fmtN(ord?ord.gmv||0:0);
+    lastTd.appendChild(div);
+  } else if(!isLoss && ld){ ld.remove(); }
+
   showChangePulse(idx);
   updSaveBar();
 }
 
 function showChangePulse(idx){
-  const row=document.getElementById('act-'+idx)?.closest('tr');
+  const row = document.getElementById('act-'+idx)?.closest('tr');
   if(!row) return;
-  const existing=row.querySelector('.row-spinner'); if(existing) existing.remove();
-  const lastTd=row.querySelector('td:last-child');
+  const existing = row.querySelector('.row-spinner'); if(existing) existing.remove();
+  const lastTd = row.querySelector('td:last-child');
   if(lastTd){
-    const sp=document.createElement('div');
-    sp.className='row-spinner';
-    sp.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Change pending`;
+    const sp = document.createElement('div');
+    sp.className = 'row-spinner';
+    sp.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Change pending`;
     lastTd.appendChild(sp);
   }
 }
 
 function updSaveBar(){
-  const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;
-  const bar=document.getElementById('save-bar');
-  bar.classList.toggle('hide',n===0);
-  $('save-cnt',n+' change'+(n===1?'':'s')+' pending — ready to save');
-  $('save-st','');
+  const n = Object.keys(CHANGES).filter(k => CHANGES[k].action).length;
+  const bar = document.getElementById('save-bar');
+  bar.classList.toggle('hide', n===0);
+  $('save-cnt', n+' change'+(n===1?'':'s')+' pending — ready to save');
+  $('save-st', '');
 }
 
 async function saveAll(){
-  const btn=document.getElementById('save-btn');
-  const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
+  const btn = document.getElementById('save-btn');
+  const sids = Object.keys(CHANGES).filter(k => CHANGES[k].action);
   if(!sids.length) return;
-  btn.disabled=true;
-  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Saving...';
-  const updates=sids.map(sid=>({ shipmentId:sid, action:CHANGES[sid].action||'', update:CHANGES[sid].update||'' }));
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Saving...';
+  const updates = sids.map(sid => ({
+    shipmentId : sid,
+    action     : CHANGES[sid].action || '',
+    update     : CHANGES[sid].update || '',
+  }));
   try{
-    const encoded=encodeURIComponent(JSON.stringify(updates));
-    const res=await fetch(API+'?action=batchSave&updates='+encoded).then(r=>r.json());
-    const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
-    btn.innerHTML='&#10003; Completed!';
-    btn.style.background='var(--green)';
-    $('save-st',ok+' saved');
-    toast(ok+' orders updated','green');
-    CHANGES={};
+    const encoded = encodeURIComponent(JSON.stringify(updates));
+    const res = await fetch(API+'?action=batchSave&updates='+encoded).then(r=>r.json());
+    const ok = res.results ? res.results.filter(r=>r.success).length : sids.length;
+    btn.innerHTML = '&#10003; Completed!';
+    btn.style.background = 'var(--green)';
+    $('save-st', ok+' saved');
+    toast(ok+' orders updated', 'green');
+    CHANGES = {};
     document.querySelectorAll('.isel.changed').forEach(el=>el.classList.remove('changed'));
     document.querySelectorAll('.row-spinner').forEach(el=>el.remove());
     setTimeout(()=>{
-      btn.disabled=false;
-      btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';
-      btn.style.background='';
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';
+      btn.style.background = '';
       loadData(true);
     },2000);
   }catch(e){
-    btn.disabled=false; btn.innerHTML='Save All Changes';
-    toast('Save failed: '+e.message,'red');
+    btn.disabled = false; btn.innerHTML = 'Save All Changes';
+    toast('Save failed: '+e.message, 'red');
   }
 }
 
@@ -1164,12 +1320,12 @@ function dlCityFor(city){
     .then(p=>{
       hideOv();
       if(!p.success){ toast(p.error,'red'); return; }
-      const ws=XLSX.utils.json_to_sheet(p.rows);
-      const wb=XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb,ws,city.substring(0,31));
-      if(p.actionRef){ XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.actionRef),'Action-Update Reference'); }
-      XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet([{'NOTE':'Reference only. All updates via dashboard.'}]),'READ ME');
-      XLSX.writeFile(wb,'RTO_'+city+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+      const ws = XLSX.utils.json_to_sheet(p.rows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, city.substring(0,31));
+      if(p.actionRef){ XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(p.actionRef), 'Action-Update Reference'); }
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet([{'NOTE':'Reference only. All updates via dashboard.'}]), 'READ ME');
+      XLSX.writeFile(wb, 'RTO_'+city+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
     })
     .catch(e=>{ hideOv(); toast(e.message,'red'); });
 }
@@ -1177,12 +1333,12 @@ function dlCityFor(city){
 // ── AGGREGATE ─────────────────────────────────────────────
 function agg(orders){
   const r={
-    total:0,totalAmount:0,
-    pending:{count:0,amount:0},recoverable:{count:0,amount:0},highAgeing:{count:0,amount:0},
-    actionPending:0,green:0,srnPending:0,lossTotal:0,inhouseLoss:0,
+    total:0, totalAmount:0,
+    pending:{count:0,amount:0}, recoverable:{count:0,amount:0}, highAgeing:{count:0,amount:0},
+    actionPending:0, green:0, srnPending:0, lossTotal:0, inhouseLoss:0,
     byOrderType:{'3PL':0,'PSP':0,'FC':0,'Retail':0},
     byShipmentType:{'QC':0,'Non-QC':0},
-    byAction:{}
+    byAction:{},
   };
   orders.forEach(o=>{
     r.total++; r.totalAmount+=o.gmv||0;
@@ -1192,7 +1348,10 @@ function agg(orders){
     if(o.isGreen)        r.green++;
     if(o.actionPending)  r.actionPending++;
     if(!o.srnCreated)    r.srnPending++;
-    if(o.lossType){ r.lossTotal+=o.gmv||0; if(o.lossType==='In-house rider loss') r.inhouseLoss++; }
+    if(o.lossType){
+      r.lossTotal+=o.gmv||0;
+      if(o.lossType==='In-house rider loss') r.inhouseLoss++;
+    }
     const ot=o.orderType||'FC'; if(r.byOrderType[ot]!==undefined) r.byOrderType[ot]++;
     const st=(o.shipmentType||'').includes('Non')?'Non-QC':'QC'; r.byShipmentType[st]++;
     const a=o.currentAction||'No action'; r.byAction[a]=(r.byAction[a]||0)+1;
@@ -1204,26 +1363,35 @@ function grpBy(arr,k){ return arr.reduce((m,i)=>{ const v=i[k]||'?'; if(!m[v]) m
 
 // ── POPULATE FILTERS ──────────────────────────────────────
 function popFilters(){
+  // Cities
   const cs=document.getElementById('f-city');
-  // Remove previously added city options (keep 'All Cities')
   while(cs.options.length>1) cs.remove(1);
-  [...new Set(RAW.map(o=>o.city))].sort().forEach(c=>{ const op=document.createElement('option'); op.value=c; op.textContent=c; cs.appendChild(op); });
+  [...new Set(RAW.map(o=>o.city))].sort().forEach(c=>{
+    const op=document.createElement('option'); op.value=c; op.textContent=c; cs.appendChild(op);
+  });
 
+  // Actions — collect all unique actions across all order types and all stages
   const as=document.getElementById('f-act');
   while(as.options.length>1) as.remove(1);
-  // Collect all actions from all order types in AM
   const al=new Set();
   Object.values(AM).forEach(cfg=>{
-    if(cfg.stageIndependent){ cfg.actions.forEach(a=>al.add(a)); }
-    else { Object.values(cfg.byStage||{}).forEach(s=>s.actions.forEach(a=>al.add(a))); }
+    if(cfg.stageIndependent){
+      (cfg.actions||[]).forEach(a=>al.add(a));
+    } else {
+      Object.values(cfg.byStage||{}).forEach(s=>(s.actions||[]).forEach(a=>al.add(a)));
+    }
   });
-  [...al].sort().forEach(a=>{ const op=document.createElement('option'); op.value=a; op.textContent=a; as.appendChild(op); });
+  [...al].sort().forEach(a=>{
+    const op=document.createElement('option'); op.value=a; op.textContent=a; as.appendChild(op);
+  });
 }
 
 // ── TOAST ─────────────────────────────────────────────────
-function toast(msg,type='green'){
+function toast(msg, type='green'){
   const t=document.createElement('div');
-  t.className='toast'; t.style.background=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)'; t.textContent=msg;
+  t.className='toast';
+  t.style.background=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)';
+  t.textContent=msg;
   document.body.appendChild(t);
   setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),350); },3000);
 }
