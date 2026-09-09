@@ -468,7 +468,7 @@ tbody td.td-main{font-weight:700;font-size:12px}
           <table>
             <thead>
               <tr>
-                <th>Order ID</th><th>City</th><th>BU</th><th>Partner</th><th>QC</th><th>Stage</th>
+                <th>Order ID</th><th>City</th><th>BU</th><th>Partner</th><th>Store</th><th>QC</th><th>Stage</th>
                 <th>Amount</th><th>Ageing</th><th>Bracket</th><th>Deadline</th><th>SLA</th><th>Status</th>
                 <th style="min-width:200px">Action</th><th style="min-width:180px">Update</th>
               </tr>
@@ -498,7 +498,7 @@ tbody td.td-main{font-weight:700;font-size:12px}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CK   = 'rto_v16';
+const CK   = 'rto_v17';
 const CTTL = 5 * 60 * 1000;
 
 let RAW=[], FLT=[], TRD=[], AM={};
@@ -921,8 +921,9 @@ function rdTbl() {
 
     // Badges
     const buBdg  = o.businessUnit==='PSP'?'b-purple':'b-blue';
-    const ptBdg  = o.partnerType==='3PL'?'b-amber':o.partnerType==='PSP'?'b-purple':'b-green';
-    const stBdgType = o.storeType==='Retail'?'b-teal':'b-blue';
+    const ptBdg  = o.partnerType==='3PL'?'b-amber':'b-green';
+    const storeLbl = o.storeTypeRaw==='RETAIL'?'Retail':'Warehouse';
+    const storeBdg = o.storeTypeRaw==='RETAIL'?'b-teal':'b-blue';
     const qcBdg  = (o.qcType||'').includes('Non')?'b-purple':'b-blue';
     const stageBdg = o.stage==='Pre MDQ'?'b-amber':'b-slate';
 
@@ -966,38 +967,43 @@ function rdTbl() {
       const isLoss   = LOSS_ACT.has(selAct) || LOSS_UPD.has(selUpd);
       const lossHtml = isLoss ? `<div class="loss-display">Loss amount: ${fmtN(o.amount||0)}</div>` : '';
 
-      // Contextual follow-up hints shown below the update dropdown
-      let followUpHtml = '';
-      if (selUpd === 'Shipment received' && !o.srnCreated) {
-        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
-          &#9203; SRN creation pending — due within 2 days of shipment received</div>`;
-      } else if (selUpd === 'Rider absconded') {
-        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--red);margin-top:4px">
-          &#9888; Follow-up required: CN received or Loss</div>`;
-      } else if (selAct === 'CN requested' && !o.cnReceivedDate) {
-        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
-          &#9203; Awaiting CN received — due within 2 days</div>`;
-      } else if (selAct === 'Delivery COD' && selUpd !== 'COD collected') {
-        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
-          &#9203; Awaiting COD collected</div>`;
-      }
-
       actCell = `<select class="isel${pc.action!==undefined?' changed':''}" id="act-${gi}"
         onchange="onAct(${gi},'${o.orderId}','${o.amKey}')">
         <option value="">Select Action</option>${aOpts}</select>`;
 
-      if (o.abscondedFollowup && o.abscondedFollowup.length) {
-        updCell = `<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">Follow-up required</div>
+      // ── Shipment received follow-up: dedicated dropdown ────────────────────
+      if (o.shipmentFollowupPending && o.shipmentFollowup && o.shipmentFollowup.length) {
+        const fuSel = pc.update !== undefined ? pc.update : (o.currentUpdate || '');
+        updCell = `<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">
+            &#128230; Shipment received — select next step</div>
+          <select class="isel changed" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')">
+            <option value="">Select follow-up</option>
+            ${o.shipmentFollowup.map(u=>`<option value="${u}"${fuSel===u?' selected':''}>${u}</option>`).join('')}
+          </select>`;
+
+      // ── Rider absconded follow-up ──────────────────────────────────────────
+      } else if (o.abscondedFollowup && o.abscondedFollowup.length) {
+        updCell = `<div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:3px">&#9888; Follow-up required</div>
           <select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')">
             <option value="">Select</option>
             ${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
-          </select>${lossHtml}${followUpHtml}`;
+          </select>${lossHtml}`;
+
+      // ── No updates for this action ─────────────────────────────────────────
       } else if (curU.length === 0) {
         updCell = `<span class="locked-note">No update required</span>${lossHtml}`;
+
+      // ── Standard update dropdown with contextual hints ─────────────────────
       } else {
+        let hintHtml = '';
+        if (selAct === 'CN requested' && !o.cnReceivedDate) {
+          hintHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">&#9203; Awaiting CN received — due within 2 days</div>`;
+        } else if (selAct === 'Delivery COD' && selUpd !== 'COD collected') {
+          hintHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">&#9203; Awaiting COD collected</div>`;
+        }
         updCell = `<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}"
           onchange="onUpd(${gi},'${o.orderId}')">
-          <option value="">Select Update</option>${uOpts}</select>${lossHtml}${followUpHtml}`;
+          <option value="">Select Update</option>${uOpts}</select>${lossHtml}${hintHtml}`;
       }
     }
 
@@ -1006,6 +1012,7 @@ function rdTbl() {
       <td style="font-weight:600">${o.city}</td>
       <td><span class="badge ${buBdg}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
       <td><span class="badge ${ptBdg}">${o.partnerType}</span></td>
+      <td><span class="badge ${storeBdg}" style="font-size:10px">${storeLbl}</span></td>
       <td><span class="badge ${qcBdg}">${o.qcType||'—'}</span></td>
       <td><span class="badge ${stageBdg}" style="font-size:10px">${o.stage||'—'}</span></td>
       <td style="font-weight:700">${fmtN(o.amount||0)}</td>
