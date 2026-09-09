@@ -299,7 +299,18 @@ tbody td.td-main{font-weight:700;font-size:12px}
     <div class="field-label">Email address</div>
     <input class="field-input" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/>
     <div class="field-label">Password</div>
-    <input class="field-input" type="password" id="l-pwd" placeholder="Your city password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div style="position:relative;margin-bottom:14px">
+      <input class="field-input" type="password" id="l-pwd" placeholder="Your city password"
+        style="margin-bottom:0;padding-right:40px"
+        onkeydown="if(event.key==='Enter')doLogin()"/>
+      <button type="button" onclick="togglePwd()" id="pwd-eye"
+        style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+               background:none;border:none;cursor:pointer;color:var(--t3);
+               font-size:16px;padding:4px;line-height:1;display:flex;align-items:center"
+        title="Show / hide password">
+        &#128065;
+      </button>
+    </div>
     <button class="login-submit" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
     <div class="login-err" id="l-err"></div>
     <div class="login-hint">Forgot password? Contact your admin.</div>
@@ -457,7 +468,7 @@ tbody td.td-main{font-weight:700;font-size:12px}
           <table>
             <thead>
               <tr>
-                <th>Order ID</th><th>City</th><th>BU</th><th>Partner</th><th>Store</th><th>QC</th><th>Stage</th>
+                <th>Order ID</th><th>City</th><th>BU</th><th>Partner</th><th>QC</th><th>Stage</th>
                 <th>Amount</th><th>Ageing</th><th>Bracket</th><th>Deadline</th><th>SLA</th><th>Status</th>
                 <th style="min-width:200px">Action</th><th style="min-width:180px">Update</th>
               </tr>
@@ -487,7 +498,7 @@ tbody td.td-main{font-weight:700;font-size:12px}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CK   = 'rto_v13';
+const CK   = 'rto_v16';
 const CTTL = 5 * 60 * 1000;
 
 let RAW=[], FLT=[], TRD=[], AM={};
@@ -508,6 +519,14 @@ function _amKey(o) {
 }
 
 // ── LOGIN ────────────────────────────────────────────────
+function togglePwd() {
+  const inp = document.getElementById('l-pwd');
+  const btn = document.getElementById('pwd-eye');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  btn.style.color = show ? 'var(--blue)' : 'var(--t3)';
+}
+
 function doLogin() {
   const email=document.getElementById('l-email').value.trim();
   const pwd=document.getElementById('l-pwd').value.trim();
@@ -947,6 +966,22 @@ function rdTbl() {
       const isLoss   = LOSS_ACT.has(selAct) || LOSS_UPD.has(selUpd);
       const lossHtml = isLoss ? `<div class="loss-display">Loss amount: ${fmtN(o.amount||0)}</div>` : '';
 
+      // Contextual follow-up hints shown below the update dropdown
+      let followUpHtml = '';
+      if (selUpd === 'Shipment received' && !o.srnCreated) {
+        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
+          &#9203; SRN creation pending — due within 2 days of shipment received</div>`;
+      } else if (selUpd === 'Rider absconded') {
+        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--red);margin-top:4px">
+          &#9888; Follow-up required: CN received or Loss</div>`;
+      } else if (selAct === 'CN requested' && !o.cnReceivedDate) {
+        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
+          &#9203; Awaiting CN received — due within 2 days</div>`;
+      } else if (selAct === 'Delivery COD' && selUpd !== 'COD collected') {
+        followUpHtml = `<div style="font-size:10px;font-weight:600;color:var(--amber);margin-top:4px">
+          &#9203; Awaiting COD collected</div>`;
+      }
+
       actCell = `<select class="isel${pc.action!==undefined?' changed':''}" id="act-${gi}"
         onchange="onAct(${gi},'${o.orderId}','${o.amKey}')">
         <option value="">Select Action</option>${aOpts}</select>`;
@@ -956,13 +991,13 @@ function rdTbl() {
           <select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')">
             <option value="">Select</option>
             ${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}
-          </select>${lossHtml}`;
+          </select>${lossHtml}${followUpHtml}`;
       } else if (curU.length === 0) {
         updCell = `<span class="locked-note">No update required</span>${lossHtml}`;
       } else {
         updCell = `<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}"
           onchange="onUpd(${gi},'${o.orderId}')">
-          <option value="">Select Update</option>${uOpts}</select>${lossHtml}`;
+          <option value="">Select Update</option>${uOpts}</select>${lossHtml}${followUpHtml}`;
       }
     }
 
@@ -971,7 +1006,6 @@ function rdTbl() {
       <td style="font-weight:600">${o.city}</td>
       <td><span class="badge ${buBdg}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
       <td><span class="badge ${ptBdg}">${o.partnerType}</span></td>
-      <td><span class="badge ${stBdgType}">${o.storeType||'FC'}</span></td>
       <td><span class="badge ${qcBdg}">${o.qcType||'—'}</span></td>
       <td><span class="badge ${stageBdg}" style="font-size:10px">${o.stage||'—'}</span></td>
       <td style="font-weight:700">${fmtN(o.amount||0)}</td>
@@ -1021,12 +1055,14 @@ function showChangePulse(idx) {
   const row=document.getElementById('act-'+idx)?.closest('tr');
   if (!row) return;
   const existing=row.querySelector('.row-spinner'); if(existing) existing.remove();
-  const lastTd=row.querySelector('td:last-child');
-  if (lastTd){
+  // Append to the Action cell (second-to-last td) so it doesn't overwrite the update dropdown
+  const tds=row.querySelectorAll('td');
+  const targetTd = tds[tds.length-2] || tds[tds.length-1];
+  if (targetTd){
     const sp=document.createElement('div');
     sp.className='row-spinner';
     sp.innerHTML=`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Change pending`;
-    lastTd.appendChild(sp);
+    targetTd.appendChild(sp);
   }
 }
 
