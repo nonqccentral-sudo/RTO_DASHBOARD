@@ -313,8 +313,35 @@ tbody td.td-main{font-weight:700;font-size:12px}
     </div>
     <button class="login-submit" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
     <div class="login-err" id="l-err"></div>
-    <div class="login-hint">Forgot password? Contact your admin.</div>
+    <div class="login-hint">
+      <a href="#" onclick="showReset();return false"
+        style="color:var(--blue);font-weight:600;text-decoration:none;font-size:12px">
+        Forgot password?
+      </a>
+    </div>
     <div class="city-strip"><span>DEL</span><span>MUM</span><span>BLR</span><span>HYD</span><span>CHD</span><span>JAI</span><span>PUN</span><span>KOL</span></div>
+  </div>
+
+  <!-- RESET PASSWORD PANEL -->
+  <div class="login-card" id="reset-card" style="display:none">
+    <div class="login-title-block">
+      <div class="login-icon-wrap">&#128274;</div>
+      <div><div class="login-title-main">Reset Password</div><div class="login-title-sub">We'll email your password to you</div></div>
+    </div>
+    <div class="login-divider"></div>
+    <div class="field-label">Your registered email address</div>
+    <input class="field-input" type="email" id="r-email" placeholder="you@1mg.com"
+      onkeydown="if(event.key==='Enter')doReset()"/>
+    <button class="login-submit" id="r-btn" onclick="doReset()">Send Password &rarr;</button>
+    <div class="login-err" id="r-err" style="color:var(--green)"></div>
+    <div class="login-hint" style="margin-top:10px">
+      <a href="#" onclick="showLogin();return false"
+        style="color:var(--blue);font-weight:600;text-decoration:none;font-size:12px">
+        &larr; Back to Sign In
+      </a>
+    </div>
+  </div>
+
   </div>
 </div>
 
@@ -498,7 +525,7 @@ tbody td.td-main{font-weight:700;font-size:12px}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzX3JlsjGvPj4xaXIQj3mjGdmL03Bs7qy2Ncl5N8UT4tdY8BH1Q3S8AXZGipBXmJUMsDA/exec';
-const CK   = 'rto_v17';
+const CK   = 'rto_v18';
 const CTTL = 5 * 60 * 1000;
 
 let RAW=[], FLT=[], TRD=[], AM={};
@@ -525,6 +552,51 @@ function togglePwd() {
   const show = inp.type === 'password';
   inp.type = show ? 'text' : 'password';
   btn.style.color = show ? 'var(--blue)' : 'var(--t3)';
+}
+
+function showReset() {
+  document.querySelector('.login-card:not(#reset-card)').style.display = 'none';
+  document.getElementById('reset-card').style.display = 'block';
+  document.getElementById('r-email').value = document.getElementById('l-email').value || '';
+  $('r-err', '');
+  document.getElementById('r-btn').disabled = false;
+  document.getElementById('r-btn').textContent = 'Send Password \u2192';
+  setTimeout(() => document.getElementById('r-email').focus(), 50);
+}
+
+function showLogin() {
+  document.getElementById('reset-card').style.display = 'none';
+  document.querySelector('.login-card:not(#reset-card)').style.display = 'block';
+  setTimeout(() => document.getElementById('l-email').focus(), 50);
+}
+
+function doReset() {
+  const email = document.getElementById('r-email').value.trim();
+  if (!email) { $('r-err', 'Please enter your email address'); document.getElementById('r-err').style.color = 'var(--red)'; return; }
+  const btn = document.getElementById('r-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  $('r-err', '');
+  fetch(API + '?action=resetPassword&email=' + encodeURIComponent(email))
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        document.getElementById('r-err').style.color = 'var(--green)';
+        $('r-err', '\u2713 Password sent! Check your inbox.');
+        btn.textContent = 'Sent \u2713';
+        // Pre-fill email on login form for convenience
+        document.getElementById('l-email').value = email;
+        setTimeout(() => showLogin(), 3000);
+      } else {
+        document.getElementById('r-err').style.color = 'var(--red)';
+        $('r-err', res.error || 'Something went wrong. Try again.');
+        btn.disabled = false; btn.textContent = 'Send Password \u2192';
+      }
+    })
+    .catch(() => {
+      document.getElementById('r-err').style.color = 'var(--red)';
+      $('r-err', 'Network error. Please try again.');
+      btn.disabled = false; btn.textContent = 'Send Password \u2192';
+    });
 }
 
 function doLogin() {
