@@ -306,10 +306,10 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
     <div class="bg-logo-wrap"><div class="bg-tata1mg"><span class="bg-tata">TATA</span><span class="bg-onemg"><span class="bg-one">1</span><span class="bg-mg">mg</span><div class="bg-underline"></div></span></div><div class="bg-tagline">Together bringing trust to healthcare</div></div>
     <div class="login-bg-grid"></div>
     <div class="float-card fc1"><div class="fc-dot red"></div><div class="fc-lines"><div class="fcl w60"></div><div class="fcl w40"></div></div><div class="fc-badge">High Ageing</div></div>
-    <div class="float-card fc2"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w70"></div><div class="fcl w50"></div></div><div class="fc-badge green">CN received</div></div>
+    <div class="float-card fc2"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w70"></div><div class="fcl w50"></div></div><div class="fc-badge green">CN Received</div></div>
     <div class="float-card fc3"><div class="fc-dot amber"></div><div class="fc-lines"><div class="fcl w55"></div><div class="fcl w35"></div></div><div class="fc-badge amber">Recoverable</div></div>
     <div class="float-card fc4"><div class="fc-dot blue"></div><div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div><div class="fc-badge blue">Pending with rider</div></div>
-    <div class="float-card fc5"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w50"></div><div class="fcl w30"></div></div><div class="fc-badge green">COD collected</div></div>
+    <div class="float-card fc5"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w50"></div><div class="fcl w30"></div></div><div class="fc-badge green">COD Collected</div></div>
     <div class="float-stat fs1"><div class="fst-num">247</div><div class="fst-lbl">Active RTOs</div></div>
     <div class="float-stat fs2"><div class="fst-num">Rs.1.2L</div><div class="fst-lbl">Recoverable</div></div>
     <div class="float-stat fs3"><div class="fst-num">18</div><div class="fst-lbl">Action Pending</div></div>
@@ -378,12 +378,12 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
     <span class="hdr-asof" id="asof"></span>
     <div class="hdr-right">
       <span class="user-pill" id="user-pill"></span>
+      <button class="hdr-btn" onclick="scrollToTop()">&#8962; Home</button>
       <div class="qc-tabs" id="qc-tabs">
         <button data-v="Overall" class="on" onclick="setQC('Overall')">Overall</button>
         <button data-v="QC" onclick="setQC('QC')">QC</button>
         <button data-v="Non-QC" onclick="setQC('Non-QC')">Non-QC</button>
       </div>
-      <button class="hdr-btn" onclick="scrollToTop()">&#8962; Home</button>
       <button class="hdr-btn danger" onclick="logout()">Sign Out</button>
     </div>
   </div>
@@ -525,7 +525,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const CK   = 'rto_v23';
+const CK   = 'rto_v24';
 const CTTL = 5 * 60 * 1000;
 const MAX_EDITS = 2;
 
@@ -538,7 +538,7 @@ const fmtN = n => 'Rs.' + Number(n).toLocaleString('en-IN',{maximumFractionDigit
 const fmtK = n => {if(!n)return'Rs.0';if(n>=10000000)return'Rs.'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(n>=1000)return'Rs.'+(n/1000).toFixed(1)+'K';return'Rs.'+n;};
 const pct  = (a,b) => b?Math.round(a/b*100):0;
 const $    = (id,v) => {const e=document.getElementById(id);if(e)e.textContent=v;};
-const CN_UPDATES = new Set(['CN received']);
+const CN_UPDATES = new Set(['CN Received']);
 
 function _amKey(o){return o.amKey||'FC|E-Pharma|Post MDQ';}
 
@@ -711,7 +711,7 @@ function loadRecoverySection(city){
   const rs=document.getElementById('recovery-section');
   rs.style.display='none';rs.innerHTML='';
   // Find loss orders for this city
-  const lossOrders=RAW.filter(o=>o.city===city&&(o.requiresLoss||o.isGreen)&&(o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order lost'));
+  const lossOrders=RAW.filter(o=>o.city===city&&(o.requiresLoss||o.isGreen)&&(o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order Lost'));
   if(!lossOrders.length) return;
   rs.style.display='block';
   rs.innerHTML=`<div class="recovery-section">
@@ -847,15 +847,15 @@ function rdTbl(){
       // Update cell
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order lost';
+      const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
       const lossHtml=isLoss?`<div class="loss-display">&#128176; Loss: ${fmtN(o.amount||0)}</div>`:'';
-      // CN number input — shows when CN received is selected
+      // CN number input — shows when CN Received is selected
       const showCN=CN_UPDATES.has(selUpd);
       const cnHtml=showCN?`<span class="cn-label">&#128373; Enter CN Number:</span><input class="cn-input" id="cn-${gi}" placeholder="CN123456" value="${selCN}" oninput="onCN(${gi},'${o.orderId}')"/>`:'';
 
       if(o.shipmentFollowupPending&&o.shipmentFollowup&&o.shipmentFollowup.length){
         const fuSel=pc.update!==undefined?pc.update:(o.currentUpdate||'');
-        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">&#128230; Shipment received — select next step</div><select class="isel changed" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${fuSel===u?' selected':''}>${u}</option>`).join('')}</select>`;
+        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">&#128230; Shipment Received — select next step</div><select class="isel changed" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${fuSel===u?' selected':''}>${u}</option>`).join('')}</select>`;
       } else if(o.abscondedFollowup&&o.abscondedFollowup.length){
         updCell=`<div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:3px">&#9888; Follow-up required</div><select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}</select>${lossHtml}`;
       } else if(curU.length===0){
@@ -864,8 +864,8 @@ function rdTbl(){
         updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span><span class="locked-chip" style="margin-left:6px">Max edits (${MAX_EDITS})</span>`;
       } else {
         let hintHtml='';
-        if(selAct==='CN requested'&&!o.cnReceivedDate)hintHtml=`<span class="hint-chip">&#9203; Awaiting CN received — due within 2 days</span>`;
-        else if(selAct==='Delivery - COD'&&selUpd!=='COD collected')hintHtml=`<span class="hint-chip">&#9203; Awaiting COD collected</span>`;
+        if(selAct==='CN Requested'&&!o.cnReceivedDate)hintHtml=`<span class="hint-chip">&#9203; Awaiting CN Received — due within 2 days</span>`;
+        else if(selAct==='Delivery - COD'&&selUpd!=='COD Collected')hintHtml=`<span class="hint-chip">&#9203; Awaiting COD Collected</span>`;
         else if(selAct==='Delivery - Prepaid'&&!selUpd)hintHtml=`<span class="hint-chip">&#9203; Select update for prepaid delivery</span>`;
         updCell=`<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${hintHtml}`;
         if(o.updateLocked)updCell+=`<span class="locked-chip" style="display:block;margin-top:4px">Last edit used</span>`;
@@ -905,7 +905,7 @@ function onUpd(idx,sid){
   const us=document.getElementById('upd-'+idx);if(!us)return;
   if(!CHANGES[sid])CHANGES[sid]={};
   CHANGES[sid].update=us.value;
-  // Clear CN if update changed away from CN received
+  // Clear CN if update changed away from CN Received
   if(!CN_UPDATES.has(us.value))CHANGES[sid].cnNumber='';
   updSaveBar();rdTbl();
 }
@@ -985,7 +985,7 @@ function _buildAndDownloadXLSX(p,label){
     {'Column':'Order ID','Instructions':'DO NOT modify — used to match rows on upload'},
     {'Column':'Current Action','Instructions':'Fill from Action-Update Reference sheet. Spelling is auto-corrected.'},
     {'Column':'Current Update','Instructions':'Valid update for chosen action (optional)'},
-    {'Column':'CN Number','Instructions':'Required when update is "CN received"'},
+    {'Column':'CN Number','Instructions':'Required when update is "CN Received"'},
     {'Column':'Action Edits Used','Instructions':'Shows X/2 — max 2 edits per order'},
     {'Column':'Update Edits Used','Instructions':'Shows X/2 — max 2 edits per order'},
     {'Column':'','Instructions':''},
