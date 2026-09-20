@@ -213,6 +213,7 @@ tbody tr:hover{background:#F0F7FF}
 tbody tr.tr-green{background:#F0FDF4;border-left:3px solid var(--green)}tbody tr.tr-green:hover{background:#DCFCE7}
 tbody tr.tr-red{background:#FEF2F2;border-left:3px solid var(--red)}tbody tr.tr-red:hover{background:#FEE2E2}
 tbody tr.tr-upload-fail{background:#FFF0F0;outline:2px solid var(--red);border-left:3px solid var(--red)}
+tbody tr.tr-loss{background:#F5F3FF;border-left:3px solid var(--purple)}tbody tr.tr-loss:hover{background:#EDE9FE}
 tbody td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap}
 tbody td.td-main{font-weight:700;font-size:13px;font-family:'SFMono-Regular',Consolas,monospace;letter-spacing:.4px;color:var(--blue)}
 tbody td.td-city{font-weight:600;font-size:13px}
@@ -391,7 +392,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
   <div class="cache-bar hide" id="cache-bar">&#9889; Cached &middot; <span id="cache-age"></span> &middot; <a href="#" onclick="fref();return false">Refresh now</a></div>
 
   <div class="filter-bar">
-    <div class="fg"><label>City</label><select id="f-city" onchange="apF()"><option value="">All Cities</option></select></div>
+    <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
     <div class="fg"><label>Partner</label><select id="f-type" onchange="apF()"><option value="">All</option><option value="INHOUSE">INHOUSE</option><option value="3PL">3PL</option></select></div>
     <div class="fg"><label>BU</label><select id="f-bu" onchange="apF()"><option value="">All</option><option value="E-Pharma">E-Pharma</option><option value="PSP">PSP</option></select></div>
     <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="FC">FC</option><option value="Retail">Retail</option></select></div>
@@ -493,7 +494,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
             <thead>
               <tr>
                 <th style="min-width:150px">Order ID</th>
-                <th>City</th><th>BU</th><th>Partner</th><th>Store</th><th>QC</th><th>Stage</th>
+                <th>City</th><th>BU</th><th>Partner</th><th>Store</th><th>Service Type</th><th>Stage</th><th>GMV</th><th>Status</th>
                 <th>Amount</th><th>Age</th><th>Bracket</th><th>Status</th>
                 <th style="min-width:240px">Action</th>
                 <th style="min-width:210px">Update</th>
@@ -525,7 +526,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const CK   = 'rto_v24';
+const CK   = 'rto_v26';
 const CTTL = 5 * 60 * 1000;
 const MAX_EDITS = 2;
 
@@ -624,6 +625,18 @@ function apF(){
 }
 
 function rstF(){['f-city','f-type','f-bu','f-store','f-stage','f-age','f-act'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('f-from').value='';document.getElementById('f-to').value='';const ts=document.getElementById('tbl-search');if(ts)ts.value='';SCITY=null;APF=false;GAP=false;document.getElementById('gapbtn').classList.remove('on');setQC('Overall');closeDet();}
+function onCityFilter(){
+  const city = document.getElementById('f-city').value;
+  if (city) {
+    // City selected from dropdown → open city detail directly
+    openDet(city);
+  } else {
+    // Cleared → close detail and show all
+    if (SCITY) closeDet();
+    else apF();
+  }
+}
+
 function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);apF();}
 function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);apF();}
 
@@ -638,23 +651,34 @@ function canEdit(city){return USER&&(USER.isAdmin||USER.city===city);}
 // ── CITIES ────────────────────────────────────────────────────────────────────
 function rdCities(){
   const grid=document.getElementById('city-grid');
-  const cm=grpBy(FLT,'city');const cities=Object.keys(cm).sort();
+  // Use ALL cities from RAW (not just FLT) for city grid — show every city always
+  const allCityMap=grpBy(RAW,'city');
+  const cm=grpBy(FLT,'city');const cities=Object.keys(allCityMap).sort();
   grid.innerHTML='';
   if(!cities.length){grid.innerHTML='<div class="emp"><div class="emp-icon">&#127961;</div>No city data.</div>';return;}
-  const maxR=Math.max(...cities.map(c=>agg(cm[c]).recoverable.count));
+  const RED_THRESHOLD = 80; // cities with >80 active orders shown in red
   cities.forEach(city=>{
-    const a=agg(cm[city]);const haC=cm[city].filter(o=>o.isHighAgeing).length,apC=cm[city].filter(o=>o.actionPending).length,rp=pct(a.recoverable.count,a.total);
-    const isR=haC>0||apC>0,isA=!isR&&a.recoverable.count>0&&a.recoverable.count===maxR;
+    const cityOrders=allCityMap[city]||[];
+    const a=agg(cm[city]||[]);
+    const totalActive=cityOrders.filter(o=>!o.isGreen).length;
+    const haC=cityOrders.filter(o=>o.isHighAgeing).length;
+    const apC=cityOrders.filter(o=>o.actionPending).length;
+    const rp=pct(a.recoverable.count,a.total);
+    // Red if: >80 active orders (new rule) OR has high ageing OR has action pending
+    const isOverThreshold = totalActive > RED_THRESHOLD;
+    const isR = isOverThreshold || haC>0 || apC>0;
+    const isA = !isR && a.recoverable.count>0;
     const editable=canEdit(city);const el=document.createElement('div');
     el.className='city-card'+(SCITY===city?' sel':'')+(isR?' flag-r':isA?' flag-a':'');
-    el.innerHTML=`<div class="city-top"><div class="city-name">${city}</div>${a.recoverable.count>0?`<div class="city-rec-badge">${a.recoverable.count} REC</div>`:''}</div>
+    const overBadge = isOverThreshold ? `<div style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-l);border:1px solid #FECACA;padding:1px 7px;border-radius:20px">&#9888; ${totalActive} OPEN</div>` : (a.recoverable.count>0?`<div class="city-rec-badge">${a.recoverable.count} REC</div>`:'');
+    el.innerHTML=`<div class="city-top"><div class="city-name">${city}</div>${overBadge}</div>
       <div class="city-stats">
-        <div class="cstat bl"><div class="cstat-label">Total</div><div class="cstat-val">${a.total}</div></div>
+        <div class="cstat bl"><div class="cstat-label">Total Active</div><div class="cstat-val">${totalActive}</div></div>
         <div class="cstat rd"><div class="cstat-label">Recoverable</div><div class="cstat-val">${a.recoverable.count}</div></div>
         <div class="cstat am"><div class="cstat-label">High Ageing</div><div class="cstat-val">${haC}</div></div>
         <div class="cstat"><div class="cstat-label">Action Pending</div><div class="cstat-val">${apC}</div></div>
       </div>
-      <div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${rp}%"></div></div><div class="city-prog-lbl"><span>${rp}% recoverable</span><span>${isR?haC+' high age':isA?'Most rec.':''}</span></div></div>
+      <div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${rp}%"></div></div><div class="city-prog-lbl"><span>${rp}% recoverable</span><span>${isOverThreshold?'⚠ >'+RED_THRESHOLD+' open':isR?haC+' high age':''}</span></div></div>
       <div class="city-actions">
         <button class="city-action-btn cab-dl" onclick="event.stopPropagation();dlCityFor('${city}')">&#11015; Download</button>
         ${apC>0&&editable?`<button class="city-action-btn cab-ap" onclick="event.stopPropagation();openCityAP('${city}')">AP (${apC})</button>`:''}
@@ -674,7 +698,8 @@ function openDet(city){
   if(USER && USER.isAdmin){
     dlDiv.innerHTML=`
       <button onclick="dlCityFor('${city}')" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--blue-l);color:var(--blue)">&#11015; City Download</button>
-      <button onclick="dlAdminPanIndia()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #D8B4FE;background:var(--purple-l);color:var(--purple)">&#11015; Pan-India (Admin)</button>`;
+      <button onclick="dlAdminPanIndia()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #D8B4FE;background:var(--purple-l);color:var(--purple)">&#11015; Pan-India (Admin)</button>
+          ${USER&&USER.isAdmin?`<button onclick="dlAdminLoss()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #FECACA;background:var(--red-l);color:var(--red)">&#11015; Loss/Lost (Admin)</button>`:''}`;
   } else {
     dlDiv.innerHTML=`<button onclick="dlCityFor('${city}')" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--blue-l);color:var(--blue)">&#11015; Download Excel</button>`;
   }
@@ -686,7 +711,7 @@ function openDet(city){
   document.getElementById('cd-kpis').innerHTML=`
     <div class="kpi a-red"><div class="kpi-icon">&#9888;</div><div class="kpi-label">Recoverable</div><div class="kpi-value">${a.recoverable.count}</div><div class="kpi-sub">${fmtN(a.recoverable.amount)}</div></div>
     <div class="kpi a-blue"><div class="kpi-icon">&#128230;</div><div class="kpi-label">Total</div><div class="kpi-value">${a.total}</div><div class="kpi-sub">${fmtN(a.totalAmount)}</div></div>
-    <div class="kpi a-amber"><div class="kpi-icon">&#9203;</div><div class="kpi-label">Action Pending</div><div class="kpi-value">${a.actionPending}</div><div class="kpi-sub">Need update</div></div>
+    <div class="kpi a-amber clickable" onclick="openCityAP(SCITY)"><div class="kpi-icon">&#9203;</div><div class="kpi-label">Action Pending</div><div class="kpi-value">${a.actionPending}</div><div class="kpi-sub">Click → home table</div></div>
     <div class="kpi a-red clickable" onclick="openHA()"><div class="kpi-icon">&#128308;</div><div class="kpi-label">High Ageing &gt;5d</div><div class="kpi-value">${a.highAgeing.count}</div><div class="kpi-hint">Click to view</div></div>`;
   const cg=document.getElementById('cd-charts');
   cg.innerHTML=`<div class="chart-card"><div class="chart-head"><h3>Partner Type</h3></div><canvas id="cd-ot"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Business Unit</h3></div><canvas id="cd-bu"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
@@ -704,7 +729,18 @@ function openDet(city){
 }
 
 function closeDet(){SCITY=null;APF=false;document.getElementById('city-det').classList.remove('vis');document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('sel'));document.getElementById('home-btn').classList.remove('vis');document.getElementById('recovery-section').style.display='none';apF();setTimeout(()=>document.getElementById('city-section').scrollIntoView({behavior:'smooth',block:'start'}),100);}
-function openCityAP(city){openDet(city);setTimeout(()=>{APF=true;document.getElementById('ap-tog').classList.add('on');apF();},250);}
+function openCityAP(city){
+  // Click AP from city detail → close detail, go to home table, apply AP filter for that city
+  closeDet();
+  // Set city filter and AP filter, scroll to table
+  document.getElementById('f-city').value = city;
+  setTimeout(()=>{
+    GAP = true;
+    document.getElementById('gapbtn').classList.add('on');
+    apF();
+    document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }, 150);
+}
 
 // ── RECOVERY SECTION (inside city detail) ─────────────────────────────────────
 function loadRecoverySection(city){
@@ -804,8 +840,15 @@ function rdTbl(){
 
   tbody.innerHTML=sl.map((o,i)=>{
     const gi=(PG-1)*PSZ+i,edit=canEdit(o.city);
-    const trCls=o.isGreen?'tr-green':o.actionPending?'tr-red':FAILED_ROWS.has(o.orderId)?'tr-upload-fail':'';
-    const stBdg=o.isGreen?`<span class="badge b-green">&#9989; Closed</span>`:o.actionPending?`<span class="badge b-red b-flash">&#9888; Action Pending</span>`:`<span class="badge b-slate">${o.closureStatus||'Active'}</span>`;
+    const isLossRow=(o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order Lost');
+    const trCls=o.isGreen?'tr-green':isLossRow&&!o.isGreen?'tr-loss':o.actionPending?'tr-red':FAILED_ROWS.has(o.orderId)?'tr-upload-fail':'';
+    const srnBdg=o.srnDone
+      ?`<span class="badge b-green">&#9989; SRN Closed</span>`
+      :isLossRow
+        ?`<span class="badge b-purple">&#128176; Loss/Lost</span>`
+        :o.actionPending
+          ?`<span class="badge b-red b-flash">&#9888; Action Pending</span>`
+          :`<span class="badge b-slate">SRN Open</span>`;
     const agCls=o.isHighAgeing?'ha':o.isRecoverable?'rv':'p';
     const agBdg=o.isHighAgeing?'b-red':o.isRecoverable?'b-amber':'b-blue';
     const buBdg=o.businessUnit==='PSP'?'b-purple':'b-blue';
@@ -867,23 +910,30 @@ function rdTbl(){
         if(selAct==='CN Requested'&&!o.cnReceivedDate)hintHtml=`<span class="hint-chip">&#9203; Awaiting CN Received — due within 2 days</span>`;
         else if(selAct==='Delivery - COD'&&selUpd!=='COD Collected')hintHtml=`<span class="hint-chip">&#9203; Awaiting COD Collected</span>`;
         else if(selAct==='Delivery - Prepaid'&&!selUpd)hintHtml=`<span class="hint-chip">&#9203; Select update for prepaid delivery</span>`;
+        else if(selAct==='Pending with Rider - PSP'&&!selUpd)hintHtml=`<span class="hint-chip">&#128337; Stays open — will close when SRN created in backend</span>`;
+        else if(selAct==='Pending with Nurse'&&!selUpd)hintHtml=`<span class="hint-chip">&#128337; Select: Order Lost / Shipment Received / CN Received</span>`;
         updCell=`<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${hintHtml}`;
         if(o.updateLocked)updCell+=`<span class="locked-chip" style="display:block;margin-top:4px">Last edit used</span>`;
       }
     }
 
+    // 11 columns: Order ID | City | BU | Partner | Store | Service Type | Stage | GMV | Status | Action | Update
+    const buBdg2   = (o.businessUnit||'E-Pharma')==='PSP'?'b-purple':'b-blue';
+    const ptBdg2   = o.partner==='3PL'?'b-amber':'b-green';
+    const storeBdg2= o.storeType==='RETAIL'?'b-teal':'b-blue';
+    const stageBdg2= (o.stage||'').includes('Pre')?'b-amber':'b-slate';
+    const sfBdg2   = (o.serviceFlag||'').includes('Non')?'b-purple':'b-blue';
+    const gmvFmt   = 'Rs.'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
     return `<tr class="${trCls}" id="row-${o.orderId}">
       <td class="td-main">${o.orderId}</td>
       <td class="td-city">${o.city}</td>
-      <td><span class="badge ${buBdg}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
-      <td><span class="badge ${ptBdg}">${o.partnerType}</span></td>
-      <td><span class="badge ${storeBdg}" style="font-size:10px">${storeLbl}</span></td>
-      <td><span class="badge ${qcBdg}">${o.qcType||'—'}</span></td>
-      <td><span class="badge ${stageBdg}" style="font-size:10px">${o.stage||'—'}</span></td>
-      <td class="td-amount">${fmtN(o.amount||0)}</td>
-      <td><span class="age-val ${agCls}">${o.ageing}d</span></td>
-      <td><span class="badge ${agBdg}">${o.ageingBracket}</span></td>
-      <td>${stBdg}</td>
+      <td><span class="badge ${buBdg2}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
+      <td><span class="badge ${ptBdg2}">${o.partner||'—'}</span></td>
+      <td><span class="badge ${storeBdg2}" style="font-size:10px">${o.storeType||'—'}</span></td>
+      <td><span class="badge ${sfBdg2}" style="font-size:10px">${o.serviceFlag||'—'}</span></td>
+      <td><span class="badge ${stageBdg2}" style="font-size:10px">${o.stage||'—'}</span></td>
+      <td class="td-amount">${gmvFmt}</td>
+      <td>${srnBdg}</td>
       <td style="vertical-align:top;padding-top:10px">${actCell}</td>
       <td style="vertical-align:top;padding-top:10px">${updCell}</td>
     </tr>`;
@@ -956,45 +1006,68 @@ async function saveAll(){
 function chPg(d){PG+=d;rdTbl();document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── DOWNLOAD ──────────────────────────────────────────────────────────────────
+function _getActiveFilterParams(){
+  const p=new URLSearchParams();
+  const fType=document.getElementById('f-type')?.value||'';
+  const fBU=document.getElementById('f-bu')?.value||'';
+  const fStore=document.getElementById('f-store')?.value||'';
+  const fStage=document.getElementById('f-stage')?.value||'';
+  const fAge=document.getElementById('f-age')?.value||'';
+  const fAct=document.getElementById('f-act')?.value||'';
+  if(fType)p.set('fPartner',fType);
+  if(fBU)p.set('fBU',fBU);
+  if(fStore)p.set('fStore',fStore);
+  if(fStage)p.set('fStage',fStage);
+  if(fAge)p.set('fAge',fAge);
+  if(fAct)p.set('fAction',fAct);
+  if(QF!=='Overall')p.set('fQC',QF);
+  const s=p.toString();return s?'&'+s:'';
+}
+
 function dlCity(){if(SCITY)dlCityFor(SCITY);}
 
 function dlCityFor(city){
   showOv();omsg('Preparing Excel for '+city+'...');
   const isAdmin=USER&&USER.isAdmin?'true':'false';
-  fetch(API+'?action=downloadCity&city='+encodeURIComponent(city)+'&isAdmin='+isAdmin)
+  const filters=_getActiveFilterParams();
+  const activeFilters=filters?'  [Filters applied]':'';
+  fetch(API+'?action=downloadCity&city='+encodeURIComponent(city)+'&isAdmin='+isAdmin+filters)
     .then(r=>r.json()).then(p=>{
       hideOv();if(!p.success){toast(p.error,'red');return;}
-      _buildAndDownloadXLSX(p,city);
+      _buildAndDownloadXLSX(p,city+activeFilters);
+    }).catch(e=>{hideOv();toast(e.message,'red');});
+}
+
+function dlAdminLoss(){
+  if(!USER||!USER.isAdmin){toast('Admin only','red');return;}
+  showOv();omsg('Preparing Pan-India Loss/Lost report...');
+  fetch(API+'?action=downloadLoss')
+    .then(r=>r.json()).then(p=>{
+      hideOv();if(!p.success){toast(p.error||'Failed','red');return;}
+      _buildAndDownloadXLSX(p,'Pan-India-Loss-Lost');
     }).catch(e=>{hideOv();toast(e.message,'red');});
 }
 
 function dlAdminPanIndia(){
   showOv();omsg('Preparing Pan-India Excel (Admin)...');
-  fetch(API+'?action=downloadAdmin')
+  const filters=_getActiveFilterParams();
+  fetch(API+'?action=downloadAdmin'+filters)
     .then(r=>r.json()).then(p=>{
       hideOv();if(!p.success){toast(p.error,'red');return;}
-      _buildAndDownloadXLSX(p,'Pan-India');
+      _buildAndDownloadXLSX(p,'Pan-India'+(filters?' [Filtered]':''));
     }).catch(e=>{hideOv();toast(e.message,'red');});
 }
 
 function _buildAndDownloadXLSX(p,label){
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet1||[]),'Active Orders — '+label.substring(0,20));
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet2||[]),'Action-Update Reference');
-  const instr=[
-    {'Column':'Order ID','Instructions':'DO NOT modify — used to match rows on upload'},
-    {'Column':'Current Action','Instructions':'Fill from Action-Update Reference sheet. Spelling is auto-corrected.'},
-    {'Column':'Current Update','Instructions':'Valid update for chosen action (optional)'},
-    {'Column':'CN Number','Instructions':'Required when update is "CN Received"'},
-    {'Column':'Action Edits Used','Instructions':'Shows X/2 — max 2 edits per order'},
-    {'Column':'Update Edits Used','Instructions':'Shows X/2 — max 2 edits per order'},
-    {'Column':'','Instructions':''},
-    {'Column':'How to Upload','Instructions':'City Detail → Upload Updates → select this file'},
-    {'Column':'Note for Users','Instructions':'Only pending action orders are included in this file'},
-    {'Column':'Note for Admin','Instructions':'Pan-India download includes all orders regardless of status'},
-  ];
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(instr),'Instructions');
-  XLSX.writeFile(wb,'RTO_'+label+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  // Tab 1: Standardised Remarks & Updates
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet1||[]),'Standardised Remarks');
+  // Tab 2: Instructions
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet2||[]),'Instructions');
+  // Tab 3: Order Data (or Loss data)
+  const dataSheetName = label.includes('Loss') ? 'Loss-Lost Data' : 'Order Data';
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet3||p.sheet1||[]),dataSheetName);
+  XLSX.writeFile(wb,'RTO_'+label.replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
 // ── UPLOAD ────────────────────────────────────────────────────────────────────
