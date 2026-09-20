@@ -470,7 +470,21 @@ tbody td.td-amount{font-weight:700;font-size:13px}
 </div>
 
 <script>
-Chart.register(ChartDataLabels);
+// FIX: Chart.register wrapped in try-catch — if Chart.js CDN fails to load,
+// it previously threw a TypeError here and silently killed ALL JS including doLogin.
+// Now login always works regardless of CDN status.
+let _chartsReady = false;
+function _initCharts() {
+  if(_chartsReady) return true;
+  try {
+    if(typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
+      Chart.register(ChartDataLabels);
+      _chartsReady = true;
+    }
+  } catch(e) { console.warn('Chart.js init failed:', e); }
+  return _chartsReady;
+}
+
 const API  = 'https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
 const CK   = 'rto_v27';
 const CTTL = 5 * 60 * 1000;
@@ -861,12 +875,24 @@ function rdCharts(){
 
 function dC(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
 const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}}};
-function drawDn(id,labels,data,colors){dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
-function drawHB(id,labels,data){dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2','#2563EB','#DC2626'][i%8]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
-function drawSB(id,labels,qcD,nqD){dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'QC',data:qcD,backgroundColor:'#2563EB',borderRadius:3},{label:'Non-QC',data:nqD,backgroundColor:'#7C3AED',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
+function drawDn(id,labels,data,colors){
+  if(!_initCharts())return;
+  dC(id);const ctx=document.getElementById(id);if(!ctx)return;
+  const tot=data.reduce((s,v)=>s+v,0)||1;
+  CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}}); }
+function drawHB(id,labels,data){
+  if(!_initCharts())return;
+  dC(id);const ctx=document.getElementById(id);if(!ctx)return;
+  const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2','#2563EB','#DC2626'][i%8]);
+  CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}}); }
+function drawSB(id,labels,qcD,nqD){
+  if(!_initCharts())return;
+  dC(id);const ctx=document.getElementById(id);if(!ctx)return;
+  CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'QC',data:qcD,backgroundColor:'#2563EB',borderRadius:3},{label:'Non-QC',data:nqD,backgroundColor:'#7C3AED',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}}); }
 
 // FIX: Trend chart now shows synthetic today point if Backlog Snapshot is empty
 function drawTrend(){
+  if(!_initCharts())return;
   dC('ch-tr');
   const ctx=document.getElementById('ch-tr');if(!ctx)return;
   let trendData=TRD;
