@@ -8,28 +8,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-:root {
-  --bg:#F1F4F9;--surface:#FFFFFF;--surf-2:#F5F7FA;--surf-3:#E8ECF2;
-  --border:#DDE1EB;--border-2:#C8CDD9;
-  --t1:#0F172A;--t2:#475569;--t3:#94A3B8;
-  --blue:#2563EB;--blue-l:#EFF6FF;--blue-d:#1D4ED8;
-  --green:#059669;--green-l:#ECFDF5;
-  --red:#DC2626;--red-l:#FEF2F2;
-  --amber:#D97706;--amber-l:#FFFBEB;
-  --purple:#7C3AED;--purple-l:#F5F3FF;
-  --teal:#0891B2;--teal-l:#ECFEFF;
-  --slate:#475569;
-  --sh-xs:0 1px 3px rgba(0,0,0,.06);--sh-sm:0 2px 8px rgba(0,0,0,.08);
-  --sh-md:0 4px 16px rgba(0,0,0,.1);--sh-lg:0 8px 32px rgba(0,0,0,.14);
-  --r-sm:6px;--r:10px;--r-lg:14px;
-  --font:'Inter','Segoe UI',system-ui,sans-serif;
-}
+:root{--bg:#F1F4F9;--surface:#FFFFFF;--surf-2:#F5F7FA;--surf-3:#E8ECF2;--border:#DDE1EB;--border-2:#C8CDD9;--t1:#0F172A;--t2:#475569;--t3:#94A3B8;--blue:#2563EB;--blue-l:#EFF6FF;--blue-d:#1D4ED8;--green:#059669;--green-l:#ECFDF5;--red:#DC2626;--red-l:#FEF2F2;--amber:#D97706;--amber-l:#FFFBEB;--purple:#7C3AED;--purple-l:#F5F3FF;--teal:#0891B2;--teal-l:#ECFEFF;--slate:#475569;--sh-xs:0 1px 3px rgba(0,0,0,.06);--sh-sm:0 2px 8px rgba(0,0,0,.08);--sh-md:0 4px 16px rgba(0,0,0,.1);--sh-lg:0 8px 32px rgba(0,0,0,.14);--r-sm:6px;--r:10px;--r-lg:14px;--font:'Inter','Segoe UI',system-ui,sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-
-/* LOGIN */
-.login-bg{position:absolute;inset:0;overflow:hidden;}
-.login-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;}
+.login-bg{position:absolute;inset:0;overflow:hidden;}.login-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:48px 48px;}
 .float-card{position:absolute;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;animation:floatY 6s ease-in-out infinite;pointer-events:none;}
 .fc1{top:12%;left:4%;animation-delay:0s;width:200px}.fc2{top:25%;right:5%;animation-delay:1.2s;width:210px}.fc3{bottom:30%;left:3%;animation-delay:2.4s;width:195px}.fc4{bottom:18%;right:4%;animation-delay:.8s;width:220px}.fc5{top:55%;left:6%;animation-delay:1.8s;width:200px}
 @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
@@ -60,8 +42,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .login-submit:hover{background:var(--blue-d)}.login-submit:disabled{opacity:.6;cursor:default}
 .login-err{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-top:10px}
 .login-hint{font-size:11px;color:var(--t3);text-align:center;margin-top:16px}
-
-/* OVERLAY */
 #ov{position:fixed;inset:0;z-index:9999;background:rgba(241,244,249,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px);transition:opacity .25s}
 #ov.hide{opacity:0;pointer-events:none}
 .ov-ring{width:44px;height:44px;border:3px solid var(--border-2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite}
@@ -69,8 +49,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .ov-dots span:nth-child(2){animation-delay:.14s;background:var(--amber)}.ov-dots span:nth-child(3){animation-delay:.28s;background:var(--red)}
 .ov-msg{font-size:13px;color:var(--t2);font-weight:500}
 @keyframes spin{to{transform:rotate(360deg)}}@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-
-/* HEADER */
 .hdr{height:58px;background:linear-gradient(135deg,#1E3A5F,#2563EB);padding:0 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(37,99,235,.3)}
 .hdr-brand{display:flex;align-items:center;gap:9px}
 .hdr-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px}
@@ -83,9 +61,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .qc-tabs button.on{background:rgba(255,255,255,.25);color:#fff}
 .hdr-btn{padding:5px 13px;border-radius:var(--r-sm);border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);font-size:12px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer;transition:all .12s;white-space:nowrap}
 .hdr-btn:hover{background:rgba(255,255,255,.2);color:#fff}.hdr-btn.danger:hover{background:#DC2626;border-color:#DC2626;color:#fff}
+.hdr-btn.amber-btn{border-color:rgba(251,191,36,.4);color:#FDE68A}.hdr-btn.amber-btn:hover{background:#D97706;border-color:#D97706;color:#fff}
 .user-pill{font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:3px 10px;border-radius:20px}
-
-/* CACHE + FILTER */
 .cache-bar{background:#FFFBEB;border-bottom:1px solid #FDE68A;padding:6px 24px;font-size:12px;color:var(--amber);display:flex;align-items:center;gap:8px}
 .cache-bar.hide{display:none}.cache-bar a{color:var(--amber);font-weight:600}
 .filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;box-shadow:var(--sh-xs)}
@@ -98,20 +75,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .btn-reset{background:var(--red-l);border-color:#FECACA;color:var(--red)}.btn-reset:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .btn-refresh{background:var(--blue-l);border-color:#BFDBFE;color:var(--blue)}.btn-refresh:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 .btn-refresh.sp svg{animation:spin .6s linear infinite}
-
-/* HOME BTN */
 #home-btn{position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;transition:all .15s}
 #home-btn.vis{display:flex}#home-btn:hover{background:var(--blue-d);transform:translateY(-1px)}
-
-/* MAIN */
 .main{padding:20px 24px;max-width:1440px;margin:0 auto}
 .sec{margin-bottom:28px}
 .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .sec-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t2);white-space:nowrap}
 .sec-line{flex:1;height:1px;background:var(--border)}
 .sec-note{font-size:11px;color:var(--t3);white-space:nowrap}
-
-/* KPI */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--sh-xs);transition:box-shadow .2s,transform .15s}
 .kpi:hover{box-shadow:var(--sh-sm);transform:translateY(-1px)}
@@ -123,8 +94,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .kpi-value{font-size:30px;font-weight:800;line-height:1;color:var(--t1);letter-spacing:-1px}
 .a-red .kpi-value{color:var(--red)}.a-green .kpi-value{color:var(--green)}.a-amber .kpi-value{color:var(--amber)}
 .kpi-sub{font-size:11px;color:var(--t3);margin-top:4px}.kpi.clickable{cursor:pointer}.kpi-hint{font-size:10px;color:var(--t3);margin-top:6px}
-
-/* AGEING */
 .age-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .age-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh-xs)}
 .age-ring{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
@@ -135,8 +104,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .age-amt{font-size:11px;color:var(--t3);margin-top:2px}.age-bar{height:4px;background:var(--surf-3);border-radius:2px;margin-top:8px;overflow:hidden}
 .age-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
 .age-card.p .age-bar-fill{background:var(--blue)}.age-card.rv .age-bar-fill{background:var(--amber)}.age-card.ha .age-bar-fill{background:var(--red)}
-
-/* CITY */
 .city-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 .city-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .15s;box-shadow:var(--sh-xs)}
 .city-card:hover{border-color:var(--blue);box-shadow:var(--sh-md);transform:translateY(-2px)}.city-card.sel{border-color:var(--blue);background:var(--blue-l)}
@@ -154,8 +121,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .cab-dl{background:var(--blue-l);border-color:#BFDBFE;color:var(--blue)}.cab-dl:hover{background:var(--blue);color:#fff}
 .cab-ap{background:var(--red-l);border-color:#FECACA;color:var(--red)}.cab-ap:hover{background:var(--red);color:#fff}
 .city-ro-note{font-size:10px;color:var(--t3);text-align:center;margin-top:7px}
-
-/* CITY DETAIL */
 #city-det{display:none;margin-bottom:32px}#city-det.vis{display:block}
 .cd-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-xs);flex-wrap:wrap}
 .cd-title{font-size:18px;font-weight:800;color:var(--t1)}.cd-right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -164,24 +129,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .ap-filter-btn{padding:5px 14px;border-radius:6px;border:1px solid #FDE68A;background:#fff;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;transition:all .12s}
 .ap-filter-btn.on{background:var(--amber);color:#fff;border-color:var(--amber)}
 .ap-badge-count{background:var(--red-l);color:var(--red);border:1px solid #FECACA;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
-
-/* RECOVERY SECTION */
 .recovery-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-xs);margin-bottom:16px;overflow:hidden}
 .recovery-header{padding:12px 18px;background:linear-gradient(135deg,#4C1D95,#7C3AED);display:flex;align-items:center;justify-content:space-between}
 .recovery-header h3{color:#fff;font-size:13px;font-weight:700}
 .recovery-body{padding:14px 18px}
-.recovery-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);margin-bottom:6px;background:var(--surf-2);font-size:12px}
+.recovery-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);margin-bottom:6px;background:var(--surf-2);font-size:12px;flex-wrap:wrap}
 .recovery-row .rec-id{font-weight:700;font-size:12px;color:var(--blue);font-family:monospace;min-width:130px}
 .recovery-row .rec-gmv{color:var(--red);font-weight:700}
 .recovery-row .rec-recovered{color:var(--green);font-weight:700}
 .recovery-inp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:110px;color:var(--t1)}
 .recovery-inp:focus{outline:none;border-color:var(--purple)}
-.recovery-note-inp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;flex:1;color:var(--t1)}
-.recovery-note-inp:focus{outline:none;border-color:var(--purple)}
+.recovery-ref-inp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:160px;color:var(--t1)}
+.recovery-ref-inp:focus{outline:none;border-color:var(--purple)}
 .rec-save-btn{padding:5px 12px;border-radius:6px;border:none;background:var(--purple);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:all .12s}
 .rec-save-btn:hover{background:#6D28D9}
-
-/* CHARTS */
 .chart-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .chart-grid .span3{grid-column:1/-1}
 .chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh-xs)}
@@ -189,8 +150,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .chart-head h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t2)}
 .chart-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf-2);color:var(--t3);border:1px solid var(--border)}
 .chart-card canvas{max-height:200px}
-
-/* TABLE */
+.chart-empty{text-align:center;padding:32px;color:var(--t3);font-size:12px}
 .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh-xs);overflow:hidden}
 .table-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#1E3A5F,#2563EB);gap:10px;flex-wrap:wrap}
 .table-head h3{font-size:14px;font-weight:700;color:#fff}.table-head-right{display:flex;align-items:center;gap:8px}
@@ -217,9 +177,7 @@ tbody tr.tr-loss{background:#F5F3FF;border-left:3px solid var(--purple)}tbody tr
 tbody td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap}
 tbody td.td-main{font-weight:700;font-size:13px;font-family:'SFMono-Regular',Consolas,monospace;letter-spacing:.4px;color:var(--blue)}
 tbody td.td-city{font-weight:600;font-size:13px}
-tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
-
-/* INLINE EDITS */
+tbody td.td-amount{font-weight:700;font-size:13px}
 .edit-cell{display:flex;align-items:flex-start;gap:6px;min-width:220px}
 .isel{padding:6px 9px;border-radius:6px;border:1.5px solid var(--border);background:var(--surf-2);font-size:12px;color:var(--t1);cursor:pointer;flex:1;max-width:210px;font-weight:500}
 .isel:focus{outline:none;border-color:var(--blue);background:#fff}
@@ -233,8 +191,9 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 .cn-input{padding:5px 9px;border-radius:6px;border:1.5px solid #A7F3D0;background:var(--green-l);font-size:12px;color:var(--t1);width:150px;margin-top:4px}
 .cn-input:focus{outline:none;border-color:var(--green)}
 .cn-label{font-size:10px;font-weight:700;color:var(--green);margin-top:4px;display:block}
-
-/* SAVE BAR */
+.ref-input{padding:5px 9px;border-radius:6px;border:1.5px solid #FDE68A;background:var(--amber-l);font-size:12px;color:var(--t1);width:160px;margin-top:4px}
+.ref-input:focus{outline:none;border-color:var(--amber)}
+.ref-label{font-size:10px;font-weight:700;color:var(--amber);margin-top:4px;display:block}
 .save-bar{position:sticky;bottom:0;z-index:50;background:linear-gradient(135deg,#1E3A5F,#2563EB);padding:12px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 -4px 20px rgba(37,99,235,.25)}
 .save-bar.hide{display:none}
 .save-count{font-size:13px;font-weight:600;color:rgba(255,255,255,.9)}
@@ -243,27 +202,14 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 .clear-all-btn{padding:8px 16px;border-radius:7px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s}
 .clear-all-btn:hover{background:rgba(220,38,38,.8);border-color:rgba(220,38,38,.8);color:#fff}
 .save-status{font-size:12px;color:rgba(255,255,255,.8)}
-
-/* PAGINATION */
 .pag{display:flex;align-items:center;gap:6px;padding:12px 20px;border-top:1px solid var(--border);justify-content:flex-end;background:var(--surf-2)}
 .pag button{padding:6px 16px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;transition:all .12s}
 .pag button:disabled{opacity:.4;cursor:default}.pag button:not(:disabled):hover{border-color:var(--blue);color:var(--blue);background:var(--blue-l)}
 .pag-info{font-size:12px;color:var(--t2);font-weight:600;padding:0 8px}
-
-/* BADGES */
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;gap:3px;white-space:nowrap}
-.b-blue{background:var(--blue-l);color:var(--blue);border:1px solid #BFDBFE}
-.b-green{background:var(--green-l);color:var(--green);border:1px solid #A7F3D0}
-.b-red{background:var(--red-l);color:var(--red);border:1px solid #FECACA}
-.b-amber{background:var(--amber-l);color:var(--amber);border:1px solid #FDE68A}
-.b-purple{background:var(--purple-l);color:var(--purple);border:1px solid #D8B4FE}
-.b-teal{background:var(--teal-l);color:var(--teal);border:1px solid #A5F0FC}
-.b-slate{background:var(--surf-2);color:var(--slate);border:1px solid var(--border)}
+.b-blue{background:var(--blue-l);color:var(--blue);border:1px solid #BFDBFE}.b-green{background:var(--green-l);color:var(--green);border:1px solid #A7F3D0}.b-red{background:var(--red-l);color:var(--red);border:1px solid #FECACA}.b-amber{background:var(--amber-l);color:var(--amber);border:1px solid #FDE68A}.b-purple{background:var(--purple-l);color:var(--purple);border:1px solid #D8B4FE}.b-teal{background:var(--teal-l);color:var(--teal);border:1px solid #A5F0FC}.b-slate{background:var(--surf-2);color:var(--slate);border:1px solid var(--border)}
 .b-flash{animation:flash 1.4s infinite}
 @keyframes flash{0%,100%{opacity:1}50%{opacity:.45}}
-.age-val{font-weight:800;font-size:14px}.age-val.p{color:var(--t1)}.age-val.rv{color:var(--amber)}.age-val.ha{color:var(--red)}
-
-/* MODALS */
 .modal-bg{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px}
 .modal-bg.hide{display:none}
 .modal{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh-lg);width:100%;max-width:780px;max-height:84vh;display:flex;flex-direction:column;overflow:hidden}
@@ -272,27 +218,21 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 .modal-close{width:30px;height:30px;border-radius:6px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .modal-close:hover{background:rgba(220,38,38,.8);border-color:#DC2626}
 .modal-body{overflow-y:auto;padding:18px 22px;flex:1}
-.modal-city-block{margin-bottom:20px}
-.modal-city-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:8px;display:flex;align-items:center;gap:7px}
+.modal-city-block{margin-bottom:20px}.modal-city-name{font-size:13px;font-weight:700;color:var(--t1);margin-bottom:8px;display:flex;align-items:center;gap:7px}
 .modal-city-ct{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--red-l);color:var(--red);border:1px solid #FECACA}
 .modal-order-list{display:flex;flex-direction:column;gap:5px}
 .modal-order-row{display:flex;align-items:center;gap:9px;padding:10px 14px;background:var(--surf-2);border-radius:8px;border:1px solid var(--border);cursor:pointer;transition:all .1s}
 .modal-order-row:hover{background:var(--red-l);border-color:#FECACA}
 .mor-id{font-size:12px;font-weight:700;color:var(--blue);min-width:140px;font-family:monospace}.mor-meta{flex:1;font-size:11px;color:var(--t2)}.mor-case{font-size:10px;color:var(--t3);margin-top:1px}
 .mor-age{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--red-l);color:var(--red);border:1px solid #FECACA}
-
-/* UPLOAD MODAL */
 .upload-modal{background:var(--surface);border-radius:var(--r-lg);box-shadow:var(--sh-lg);width:100%;max-width:900px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
 .upload-summary-bar{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;gap:20px;align-items:center;background:var(--surf-2)}
 .upload-stat{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
 .upload-stat.ok{color:var(--green)}.upload-stat.fail{color:var(--red)}.upload-stat.total{color:var(--t2);font-weight:500}
 .upload-result-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:12px;border:1px solid}
-.upload-result-row.ok{background:#F0FDF4;border-color:#A7F3D0}
-.upload-result-row.fail{background:var(--red-l);border-color:#FECACA}
+.upload-result-row.ok{background:#F0FDF4;border-color:#A7F3D0}.upload-result-row.fail{background:var(--red-l);border-color:#FECACA}
 .upr-icon{font-size:16px;flex-shrink:0;margin-top:1px}.upr-id{font-weight:700;font-size:12px;min-width:140px;font-family:monospace;color:var(--blue)}.upr-msg{color:var(--t2);flex:1;line-height:1.5}
 .autocorrect-note{font-size:10px;color:var(--amber);font-style:italic;margin-top:2px;display:block}
-
-/* MISC */
 .emp{text-align:center;padding:48px;color:var(--t3);font-size:13px}.emp-icon{font-size:32px;margin-bottom:8px}
 .err-box{background:var(--red-l);border:1px solid #FECACA;border-radius:var(--r);padding:20px 24px;color:var(--red);font-weight:600;margin:24px}
 .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:var(--sh-md);transition:opacity .35s;color:#fff;display:flex;align-items:center;gap:8px}
@@ -309,7 +249,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
     <div class="float-card fc1"><div class="fc-dot red"></div><div class="fc-lines"><div class="fcl w60"></div><div class="fcl w40"></div></div><div class="fc-badge">High Ageing</div></div>
     <div class="float-card fc2"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w70"></div><div class="fcl w50"></div></div><div class="fc-badge green">CN Received</div></div>
     <div class="float-card fc3"><div class="fc-dot amber"></div><div class="fc-lines"><div class="fcl w55"></div><div class="fcl w35"></div></div><div class="fc-badge amber">Recoverable</div></div>
-    <div class="float-card fc4"><div class="fc-dot blue"></div><div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div><div class="fc-badge blue">Pending with rider</div></div>
+    <div class="float-card fc4"><div class="fc-dot blue"></div><div class="fc-lines"><div class="fcl w65"></div><div class="fcl w45"></div></div><div class="fc-badge blue">Pending with Rider</div></div>
     <div class="float-card fc5"><div class="fc-dot green"></div><div class="fc-lines"><div class="fcl w50"></div><div class="fcl w30"></div></div><div class="fc-badge green">COD Collected</div></div>
     <div class="float-stat fs1"><div class="fst-num">247</div><div class="fst-lbl">Active RTOs</div></div>
     <div class="float-stat fs2"><div class="fst-num">Rs.1.2L</div><div class="fst-lbl">Recoverable</div></div>
@@ -365,6 +305,7 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 <div class="modal-bg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
   <div class="modal"><div class="modal-hdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="modal-close" onclick="closeHA()">&#10005;</button></div><div class="modal-body" id="ha-body"></div></div>
 </div>
+
 <!-- AP MODAL -->
 <div class="modal-bg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
   <div class="modal" style="max-width:960px"><div class="modal-hdr"><h2>Action Pending Queue</h2><button class="modal-close" onclick="closeAP()">&#10005;</button></div><div class="modal-body" id="ap-body"></div></div>
@@ -380,6 +321,8 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
     <div class="hdr-right">
       <span class="user-pill" id="user-pill"></span>
       <button class="hdr-btn" onclick="scrollToTop()">&#8962; Home</button>
+      <!-- ADMIN: Loss report accessible from main header -->
+      <button class="hdr-btn amber-btn" id="admin-loss-hdr-btn" style="display:none" onclick="dlAdminLoss()">&#11015; Loss Report</button>
       <div class="qc-tabs" id="qc-tabs">
         <button data-v="Overall" class="on" onclick="setQC('Overall')">Overall</button>
         <button data-v="QC" onclick="setQC('QC')">QC</button>
@@ -395,7 +338,8 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
     <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
     <div class="fg"><label>Partner</label><select id="f-type" onchange="apF()"><option value="">All</option><option value="INHOUSE">INHOUSE</option><option value="3PL">3PL</option></select></div>
     <div class="fg"><label>BU</label><select id="f-bu" onchange="apF()"><option value="">All</option><option value="E-Pharma">E-Pharma</option><option value="PSP">PSP</option></select></div>
-    <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="FC">FC</option><option value="Retail">Retail</option></select></div>
+    <!-- FIX: Store filter now uses WAREHOUSE/RETAIL (matches o.storeType from backend) -->
+    <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage" onchange="apF()"><option value="">All</option><option value="Pre MDQ">Pre MDQ</option><option value="Post MDQ">Post MDQ</option></select></div>
     <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">Pending (0-2d)</option><option value="Recoverable">Recoverable</option><option value="High Ageing">High Ageing (&gt;5d)</option></select></div>
     <div class="fg"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
@@ -410,7 +354,6 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
   </div>
 
   <div class="main" id="main-top">
-    <!-- KPIs -->
     <div class="sec">
       <div class="sec-head"><span class="sec-title">PAN India Overview</span><div class="sec-line"></div></div>
       <div class="kpi-grid">
@@ -420,32 +363,30 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
         <div class="kpi a-amber"><div class="kpi-icon">&#128200;</div><div class="kpi-label">Recoverable (&gt;2d)</div><div class="kpi-value" id="k-rv">-</div><div class="kpi-sub" id="k-rv-s">-</div></div>
         <div class="kpi a-red clickable" onclick="openHA()"><div class="kpi-icon">&#128308;</div><div class="kpi-label">High Ageing (&gt;5d)</div><div class="kpi-value" id="k-ha">-</div><div class="kpi-sub" id="k-ha-s">-</div><div class="kpi-hint">Click to view</div></div>
         <div class="kpi a-green"><div class="kpi-icon">&#9989;</div><div class="kpi-label">Green / Closed</div><div class="kpi-value" id="k-gr">-</div><div class="kpi-sub">Visible 24h then removed</div></div>
-        <div class="kpi a-red"><div class="kpi-icon">&#128176;</div><div class="kpi-label">Loss Amount</div><div class="kpi-value" id="k-ls">-</div><div class="kpi-sub" id="k-ls-s">-</div></div>
+        <!-- FIX: Loss amount now shows correctly (was using o.amount, fixed to o.gmv in agg) -->
+        <div class="kpi a-red clickable" onclick="dlAdminLoss()"><div class="kpi-icon">&#128176;</div><div class="kpi-label">Total Loss Amount</div><div class="kpi-value" id="k-ls">-</div><div class="kpi-sub" id="k-ls-s">Click to download Loss Report</div></div>
       </div>
     </div>
 
-    <!-- AGEING -->
     <div class="sec">
-      <div class="sec-head"><span class="sec-title">Ageing Breakdown</span><div class="sec-line"></div><span class="sec-note">From Shipment Received date (or Cancellation date)</span></div>
+      <div class="sec-head"><span class="sec-title">Ageing Breakdown</span><div class="sec-line"></div><span class="sec-note">From Cancellation date</span></div>
       <div class="age-strip">
         <div class="age-card p"><div class="age-ring" id="ag-p-p">-</div><div class="age-info"><div class="age-label">Pending (0-2 days)</div><div class="age-count" id="ag-p-c">-</div><div class="age-amt" id="ag-p-a">-</div><div class="age-bar"><div class="age-bar-fill" id="ag-p-b" style="width:0"></div></div></div></div>
         <div class="age-card rv"><div class="age-ring" id="ag-r-p">-</div><div class="age-info"><div class="age-label">Recoverable (&gt;2 days)</div><div class="age-count" id="ag-r-c">-</div><div class="age-amt" id="ag-r-a">-</div><div class="age-bar"><div class="age-bar-fill" id="ag-r-b" style="width:0"></div></div><div style="font-size:10px;color:var(--t3);margin-top:3px;font-style:italic" id="ag-r-n">-</div></div></div>
-        <div class="age-card ha"><div class="age-ring" id="ag-h-p">-</div><div class="age-info"><div class="age-label">High Ageing (&gt;5d) — sub-bracket</div><div class="age-count" id="ag-h-c">-</div><div class="age-amt" id="ag-h-a">-</div><div class="age-bar"><div class="age-bar-fill" id="ag-h-b" style="width:0"></div></div></div></div>
+        <div class="age-card ha"><div class="age-ring" id="ag-h-p">-</div><div class="age-info"><div class="age-label">High Ageing (&gt;5d)</div><div class="age-count" id="ag-h-c">-</div><div class="age-amt" id="ag-h-a">-</div><div class="age-bar"><div class="age-bar-fill" id="ag-h-b" style="width:0"></div></div></div></div>
       </div>
     </div>
 
-    <!-- CITY -->
     <div class="sec" id="city-section">
-      <div class="sec-head"><span class="sec-title">City-wise Performance</span><div class="sec-line"></div><span class="sec-note">Click to drill down</span></div>
+      <!-- FIX: Red threshold note now dynamic from API -->
+      <div class="sec-head"><span class="sec-title">City-wise Performance</span><div class="sec-line"></div><span class="sec-note" id="city-threshold-note">Click to drill down</span></div>
       <div class="city-grid" id="city-grid"></div>
     </div>
 
-    <!-- CITY DETAIL -->
     <div id="city-det">
       <div class="cd-header">
         <div class="cd-title" id="cd-title"></div>
         <div class="cd-right">
-          <!-- Admin gets extra download button; regular user gets one -->
           <span id="dl-buttons"></span>
           <button onclick="triggerUpload()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #D8B4FE;background:var(--purple-l);color:var(--purple);transition:all .12s" onmouseover="this.style.background='var(--purple)';this.style.color='#fff'" onmouseout="this.style.background='var(--purple-l)';this.style.color='var(--purple)'">&#11014; Upload Updates</button>
           <input type="file" id="upload-file" accept=".xlsx,.xls" style="display:none" onchange="handleUpload(this)"/>
@@ -459,11 +400,9 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
       </div>
       <div class="kpi-grid" id="cd-kpis" style="margin-bottom:16px"></div>
       <div class="chart-grid" id="cd-charts" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px"></div>
-      <!-- Recovery section — shown inside city detail -->
       <div id="recovery-section" style="display:none"></div>
     </div>
 
-    <!-- CHARTS -->
     <div class="sec">
       <div class="sec-head"><span class="sec-title">Analytics</span><div class="sec-line"></div></div>
       <div class="chart-grid">
@@ -472,11 +411,11 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
         <div class="chart-card"><div class="chart-head"><h3>Business Unit</h3></div><canvas id="ch-ot"></canvas></div>
         <div class="chart-card"><div class="chart-head"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
         <div class="chart-card"><div class="chart-head"><h3>QC Split by Store</h3></div><canvas id="ch-qcot"></canvas></div>
-        <div class="chart-card span3"><div class="chart-head"><h3>30-Day Trend</h3><span class="chart-badge">Last 30 days</span></div><canvas id="ch-tr" style="max-height:180px"></canvas></div>
+        <!-- FIX: 30-day trend now shows synthetic today point if no snapshot history exists -->
+        <div class="chart-card span3"><div class="chart-head"><h3>30-Day Backlog Trend</h3><span class="chart-badge" id="trend-badge">Last 30 days</span></div><canvas id="ch-tr" style="max-height:180px"></canvas><div id="trend-hint" style="display:none;font-size:11px;color:var(--t3);text-align:center;margin-top:6px;padding:0 12px">&#128204; Only today's data available — run <strong>RTO Dashboard &rarr; Record Today's Snapshot</strong> from Apps Script menu daily to build trend history.</div></div>
       </div>
     </div>
 
-    <!-- TABLE -->
     <div class="sec">
       <div class="sec-head"><span class="sec-title">Order Details</span><div class="sec-line"></div></div>
       <div class="table-wrap">
@@ -491,13 +430,20 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
         </div>
         <div class="tbl-scroll">
           <table>
+            <!-- FIX: 11 columns matching tbody (was 15 with duplicate/extra columns) -->
             <thead>
               <tr>
-                <th style="min-width:150px">Order ID</th>
-                <th>City</th><th>BU</th><th>Partner</th><th>Store</th><th>Service Type</th><th>Stage</th><th>GMV</th><th>Status</th>
-                <th>Amount</th><th>Age</th><th>Bracket</th><th>Status</th>
+                <th style="min-width:155px">Order ID</th>
+                <th>City</th>
+                <th>BU</th>
+                <th>Partner</th>
+                <th>Store</th>
+                <th>Service Type</th>
+                <th>Stage</th>
+                <th>GMV</th>
+                <th>SRN Status</th>
                 <th style="min-width:240px">Action</th>
-                <th style="min-width:210px">Update</th>
+                <th style="min-width:220px">Update</th>
               </tr>
             </thead>
             <tbody id="tbl-body"></tbody>
@@ -526,22 +472,24 @@ tbody td.td-amount{font-weight:700;font-size:13px;color:var(--t1)}
 <script>
 Chart.register(ChartDataLabels);
 const API  = 'https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const CK   = 'rto_v26';
+const CK   = 'rto_v27';
 const CTTL = 5 * 60 * 1000;
-const MAX_EDITS = 2;
+const MAX_EDITS  = 2;
+const CN_UPDATES  = new Set(['CN Received']);
+// FIX: Added REF_UPDATES set for mandatory Reference Number fields
+const REF_UPDATES = new Set(['COD Collected', 'GMV Collected']);
 
 let RAW=[], FLT=[], TRD=[], AM={};
 let PG=1, PSZ=50, CHS={};
+// FIX: RED_TH now set from API (was hardcoded 80; API returns 50)
+let RED_TH = 50;
 let QF='Overall', SCITY=null, APF=false, GAP=false;
 let USER=null, CHANGES={}, FAILED_ROWS=new Set(), UPLOAD_CHANGES={};
 
 const fmtN = n => 'Rs.' + Number(n).toLocaleString('en-IN',{maximumFractionDigits:0});
-const fmtK = n => {if(!n)return'Rs.0';if(n>=10000000)return'Rs.'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(n>=1000)return'Rs.'+(n/1000).toFixed(1)+'K';return'Rs.'+n;};
+const fmtK = n => {if(!n||n===0)return'Rs.0';if(n>=10000000)return'Rs.'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return'Rs.'+(n/100000).toFixed(1)+'L';if(n>=1000)return'Rs.'+(n/1000).toFixed(1)+'K';return'Rs.'+n;};
 const pct  = (a,b) => b?Math.round(a/b*100):0;
 const $    = (id,v) => {const e=document.getElementById(id);if(e)e.textContent=v;};
-const CN_UPDATES = new Set(['CN Received']);
-
-function _amKey(o){return o.amKey||'FC|E-Pharma|Post MDQ';}
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 function togglePwd(){const inp=document.getElementById('l-pwd'),btn=document.getElementById('pwd-eye'),show=inp.type==='password';inp.type=show?'text':'password';btn.style.color=show?'var(--blue)':'var(--t3)';}
@@ -555,12 +503,27 @@ function doLogin(){
   const btn=document.getElementById('l-btn');btn.disabled=true;btn.textContent='Signing in...';$('l-err','');
   fetch(API+'?action=login&email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pwd))
     .then(r=>r.json()).then(res=>{
-      if(res.success){USER=res;document.getElementById('login-screen').classList.add('hide');$('user-pill',res.isAdmin?'Admin':res.city);loadData();}
-      else{$('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In \u2192';}
+      if(res.success){
+        USER=res;
+        document.getElementById('login-screen').classList.add('hide');
+        $('user-pill',res.isAdmin?'Admin':res.city);
+        // FIX: Show admin loss report button from header
+        if(res.isAdmin) document.getElementById('admin-loss-hdr-btn').style.display='block';
+        loadData();
+      }else{$('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In \u2192';}
     }).catch(()=>{$('l-err','Network error');btn.disabled=false;btn.textContent='Sign In \u2192';});
 }
 
-function logout(){if(!confirm('Sign out?'))return;USER=null;CHANGES={};FAILED_ROWS=new Set();UPLOAD_CHANGES={};document.getElementById('dash').style.display='none';document.getElementById('login-screen').classList.remove('hide');document.getElementById('l-email').value='';document.getElementById('l-pwd').value='';$('l-err','');document.getElementById('l-btn').disabled=false;document.getElementById('l-btn').textContent='Sign In \u2192';localStorage.removeItem(CK);}
+function logout(){
+  if(!confirm('Sign out?'))return;
+  USER=null;CHANGES={};FAILED_ROWS=new Set();UPLOAD_CHANGES={};
+  document.getElementById('dash').style.display='none';
+  document.getElementById('login-screen').classList.remove('hide');
+  document.getElementById('l-email').value='';document.getElementById('l-pwd').value='';
+  $('l-err','');document.getElementById('l-btn').disabled=false;document.getElementById('l-btn').textContent='Sign In \u2192';
+  document.getElementById('admin-loss-hdr-btn').style.display='none';
+  localStorage.removeItem(CK);
+}
 
 // ── DATA ──────────────────────────────────────────────────────────────────────
 function omsg(m){$('ov-msg',m);}
@@ -585,6 +548,9 @@ function fref(){const b=document.getElementById('btn-ref');b.classList.add('sp')
 function onLoad(p){
   if(!p.success){hideOv();document.getElementById('ov').innerHTML='<div class="err-box">'+p.error+'</div>';return;}
   RAW=p.orders||[];TRD=p.trend||[];AM=p.actionMap||{};
+  // FIX: Use threshold from API instead of hardcoded value
+  RED_TH = p.redThreshold || 50;
+  $('city-threshold-note','Red = >' + RED_TH + ' active orders · Click to drill down');
   $('asof','As of '+p.asOf);
   popFilters();apF();
   document.getElementById('dash').style.display='block';hideOv();
@@ -599,18 +565,27 @@ window.addEventListener('scroll',()=>{const det=document.getElementById('city-de
 function setQC(v){QF=v;document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));apF();}
 
 function apF(){
-  const city=document.getElementById('f-city').value,type=document.getElementById('f-type').value,
-    bu=document.getElementById('f-bu').value,store=document.getElementById('f-store').value,
-    stage=document.getElementById('f-stage').value,age=document.getElementById('f-age').value,
-    act=document.getElementById('f-act').value,df=document.getElementById('f-from').value,
-    dt=document.getElementById('f-to').value,srch=(document.getElementById('tbl-search')?.value||'').trim().toLowerCase();
+  const city=document.getElementById('f-city').value,
+    type=document.getElementById('f-type').value,
+    bu=document.getElementById('f-bu').value,
+    store=document.getElementById('f-store').value,
+    stage=document.getElementById('f-stage').value,
+    age=document.getElementById('f-age').value,
+    act=document.getElementById('f-act').value,
+    df=document.getElementById('f-from').value,
+    dt=document.getElementById('f-to').value,
+    srch=(document.getElementById('tbl-search')?.value||'').trim().toLowerCase();
   FLT=RAW.filter(o=>{
-    if(QF==='QC'&&o.qcType!=='QC')return false;
-    if(QF==='Non-QC'&&o.qcType!=='Non-QC')return false;
-    if(SCITY&&o.city!==SCITY)return false;
-    if(city&&o.city!==city)return false;
-    if(type&&o.partnerType!==type)return false;
+    // FIX: o.qcType → o.serviceFlag
+    if(QF==='QC'&&o.serviceFlag!=='QC')return false;
+    if(QF==='Non-QC'&&o.serviceFlag!=='Non-QC')return false;
+    // FIX: SCITY and dropdown don't double-filter — SCITY takes precedence
+    if(SCITY){if(o.city!==SCITY)return false;}
+    else if(city&&o.city!==city)return false;
+    // FIX: o.partnerType → o.partner
+    if(type&&o.partner!==type)return false;
     if(bu&&o.businessUnit!==bu)return false;
+    // FIX: store filter now matches WAREHOUSE/RETAIL (not FC/Retail)
     if(store&&o.storeType!==store)return false;
     if(stage&&o.stage!==stage)return false;
     if(age&&o.ageingBracket!==age)return false;
@@ -624,39 +599,58 @@ function apF(){
   PG=1;rdKPI();rdAgeing();rdCities();rdCharts();rdTbl();
 }
 
-function rstF(){['f-city','f-type','f-bu','f-store','f-stage','f-age','f-act'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('f-from').value='';document.getElementById('f-to').value='';const ts=document.getElementById('tbl-search');if(ts)ts.value='';SCITY=null;APF=false;GAP=false;document.getElementById('gapbtn').classList.remove('on');setQC('Overall');closeDet();}
-function onCityFilter(){
-  const city = document.getElementById('f-city').value;
-  if (city) {
-    // City selected from dropdown → open city detail directly
-    openDet(city);
-  } else {
-    // Cleared → close detail and show all
-    if (SCITY) closeDet();
-    else apF();
-  }
+function rstF(){
+  ['f-city','f-type','f-bu','f-store','f-stage','f-age','f-act'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-from').value='';document.getElementById('f-to').value='';
+  const ts=document.getElementById('tbl-search');if(ts)ts.value='';
+  SCITY=null;APF=false;GAP=false;
+  document.getElementById('gapbtn').classList.remove('on');
+  setQC('Overall');closeDet();
 }
 
+function onCityFilter(){
+  const city=document.getElementById('f-city').value;
+  if(city){openDet(city);}
+  else{if(SCITY)closeDet();else apF();}
+}
 function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);apF();}
 function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);apF();}
 
 // ── KPI ───────────────────────────────────────────────────────────────────────
-function rdKPI(){const a=agg(FLT);$('k-ap',a.actionPending);$('k-tot',a.total);$('k-tot-s',fmtN(a.totalAmount)+' total');$('k-pd',a.pending.count);$('k-pd-s',fmtN(a.pending.amount)+' at risk');$('k-rv',a.recoverable.count);$('k-rv-s',fmtN(a.recoverable.amount)+' (incl. high ageing)');$('k-ha',a.highAgeing.count);$('k-ha-s',fmtN(a.highAgeing.amount)+' exposure');$('k-gr',a.green);$('k-ls',fmtK(a.lossTotal));$('k-ls-s','In-house: '+a.inhouseLoss+' cases');$('gapc',FLT.filter(o=>o.actionPending).length);}
+function rdKPI(){
+  // FIX: agg() now uses o.gmv correctly, so k-ls shows real loss amount
+  const a=agg(FLT);
+  $('k-ap',a.actionPending);$('k-tot',a.total);$('k-tot-s',fmtN(a.totalAmount)+' total');
+  $('k-pd',a.pending.count);$('k-pd-s',fmtN(a.pending.amount)+' at risk');
+  $('k-rv',a.recoverable.count);$('k-rv-s',fmtN(a.recoverable.amount));
+  $('k-ha',a.highAgeing.count);$('k-ha-s',fmtN(a.highAgeing.amount)+' exposure');
+  $('k-gr',a.green);
+  $('k-ls',fmtK(a.lossTotal));
+  $('k-ls-s','In-house: '+a.inhouseLoss+' cases — Click to download');
+  $('gapc',FLT.filter(o=>o.actionPending).length);
+}
 
 // ── AGEING ────────────────────────────────────────────────────────────────────
-function rdAgeing(){const a=agg(FLT),t=a.total||1;const pp=pct(a.pending.count,t),rp=pct(a.recoverable.count,t),hp=pct(a.highAgeing.count,t);$('ag-p-p',pp+'%');$('ag-p-c',a.pending.count);$('ag-p-a',fmtN(a.pending.amount));$('ag-r-p',rp+'%');$('ag-r-c',a.recoverable.count);$('ag-r-a',fmtN(a.recoverable.amount));$('ag-h-p',hp+'%');$('ag-h-c',a.highAgeing.count);$('ag-h-a',fmtN(a.highAgeing.amount));$('ag-r-n','incl. '+a.highAgeing.count+' high ageing (>5d)');['ag-p-b','ag-r-b','ag-h-b'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.style.width=[pp,rp,hp][i]+'%';});}
+function rdAgeing(){
+  const a=agg(FLT),t=a.total||1;
+  const pp=pct(a.pending.count,t),rp=pct(a.recoverable.count,t),hp=pct(a.highAgeing.count,t);
+  $('ag-p-p',pp+'%');$('ag-p-c',a.pending.count);$('ag-p-a',fmtN(a.pending.amount));
+  $('ag-r-p',rp+'%');$('ag-r-c',a.recoverable.count);$('ag-r-a',fmtN(a.recoverable.amount));
+  $('ag-h-p',hp+'%');$('ag-h-c',a.highAgeing.count);$('ag-h-a',fmtN(a.highAgeing.amount));
+  $('ag-r-n','incl. '+a.highAgeing.count+' high ageing (>5d)');
+  ['ag-p-b','ag-r-b','ag-h-b'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.style.width=[pp,rp,hp][i]+'%';});
+}
 
 function canEdit(city){return USER&&(USER.isAdmin||USER.city===city);}
 
 // ── CITIES ────────────────────────────────────────────────────────────────────
 function rdCities(){
   const grid=document.getElementById('city-grid');
-  // Use ALL cities from RAW (not just FLT) for city grid — show every city always
   const allCityMap=grpBy(RAW,'city');
-  const cm=grpBy(FLT,'city');const cities=Object.keys(allCityMap).sort();
+  const cm=grpBy(FLT,'city');
+  const cities=Object.keys(allCityMap).sort();
   grid.innerHTML='';
   if(!cities.length){grid.innerHTML='<div class="emp"><div class="emp-icon">&#127961;</div>No city data.</div>';return;}
-  const RED_THRESHOLD = 80; // cities with >80 active orders shown in red
   cities.forEach(city=>{
     const cityOrders=allCityMap[city]||[];
     const a=agg(cm[city]||[]);
@@ -664,46 +658,52 @@ function rdCities(){
     const haC=cityOrders.filter(o=>o.isHighAgeing).length;
     const apC=cityOrders.filter(o=>o.actionPending).length;
     const rp=pct(a.recoverable.count,a.total);
-    // Red if: >80 active orders (new rule) OR has high ageing OR has action pending
-    const isOverThreshold = totalActive > RED_THRESHOLD;
-    const isR = isOverThreshold || haC>0 || apC>0;
-    const isA = !isR && a.recoverable.count>0;
-    const editable=canEdit(city);const el=document.createElement('div');
+    // FIX: Red ONLY for cities exceeding RED_TH active orders (was: any city with AP/HA turned red)
+    const isR = totalActive > RED_TH;
+    // Amber for cities with HA or AP but below threshold
+    const isA = !isR && (haC>0 || apC>0);
+    const editable=canEdit(city);
+    const el=document.createElement('div');
     el.className='city-card'+(SCITY===city?' sel':'')+(isR?' flag-r':isA?' flag-a':'');
-    const overBadge = isOverThreshold ? `<div style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-l);border:1px solid #FECACA;padding:1px 7px;border-radius:20px">&#9888; ${totalActive} OPEN</div>` : (a.recoverable.count>0?`<div class="city-rec-badge">${a.recoverable.count} REC</div>`:'');
-    el.innerHTML=`<div class="city-top"><div class="city-name">${city}</div>${overBadge}</div>
+    const topBadge=isR
+      ?`<div style="font-size:9px;font-weight:700;color:var(--red);background:var(--red-l);border:1px solid #FECACA;padding:1px 7px;border-radius:20px">&#9888; ${totalActive} ACTIVE</div>`
+      :isA
+        ?`<div style="font-size:9px;font-weight:700;color:var(--amber);background:var(--amber-l);border:1px solid #FDE68A;padding:1px 7px;border-radius:20px">${haC>0?'HIGH AGE':apC+' AP'}</div>`
+        :(a.recoverable.count>0?`<div class="city-rec-badge">${a.recoverable.count} REC</div>`:'');
+    el.innerHTML=`<div class="city-top"><div class="city-name">${city}</div>${topBadge}</div>
       <div class="city-stats">
-        <div class="cstat bl"><div class="cstat-label">Total Active</div><div class="cstat-val">${totalActive}</div></div>
+        <div class="cstat bl"><div class="cstat-label">Active</div><div class="cstat-val">${totalActive}</div></div>
         <div class="cstat rd"><div class="cstat-label">Recoverable</div><div class="cstat-val">${a.recoverable.count}</div></div>
-        <div class="cstat am"><div class="cstat-label">High Ageing</div><div class="cstat-val">${haC}</div></div>
+        <div class="cstat am"><div class="cstat-label">High Age</div><div class="cstat-val">${haC}</div></div>
         <div class="cstat"><div class="cstat-label">Action Pending</div><div class="cstat-val">${apC}</div></div>
       </div>
-      <div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${rp}%"></div></div><div class="city-prog-lbl"><span>${rp}% recoverable</span><span>${isOverThreshold?'⚠ >'+RED_THRESHOLD+' open':isR?haC+' high age':''}</span></div></div>
+      <div class="city-prog"><div class="city-prog-bar"><div class="city-prog-fill" style="width:${rp}%"></div></div>
+      <div class="city-prog-lbl"><span>${rp}% recoverable</span><span>${isR?'&#9888; >'+RED_TH+' active':''}</span></div></div>
       <div class="city-actions">
         <button class="city-action-btn cab-dl" onclick="event.stopPropagation();dlCityFor('${city}')">&#11015; Download</button>
         ${apC>0&&editable?`<button class="city-action-btn cab-ap" onclick="event.stopPropagation();openCityAP('${city}')">AP (${apC})</button>`:''}
       </div>${!editable?'<div class="city-ro-note">View Only</div>':''}`;
-    el.onclick=()=>openDet(city);grid.appendChild(el);
+    el.onclick=()=>openDet(city);
+    grid.appendChild(el);
   });
 }
 
 // ── CITY DETAIL ───────────────────────────────────────────────────────────────
 function openDet(city){
   SCITY=city;APF=false;
+  // FIX: Sync f-city dropdown to avoid double-city filter conflict in apF()
+  document.getElementById('f-city').value=city;
   document.getElementById('city-det').classList.add('vis');
   $('cd-title',city+(canEdit(city)?'':' — View Only'));
-
-  // Download buttons — admin gets two options, user gets one
   const dlDiv=document.getElementById('dl-buttons');
-  if(USER && USER.isAdmin){
+  if(USER&&USER.isAdmin){
     dlDiv.innerHTML=`
       <button onclick="dlCityFor('${city}')" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--blue-l);color:var(--blue)">&#11015; City Download</button>
-      <button onclick="dlAdminPanIndia()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #D8B4FE;background:var(--purple-l);color:var(--purple)">&#11015; Pan-India (Admin)</button>
-          ${USER&&USER.isAdmin?`<button onclick="dlAdminLoss()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #FECACA;background:var(--red-l);color:var(--red)">&#11015; Loss/Lost (Admin)</button>`:''}`;
+      <button onclick="dlAdminPanIndia()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #D8B4FE;background:var(--purple-l);color:var(--purple)">&#11015; Pan-India</button>
+      <button onclick="dlAdminLoss()" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #FECACA;background:var(--red-l);color:var(--red)">&#11015; Loss Report</button>`;
   } else {
     dlDiv.innerHTML=`<button onclick="dlCityFor('${city}')" style="padding:6px 14px;border-radius:var(--r-sm);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--blue-l);color:var(--blue)">&#11015; Download Excel</button>`;
   }
-
   document.querySelectorAll('.city-card').forEach(c=>{const n=c.querySelector('.city-name');c.classList.toggle('sel',n&&n.textContent.trim()===city);});
   apF();
   $('ap-cnt',FLT.filter(o=>o.actionPending).length+' action pending');
@@ -711,60 +711,68 @@ function openDet(city){
   document.getElementById('cd-kpis').innerHTML=`
     <div class="kpi a-red"><div class="kpi-icon">&#9888;</div><div class="kpi-label">Recoverable</div><div class="kpi-value">${a.recoverable.count}</div><div class="kpi-sub">${fmtN(a.recoverable.amount)}</div></div>
     <div class="kpi a-blue"><div class="kpi-icon">&#128230;</div><div class="kpi-label">Total</div><div class="kpi-value">${a.total}</div><div class="kpi-sub">${fmtN(a.totalAmount)}</div></div>
-    <div class="kpi a-amber clickable" onclick="openCityAP(SCITY)"><div class="kpi-icon">&#9203;</div><div class="kpi-label">Action Pending</div><div class="kpi-value">${a.actionPending}</div><div class="kpi-sub">Click → home table</div></div>
+    <div class="kpi a-amber clickable" onclick="openCityAP('${city}')"><div class="kpi-icon">&#9203;</div><div class="kpi-label">Action Pending</div><div class="kpi-value">${a.actionPending}</div><div class="kpi-hint">Click → filter table</div></div>
     <div class="kpi a-red clickable" onclick="openHA()"><div class="kpi-icon">&#128308;</div><div class="kpi-label">High Ageing &gt;5d</div><div class="kpi-value">${a.highAgeing.count}</div><div class="kpi-hint">Click to view</div></div>`;
   const cg=document.getElementById('cd-charts');
   cg.innerHTML=`<div class="chart-card"><div class="chart-head"><h3>Partner Type</h3></div><canvas id="cd-ot"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Business Unit</h3></div><canvas id="cd-bu"></canvas></div><div class="chart-card"><div class="chart-head"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
   setTimeout(()=>{
+    // FIX: use o.partner via agg byPartner
     drawDn('cd-ot',['INHOUSE','3PL'],[a.byPartner['INHOUSE']||0,a.byPartner['3PL']||0],['#059669','#D97706']);
     drawDn('cd-bu',['E-Pharma','PSP'],[a.byBU['E-Pharma']||0,a.byBU['PSP']||0],['#2563EB','#7C3AED']);
     const top=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,6);
     drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
   },80);
-
-  // Load recovery section for this city
   loadRecoverySection(city);
-
   document.getElementById('city-det').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function closeDet(){SCITY=null;APF=false;document.getElementById('city-det').classList.remove('vis');document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('sel'));document.getElementById('home-btn').classList.remove('vis');document.getElementById('recovery-section').style.display='none';apF();setTimeout(()=>document.getElementById('city-section').scrollIntoView({behavior:'smooth',block:'start'}),100);}
-function openCityAP(city){
-  // Click AP from city detail → close detail, go to home table, apply AP filter for that city
-  closeDet();
-  // Set city filter and AP filter, scroll to table
-  document.getElementById('f-city').value = city;
-  setTimeout(()=>{
-    GAP = true;
-    document.getElementById('gapbtn').classList.add('on');
-    apF();
-    document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
-  }, 150);
+function closeDet(){
+  SCITY=null;APF=false;
+  // FIX: Reset f-city dropdown so home view shows all cities
+  document.getElementById('f-city').value='';
+  document.getElementById('city-det').classList.remove('vis');
+  document.querySelectorAll('.city-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('home-btn').classList.remove('vis');
+  document.getElementById('recovery-section').style.display='none';
+  apF();
+  setTimeout(()=>document.getElementById('city-section').scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
-// ── RECOVERY SECTION (inside city detail) ─────────────────────────────────────
+function openCityAP(city){
+  closeDet();
+  document.getElementById('f-city').value=city;
+  setTimeout(()=>{
+    GAP=true;document.getElementById('gapbtn').classList.add('on');apF();
+    document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  },150);
+}
+
+// ── RECOVERY SECTION ──────────────────────────────────────────────────────────
 function loadRecoverySection(city){
   const rs=document.getElementById('recovery-section');
   rs.style.display='none';rs.innerHTML='';
-  // Find loss orders for this city
-  const lossOrders=RAW.filter(o=>o.city===city&&(o.requiresLoss||o.isGreen)&&(o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order Lost'));
-  if(!lossOrders.length) return;
+  // FIX: Only o.requiresLoss (removed incorrect isGreen condition)
+  const lossOrders=RAW.filter(o=>o.city===city&&o.requiresLoss);
+  if(!lossOrders.length)return;
   rs.style.display='block';
   rs.innerHTML=`<div class="recovery-section">
     <div class="recovery-header">
       <h3>&#128257; Recovery Tracker — ${city} (${lossOrders.length} loss order${lossOrders.length>1?'s':''})</h3>
-      <span style="font-size:11px;color:rgba(255,255,255,.7)">Add recovered amount against each order</span>
+      <span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference Number both required</span>
     </div>
     <div class="recovery-body">
       ${lossOrders.map(o=>`
         <div class="recovery-row" id="rec-row-${o.orderId}">
           <span class="rec-id">${o.orderId}</span>
-          <span style="color:var(--t3);font-size:11px">${o.stage} &middot; ${o.partnerType}</span>
-          <span class="rec-gmv">GMV: ${fmtN(o.amount)}</span>
-          ${o.hasRecovery?`<span class="rec-recovered">&#9989; Recovered: ${fmtN(o.recoveryAmount)}</span>`:'<span style="color:var(--t3);font-size:11px">No recovery yet</span>'}
+          <span style="color:var(--t3);font-size:11px">${o.stage||''} &middot; ${o.partner||''}</span>
+          <!-- FIX: o.amount → o.gmv -->
+          <span class="rec-gmv">GMV: ${fmtN(o.gmv)}</span>
+          <!-- FIX: o.recoveryAmount → o.recoveredAmount -->
+          ${o.hasRecovery?`<span class="rec-recovered">&#9989; Recovered: ${fmtN(o.recoveredAmount)}</span>`:'<span style="color:var(--t3);font-size:11px">No recovery yet</span>'}
           ${canEdit(city)?`
-            <input class="recovery-inp" type="number" id="rec-amt-${o.orderId}" placeholder="Amount" min="0" max="${o.amount}" value="${o.recoveryAmount||''}"/>
-            <input class="recovery-note-inp" type="text" id="rec-note-${o.orderId}" placeholder="Note (optional)" value="${o.recoveryNote||''}"/>
+            <input class="recovery-inp" type="number" id="rec-amt-${o.orderId}" placeholder="Amount" min="0" max="${o.gmv}" value="${o.recoveredAmount||''}"/>
+            <!-- FIX: changed note field to refNumber (backend requires refNumber, not note) -->
+            <input class="recovery-ref-inp" type="text" id="rec-ref-${o.orderId}" placeholder="Reference Number *" value="${o.recoveryRefNumber||''}"/>
             <button class="rec-save-btn" onclick="saveRecovery('${o.orderId}')">Save</button>
           `:''}
         </div>`).join('')}
@@ -774,16 +782,28 @@ function loadRecoverySection(city){
 
 function saveRecovery(orderId){
   const amount=parseFloat(document.getElementById('rec-amt-'+orderId)?.value)||0;
-  const note=document.getElementById('rec-note-'+orderId)?.value||'';
+  // FIX: read refNumber, not note; send refNumber to backend (which requires it)
+  const refNumber=(document.getElementById('rec-ref-'+orderId)?.value||'').trim();
   const city=SCITY||'';
   if(amount<=0){toast('Enter a valid recovery amount','red');return;}
-  fetch(API+'?action=addRecovery&orderId='+encodeURIComponent(orderId)+'&amount='+amount+'&note='+encodeURIComponent(note)+'&city='+encodeURIComponent(city))
+  if(!refNumber){toast('Reference Number is required for recovery','red');return;}
+  // FIX: send refNumber + user params (backend requires both)
+  fetch(API+'?action=addRecovery&orderId='+encodeURIComponent(orderId)
+    +'&amount='+amount
+    +'&refNumber='+encodeURIComponent(refNumber)
+    +'&city='+encodeURIComponent(city)
+    +'&user='+encodeURIComponent(USER?.email||USER?.city||''))
     .then(r=>r.json()).then(res=>{
       if(res.success){
         toast('&#9989; Recovery saved for '+orderId,'green');
         const row=document.getElementById('rec-row-'+orderId);
-        if(row){const recEl=row.querySelector('.rec-recovered');if(recEl)recEl.remove();const span=document.createElement('span');span.className='rec-recovered';span.innerHTML='&#9989; Recovered: '+fmtN(amount);row.querySelector('.rec-gmv').after(span);}
-      } else {toast(res.error||'Failed to save recovery','red');}
+        if(row){
+          const existing=row.querySelector('.rec-recovered');if(existing)existing.remove();
+          const span=document.createElement('span');span.className='rec-recovered';
+          span.innerHTML='&#9989; Recovered: '+fmtN(amount);
+          row.querySelector('.rec-gmv').after(span);
+        }
+      }else{toast(res.error||'Failed to save recovery','red');}
     }).catch(()=>toast('Network error','red'));
 }
 
@@ -793,21 +813,32 @@ function openHA(){
   const hm={};FLT.forEach(o=>{if(!o.isHighAgeing)return;if(!hm[o.city])hm[o.city]=[];hm[o.city].push(o);});
   const cities=Object.keys(hm).sort();
   if(!cities.length){body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No high ageing orders.</div>';}
-  else{body.innerHTML=cities.map(city=>{const ords=hm[city].sort((a,b)=>b.ageing-a.ageing);return`<div class="modal-city-block"><div class="modal-city-name">${city}<span class="modal-city-ct">${ords.length} order${ords.length>1?'s':''}</span></div><div class="modal-order-list">${ords.map(o=>`<div class="modal-order-row" onclick="jumpTo('${o.orderId}')"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.businessUnit||'E-Pharma'} &middot; ${o.storeType||o.partnerType} &middot; ${fmtN(o.amount||0)}<div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' → '+o.currentUpdate:''}</div></div><div class="mor-age">${o.ageing}d</div></div>`).join('')}</div></div>`;}).join('');}
+  else{body.innerHTML=cities.map(city=>{
+    // FIX: o.ageing → o.ageingDays; o.amount → o.gmv; o.partnerType → o.partner
+    const ords=hm[city].sort((a,b)=>b.ageingDays-a.ageingDays);
+    return`<div class="modal-city-block"><div class="modal-city-name">${city}<span class="modal-city-ct">${ords.length} order${ords.length>1?'s':''}</span></div><div class="modal-order-list">${ords.map(o=>`<div class="modal-order-row" onclick="jumpTo('${o.orderId}')"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.businessUnit||'E-Pharma'} &middot; ${o.partner||''} &middot; ${fmtN(o.gmv||0)}<div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' → '+o.currentUpdate:''}</div></div><div class="mor-age">${o.ageingDays}d</div></div>`).join('')}</div></div>`;
+  }).join('');}
   document.getElementById('ha-modal').classList.remove('hide');
 }
 function closeHA(){document.getElementById('ha-modal').classList.add('hide');}
 
 function openAPModal(){
   const body=document.getElementById('ap-body');
-  const ap=FLT.filter(o=>o.actionPending).sort((a,b)=>b.ageing-a.ageing);
+  // FIX: o.ageing → o.ageingDays; o.partnerType → o.partner
+  const ap=FLT.filter(o=>o.actionPending).sort((a,b)=>b.ageingDays-a.ageingDays);
   if(!ap.length){body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No action pending.</div>';}
-  else{body.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#E2E8F0"><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#334155">Order ID</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#334155">City</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">BU</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Partner</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Action</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:var(--red)">Reason</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Age</th></tr></thead><tbody>${ap.map(o=>`<tr style="border-bottom:1px solid #E2E8F0;cursor:pointer" onclick="jumpTo('${o.orderId}')"><td style="padding:10px 14px;font-weight:700;font-size:12px;color:var(--blue);font-family:monospace">${o.orderId}</td><td style="padding:10px 14px;font-weight:600;color:var(--t2)">${o.city}</td><td style="padding:10px 14px;font-weight:600;color:${o.businessUnit==='PSP'?'var(--purple)':'var(--blue)'}">${o.businessUnit||'E-Pharma'}</td><td style="padding:10px 14px;color:var(--t2)">${o.partnerType}${o.partnerType==='INHOUSE'?' / '+o.storeType:''}</td><td style="padding:10px 14px;color:var(--t2)">${o.currentAction||'—'}</td><td style="padding:10px 14px;font-weight:600;color:var(--amber)">${o.pendingReason||'—'}</td><td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'}">${o.ageing}d</td></tr>`).join('')}</tbody></table>`;}
+  else{body.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#E2E8F0"><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;text-align:left;font-size:11px;text-transform:uppercase;color:#334155">Order ID</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">City</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">BU</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Partner</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Action</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:var(--red)">Reason</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Age</th></tr></thead><tbody>${ap.map(o=>`<tr style="border-bottom:1px solid #E2E8F0;cursor:pointer" onclick="jumpTo('${o.orderId}')"><td style="padding:10px 14px;font-weight:700;font-size:12px;color:var(--blue);font-family:monospace">${o.orderId}</td><td style="padding:10px 14px;font-weight:600;color:var(--t2)">${o.city}</td><td style="padding:10px 14px;font-weight:600;color:${o.businessUnit==='PSP'?'var(--purple)':'var(--blue)'}">${o.businessUnit||'E-Pharma'}</td><td style="padding:10px 14px;color:var(--t2)">${o.partner}${o.partner==='INHOUSE'?' / '+o.storeType:''}</td><td style="padding:10px 14px;color:var(--t2)">${o.currentAction||'—'}</td><td style="padding:10px 14px;font-weight:600;color:var(--amber)">${o.pendingReason||'—'}</td><td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'}">${o.ageingDays}d</td></tr>`).join('')}</tbody></table>`;}
   document.getElementById('ap-modal').classList.remove('hide');
 }
 function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
 
-function jumpTo(sid){closeHA();closeAP();const idx=FLT.findIndex(o=>o.orderId===sid);if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{const rows=document.querySelectorAll('#tbl-body tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';rows[li].style.borderRadius='4px';setTimeout(()=>{rows[li].style.outline='';},2500);}},400);}
+function jumpTo(sid){
+  closeHA();closeAP();
+  const idx=FLT.findIndex(o=>o.orderId===sid);
+  if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}
+  document.querySelector('.table-wrap')?.scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(()=>{const rows=document.querySelectorAll('#tbl-body tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';rows[li].style.borderRadius='4px';setTimeout(()=>{rows[li].style.outline='';},2500);}},400);
+}
 
 // ── CHARTS ────────────────────────────────────────────────────────────────────
 function rdCharts(){
@@ -817,16 +848,42 @@ function rdCharts(){
   drawDn('ch-ot',['E-Pharma','PSP'],[a.byBU['E-Pharma']||0,a.byBU['PSP']||0],['#2563EB','#7C3AED']);
   const topA=Object.entries(a.byAction).sort((x,y)=>y[1]-x[1]).slice(0,8);
   drawHB('ch-ac',topA.map(c=>c[0].substring(0,24)),topA.map(c=>c[1]));
-  const inhouseFLT=FLT.filter(o=>o.partnerType==='INHOUSE');const storeMap=grpBy(inhouseFLT,'storeType');const storeKeys=['FC','Retail'];
-  const qcD=storeKeys.map(st=>(storeMap[st]||[]).filter(o=>o.qcType==='QC').length);const nqD=storeKeys.map(st=>(storeMap[st]||[]).filter(o=>o.qcType==='Non-QC').length);
-  drawSB('ch-qcot',storeKeys,qcD,nqD);drawTrend();
+  // FIX: o.partner (not partnerType), storeType WAREHOUSE/RETAIL, o.serviceFlag (not qcType)
+  const inhouseFLT=FLT.filter(o=>o.partner==='INHOUSE');
+  const storeMap=grpBy(inhouseFLT,'storeType');
+  const storeKeys=['WAREHOUSE','RETAIL'];
+  const storeLabels=['Warehouse','Retail'];
+  const qcD=storeKeys.map(st=>(storeMap[st]||[]).filter(o=>o.serviceFlag==='QC').length);
+  const nqD=storeKeys.map(st=>(storeMap[st]||[]).filter(o=>o.serviceFlag==='Non-QC').length);
+  drawSB('ch-qcot',storeLabels,qcD,nqD);
+  drawTrend();
 }
+
 function dC(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
 const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}}};
 function drawDn(id,labels,data,colors){dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
 function drawHB(id,labels,data){dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2','#2563EB','#DC2626'][i%8]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
 function drawSB(id,labels,qcD,nqD){dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'QC',data:qcD,backgroundColor:'#2563EB',borderRadius:3},{label:'Non-QC',data:nqD,backgroundColor:'#7C3AED',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
-function drawTrend(){dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx||!TRD.length)return;CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:TRD.map(r=>r.date),datasets:[{label:'Total',data:TRD.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:TRD.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:TRD.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:TRD.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+
+// FIX: Trend chart now shows synthetic today point if Backlog Snapshot is empty
+function drawTrend(){
+  dC('ch-tr');
+  const ctx=document.getElementById('ch-tr');if(!ctx)return;
+  let trendData=TRD;
+  const hint=document.getElementById('trend-hint'),badge=document.getElementById('trend-badge');
+  if(!trendData.length){
+    // Compute today's snapshot from current data
+    const a=agg(RAW.filter(o=>!o.isGreen));
+    const todayLbl=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short'});
+    trendData=[{date:todayLbl,total:a.total,pending:a.pending.count,recoverable:a.recoverable.count,highAgeing:a.highAgeing.count,actionPending:a.actionPending}];
+    if(hint)hint.style.display='block';
+    if(badge)badge.textContent='Today only';
+  }else{
+    if(hint)hint.style.display='none';
+    if(badge)badge.textContent='Last '+trendData.length+' days';
+  }
+  CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trendData.map(r=>r.date),datasets:[{label:'Total',data:trendData.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trendData.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trendData.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trendData.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+}
 
 // ── TABLE ─────────────────────────────────────────────────────────────────────
 function rdTbl(){
@@ -849,14 +906,16 @@ function rdTbl(){
         :o.actionPending
           ?`<span class="badge b-red b-flash">&#9888; Action Pending</span>`
           :`<span class="badge b-slate">SRN Open</span>`;
-    const agCls=o.isHighAgeing?'ha':o.isRecoverable?'rv':'p';
-    const agBdg=o.isHighAgeing?'b-red':o.isRecoverable?'b-amber':'b-blue';
-    const buBdg=o.businessUnit==='PSP'?'b-purple':'b-blue';
-    const ptBdg=o.partnerType==='3PL'?'b-amber':'b-green';
-    const storeLbl=String(o.storeTypeRaw||'').toUpperCase()==='RETAIL'?'Retail':'Warehouse';
-    const storeBdg=String(o.storeTypeRaw||'').toUpperCase()==='RETAIL'?'b-teal':'b-blue';
-    const qcBdg=(o.qcType||'').includes('Non')?'b-purple':'b-blue';
-    const stageBdg=o.stage==='Pre MDQ'?'b-amber':'b-slate';
+
+    // FIX: All badge calculations use correct field names
+    const buBdg   = (o.businessUnit||'E-Pharma')==='PSP'?'b-purple':'b-blue';
+    const ptBdg   = o.partner==='3PL'?'b-amber':'b-green';
+    // FIX: storeType is already WAREHOUSE/RETAIL from backend
+    const storeBdg = o.storeType==='RETAIL'?'b-teal':'b-blue';
+    const storeLbl = o.storeType==='RETAIL'?'Retail':'Warehouse';
+    const sfBdg    = (o.serviceFlag||'').includes('Non')?'b-purple':'b-blue';
+    const stageBdg = (o.stage||'').includes('Pre')?'b-amber':'b-slate';
+    const gmvFmt   = 'Rs.'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
 
     let actCell,updCell;
 
@@ -864,26 +923,29 @@ function rdTbl(){
       actCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentAction||'—'}</span>`;
       updCell=`<span style="font-size:12px;font-weight:600;color:var(--green)">${o.currentUpdate||'—'}${o.cnNumber?' (CN: '+o.cnNumber+')':''}</span>`;
     } else if(o.isPostMDQ3PL){
-      actCell=`<span class="locked-note">${o.currentAction||'Post MDQ — locked'}</span>`;
+      actCell=`<span class="locked-note">${o.currentAction||'Post MDQ 3PL — locked'}</span>`;
       updCell=`<span class="locked-note">${o.currentUpdate||'—'}</span>`;
     } else if(!edit){
       actCell=`<span style="font-size:12px;color:var(--t2)">${o.currentAction||'—'}</span>`;
       updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span>`;
     } else {
-      const key=_amKey(o),oa=AM[key]||AM['FC|E-Pharma|Post MDQ']||{actions:[],updates:{}};
+      // FIX: use o.caseId to look up AM (was using broken _amKey returning wrong key format)
+      const oa=AM[o.caseId]||{actions:[],updates:{}};
       const pc=CHANGES[o.orderId]||{};
-      const selAct=pc.action!==undefined?pc.action:(o.currentAction||o.defaultAction||'');
+      const selAct=pc.action!==undefined?pc.action:(o.currentAction||'');
       const selUpd=pc.update!==undefined?pc.update:(o.currentUpdate||'');
       const selCN =pc.cnNumber!==undefined?pc.cnNumber:(o.cnNumber||'');
+      const selRef=pc.refNumber!==undefined?pc.refNumber:(o.refNumber||'');
 
-      // Action cell — locked if max edits reached
-      if(o.actionLocked && !pc.action){
+      // Action cell
+      if(o.actionLocked&&!pc.action){
         actCell=`<div><span style="font-size:12px;color:var(--t2)">${o.currentAction||'—'}</span><span class="locked-chip" style="margin-left:6px">Max edits (${MAX_EDITS})</span></div>`;
       } else {
         const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
         const hasChange=pc.action!==undefined;
-        const delBtn=hasChange?`<button class="row-del-btn" onclick="clearRow('${o.orderId}')" title="Remove this change">&#10005;</button>`:'';
-        actCell=`<div class="edit-cell"><select class="isel${hasChange?' changed':''}" id="act-${gi}" onchange="onAct(${gi},'${o.orderId}','${key}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
+        const delBtn=hasChange?`<button class="row-del-btn" onclick="clearRow('${o.orderId}')" title="Clear this change">&#10005;</button>`:'';
+        // FIX: pass o.caseId to onAct (was passing broken amKey)
+        actCell=`<div class="edit-cell"><select class="isel${hasChange?' changed':''}" id="act-${gi}" onchange="onAct(${gi},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
         if(o.actionLocked)actCell+=`<span class="locked-chip">Last edit used</span>`;
       }
 
@@ -891,47 +953,41 @@ function rdTbl(){
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
       const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
-      const lossHtml=isLoss?`<div class="loss-display">&#128176; Loss: ${fmtN(o.amount||0)}</div>`:'';
-      // CN number input — shows when CN Received is selected
+      // FIX: loss display uses o.gmv (not o.amount)
+      const lossHtml=isLoss?`<div class="loss-display">&#128176; Loss: ${fmtN(o.gmv||0)}</div>`:'';
       const showCN=CN_UPDATES.has(selUpd);
-      const cnHtml=showCN?`<span class="cn-label">&#128373; Enter CN Number:</span><input class="cn-input" id="cn-${gi}" placeholder="CN123456" value="${selCN}" oninput="onCN(${gi},'${o.orderId}')"/>`:'';
+      const cnHtml=showCN?`<span class="cn-label">&#128373; CN Number (required):</span><input class="cn-input" id="cn-${gi}" placeholder="CN123456" value="${selCN}" oninput="onCN(${gi},'${o.orderId}')"/>`:'';
+      // FIX: Added Reference Number input for COD/GMV Collected
+      const showRef=REF_UPDATES.has(selUpd);
+      const refHtml=showRef?`<span class="ref-label">&#128218; Reference No. (required):</span><input class="ref-input" id="ref-${gi}" placeholder="REF123456" value="${selRef}" oninput="onRef(${gi},'${o.orderId}')"/>`:'';
 
       if(o.shipmentFollowupPending&&o.shipmentFollowup&&o.shipmentFollowup.length){
-        const fuSel=pc.update!==undefined?pc.update:(o.currentUpdate||'');
-        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">&#128230; Shipment Received — select next step</div><select class="isel changed" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${fuSel===u?' selected':''}>${u}</option>`).join('')}</select>`;
-      } else if(o.abscondedFollowup&&o.abscondedFollowup.length){
-        updCell=`<div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:3px">&#9888; Follow-up required</div><select class="isel" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select</option>${o.abscondedFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}</select>${lossHtml}`;
+        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px">&#128230; Shipment Received — select next step</div><select class="isel changed" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}</select>`;
       } else if(curU.length===0){
-        updCell=`<span class="locked-note">No update required</span>${lossHtml}`;
-      } else if(o.updateLocked && !pc.update){
+        updCell=`<span class="locked-note">No update required — awaiting SRN</span>${lossHtml}`;
+      } else if(o.updateLocked&&!pc.update){
         updCell=`<span style="font-size:12px;color:var(--t2)">${o.currentUpdate||'—'}</span><span class="locked-chip" style="margin-left:6px">Max edits (${MAX_EDITS})</span>`;
       } else {
         let hintHtml='';
-        if(selAct==='CN Requested'&&!o.cnReceivedDate)hintHtml=`<span class="hint-chip">&#9203; Awaiting CN Received — due within 2 days</span>`;
-        else if(selAct==='Delivery - COD'&&selUpd!=='COD Collected')hintHtml=`<span class="hint-chip">&#9203; Awaiting COD Collected</span>`;
-        else if(selAct==='Delivery - Prepaid'&&!selUpd)hintHtml=`<span class="hint-chip">&#9203; Select update for prepaid delivery</span>`;
-        else if(selAct==='Pending with Rider - PSP'&&!selUpd)hintHtml=`<span class="hint-chip">&#128337; Stays open — will close when SRN created in backend</span>`;
-        else if(selAct==='Pending with Nurse'&&!selUpd)hintHtml=`<span class="hint-chip">&#128337; Select: Order Lost / Shipment Received / CN Received</span>`;
-        updCell=`<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${hintHtml}`;
+        if(selAct==='CN Requested'&&!o.cnReceivedDate)hintHtml=`<span class="hint-chip">&#9203; Awaiting CN Received from partner</span>`;
+        else if(selAct==='Delivery \u2013 COD'&&selUpd!=='COD Collected')hintHtml=`<span class="hint-chip">&#9203; Select COD Collected when cash received</span>`;
+        // FIX: Note explaining difference between Pending with 3PL vs Pending with Rider – 3PL
+        else if(selAct==='Pending with 3PL')hintHtml=`<span class="hint-chip">&#128230; 3PL has shipment — awaiting SRN (no update needed)</span>`;
+        else if(selAct==='Pending with Rider \u2013 3PL')hintHtml=`<span class="hint-chip">&#128336; 3PL rider en route — select outcome below</span>`;
+        updCell=`<select class="isel${pc.update!==undefined?' changed':''}" id="upd-${gi}" onchange="onUpd(${gi},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${refHtml}${hintHtml}`;
         if(o.updateLocked)updCell+=`<span class="locked-chip" style="display:block;margin-top:4px">Last edit used</span>`;
       }
     }
 
-    // 11 columns: Order ID | City | BU | Partner | Store | Service Type | Stage | GMV | Status | Action | Update
-    const buBdg2   = (o.businessUnit||'E-Pharma')==='PSP'?'b-purple':'b-blue';
-    const ptBdg2   = o.partner==='3PL'?'b-amber':'b-green';
-    const storeBdg2= o.storeType==='RETAIL'?'b-teal':'b-blue';
-    const stageBdg2= (o.stage||'').includes('Pre')?'b-amber':'b-slate';
-    const sfBdg2   = (o.serviceFlag||'').includes('Non')?'b-purple':'b-blue';
-    const gmvFmt   = 'Rs.'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
+    // 11 columns exactly
     return `<tr class="${trCls}" id="row-${o.orderId}">
       <td class="td-main">${o.orderId}</td>
       <td class="td-city">${o.city}</td>
-      <td><span class="badge ${buBdg2}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
-      <td><span class="badge ${ptBdg2}">${o.partner||'—'}</span></td>
-      <td><span class="badge ${storeBdg2}" style="font-size:10px">${o.storeType||'—'}</span></td>
-      <td><span class="badge ${sfBdg2}" style="font-size:10px">${o.serviceFlag||'—'}</span></td>
-      <td><span class="badge ${stageBdg2}" style="font-size:10px">${o.stage||'—'}</span></td>
+      <td><span class="badge ${buBdg}" style="font-size:10px">${o.businessUnit||'E-Pharma'}</span></td>
+      <td><span class="badge ${ptBdg}">${o.partner||'—'}</span></td>
+      <td><span class="badge ${storeBdg}" style="font-size:10px">${storeLbl}</span></td>
+      <td><span class="badge ${sfBdg}" style="font-size:10px">${o.serviceFlag||'—'}</span></td>
+      <td><span class="badge ${stageBdg}" style="font-size:10px">${o.stage||'—'}</span></td>
       <td class="td-amount">${gmvFmt}</td>
       <td>${srnBdg}</td>
       <td style="vertical-align:top;padding-top:10px">${actCell}</td>
@@ -941,13 +997,14 @@ function rdTbl(){
   updSaveBar();
 }
 
-function onAct(idx,sid,amKey){
+// FIX: onAct now uses caseId (not broken amKey string)
+function onAct(idx,sid,caseId){
   const as=document.getElementById('act-'+idx),us=document.getElementById('upd-'+idx);if(!as)return;
-  const oa=AM[amKey]||AM['FC|E-Pharma|Post MDQ']||{actions:[],updates:{}};
+  const oa=AM[caseId]||{actions:[],updates:{}};
   const upds=(as.value&&oa.updates[as.value])||[];
   if(us){us.innerHTML='<option value="">Select Update</option>'+upds.map(u=>`<option value="${u}">${u}</option>`).join('');us.disabled=upds.length===0;}
   if(!CHANGES[sid])CHANGES[sid]={};
-  CHANGES[sid].action=as.value;CHANGES[sid].update='';CHANGES[sid].cnNumber='';
+  CHANGES[sid].action=as.value;CHANGES[sid].update='';CHANGES[sid].cnNumber='';CHANGES[sid].refNumber='';
   updSaveBar();rdTbl();
 }
 
@@ -955,8 +1012,9 @@ function onUpd(idx,sid){
   const us=document.getElementById('upd-'+idx);if(!us)return;
   if(!CHANGES[sid])CHANGES[sid]={};
   CHANGES[sid].update=us.value;
-  // Clear CN if update changed away from CN Received
   if(!CN_UPDATES.has(us.value))CHANGES[sid].cnNumber='';
+  // FIX: Clear refNumber when update changes away from COD/GMV Collected
+  if(!REF_UPDATES.has(us.value))CHANGES[sid].refNumber='';
   updSaveBar();rdTbl();
 }
 
@@ -964,6 +1022,13 @@ function onCN(idx,sid){
   const inp=document.getElementById('cn-'+idx);if(!inp)return;
   if(!CHANGES[sid])CHANGES[sid]={};
   CHANGES[sid].cnNumber=inp.value.trim();
+}
+
+// FIX: New handler for Reference Number input
+function onRef(idx,sid){
+  const inp=document.getElementById('ref-'+idx);if(!inp)return;
+  if(!CHANGES[sid])CHANGES[sid]={};
+  CHANGES[sid].refNumber=inp.value.trim();
 }
 
 function clearRow(sid){delete CHANGES[sid];FAILED_ROWS.delete(sid);rdTbl();updSaveBar();}
@@ -979,25 +1044,32 @@ async function saveAll(){
   const btn=document.getElementById('save-btn');
   const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
   if(!sids.length)return;
-  // Validate CN required updates
+  // FIX: Validate both CN Number and Reference Number before sending
   for(const sid of sids){
     const ch=CHANGES[sid];
-    if(CN_UPDATES.has(ch.update)&&!ch.cnNumber){
-      toast('CN Number is required for "'+ch.update+'" on order '+sid,'red');return;
-    }
+    if(CN_UPDATES.has(ch.update)&&!ch.cnNumber){toast('CN Number required for "'+ch.update+'" — order '+sid,'red');return;}
+    if(REF_UPDATES.has(ch.update)&&!ch.refNumber){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
   }
   btn.disabled=true;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Saving...';
-  const updates=sids.map(sid=>({orderId:sid,action:CHANGES[sid].action||'',update:CHANGES[sid].update||'',cnNumber:CHANGES[sid].cnNumber||''}));
+  // FIX: Include refNumber in updates payload; include user+city for audit trail
+  const updates=sids.map(sid=>({
+    orderId  : sid,
+    action   : CHANGES[sid].action||'',
+    update   : CHANGES[sid].update||'',
+    cnNumber : CHANGES[sid].cnNumber||'',
+    refNumber: CHANGES[sid].refNumber||'',
+  }));
   try{
     const encoded=encodeURIComponent(JSON.stringify(updates));
-    const res=await fetch(API+'?action=batchSave&updates='+encoded).then(r=>r.json());
+    const userParam='&user='+encodeURIComponent(USER?.email||USER?.city||'Unknown');
+    const cityParam='&city='+encodeURIComponent(USER?.city||'');
+    const res=await fetch(API+'?action=batchSave&updates='+encoded+userParam+cityParam).then(r=>r.json());
     const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
-    // Check edit limit errors
     const limited=res.results?res.results.filter(r=>!r.success&&r.error&&r.error.includes('limit')):[];
     btn.innerHTML='&#9989; Saved!';
-    $('save-st',ok+'/'+sids.length+' saved'+(limited.length?' ('+limited.length+' edit limit reached)':''));
-    toast('&#9989; '+ok+' orders updated','green');
-    if(limited.length)toast(limited.length+' orders reached edit limit','amber');
+    $('save-st',ok+'/'+sids.length+' saved'+(limited.length?' ('+limited.length+' edit limit)':''));
+    toast('&#9989; '+ok+' order'+(ok===1?'':'s')+' updated','green');
+    if(limited.length)toast(limited.length+' order(s) reached edit limit','amber');
     CHANGES={};FAILED_ROWS.clear();UPLOAD_CHANGES={};
     setTimeout(()=>{btn.disabled=false;btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save All Changes';loadData(true);},2000);
   }catch(e){btn.disabled=false;btn.innerHTML='Save All Changes';toast('Save failed: '+e.message,'red');}
@@ -1024,49 +1096,38 @@ function _getActiveFilterParams(){
   const s=p.toString();return s?'&'+s:'';
 }
 
-function dlCity(){if(SCITY)dlCityFor(SCITY);}
-
 function dlCityFor(city){
   showOv();omsg('Preparing Excel for '+city+'...');
   const isAdmin=USER&&USER.isAdmin?'true':'false';
   const filters=_getActiveFilterParams();
-  const activeFilters=filters?'  [Filters applied]':'';
   fetch(API+'?action=downloadCity&city='+encodeURIComponent(city)+'&isAdmin='+isAdmin+filters)
-    .then(r=>r.json()).then(p=>{
-      hideOv();if(!p.success){toast(p.error,'red');return;}
-      _buildAndDownloadXLSX(p,city+activeFilters);
-    }).catch(e=>{hideOv();toast(e.message,'red');});
+    .then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error,'red');return;}_buildAndDownloadXLSX(p,city);})
+    .catch(e=>{hideOv();toast(e.message,'red');});
 }
 
+// FIX: dlAdminLoss now accessible globally (also wired to header button + loss KPI card)
 function dlAdminLoss(){
-  if(!USER||!USER.isAdmin){toast('Admin only','red');return;}
-  showOv();omsg('Preparing Pan-India Loss/Lost report...');
+  if(!USER||!USER.isAdmin){toast('Admin access required','red');return;}
+  showOv();omsg('Preparing Loss/Lost report...');
   fetch(API+'?action=downloadLoss')
-    .then(r=>r.json()).then(p=>{
-      hideOv();if(!p.success){toast(p.error||'Failed','red');return;}
-      _buildAndDownloadXLSX(p,'Pan-India-Loss-Lost');
-    }).catch(e=>{hideOv();toast(e.message,'red');});
+    .then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error||'Failed','red');return;}_buildAndDownloadXLSX(p,'Pan-India-Loss-Lost');})
+    .catch(e=>{hideOv();toast(e.message,'red');});
 }
 
 function dlAdminPanIndia(){
   showOv();omsg('Preparing Pan-India Excel (Admin)...');
   const filters=_getActiveFilterParams();
   fetch(API+'?action=downloadAdmin'+filters)
-    .then(r=>r.json()).then(p=>{
-      hideOv();if(!p.success){toast(p.error,'red');return;}
-      _buildAndDownloadXLSX(p,'Pan-India'+(filters?' [Filtered]':''));
-    }).catch(e=>{hideOv();toast(e.message,'red');});
+    .then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error,'red');return;}_buildAndDownloadXLSX(p,'Pan-India'+(filters?' Filtered':''));})
+    .catch(e=>{hideOv();toast(e.message,'red');});
 }
 
 function _buildAndDownloadXLSX(p,label){
   const wb=XLSX.utils.book_new();
-  // Tab 1: Standardised Remarks & Updates
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet1||[]),'Standardised Remarks');
-  // Tab 2: Instructions
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet2||[]),'Instructions');
-  // Tab 3: Order Data (or Loss data)
-  const dataSheetName = label.includes('Loss') ? 'Loss-Lost Data' : 'Order Data';
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet3||p.sheet1||[]),dataSheetName);
+  const dataName=label.includes('Loss')?'Loss-Lost Data':'Order Data';
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet3||[]),dataName);
   XLSX.writeFile(wb,'RTO_'+label.replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
@@ -1092,39 +1153,41 @@ function handleUpload(input){
     hideOv();
     try{
       const wb=XLSX.read(e.target.result,{type:'array'});
-      const ws=wb.Sheets[wb.SheetNames[0]];
+      const ws=wb.Sheets[wb.SheetNames.find(n=>n==='Order Data')||wb.SheetNames[0]];
       const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
-      if(!rows.length){toast('File is empty','red');return;}
+      if(!rows.length){toast('File is empty or wrong tab selected','red');return;}
       const results=[];UPLOAD_CHANGES={};
       rows.forEach(row=>{
         const orderId=String(row['Order ID']||row['order_id']||row['OrderID']||'').trim();
         if(!orderId)return;
         const order=RAW.find(o=>o.orderId===orderId);
-        if(!order){results.push({orderId,status:'fail',reason:'Order ID not found'});return;}
+        if(!order){results.push({orderId,status:'fail',reason:'Order ID not found in active dashboard'});return;}
         if(!canEdit(order.city)){results.push({orderId,status:'fail',reason:'No edit permission for '+order.city});return;}
         if(order.isGreen){results.push({orderId,status:'fail',reason:'Order already closed'});return;}
-        if(order.actionLocked){results.push({orderId,status:'fail',reason:'Action edit limit reached for this order'});return;}
+        if(order.actionLocked){results.push({orderId,status:'fail',reason:'Action edit limit reached'});return;}
         const rawAction=String(row['Current Action']||row['Action']||'').trim();
         const rawUpdate=String(row['Current Update']||row['Update']||'').trim();
         const rawCN=String(row['CN Number']||row['cn_number']||'').trim();
+        // FIX: Read Reference Number from upload file
+        const rawRef=String(row['Reference Number']||row['ref_number']||'').trim();
         if(!rawAction){results.push({orderId,status:'fail',reason:'Action column is empty'});return;}
-        const oa=AM[order.amKey]||AM['FC|E-Pharma|Post MDQ']||{actions:[],updates:{}};
+        // FIX: use o.caseId to look up valid actions
+        const oa=AM[order.caseId]||{actions:[],updates:{}};
         const actionResult=_fuzzy(rawAction,oa.actions);
-        if(!actionResult){results.push({orderId,status:'fail',reason:'"'+rawAction+'" is not valid for '+order.amKey});FAILED_ROWS.add(orderId);return;}
+        if(!actionResult){results.push({orderId,status:'fail',reason:'"'+rawAction+'" not valid for case '+order.caseId});FAILED_ROWS.add(orderId);return;}
         let matchedUpdate='',updateCorrected=false;
         const validUpdates=oa.updates[actionResult.match]||[];
         if(rawUpdate&&validUpdates.length){
           const ur=_fuzzy(rawUpdate,validUpdates);
           if(ur){matchedUpdate=ur.match;updateCorrected=ur.corrected&&_norm(ur.match)!==_norm(rawUpdate);}
-          else{results.push({orderId,status:'fail',reason:'"'+rawUpdate+'" is not a valid update for "'+actionResult.match+'"'});FAILED_ROWS.add(orderId);return;}
+          else{results.push({orderId,status:'fail',reason:'"'+rawUpdate+'" not valid for action "'+actionResult.match+'"'});FAILED_ROWS.add(orderId);return;}
         }
-        // CN number validation
-        if(CN_UPDATES.has(matchedUpdate)&&!rawCN){
-          results.push({orderId,status:'fail',reason:'CN Number required when update is "'+matchedUpdate+'"'});FAILED_ROWS.add(orderId);return;
-        }
-        UPLOAD_CHANGES[orderId]={action:actionResult.match,update:matchedUpdate,cnNumber:rawCN};
-        CHANGES[orderId]={action:actionResult.match,update:matchedUpdate,cnNumber:rawCN};
-        results.push({orderId,status:'ok',action:actionResult.match,update:matchedUpdate,cnNumber:rawCN,actionCorrected:actionResult.corrected,updateCorrected,rawAction,rawUpdate});
+        if(CN_UPDATES.has(matchedUpdate)&&!rawCN){results.push({orderId,status:'fail',reason:'CN Number required for "'+matchedUpdate+'"'});FAILED_ROWS.add(orderId);return;}
+        // FIX: Validate Reference Number for COD/GMV in upload
+        if(REF_UPDATES.has(matchedUpdate)&&!rawRef){results.push({orderId,status:'fail',reason:'Reference Number required for "'+matchedUpdate+'"'});FAILED_ROWS.add(orderId);return;}
+        UPLOAD_CHANGES[orderId]={action:actionResult.match,update:matchedUpdate,cnNumber:rawCN,refNumber:rawRef};
+        CHANGES[orderId]={action:actionResult.match,update:matchedUpdate,cnNumber:rawCN,refNumber:rawRef};
+        results.push({orderId,status:'ok',action:actionResult.match,update:matchedUpdate,cnNumber:rawCN,refNumber:rawRef,actionCorrected:actionResult.corrected,updateCorrected,rawAction,rawUpdate});
       });
       _showUploadResults(results);rdTbl();updSaveBar();
     }catch(err){hideOv();toast('Failed to read file: '+err.message,'red');}
@@ -1136,17 +1199,19 @@ function _showUploadResults(results){
   const ok=results.filter(r=>r.status==='ok'),fail=results.filter(r=>r.status==='fail');
   $('upload-modal-title','Upload Results');
   document.getElementById('upload-summary').innerHTML=
-    `<div class="upload-stat ok"><span class="upload-stat-icon">&#9989;</span>${ok.length} valid — ready to save</div>`+
-    (fail.length?`<div class="upload-stat fail"><span class="upload-stat-icon">&#10060;</span>${fail.length} failed</div>`:'')+
+    `<div class="upload-stat ok"><span>&#9989;</span>${ok.length} valid — ready to save</div>`+
+    (fail.length?`<div class="upload-stat fail"><span>&#10060;</span>${fail.length} failed`:'')+
     `<div class="upload-stat total">${results.length} rows processed</div>`;
   document.getElementById('upload-body').innerHTML=results.map(r=>{
     if(r.status==='ok'){
       const acNote=r.actionCorrected?`<span class="autocorrect-note">&#9998; Action corrected: "${r.rawAction}" → "${r.action}"</span>`:'';
       const updNote=r.updateCorrected?`<span class="autocorrect-note">&#9998; Update corrected: "${r.rawUpdate}" → "${r.update}"</span>`:'';
       const cnNote=r.cnNumber?`<span class="autocorrect-note" style="color:var(--green)">CN: ${r.cnNumber}</span>`:'';
-      return `<div class="upload-result-row ok"><span class="upr-icon">&#9989;</span><span class="upr-id">${r.orderId}</span><span class="upr-msg">Action: <strong>${r.action}</strong>${r.update?' → Update: <strong>'+r.update+'</strong>':''}${acNote}${updNote}${cnNote}</span></div>`;
+      // FIX: Show Reference Number in upload results
+      const refNote=r.refNumber?`<span class="autocorrect-note" style="color:var(--amber)">Ref: ${r.refNumber}</span>`:'';
+      return `<div class="upload-result-row ok"><span class="upr-icon">&#9989;</span><span class="upr-id">${r.orderId}</span><span class="upr-msg">Action: <strong>${r.action}</strong>${r.update?' → Update: <strong>'+r.update+'</strong>':''}${acNote}${updNote}${cnNote}${refNote}</span></div>`;
     }else{
-      return `<div class="upload-result-row fail"><span class="upr-icon">&#10060;</span><span class="upr-id">${r.orderId}</span><span class="upr-msg">${r.reason}<br><span style="font-size:10px;color:var(--t3)">Fix via the Action dropdown in the table</span></span></div>`;
+      return `<div class="upload-result-row fail"><span class="upr-icon">&#10060;</span><span class="upr-id">${r.orderId}</span><span class="upr-msg">${r.reason}</span></div>`;
     }
   }).join('');
   const saveBtn=document.getElementById('upload-save-btn');
@@ -1158,19 +1223,22 @@ function _showUploadResults(results){
 function saveUploadChanges(){closeUpload();saveAll();}
 
 // ── AGGREGATE ─────────────────────────────────────────────────────────────────
+// FIX: All fields corrected — o.gmv, o.partner, o.serviceFlag, WAREHOUSE/RETAIL keys
 function agg(orders){
-  const r={total:0,totalAmount:0,pending:{count:0,amount:0},recoverable:{count:0,amount:0},highAgeing:{count:0,amount:0},actionPending:0,green:0,lossTotal:0,inhouseLoss:0,byPartner:{INHOUSE:0,'3PL':0},byBU:{'E-Pharma':0,PSP:0},byStoreType:{FC:0,Retail:0},byQC:{QC:0,'Non-QC':0},byAction:{}};
+  const r={total:0,totalAmount:0,pending:{count:0,amount:0},recoverable:{count:0,amount:0},highAgeing:{count:0,amount:0},actionPending:0,green:0,lossTotal:0,inhouseLoss:0,
+    byPartner:{INHOUSE:0,'3PL':0},byBU:{'E-Pharma':0,PSP:0},
+    byStoreType:{WAREHOUSE:0,RETAIL:0},byQC:{QC:0,'Non-QC':0},byAction:{}};
   orders.forEach(o=>{
-    r.total++;r.totalAmount+=o.amount||0;
-    if(o.isPending){r.pending.count++;r.pending.amount+=o.amount||0;}
-    if(o.isRecoverable){r.recoverable.count++;r.recoverable.amount+=o.amount||0;}
-    if(o.isHighAgeing){r.highAgeing.count++;r.highAgeing.amount+=o.amount||0;}
+    r.total++;r.totalAmount+=o.gmv||0;
+    if(o.isPending)   {r.pending.count++;    r.pending.amount    +=o.gmv||0;}
+    if(o.isRecoverable){r.recoverable.count++;r.recoverable.amount+=o.gmv||0;}
+    if(o.isHighAgeing) {r.highAgeing.count++; r.highAgeing.amount +=o.gmv||0;}
     if(o.isGreen)r.green++;if(o.actionPending)r.actionPending++;
-    if(o.lossType){r.lossTotal+=o.amount||0;if(o.lossType==='In-house rider loss')r.inhouseLoss++;}
-    const pt=o.partnerType||'INHOUSE';if(r.byPartner[pt]!==undefined)r.byPartner[pt]++;
+    if(o.lossType){r.lossTotal+=o.gmv||0;if(o.lossType==='In-house rider loss')r.inhouseLoss++;}
+    const pt=o.partner||'INHOUSE';if(r.byPartner[pt]!==undefined)r.byPartner[pt]++;
     const bu=o.businessUnit||'E-Pharma';if(r.byBU[bu]!==undefined)r.byBU[bu]++;
-    if(o.partnerType==='INHOUSE'){const st=o.storeType||'FC';if(r.byStoreType[st]!==undefined)r.byStoreType[st]++;}
-    const qc=(o.qcType||'').includes('Non')?'Non-QC':'QC';if(r.byQC[qc]!==undefined)r.byQC[qc]++;
+    if(o.partner==='INHOUSE'){const st=o.storeType||'WAREHOUSE';if(r.byStoreType[st]!==undefined)r.byStoreType[st]++;}
+    const qc=o.serviceFlag==='QC'?'QC':'Non-QC';if(r.byQC[qc]!==undefined)r.byQC[qc]++;
     const a=o.currentAction||'No action';r.byAction[a]=(r.byAction[a]||0)+1;
   });
   return r;
