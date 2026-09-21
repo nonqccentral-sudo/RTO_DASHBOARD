@@ -363,7 +363,7 @@ tbody td.td-amount{font-weight:700;font-size:13px}
         <div class="kpi a-amber"><div class="kpi-icon">&#128200;</div><div class="kpi-label">Recoverable (&gt;2d)</div><div class="kpi-value" id="k-rv">-</div><div class="kpi-sub" id="k-rv-s">-</div></div>
         <div class="kpi a-red clickable" onclick="openHA()"><div class="kpi-icon">&#128308;</div><div class="kpi-label">High Ageing (&gt;5d)</div><div class="kpi-value" id="k-ha">-</div><div class="kpi-sub" id="k-ha-s">-</div><div class="kpi-hint">Click to view</div></div>
         <div class="kpi a-green"><div class="kpi-icon">&#9989;</div><div class="kpi-label">Green / Closed</div><div class="kpi-value" id="k-gr">-</div><div class="kpi-sub">Visible 24h then removed</div></div>
-        <!-- FIX: Loss amount now shows correctly (was using o.gmv, fixed to o.gmv in agg) -->
+        <!-- FIX: Loss amount now shows correctly (was using o.amount, fixed to o.gmv in agg) -->
         <div class="kpi a-red clickable" onclick="dlAdminLoss()"><div class="kpi-icon">&#128176;</div><div class="kpi-label">Total Loss Amount</div><div class="kpi-value" id="k-ls">-</div><div class="kpi-sub" id="k-ls-s">Click to download Loss Report</div></div>
       </div>
     </div>
@@ -486,12 +486,12 @@ function _initCharts() {
 }
 
 const API  = 'https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const CK   = 'rto_v29';
+const CK   = 'rto_v27';
 const CTTL = 5 * 60 * 1000;
 const MAX_EDITS  = 2;
-const CN_UPDATES = new Set(['CN Received']);
+const CN_UPDATES  = new Set(['CN Received']);
 // FIX: Added REF_UPDATES set for mandatory Reference Number fields
-const REF_UPDATES = new Set(['COD Collected','GMV Collected']);
+const REF_UPDATES = new Set(['COD Collected', 'GMV Collected']);
 
 let RAW=[], FLT=[], TRD=[], AM={};
 let PG=1, PSZ=50, CHS={};
@@ -568,7 +568,6 @@ function onLoad(p){
   $('asof','As of '+p.asOf);
   popFilters();apF();
   document.getElementById('dash').style.display='block';hideOv();
-  drawTrend();
 }
 function showCB(age,stale=false){const m=Math.round(age/60000),l=m<1?'just now':m+' min ago';$('cache-age',(stale?'Stale · ':'')+l);document.getElementById('cache-bar').classList.remove('hide');}
 
@@ -591,13 +590,13 @@ function apF(){
     dt=document.getElementById('f-to').value,
     srch=(document.getElementById('tbl-search')?.value||'').trim().toLowerCase();
   FLT=RAW.filter(o=>{
-    // FIX: o.serviceFlag → o.serviceFlag
+    // FIX: o.qcType → o.serviceFlag
     if(QF==='QC'&&o.serviceFlag!=='QC')return false;
     if(QF==='Non-QC'&&o.serviceFlag!=='Non-QC')return false;
     // FIX: SCITY and dropdown don't double-filter — SCITY takes precedence
     if(SCITY){if(o.city!==SCITY)return false;}
     else if(city&&o.city!==city)return false;
-    // FIX: o.partner → o.partner
+    // FIX: o.partnerType → o.partner
     if(type&&o.partner!==type)return false;
     if(bu&&o.businessUnit!==bu)return false;
     // FIX: store filter now matches WAREHOUSE/RETAIL (not FC/Retail)
@@ -608,7 +607,7 @@ function apF(){
     if(df||dt){const d=o.cancelledDate?new Date(o.cancelledDate.replace(/(\d+)-(\w+)-(\d+)/,'$1 $2 $3')):null;if(d){if(df&&d<new Date(df))return false;if(dt&&d>new Date(dt))return false;}}
     if(APF&&!o.actionPending)return false;
     if(GAP&&!o.actionPending)return false;
-    if(srch){const hay=(o.orderId+' '+(o.city||'')+' '+(''||'')).toLowerCase();if(!hay.includes(srch))return false;}
+    if(srch){const hay=(o.orderId+' '+(o.city||'')+' '+(o.riderDetails||'')).toLowerCase();if(!hay.includes(srch))return false;}
     return true;
   });
   PG=1;rdKPI();rdAgeing();rdCities();rdCharts();rdTbl();
@@ -780,14 +779,14 @@ function loadRecoverySection(city){
         <div class="recovery-row" id="rec-row-${o.orderId}">
           <span class="rec-id">${o.orderId}</span>
           <span style="color:var(--t3);font-size:11px">${o.stage||''} &middot; ${o.partner||''}</span>
-          <!-- FIX: o.gmv → o.gmv -->
+          <!-- FIX: o.amount → o.gmv -->
           <span class="rec-gmv">GMV: ${fmtN(o.gmv)}</span>
-          <!-- FIX: o.recoveredAmount → o.recoveredAmount -->
+          <!-- FIX: o.recoveryAmount → o.recoveredAmount -->
           ${o.hasRecovery?`<span class="rec-recovered">&#9989; Recovered: ${fmtN(o.recoveredAmount)}</span>`:'<span style="color:var(--t3);font-size:11px">No recovery yet</span>'}
           ${canEdit(city)?`
             <input class="recovery-inp" type="number" id="rec-amt-${o.orderId}" placeholder="Amount" min="0" max="${o.gmv}" value="${o.recoveredAmount||''}"/>
             <!-- FIX: changed note field to refNumber (backend requires refNumber, not note) -->
-            <input class="recovery-ref-inp" type="text" id="rec-ref-${o.orderId}" placeholder="Reference Number *" value="${''||''}"/>
+            <input class="recovery-ref-inp" type="text" id="rec-ref-${o.orderId}" placeholder="Reference Number *" value="${o.recoveryRefNumber||''}"/>
             <button class="rec-save-btn" onclick="saveRecovery('${o.orderId}')">Save</button>
           `:''}
         </div>`).join('')}
@@ -829,7 +828,7 @@ function openHA(){
   const cities=Object.keys(hm).sort();
   if(!cities.length){body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No high ageing orders.</div>';}
   else{body.innerHTML=cities.map(city=>{
-    // FIX: o.ageingDays → o.ageingDays; o.gmv → o.gmv; o.partner → o.partner
+    // FIX: o.ageing → o.ageingDays; o.amount → o.gmv; o.partnerType → o.partner
     const ords=hm[city].sort((a,b)=>b.ageingDays-a.ageingDays);
     return`<div class="modal-city-block"><div class="modal-city-name">${city}<span class="modal-city-ct">${ords.length} order${ords.length>1?'s':''}</span></div><div class="modal-order-list">${ords.map(o=>`<div class="modal-order-row" onclick="jumpTo('${o.orderId}')"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.businessUnit||'E-Pharma'} &middot; ${o.partner||''} &middot; ${fmtN(o.gmv||0)}<div class="mor-case">${o.currentAction||'No action'}${o.currentUpdate?' → '+o.currentUpdate:''}</div></div><div class="mor-age">${o.ageingDays}d</div></div>`).join('')}</div></div>`;
   }).join('');}
@@ -839,7 +838,7 @@ function closeHA(){document.getElementById('ha-modal').classList.add('hide');}
 
 function openAPModal(){
   const body=document.getElementById('ap-body');
-  // FIX: o.ageingDays → o.ageingDays; o.partner → o.partner
+  // FIX: o.ageing → o.ageingDays; o.partnerType → o.partner
   const ap=FLT.filter(o=>o.actionPending).sort((a,b)=>b.ageingDays-a.ageingDays);
   if(!ap.length){body.innerHTML='<div class="emp"><div class="emp-icon">&#9989;</div>No action pending.</div>';}
   else{body.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#E2E8F0"><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;text-align:left;font-size:11px;text-transform:uppercase;color:#334155">Order ID</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">City</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">BU</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Partner</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Action</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:var(--red)">Reason</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155">Age</th></tr></thead><tbody>${ap.map(o=>`<tr style="border-bottom:1px solid #E2E8F0;cursor:pointer" onclick="jumpTo('${o.orderId}')"><td style="padding:10px 14px;font-weight:700;font-size:12px;color:var(--blue);font-family:monospace">${o.orderId}</td><td style="padding:10px 14px;font-weight:600;color:var(--t2)">${o.city}</td><td style="padding:10px 14px;font-weight:600;color:${o.businessUnit==='PSP'?'var(--purple)':'var(--blue)'}">${o.businessUnit||'E-Pharma'}</td><td style="padding:10px 14px;color:var(--t2)">${o.partner}${o.partner==='INHOUSE'?' / '+o.storeType:''}</td><td style="padding:10px 14px;color:var(--t2)">${o.currentAction||'—'}</td><td style="padding:10px 14px;font-weight:600;color:var(--amber)">${o.pendingReason||'—'}</td><td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'}">${o.ageingDays}d</td></tr>`).join('')}</tbody></table>`;}
@@ -909,7 +908,7 @@ function drawTrend(){
     if(hint)hint.style.display='none';
     if(badge)badge.textContent='Last '+trendData.length+' days';
   }
-  CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trendData.map(r=>r.date),datasets:[{label:'Total',data:trendData.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trendData.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trendData.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trendData.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+  CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trendData.map(r=>r.date),datasets:[{label:'Total',data:trendData.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trendData.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trendData.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trendData.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});
 }
 
 // ── TABLE ─────────────────────────────────────────────────────────────────────
@@ -935,11 +934,11 @@ function rdTbl(){
           :`<span class="badge b-slate">SRN Open</span>`;
 
     // FIX: All badge calculations use correct field names
-    const buBdg=(o.businessUnit||'E-Pharma')==='PSP'?'b-purple':'b-blue';
-    const ptBdg=o.partner==='3PL'?'b-amber':'b-green';
+    const buBdg   = (o.businessUnit||'E-Pharma')==='PSP'?'b-purple':'b-blue';
+    const ptBdg   = o.partner==='3PL'?'b-amber':'b-green';
     // FIX: storeType is already WAREHOUSE/RETAIL from backend
     const storeBdg = o.storeType==='RETAIL'?'b-teal':'b-blue';
-    const storeLbl=o.storeType==='RETAIL'?'Retail':'Warehouse';
+    const storeLbl = o.storeType==='RETAIL'?'Retail':'Warehouse';
     const sfBdg    = (o.serviceFlag||'').includes('Non')?'b-purple':'b-blue';
     const stageBdg = (o.stage||'').includes('Pre')?'b-amber':'b-slate';
     const gmvFmt   = 'Rs.'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
@@ -980,7 +979,7 @@ function rdTbl(){
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
       const isLoss=selAct==='Lost'||selUpd==='Loss'||selUpd==='Order Lost';
-      // FIX: loss display uses o.gmv (not o.gmv)
+      // FIX: loss display uses o.gmv (not o.amount)
       const lossHtml=isLoss?`<div class="loss-display">&#128176; Loss: ${fmtN(o.gmv||0)}</div>`:'';
       const showCN=CN_UPDATES.has(selUpd);
       const cnHtml=showCN?`<span class="cn-label">&#128373; CN Number (required):</span><input class="cn-input" id="cn-${gi}" placeholder="CN123456" value="${selCN}" oninput="onCN(${gi},'${o.orderId}')"/>`:'';
@@ -1137,29 +1136,6 @@ function dlAdminLoss(){
   if(!USER||!USER.isAdmin){toast('Admin access required','red');return;}
   showOv();omsg('Preparing Loss/Lost report...');
   fetch(API+'?action=downloadLoss')
-    .then(r=>r.json()).then(p=>{
-      hideOv();
-      if(!p.success){toast(p.error||'Failed','red');return;}
-      // If Loss_Lost_History is empty, build from live RAW data instead
-      if((!p.sheet3||!p.sheet3.length)&&RAW.length){
-        const lossOrders=RAW.filter(o=>o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order Lost');
-        if(lossOrders.length){
-          p.sheet3=lossOrders.map(o=>({
-            'Order ID':o.orderId,'City':o.city,'GMV':o.gmv,
-            'Partner':o.partner,'Current Action':o.currentAction||'',
-            'Current Update':o.currentUpdate||'','Ageing (days)':o.ageingDays,
-            'Ageing Bracket':o.ageingBracket,'SRN Status':o.srnStatus,
-            'Recovered Amount':o.recoveredAmount||0,
-          }));
-          toast('Note: History sheet empty — showing live Loss/Lost orders','amber');
-        }
-      }
-      if(!p.sheet3||!p.sheet3.length){toast('No Loss/Lost orders found','amber');hideOv();return;}
-      _buildAndDownloadXLSX(p,'Pan-India-Loss-Lost');
-    }).catch(e=>{hideOv();toast(e.message,'red');});
-}
-  showOv();omsg('Preparing Loss/Lost report...');
-  fetch(API+'?action=downloadLoss')
     .then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error||'Failed','red');return;}_buildAndDownloadXLSX(p,'Pan-India-Loss-Lost');})
     .catch(e=>{hideOv();toast(e.message,'red');});
 }
@@ -1284,8 +1260,7 @@ function agg(orders){
     if(o.isRecoverable){r.recoverable.count++;r.recoverable.amount+=o.gmv||0;}
     if(o.isHighAgeing) {r.highAgeing.count++; r.highAgeing.amount +=o.gmv||0;}
     if(o.isGreen)r.green++;if(o.actionPending)r.actionPending++;
-    const isLoss=o.currentAction==='Lost'||o.currentUpdate==='Loss'||o.currentUpdate==='Order Lost';
-    if(isLoss){r.lossTotal+=o.gmv||0;if(o.partner==='INHOUSE')r.inhouseLoss++;}
+    if(o.lossType){r.lossTotal+=o.gmv||0;if(o.lossType==='In-house rider loss')r.inhouseLoss++;}
     const pt=o.partner||'INHOUSE';if(r.byPartner[pt]!==undefined)r.byPartner[pt]++;
     const bu=o.businessUnit||'E-Pharma';if(r.byBU[bu]!==undefined)r.byBU[bu]++;
     if(o.partner==='INHOUSE'){const st=o.storeType||'WAREHOUSE';if(r.byStoreType[st]!==undefined)r.byStoreType[st]++;}
