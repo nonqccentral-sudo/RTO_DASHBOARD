@@ -28,23 +28,126 @@
 body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 
 /* ── LOGIN ── */
-#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(140deg,#0F172A 0%,#1E3A5F 40%,#1D4ED8 100%);display:flex;align-items:center;justify-content:center;}
+#login-screen{
+  position:fixed;inset:0;z-index:1000;
+  background:linear-gradient(145deg,#0B1E3D 0%,#0F2C5C 35%,#1340A0 70%,#1A52CC 100%);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
 #login-screen.hide{display:none}
-.lcard{background:var(--surface);border-radius:var(--rl);padding:36px 40px;width:100%;max-width:400px;box-shadow:0 24px 64px rgba(0,0,0,.4);}
+
+/* Floating ambient orbs */
+#login-screen::before{
+  content:'';position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%);
+  top:-120px;left:-120px;pointer-events:none;
+}
+#login-screen::after{
+  content:'';position:absolute;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,.2) 0%,transparent 70%);
+  bottom:-80px;right:-80px;pointer-events:none;
+}
+
+/* Floating stat chips on the background */
+.l-chip{
+  position:absolute;display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.15);border-radius:14px;
+  padding:12px 18px;pointer-events:none;z-index:1;
+  box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.l-chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.l-chip-dot.green{background:#22C55E;box-shadow:0 0 6px #22C55E;}
+.l-chip-dot.amber{background:#F59E0B;box-shadow:0 0 6px #F59E0B;}
+.l-chip-dot.red{background:#EF4444;box-shadow:0 0 6px #EF4444;}
+.l-chip-lines{display:flex;flex-direction:column;gap:3px;}
+.l-chip-line{height:3px;border-radius:2px;background:rgba(255,255,255,.3);}
+.l-chip-lbl{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);}
+.l-chip-num{font-size:22px;font-weight:800;color:#fff;line-height:1;}
+.l-chip-sub{font-size:10px;color:rgba(255,255,255,.55);font-weight:500;}
+/* Chip positions */
+.lc1{top:15%;left:4%;}
+.lc2{top:40%;left:3%;}
+.lc3{top:65%;left:5%;}
+.lc4{top:25%;right:4%;}  /* Rs.1.2L */
+.lc5{top:50%;right:4%;}  /* Active RTOs */
+.lc6{top:72%;right:4%;}  /* Action Pending */
+
+/* Tata 1mg watermark */
+.l-watermark{
+  position:absolute;bottom:32px;right:40px;text-align:right;pointer-events:none;z-index:1;
+}
+.l-wm-title{font-size:28px;font-weight:900;color:rgba(255,255,255,.12);letter-spacing:1px;}
+.l-wm-sub{font-size:11px;color:rgba(255,255,255,.1);font-weight:500;margin-top:2px;}
+
+/* Card */
+.lcard{
+  position:relative;z-index:2;
+  background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
+  border-radius:20px;padding:36px 38px 30px;width:100%;max-width:420px;
+  box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.1);
+}
 .lcard .hide{display:none!important;}
-.l-head{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
-.l-icon{width:42px;height:42px;border-radius:11px;background:var(--bluel);border:1.5px solid #BFDBFE;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.l-title{font-size:18px;font-weight:800;color:var(--t1);}
-.l-sub{font-size:12px;color:var(--t3);}
-.l-div{height:1px;background:var(--border);margin-bottom:18px;}
-.lbl{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:5px;}
-.finp{width:100%;padding:10px 13px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surf2);font-size:14px;color:var(--t1);margin-bottom:14px;}
-.finp:focus{outline:none;border-color:var(--blue);background:#fff;}
-.lbtn{width:100%;padding:11px;border-radius:var(--rs);background:var(--blue);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;}
-.lbtn:hover{background:var(--blued)}.lbtn:disabled{opacity:.6;cursor:default;}
-.lerr{font-size:12px;color:var(--red);text-align:center;min-height:18px;margin-top:10px;}
-.lhint{font-size:11px;color:var(--t3);text-align:center;margin-top:12px;}
-.lhint a{color:var(--blue);font-weight:600;text-decoration:none;}
+
+/* Card header */
+.l-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.l-icon{
+  width:46px;height:46px;border-radius:13px;
+  background:linear-gradient(135deg,#EFF6FF,#DBEAFE);
+  border:1.5px solid #BFDBFE;
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
+}
+.l-title{font-size:19px;font-weight:800;color:#0F172A;line-height:1.2;}
+.l-sub{font-size:12px;color:#94A3B8;margin-top:2px;}
+.l-div{height:1px;background:#E2E8F0;margin-bottom:20px;}
+
+/* Fields */
+.lbl{font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;display:block;}
+.linp-wrap{position:relative;margin-bottom:16px;}
+.finp{
+  width:100%;padding:11px 14px;border-radius:9px;
+  border:1.5px solid #E2E8F0;background:#F8FAFC;
+  font-size:14px;color:#0F172A;outline:none;
+  transition:border-color .15s,background .15s;
+  font-family:var(--font);
+}
+.finp:focus{border-color:#2563EB;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08);}
+.finp.pwd-field{padding-right:44px;}
+.pwd-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;color:#94A3B8;font-size:16px;
+  padding:4px;line-height:1;transition:color .12s;
+}
+.pwd-toggle:hover{color:#2563EB;}
+
+/* Sign in button */
+.lbtn{
+  width:100%;padding:12px;border-radius:9px;
+  background:linear-gradient(135deg,#2563EB,#1D4ED8);
+  color:#fff;border:none;font-size:14px;font-weight:700;
+  cursor:pointer;margin-top:2px;letter-spacing:.2px;
+  transition:opacity .15s,transform .1s;
+  box-shadow:0 4px 14px rgba(37,99,235,.35);
+}
+.lbtn:hover:not(:disabled){opacity:.92;transform:translateY(-1px);}
+.lbtn:active{transform:translateY(0);}
+.lbtn:disabled{opacity:.55;cursor:default;transform:none;}
+
+.lerr{font-size:12px;color:#DC2626;text-align:center;min-height:18px;margin-top:10px;font-weight:500;}
+.lhint{font-size:12px;color:#94A3B8;text-align:center;margin-top:14px;}
+.lhint a{color:#2563EB;font-weight:600;text-decoration:none;}
+.lhint a:hover{text-decoration:underline;}
+
+/* City shortcut pills */
+.l-cities{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
+  margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;
+}
+.l-city-pill{
+  padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
+  color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;
+  cursor:pointer;transition:all .12s;letter-spacing:.3px;
+}
+.l-city-pill:hover{background:#2563EB;color:#fff;border-color:#2563EB;}
 
 /* ── FULL-PAGE OVERLAY (loading) ── */
 #ov{position:fixed;inset:0;z-index:9999;background:rgba(241,244,249,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px);}
@@ -367,26 +470,110 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <!-- LOGIN -->
 <div id="login-screen">
+
+  <!-- Floating stat chips — left side -->
+  <div class="l-chip lc1">
+    <div class="l-chip-dot red"></div>
+    <div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div>
+    <div class="l-chip-lbl">High Ageing</div>
+  </div>
+  <div class="l-chip lc2">
+    <div class="l-chip-dot green"></div>
+    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
+    <div class="l-chip-lbl">COD Collected</div>
+  </div>
+  <div class="l-chip lc3">
+    <div class="l-chip-dot amber"></div>
+    <div class="l-chip-lines"><div class="l-chip-line" style="width:26px"></div><div class="l-chip-line" style="width:16px"></div></div>
+    <div class="l-chip-lbl">Recoverable</div>
+  </div>
+
+  <!-- Floating stat chips — right side -->
+  <div class="l-chip lc4" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
+    <div class="l-chip-sub">Recoverable</div>
+    <div class="l-chip-num">Rs.1.2L</div>
+  </div>
+  <div class="l-chip lc5" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
+    <div class="l-chip-sub">Active RTOs</div>
+    <div class="l-chip-num">247</div>
+  </div>
+  <div class="l-chip lc6" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
+    <div class="l-chip-sub" style="color:rgba(255,200,100,.75)">Action Pending</div>
+    <div class="l-chip-num" style="color:#FBBF24;">18</div>
+  </div>
+
+  <!-- Right side chip: CN Received (between lc4 & lc5 visually) -->
+  <div class="l-chip" style="top:37%;right:4%;min-width:130px;">
+    <div class="l-chip-dot green"></div>
+    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
+    <div class="l-chip-lbl">CN Received</div>
+  </div>
+  <div class="l-chip" style="top:61%;right:4%;min-width:130px;">
+    <div class="l-chip-dot amber"></div>
+    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
+    <div class="l-chip-lbl">Pending with Rider</div>
+  </div>
+
+  <!-- Tata 1mg watermark -->
+  <div class="l-watermark">
+    <div class="l-wm-title">TATA 1mg</div>
+    <div class="l-wm-sub">Together bringing trust to healthcare</div>
+  </div>
+
+  <!-- Card -->
   <div class="lcard">
+    <!-- LOGIN FORM -->
     <div id="login-form">
       <div class="l-head">
         <div class="l-icon">&#128667;</div>
-        <div><div class="l-title">RTO Dashboard</div><div class="l-sub">Tata 1mg Operations</div></div>
+        <div>
+          <div class="l-title">RTO Dashboard</div>
+          <div class="l-sub">Update your RTO orders here</div>
+        </div>
       </div>
       <div class="l-div"></div>
-      <div class="lbl">Email address</div>
-      <input class="finp" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/>
-      <div class="lbl">Password</div>
-      <input class="finp" type="password" id="l-pwd" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"/>
+
+      <label class="lbl" for="l-email">Email address</label>
+      <div class="linp-wrap">
+        <input class="finp" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+
+      <label class="lbl" for="l-pwd">Password</label>
+      <div class="linp-wrap">
+        <input class="finp pwd-field" type="password" id="l-pwd" placeholder="Your city password" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="pwd-toggle" type="button" onclick="togglePwd('l-pwd',this)" tabindex="-1" title="Show/hide password">&#128065;</button>
+      </div>
+
       <button class="lbtn" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
       <div class="lerr" id="l-err"></div>
       <div class="lhint"><a href="#" onclick="showReset();return false">Forgot password?</a></div>
+
+      <!-- City shortcut pills -->
+      <div class="l-cities">
+        <button class="l-city-pill" onclick="prefillCity('DEL')">DEL</button>
+        <button class="l-city-pill" onclick="prefillCity('MUM')">MUM</button>
+        <button class="l-city-pill" onclick="prefillCity('BLR')">BLR</button>
+        <button class="l-city-pill" onclick="prefillCity('HYD')">HYD</button>
+        <button class="l-city-pill" onclick="prefillCity('CHD')">CHD</button>
+        <button class="l-city-pill" onclick="prefillCity('JAI')">JAI</button>
+        <button class="l-city-pill" onclick="prefillCity('PUN')">PUN</button>
+        <button class="l-city-pill" onclick="prefillCity('KOL')">KOL</button>
+      </div>
     </div>
+
+    <!-- RESET FORM -->
     <div id="reset-form" class="hide">
-      <div class="l-head"><div class="l-icon">&#128274;</div><div><div class="l-title">Reset Password</div></div></div>
+      <div class="l-head">
+        <div class="l-icon">&#128274;</div>
+        <div><div class="l-title">Reset Password</div><div class="l-sub">We'll send your password to your email</div></div>
+      </div>
       <div class="l-div"></div>
-      <div class="lbl">Registered email</div>
-      <input class="finp" type="email" id="r-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doReset()"/>
+
+      <label class="lbl" for="r-email">Registered email</label>
+      <div class="linp-wrap">
+        <input class="finp" type="email" id="r-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doReset()"/>
+      </div>
+
       <button class="lbtn" id="r-btn" onclick="doReset()">Send Password &rarr;</button>
       <div class="lerr" id="r-err"></div>
       <div class="lhint"><a href="#" onclick="showLogin();return false">&larr; Back to Sign In</a></div>
@@ -643,6 +830,29 @@ function showEditWarn(msg){
   if(!el||!mel)return;
   mel.textContent=msg;el.classList.remove('hide');
   clearTimeout(_warnTimer);_warnTimer=setTimeout(()=>el.classList.add('hide'),4000);
+}
+
+// ── PASSWORD TOGGLE ──
+function togglePwd(inputId,btn){
+  const inp=document.getElementById(inputId);if(!inp)return;
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.textContent=show?'🙈':'👁';
+}
+
+// ── CITY PILL PREFILL ──
+// Pills fill the email field with the city code so the user only types the password.
+// In production, city users log in with their full email — the pills are a UX shortcut
+// to type the city abbreviation; the user completes the @domain part.
+function prefillCity(code){
+  const em=document.getElementById('l-email');
+  if(!em)return;
+  // Only prefill if field is empty or was set by a previous pill click
+  if(!em.value||em.dataset.pill==='1'){
+    em.value=code.toLowerCase()+'@1mg.com';
+    em.dataset.pill='1';
+  }
+  document.getElementById('l-pwd')?.focus();
 }
 
 // ── LOGIN ──
