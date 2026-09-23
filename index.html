@@ -25,8 +25,6 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
-
-/* LOGIN */
 #login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#0B1E3D 0%,#0F2C5C 35%,#1340A0 70%,#1A52CC 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 #login-screen.hide{display:none}
 #login-screen::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%);top:-120px;left:-120px;pointer-events:none;}
@@ -69,8 +67,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .l-cities{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;}
 .l-city-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;cursor:pointer;transition:all .12s;}
 .l-city-pill:hover{background:#2563EB;color:#fff;border-color:#2563EB;}
-
-/* OVERLAY */
 #ov{position:fixed;inset:0;z-index:9999;background:rgba(241,244,249,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px);}
 #ov.hide{display:none;}
 .ov-ring{width:44px;height:44px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
@@ -79,8 +75,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 #filter-spinner{display:none;align-items:center;gap:6px;font-size:11px;color:var(--blue);font-weight:600;}
 #filter-spinner.vis{display:flex;}
 .fspin{width:14px;height:14px;border:2px solid #BFDBFE;border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;}
-
-/* HEADER */
 .hdr{height:56px;background:linear-gradient(135deg,#1E3A5F,#2563EB);padding:0 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(37,99,235,.3);}
 .hdr-brand{display:flex;align-items:center;gap:9px;}
 .hdr-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px;}
@@ -95,8 +89,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .hbtn:hover{background:rgba(255,255,255,.2);color:#fff;}
 .hbtn.danger:hover{background:#DC2626;border-color:#DC2626;color:#fff;}
 .upill{font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:3px 10px;border-radius:20px;}
-
-/* DOWNLOAD BAR */
 .dl-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .dl-bar.hide{display:none;}
 .dl-lbl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
@@ -108,8 +100,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .dlb-flt:not(:disabled):hover{background:var(--amber);color:#fff;border-color:var(--amber);}
 .dlb-loss{background:var(--redl);border-color:#FECACA;color:var(--red);}
 .dlb-loss:not(:disabled):hover{background:var(--red);color:#fff;border-color:var(--red);}
-
-/* FILTER BAR */
 .fbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;box-shadow:var(--xs);}
 .fg{display:flex;align-items:center;gap:5px;}
 .fg label{font-size:11px;font-weight:700;color:var(--t3);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
@@ -138,31 +128,26 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .btn-rst:hover{background:var(--red);color:#fff;border-color:var(--red);}
 .btn-ref{background:var(--bluel);border-color:#BFDBFE;color:var(--blue);}
 .btn-ref:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
-
-/* MAIN */
 .main{padding:20px 24px;max-width:1440px;margin:0 auto;}
 .sec{margin-bottom:28px;}
 .sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
 .sec-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t2);white-space:nowrap;}
 .sec-ln{flex:1;height:1px;background:var(--border);}
 .sec-nt{font-size:11px;color:var(--t3);}
-
-/* KPI */
 .kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--blue));border-radius:var(--r) var(--r) 0 0;}
-.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber)}
+.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber)}.kpi.ap{--acc:var(--purple)}
 .ki{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
-.ab .ki{background:var(--bluel)}.ar .ki{background:var(--redl)}.ag .ki{background:var(--greenl)}.aa .ki{background:var(--amberl)}
+.ab .ki{background:var(--bluel)}.ar .ki{background:var(--redl)}.ag .ki{background:var(--greenl)}.aa .ki{background:var(--amberl)}.ap .ki{background:var(--purplel)}
 .kl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
 .kv{font-size:30px;font-weight:800;line-height:1;color:var(--t1);letter-spacing:-1px;}
-.ar .kv{color:var(--red)}.ag .kv{color:var(--green)}.aa .kv{color:var(--amber)}
+.ar .kv{color:var(--red)}.ag .kv{color:var(--green)}.aa .kv{color:var(--amber)}.ap .kv{color:var(--purple)}
 .ks{font-size:11px;color:var(--t3);margin-top:4px;}
 .kpi.click{cursor:pointer;}
 .kh{font-size:10px;color:var(--t3);margin-top:6px;}
-
-/* AGEING */
+.srn-pill{display:inline-flex;background:var(--purplel);border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;align-items:center;gap:10px;margin-top:10px;}
 .age-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .age-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--xs);}
 .age-ring{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
@@ -177,8 +162,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .age-bar{height:4px;background:var(--surf3);border-radius:2px;margin-top:8px;overflow:hidden;}
 .age-fill{height:100%;border-radius:2px;transition:width .5s ease;}
 .age-card.p .age-fill{background:var(--blue)}.age-card.rv .age-fill{background:var(--amber)}.age-card.ha .age-fill{background:var(--red)}
-
-/* CITY CARDS */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
 .ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .15s;box-shadow:var(--xs);}
 .ccard:hover{border-color:var(--blue);box-shadow:var(--md);transform:translateY(-2px);}
@@ -191,7 +174,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .cs{background:var(--surf2);border-radius:6px;padding:7px 9px;}
 .csl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:1px;}
 .csv{font-size:15px;font-weight:800;color:var(--t1);}
-.cs.rd .csv{color:var(--red)}.cs.bl .csv{color:var(--blue)}.cs.am .csv{color:var(--amber)}
+.cs.rd .csv{color:var(--red)}.cs.bl .csv{color:var(--blue)}.cs.am .csv{color:var(--amber)}.cs.pu .csv{color:var(--purple)}
 .cprog{margin-top:10px;}
 .cpbar{height:4px;background:var(--surf3);border-radius:2px;overflow:hidden;}
 .cpfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px;}
@@ -202,8 +185,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .cb-dl:hover{background:var(--blue);color:#fff;}
 .cb-ap{background:var(--redl);border-color:#FECACA;color:var(--red);}
 .cb-ap:hover{background:var(--red);color:#fff;}
-
-/* CITY DETAIL */
 #cdet{display:none;margin-bottom:32px;}
 #cdet.vis{display:block;}
 .cd-hdr{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);flex-wrap:wrap;}
@@ -213,8 +194,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .apfb{padding:5px 14px;border-radius:6px;border:1px solid #FDE68A;background:#fff;color:var(--amber);font-size:11px;font-weight:700;cursor:pointer;}
 .apfb.on{background:var(--amber);color:#fff;border-color:var(--amber);}
 .ap-cnt{background:var(--redl);color:var(--red);border:1px solid #FECACA;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;}
-
-/* PIVOT TABLE */
 .pivot-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);margin-bottom:16px;overflow:hidden;}
 .pivot-hdr{padding:12px 18px;background:linear-gradient(135deg,#1E3A5F,var(--blue));display:flex;align-items:center;justify-content:space-between;}
 .pivot-hdr h3{color:#fff;font-size:13px;font-weight:700;margin:0;}
@@ -227,8 +206,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .pv-3pl{color:var(--amber);font-weight:800;font-size:20px;}
 .pv-oth{color:var(--t3);font-weight:800;font-size:20px;}
 .pv-tot{color:var(--t1);font-weight:800;font-size:20px;}
-
-/* RECOVERY */
 .rec-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);margin-bottom:16px;overflow:hidden;}
 .rec-hdr{padding:12px 18px;background:linear-gradient(135deg,#4C1D95,var(--purple));display:flex;align-items:center;justify-content:space-between;}
 .rec-hdr h3{color:#fff;font-size:13px;font-weight:700;}
@@ -242,16 +219,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .rrinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:170px;}
 .rsave{padding:5px 12px;border-radius:6px;border:none;background:var(--purple);color:#fff;font-size:11px;font-weight:700;cursor:pointer;}
 .rsave:hover{background:#6D28D9;}
-
-/* CHARTS */
 .chgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .chgrid .sp3{grid-column:1/-1;}
 .chcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--xs);}
 .chhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .chhd h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t2);}
 .chcard canvas{max-height:200px;}
-
-/* TABLE */
 .twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);overflow:hidden;}
 .thdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#1E3A5F,var(--blue));gap:10px;flex-wrap:wrap;}
 .thdr h3{font-size:14px;font-weight:700;color:#fff;}
@@ -285,6 +258,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .isel.ch{border-color:var(--amber)!important;background:#FFFBEB;color:var(--amber);}
 .del-btn{width:24px;height:24px;border-radius:5px;border:1.5px solid #FECACA;background:var(--redl);color:var(--red);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;margin-top:2px;}
 .del-btn:hover{background:var(--red);color:#fff;}
+.hist-btn{width:22px;height:22px;border-radius:5px;border:1.5px solid #D8B4FE;background:var(--purplel);color:var(--purple);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;margin-top:2px;font-weight:700;}
+.hist-btn:hover{background:var(--purple);color:#fff;}
 .lkchip{font-size:10px;font-weight:700;color:var(--t3);background:var(--surf3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;}
 .lknote{font-size:12px;color:var(--t3);font-style:italic;}
 .hint{font-size:10px;font-weight:600;color:var(--amber);margin-top:4px;display:block;}
@@ -300,8 +275,11 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .ro{font-size:12px;color:var(--t2);}
 .edit-warn-popup{position:fixed;top:70px;right:24px;z-index:9998;background:#1E3A5F;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:var(--md);display:flex;align-items:center;gap:10px;border-left:4px solid var(--amber);}
 .edit-warn-popup.hide{display:none;}
-
-/* SAVE BAR */
+.diff-preview{background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;}
+.diff-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);}
+.diff-row:last-child{border-bottom:none;}
+.diff-id{font-family:monospace;color:var(--blue);font-weight:700;min-width:140px;}
+.diff-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
 .sbar{position:sticky;bottom:0;z-index:50;background:linear-gradient(135deg,#1E3A5F,var(--blue));padding:12px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 -4px 20px rgba(37,99,235,.25);}
 .sbar.hide{display:none;}
 .scnt{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);}
@@ -310,15 +288,11 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .sbtn:disabled{opacity:.5;cursor:default;}
 .clrall{padding:8px 16px;border-radius:7px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:12px;font-weight:600;cursor:pointer;}
 .clrall:hover{background:rgba(220,38,38,.8);border-color:rgba(220,38,38,.8);color:#fff;}
-
-/* PAGINATION */
 .pag{display:flex;align-items:center;gap:6px;padding:12px 20px;border-top:1px solid var(--border);justify-content:flex-end;background:var(--surf2);}
 .pag button{padding:6px 16px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;}
 .pag button:disabled{opacity:.4;cursor:default;}
 .pag button:not(:disabled):hover{border-color:var(--blue);color:var(--blue);background:var(--bluel);}
 .pagi{font-size:12px;color:var(--t2);font-weight:600;padding:0 8px;}
-
-/* BADGES */
 .b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;gap:3px;white-space:nowrap;}
 .bb{background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;}
 .bg{background:var(--greenl);color:var(--green);border:1px solid #A7F3D0;}
@@ -329,8 +303,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .bs{background:var(--surf2);color:var(--t2);border:1px solid var(--border);}
 .flash{animation:flash 1.4s infinite;}
 @keyframes flash{0%,100%{opacity:1}50%{opacity:.45}}
-
-/* MODALS */
 .mbg{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;}
 .mbg.hide{display:none;}
 .modal{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:780px;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -364,43 +336,31 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .dlc-n{padding:10px 20px;border-radius:7px;background:var(--surf2);color:var(--t2);border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;}
 .emp{text-align:center;padding:48px;color:var(--t3);font-size:13px;}
 .emp-i{font-size:32px;margin-bottom:8px;}
-
-/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:var(--md);transition:opacity .35s;color:#fff;}
 #home-btn{position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;}
 #home-btn.vis{display:flex;}
-
-/* RESPONSIVE */
-@media(max-width:1100px){
-  .kgrid{grid-template-columns:repeat(4,1fr);}
-  .chgrid{grid-template-columns:repeat(2,1fr);}
-  .chgrid .sp3{grid-column:1/-1;}
-}
+/* History modal */
+.hmod{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;}
+.htx{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;font-size:12px;background:var(--surf2);}
+.htx-ts{font-size:10px;color:var(--t3);min-width:110px;}
+.htx-user{font-size:11px;font-weight:700;color:var(--blue);min-width:80px;}
+.htx-body{flex:1;line-height:1.6;}
+/* Responsive */
+@media(max-width:1100px){.kgrid{grid-template-columns:repeat(4,1fr);}.chgrid{grid-template-columns:repeat(2,1fr);}.chgrid .sp3{grid-column:1/-1;}}
 @media(max-width:768px){
   .main{padding:12px;}.hdr{padding:0 12px;height:auto;min-height:56px;flex-wrap:wrap;gap:6px;padding:8px 12px;}
   .fbar{padding:8px 12px;gap:6px;}
   .kgrid{grid-template-columns:repeat(2,1fr);gap:8px;}.kv{font-size:24px;}
-  .age-strip{grid-template-columns:1fr;}
-  .cgrid{grid-template-columns:repeat(2,1fr);}
+  .age-strip{grid-template-columns:1fr;}.cgrid{grid-template-columns:repeat(2,1fr);}
   .chgrid{grid-template-columns:1fr;}.chgrid .sp3{grid-column:1;}
   table{font-size:12px;}th,td{padding:8px 10px;}
-  .thdr{flex-wrap:wrap;gap:6px;}
-  .thdr-r{flex-wrap:wrap;gap:4px;}
-  .tsch-w input{width:160px;}
-  .hdr-r{gap:5px;}
-  .qc-tabs button{padding:4px 10px;font-size:11px;}
-  .dl-bar{padding:6px 12px;}
+  .thdr{flex-wrap:wrap;gap:6px;}.thdr-r{flex-wrap:wrap;gap:4px;}
+  .tsch-w input{width:160px;}.hdr-r{gap:5px;}.qc-tabs button{padding:4px 10px;font-size:11px;}
 }
-@media(max-width:480px){
-  .kgrid{grid-template-columns:1fr 1fr;}
-  .cgrid{grid-template-columns:1fr;}
-  .age-strip{grid-template-columns:1fr;}
-}
+@media(max-width:480px){.kgrid{grid-template-columns:1fr 1fr;}.cgrid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
-
-<!-- LOGIN -->
 <div id="login-screen">
   <div class="l-chip lc1"><div class="l-chip-dot red"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div><div class="l-chip-lbl">High Ageing</div></div>
   <div class="l-chip lc2"><div class="l-chip-dot green"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div><div class="l-chip-lbl">COD Collected</div></div>
@@ -458,31 +418,31 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 
+<!-- HISTORY MODAL -->
+<div class="mbg hide" id="hist-modal" onclick="if(event.target===this)closeHist()">
+  <div class="hmod">
+    <div class="mhdr"><h2>Order History <span id="hist-id"></span></h2><button class="mclose" onclick="closeHist()">&#10005;</button></div>
+    <div class="mbody" id="hist-body"></div>
+  </div>
+</div>
+
 <div id="ov" class="hide"><div class="ov-ring"></div><div class="ov-msg" id="ov-msg">Loading&hellip;</div></div>
 
-<!-- HIGH AGEING MODAL -->
+<!-- HA MODAL -->
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
-  <div class="modal">
-    <div class="mhdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div>
-    <div class="mbody" id="ha-body"></div>
-  </div>
+  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
 </div>
 
-<!-- AP QUEUE MODAL -->
+<!-- AP MODAL -->
 <div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
-  <div class="modal" style="max-width:960px">
-    <div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div>
-    <div class="mbody" id="ap-body"></div>
-  </div>
+  <div class="modal" style="max-width:960px"><div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div><div class="mbody" id="ap-body"></div></div>
 </div>
 
-<!-- DOWNLOAD CONFIRM -->
+<!-- DL CONFIRM -->
 <div class="mbg hide" id="dl-modal" onclick="if(event.target===this)closeDlConf()">
   <div class="dlconf">
     <div class="mhdr"><h2>Confirm Download</h2><button class="mclose" onclick="closeDlConf()">&#10005;</button></div>
-    <div class="dlcb">
-      <div class="dlct" id="dlct"></div>
-      <div class="dlcm" id="dlcm"></div>
+    <div class="dlcb"><div class="dlct" id="dlct"></div><div class="dlcm" id="dlcm"></div>
       <div class="dlcbtns">
         <button class="dlc-y" onclick="dlGo('filtered')">&#9660; Filtered Only</button>
         <button class="dlc-y" style="background:var(--green)" onclick="dlGo('complete')">&#11015; Full Dataset</button>
@@ -510,7 +470,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 
-  <!-- ADMIN DOWNLOAD BAR -->
   <div class="dl-bar hide" id="adl-bar">
     <span class="dl-lbl">&#11015; Downloads</span>
     <button class="dlb dlb-pi" onclick="triggerDl('panIndia')">&#11015; PAN India</button>
@@ -518,7 +477,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <button class="dlb dlb-loss" onclick="triggerDl('loss')">&#11015; Loss Report</button>
   </div>
 
-  <!-- FILTER BAR -->
   <div class="fbar">
     <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
     <div class="fg"><label>Partner</label><select id="f-partner" onchange="apF()"><option value="">All</option><option>INHOUSE</option><option>3PL</option></select></div>
@@ -539,9 +497,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 
   <div class="main" id="main-top">
-    <!-- KPIs -->
     <div class="sec">
-      <div class="sec-hd"><span class="sec-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
+      <div class="sec-hd"><span class="sec-ttl" id="kpi-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
       <div class="kgrid">
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">—</div><div class="ks">Needs immediate update</div></div>
         <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">—</div><div class="ks" id="k-tots">—</div></div>
@@ -551,20 +508,16 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">Green / Closed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
         <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">—</div><div class="ks" id="k-lss">In-house: —</div><div class="kh">Click for Loss Report</div></div>
       </div>
-      <!-- SRN Pending sub-info -->
-      <div style="margin-top:10px;">
-        <div style="display:inline-flex;background:#F5F3FF;border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;align-items:center;gap:10px;">
-          <span style="font-size:16px;">🔄</span>
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7C3AED;">SRN Pending</div>
-            <div style="font-size:20px;font-weight:800;color:#7C3AED;line-height:1;" id="sub-srn">—</div>
-            <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done · SRN not yet closed</div>
-          </div>
+      <div class="srn-pill">
+        <span style="font-size:15px;">🔄</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--purple);">SRN Pending</div>
+          <div style="font-size:20px;font-weight:800;color:var(--purple);line-height:1;" id="sub-srn">—</div>
+          <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done · SRN not yet closed</div>
         </div>
       </div>
     </div>
 
-    <!-- AGEING -->
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">From cancellation date</span></div>
       <div class="age-strip">
@@ -574,13 +527,11 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       </div>
     </div>
 
-    <!-- CITY CARDS -->
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;threshold active · Click to drill down</span></div>
       <div class="cgrid" id="cgrid"></div>
     </div>
 
-    <!-- CITY DETAIL -->
     <div id="cdet">
       <div class="cd-hdr">
         <div class="cd-ttl" id="cd-ttl"></div>
@@ -602,7 +553,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div id="rec-sec" style="display:none;"></div>
     </div>
 
-    <!-- ANALYTICS -->
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Analytics</span><div class="sec-ln"></div></div>
       <div class="chgrid">
@@ -615,7 +565,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       </div>
     </div>
 
-    <!-- ORDER TABLE -->
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Order Details</span><div class="sec-ln"></div></div>
       <div class="twrap">
@@ -623,26 +572,18 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
           <h3>Active Orders</h3>
           <div class="tsch-w"><span class="tsch-icon">&#128269;</span><input id="tsch" placeholder="Search Order ID / City…" oninput="onSearch()"/></div>
           <div class="thdr-r">
-            <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; Action Pending <span class="apn" id="gapc">0</span></button>
-            <button class="qbtn" onclick="openAPModal()">View Queue</button>
-            <!-- v23: AP download button -->
-            <button class="qbtn" onclick="downloadAP()" title="Download full AP queue as Excel">&#11015;</button>
+            <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; AP <span class="apn" id="gapc">0</span></button>
+            <button class="qbtn" onclick="openAPModal()">Queue</button>
+            <button class="qbtn" onclick="downloadAP()" title="Download AP queue">&#11015;</button>
             <span class="tmeta" id="tcnt">— orders</span>
           </div>
         </div>
         <div class="tscroll">
           <table>
-            <!-- v23: Updated column order -->
             <thead><tr>
-              <th style="min-width:155px">Order ID</th>
-              <th>City</th>
-              <th>GMV</th>
-              <th>Store</th>
-              <th>Partner</th>
-              <th>BU</th>
-              <th>Stage</th>
-              <th>SRN</th>
-              <th>Service Type</th>
+              <th style="min-width:165px">Order ID</th>
+              <th>City</th><th>GMV</th><th>Store</th><th>Partner</th>
+              <th>BU</th><th>Stage</th><th>SRN</th><th>Service</th>
               <th style="min-width:240px">Action</th>
               <th style="min-width:220px">Update</th>
             </tr></thead>
@@ -669,8 +610,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v233';
-const LC_TTL=3*60*1000; // 3 min cache — summary only, orders always fresh
+const LC_KEY='rto_sum_v234';
+const LC_TTL=4*60*1000; // 4 min — matches backend 4.5 min TTL
 const EDIT_LIMIT=2;
 const CN_UPDS=new Set(['CN Received']);
 const REF_UPDS=new Set(['COD Collected']);
@@ -683,6 +624,11 @@ let USER=null,CHANGES={},UPLOAD_CHANGES={},CHS={};
 let STIMER=null,ORDERS_LOADING=false,DL_PENDING=null;
 let MS_SEL=new Set();
 let _chartsReady=false;
+// Warm cache: pre-fetched order sets for QC/Non-QC tabs
+const SC_ORDERS={};
+let WARM_DONE=false;
+// Auto-refresh timer
+let _arTimer=null;
 
 function _initCharts(){if(_chartsReady)return true;try{if(typeof Chart!=='undefined'&&typeof ChartDataLabels!=='undefined'){Chart.register(ChartDataLabels);_chartsReady=true;}}catch(e){}return _chartsReady;}
 const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
@@ -697,10 +643,8 @@ function hideFSpin(){document.getElementById('filter-spinner').classList.remove(
 
 let _warnTimer=null;
 function showEditWarn(msg){const el=document.getElementById('edit-warn'),mel=document.getElementById('edit-warn-msg');if(!el||!mel)return;mel.textContent=msg;el.classList.remove('hide');clearTimeout(_warnTimer);_warnTimer=setTimeout(()=>el.classList.add('hide'),4000);}
-
 function togglePwd(inputId,btn){const inp=document.getElementById(inputId);if(!inp)return;const show=inp.type==='password';inp.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
 function prefillCity(code){const em=document.getElementById('l-email');if(!em)return;if(!em.value||em.dataset.pill==='1'){em.value=code.toLowerCase()+'@1mg.com';em.dataset.pill='1';}document.getElementById('l-pwd')?.focus();}
-
 function showReset(){document.getElementById('login-form').classList.add('hide');document.getElementById('reset-form').classList.remove('hide');$('r-err','');document.getElementById('r-btn').disabled=false;document.getElementById('r-btn').textContent='Send Password →';}
 function showLogin(){document.getElementById('reset-form').classList.add('hide');document.getElementById('login-form').classList.remove('hide');}
 function doReset(){
@@ -723,20 +667,55 @@ function doLogin(){
         $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
         if(res.isAdmin){document.getElementById('adl-bar').classList.remove('hide');_buildAdminMS();}
         loadSummary();
+        _startAutoRefresh();
       }else{$('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In →';}
     }).catch(()=>{$('l-err','Network error');btn.disabled=false;btn.textContent='Sign In →';});
 }
 function logout(){
   if(!confirm('Sign out?'))return;
-  USER=null;CHANGES={};SUM=null;ORDERS=[];localStorage.removeItem(LC_KEY);
+  USER=null;CHANGES={};SUM=null;ORDERS=[];WARM_DONE=false;
+  Object.keys(SC_ORDERS).forEach(k=>delete SC_ORDERS[k]);
+  clearInterval(_arTimer);_arTimer=null;
+  localStorage.removeItem(LC_KEY);
   document.getElementById('dash').style.display='none';
   document.getElementById('login-screen').classList.remove('hide');
   document.getElementById('adl-bar').classList.add('hide');
   document.getElementById('l-email').value='';document.getElementById('l-pwd').value='';
   $('l-err','');document.getElementById('l-btn').disabled=false;document.getElementById('l-btn').textContent='Sign In →';
+  document.title='RTO Operations Dashboard';
 }
 
-// ADMIN MULTISELECT
+// ── AUTO-REFRESH (silent, every 10 min, skips if tab hidden) ─────────────────
+function _startAutoRefresh(){
+  clearInterval(_arTimer);
+  _arTimer=setInterval(()=>{
+    if(!USER||document.hidden) return;
+    fetch(API+'?action=getSummary&email='+encodeURIComponent(USER.email||''))
+      .then(r=>r.json()).then(p=>{
+        if(!p||!p.success) return;
+        SUM=p;
+        rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
+        rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+        rdChartsKPI(p.kpi||{});
+        try{localStorage.setItem(LC_KEY,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
+      }).catch(()=>{});
+  },10*60*1000);
+}
+
+// ── WARM CACHE: pre-fetch QC/Non-QC tabs after homepage loads ─────────────────
+function warmCache(){
+  if(WARM_DONE||!USER) return;
+  WARM_DONE=true;
+  ['QC','Non-QC'].forEach(tab=>{
+    const ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')
+      +'&page=1&pageSize='+PSZ+'&fQC='+encodeURIComponent(tab);
+    fetch(ep).then(r=>r.json()).then(d=>{
+      if(d.success) SC_ORDERS[tab]={orders:d.orders||[],total:d.total||0,pages:d.pages||1};
+    }).catch(()=>{});
+  });
+}
+
+// ── ADMIN MULTISELECT ──────────────────────────────────────────────────────────
 function _buildAdminMS(){
   const wrap=document.getElementById('fgact');
   wrap.innerHTML=`<label>Action</label><div class="ms-wrap" id="mswrap"><div class="ms-trig" id="mstrig" onclick="toggleMS()"><span id="mslbl">All Actions</span><span class="ms-arrow">&#9660;</span></div><div class="ms-drop" id="msdrop"><div class="ms-srch"><input type="text" id="mssi" placeholder="Search actions…" oninput="filterMSOpts()"/></div><div id="mslist"></div><div class="ms-acts"><button class="ms-act" onclick="msSelAll()">Select All</button><button class="ms-act" onclick="msClear()">Clear</button></div></div></div>`;
@@ -756,132 +735,104 @@ function _fp(){
   const p=new URLSearchParams();
   if(QF!=='Overall') p.set('fQC',QF);
   const v=id=>(document.getElementById(id)?.value||'');
-  if(v('f-partner')) p.set('fPartner',v('f-partner'));
-  if(v('f-bu'))      p.set('fBU',v('f-bu'));
-  if(v('f-store'))   p.set('fStore',v('f-store'));
-  if(v('f-stage'))   p.set('fStage',v('f-stage'));
-  if(v('f-age'))     p.set('fAge',v('f-age'));
-  if(v('f-from'))    p.set('fFrom',v('f-from'));
-  if(v('f-to'))      p.set('fTo',v('f-to'));
+  if(v('f-partner'))p.set('fPartner',v('f-partner'));
+  if(v('f-bu'))     p.set('fBU',v('f-bu'));
+  if(v('f-store'))  p.set('fStore',v('f-store'));
+  if(v('f-stage'))  p.set('fStage',v('f-stage'));
+  if(v('f-age'))    p.set('fAge',v('f-age'));
+  if(v('f-from'))   p.set('fFrom',v('f-from'));
+  if(v('f-to'))     p.set('fTo',v('f-to'));
   if(USER?.isAdmin){if(MS_SEL.size)p.set('fActions',[...MS_SEL].join(','));}
   else{if(v('f-act'))p.set('fAction',v('f-act'));}
   return p.toString();
 }
 function _hasFilters(){
   if(QF!=='Overall') return true;
-  if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>document.getElementById(id)?.value)) return true;
-  if(USER?.isAdmin&&MS_SEL.size) return true;
-  if(!USER?.isAdmin&&document.getElementById('f-act')?.value) return true;
+  if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>document.getElementById(id)?.value))return true;
+  if(USER?.isAdmin&&MS_SEL.size)return true;
+  if(!USER?.isAdmin&&document.getElementById('f-act')?.value)return true;
   return false;
 }
-function _updFltDlBtn(){const btn=document.getElementById('dlbflt');if(!btn)return;const h=_hasFilters();btn.disabled=!h;btn.title=h?'Download filtered data':'Apply a filter to enable';}
+function _updFltDlBtn(){const btn=document.getElementById('dlbflt');if(!btn)return;const h=_hasFilters();btn.disabled=!h;}
 
+// ── UNIFIED RENDER ─────────────────────────────────────────────────────────────
+function _renderSummary(sumData){
+  SUM=sumData;TRD=sumData.trend||[];AM=sumData.actionMap||{};
+  ACTIVE_CITIES=sumData.activeCities||[];ALL_ACTIONS=sumData.allActions||[];
+  $('asof','As of '+(sumData.asOf||'—'));
+  // Update KPI section title
+  $('kpi-ttl',sumData.isAdmin?'PAN India Overview':(sumData.userCity||'City')+' Overview');
+  popFilters();
+  rdKPI(sumData.kpi||{});rdAgeing(sumData.kpi||{});
+  rdCityCards(sumData.homepageCards||[],sumData.otherCityCards||null);
+  rdChartsKPI(sumData.kpi||{});drawTrend();
+  document.getElementById('dash').style.display='block';
+  _updFltDlBtn();
+  if(!USER?.isAdmin&&USER?.city) _openCityPanel(USER.city);
+}
+function _openCityPanel(city){
+  SCITY=city;
+  document.getElementById('f-city').value=city;
+  document.getElementById('cdet').classList.add('vis');
+  document.getElementById('cdet').style.display='block';
+  $('cd-ttl',city);
+  const dlDiv=document.getElementById('cd-dl-btns');
+  if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+  document.getElementById('upload-btn').style.display='';
+  document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
+  document.getElementById('pivot-wrap').style.display='none';
+  document.getElementById('rec-sec').style.display='none';
+  $('ap-cnt','— pending');
+}
+
+// ── LOAD SUMMARY ───────────────────────────────────────────────────────────────
 function loadSummary(force=false){
   showOv('Loading dashboard…');
-  // Try local cache for summary (fast path — skip if forced)
+  WARM_DONE=false;
+  // Cache hit
   if(!force){
     try{
       const c=localStorage.getItem(LC_KEY);
-      if(c){
-        const{data,ts}=JSON.parse(c);
-        if(Date.now()-ts<LC_TTL){
-          // Cache hit: render summary immediately, load orders in parallel
-          onSummaryLoad(data);
-          return;
-        }
-      }
+      if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){_renderSummary(data);showOv('Loading orders…');loadOrders();return;}}
     }catch(e){}
   }
-  // Cache miss: fetch summary + orders in parallel
-  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER.email||'')+'&'+_fp();
-  const ordEp=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page=1&pageSize='+PSZ+'&'+_fp()
-    +((!USER?.isAdmin&&USER?.city)?'&fCity='+encodeURIComponent(USER.city):'');
-
-  Promise.all([
-    fetch(sumEp).then(r=>r.json()),
-    fetch(ordEp).then(r=>r.json()),
-  ]).then(([sumData,ordData])=>{
-    try{localStorage.setItem(LC_KEY,JSON.stringify({data:sumData,ts:Date.now()}));}catch(e){}
-    // Render summary first
-    if(!sumData||!sumData.success){hideOv();toast((sumData&&sumData.error)||'Load failed','red');return;}
-    SUM=sumData;TRD=sumData.trend||[];AM=sumData.actionMap||{};
-    ACTIVE_CITIES=sumData.activeCities||[];ALL_ACTIONS=sumData.allActions||[];
-    $('asof','As of '+(sumData.asOf||'—'));
-    popFilters();
-    rdKPI(sumData.kpi||{});rdAgeing(sumData.kpi||{});
-    rdCityCards(sumData.homepageCards||[]);
-    rdChartsKPI(sumData.kpi||{});drawTrend();
-    document.getElementById('dash').style.display='block';
-    _updFltDlBtn();
-    // City users: auto-open their city
-    if(!USER?.isAdmin&&USER?.city&&!SCITY){
-      SCITY=USER.city;
-      document.getElementById('f-city').value=USER.city;
-      document.getElementById('cdet').classList.add('vis');
-      document.getElementById('cdet').style.display='block';
-      $('cd-ttl',USER.city);
-      const dlDiv=document.getElementById('cd-dl-btns');
-      if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-      document.getElementById('upload-btn').style.display='';
-      document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-    }
-    // Render orders from parallel fetch
-    hideOv();hideFSpin();
-    document.getElementById('tload').style.display='none';
-    if(ordData&&ordData.success){
-      if(ordData.actionMap) AM=ordData.actionMap;
-      ORDERS=ordData.orders||[];TOTAL=ordData.total||0;PAGES=ordData.pages||1;PG=1;
-      $('gapc',ORDERS.filter(o=>o.actionPending).length);
-      rdTbl();rdChartsOrders();
-      if(SCITY) afterOrdersCity();
-    }else{
-      ORDERS=[];rdTbl();
-    }
-  }).catch(e=>{
-    // Fallback to cached summary if available
-    try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);onSummaryLoad(data);toast('Cached data','amber');return;}}catch(e2){}
-    hideOv();toast('Load failed: '+(e.message||'Network error'),'red');
-  });
+  // Parallel fetch: summary + orders together
+  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER.email||'');
+  const ordEp=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page=1&pageSize='+PSZ;
+  Promise.all([fetch(sumEp).then(r=>r.json()),fetch(ordEp).then(r=>r.json())])
+    .then(([sumData,ordData])=>{
+      if(!sumData||!sumData.success){hideOv();toast((sumData&&sumData.error)||'Load failed','red');return;}
+      try{localStorage.setItem(LC_KEY,JSON.stringify({data:sumData,ts:Date.now()}));}catch(e){}
+      _renderSummary(sumData);
+      hideOv();hideFSpin();
+      document.getElementById('tload').style.display='none';
+      if(ordData&&ordData.success){
+        if(ordData.actionMap) AM=ordData.actionMap;
+        ORDERS=ordData.orders||[];TOTAL=ordData.total||0;PAGES=ordData.pages||1;PG=1;
+        _updTitle();
+        rdTbl();rdChartsOrders();
+        if(SCITY) afterOrdersCity();
+      }else{ORDERS=[];rdTbl();}
+      setTimeout(warmCache,1500);
+    }).catch(e=>{
+      try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);_renderSummary(data);showOv('Loading orders…');loadOrders();toast('Cached data','amber');return;}}catch(e2){}
+      hideOv();toast('Load failed: '+(e.message||'Network error'),'red');
+    });
 }
 function onSummaryLoad(p){
   if(!p||!p.success){hideOv();toast((p&&p.error)||'Load failed','red');return;}
-  try{
-    SUM=p;TRD=p.trend||[];AM=p.actionMap||{};
-    ACTIVE_CITIES=p.activeCities||[];ALL_ACTIONS=p.allActions||[];
-    $('asof','As of '+(p.asOf||'—'));
-    popFilters();
-    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-    rdCityCards(p.homepageCards||[]);
-    rdChartsKPI(p.kpi||{});drawTrend();
-    document.getElementById('dash').style.display='block';
-    _updFltDlBtn();
-    // City users: auto-open their city detail immediately
-    if(!USER?.isAdmin&&USER?.city&&!SCITY){
-      SCITY=USER.city;
-      document.getElementById('f-city').value=USER.city;
-      document.getElementById('cdet').classList.add('vis');
-      document.getElementById('cdet').style.display='block';
-      $('cd-ttl',USER.city);
-      const dlDiv=document.getElementById('cd-dl-btns');
-      if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-      document.getElementById('upload-btn').style.display='';
-      document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-    }
-    showOv('Loading orders…');
-    loadOrders();
-  }catch(err){hideOv();toast('Render error: '+err.message,'red');}
+  try{_renderSummary(p);showOv('Loading orders…');loadOrders();}catch(err){hideOv();toast('Render error: '+err.message,'red');}
 }
-function fref(){localStorage.removeItem(LC_KEY);loadSummary(true);}
+function fref(){localStorage.removeItem(LC_KEY);WARM_DONE=false;Object.keys(SC_ORDERS).forEach(k=>delete SC_ORDERS[k]);loadSummary(true);}
 
 function loadOrders(){
-  if(ORDERS_LOADING)return;
+  if(ORDERS_LOADING) return;
   ORDERS_LOADING=true;
   document.getElementById('temp').style.display='none';
   document.getElementById('tload').style.display='block';
   showFSpin();
   const srch=(document.getElementById('tsch')?.value||'').trim();
   let ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page='+PG+'&pageSize='+PSZ+'&'+_fp();
-  if(SCITY) ep+='&fCity='+encodeURIComponent(SCITY);
   if(APF||GAP) ep+='&fAP=1';
   if(srch) ep+='&fSearch='+encodeURIComponent(srch);
   fetch(ep).then(r=>r.json()).then(d=>{
@@ -890,7 +841,7 @@ function loadOrders(){
     if(!d.success){toast(d.error||'Order load failed','red');ORDERS=[];rdTbl();return;}
     if(d.actionMap) AM=d.actionMap;
     ORDERS=d.orders||[];TOTAL=d.total||0;PAGES=d.pages||1;
-    $('gapc',ORDERS.filter(o=>o.actionPending).length);
+    _updTitle();
     rdTbl();rdChartsOrders();
     if(SCITY) afterOrdersCity();
   }).catch(e=>{
@@ -899,6 +850,13 @@ function loadOrders(){
     toast('Order load failed: '+e.message,'red');
   });
 }
+
+function _updTitle(){
+  const ap=ORDERS.filter(o=>o.actionPending).length;
+  $('gapc',ap);
+  document.title=ap>0?'('+ap+') RTO Operations':'RTO Operations Dashboard';
+}
+
 function apF(){
   PG=1;_updFltDlBtn();
   showFSpin();showOv('Applying filters…');
@@ -908,7 +866,9 @@ function apF(){
       if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
       SUM=p;TRD=p.trend||[];
       if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
-      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[]);rdChartsKPI(p.kpi||{});drawTrend();
+      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
+      rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+      rdChartsKPI(p.kpi||{});drawTrend();
       showOv('Loading orders…');loadOrders();
     }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
@@ -923,10 +883,26 @@ function rstF(){
   document.getElementById('ap-tog')?.classList.remove('on');
   QF='Overall';
   document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
-  if(SCITY){closeDet();}
   _updFltDlBtn();loadSummary(true);
 }
-function setQC(v){QF=v;document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(USER){showFSpin();showOv('Switching view…');setTimeout(()=>apF(),50);}}
+function setQC(v){
+  QF=v;
+  document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  if(!USER) return;
+  const cached=SC_ORDERS[v];
+  if(cached&&!_hasFilters()){
+    ORDERS=cached.orders;TOTAL=cached.total;PAGES=cached.pages;PG=1;
+    _updTitle();rdTbl();rdChartsOrders();
+    if(SCITY) afterOrdersCity();
+    // Refresh summary quietly in background
+    fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&fQC='+encodeURIComponent(v))
+      .then(r=>r.json()).then(p=>{
+        if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],p.otherCityCards||null);rdChartsKPI(p.kpi||{});}
+      }).catch(()=>{});
+    return;
+  }
+  showFSpin();showOv('Switching view…');setTimeout(()=>apF(),50);
+}
 function onCityFilter(){const city=document.getElementById('f-city').value;if(city){SCITY=city;openDet(city);}else if(SCITY){SCITY=null;closeDet();}else apF();}
 function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);showFSpin();showOv('Filtering…');loadOrders();}
 function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);showFSpin();showOv('Filtering…');loadOrders();}
@@ -937,7 +913,7 @@ function popFilters(){
   while(cs.options.length>1)cs.remove(1);
   ACTIVE_CITIES.forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;cs.appendChild(op);});
   if(USER?.isAdmin){_populateMSOpts(ALL_ACTIONS);}
-  else{const fs=document.getElementById('f-act');while(fs.options.length>1)fs.remove(1);ALL_ACTIONS.forEach(a=>{const op=document.createElement('option');op.value=a;op.textContent=a;fs.appendChild(op);});}
+  else{const fs=document.getElementById('f-act');if(fs){while(fs.options.length>1)fs.remove(1);ALL_ACTIONS.forEach(a=>{const op=document.createElement('option');op.value=a;op.textContent=a;fs.appendChild(op);});}}
 }
 
 function rdKPI(k){
@@ -948,8 +924,8 @@ function rdKPI(k){
   $('k-ha',k.highAgeing||0);$('k-has',fmtN(k.highAgeingAmt||0)+' exposure');
   $('k-gr',k.green||0);
   $('k-ls',fmtK(k.lossTotal||0));$('k-lss','In-house: '+(k.inhouseLoss||0));
-  $('gapc',k.actionPending||0);
   $('sub-srn',k.srnPending||0);
+  $('gapc',k.actionPending||0);
 }
 function rdAgeing(k){
   const t=k.total||1;
@@ -960,43 +936,52 @@ function rdAgeing(k){
   [['ag-pb',pp],['ag-rb',rp],['ag-hb',hp]].forEach(([id,w])=>{const e=document.getElementById(id);if(e)e.style.width=w+'%';});
 }
 
-function rdCityCards(cards){
+function rdCityCards(cards,otherCityCards){
   const grid=document.getElementById('cgrid');grid.innerHTML='';
-  // For city users: always show their own city card even if not red
-  let displayCards=cards;
+  let displayCards=cards||[];
   if(!USER?.isAdmin&&USER?.city){
-    const userCityUC=(USER.city||'').toUpperCase();
-    const hasOwn=cards.some(c=>c.city.toUpperCase()===userCityUC);
-    if(!hasOwn&&SUM&&SUM.allCityCards){
-      const ownCard=SUM.allCityCards.find(c=>c.city.toUpperCase()===userCityUC);
-      if(ownCard) displayCards=[ownCard,...cards];
-    }
+    const uc=(USER.city||'').toUpperCase();
+    const hasOwn=displayCards.some(c=>c.city.toUpperCase()===uc);
+    if(!hasOwn&&SUM&&SUM.allCityCards){const own=SUM.allCityCards.find(c=>c.city.toUpperCase()===uc);if(own)displayCards=[own,...displayCards];}
   }
-  if(!displayCards||!displayCards.length){
-    grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No city card available.')+'</div>';
-    return;
+  if(!displayCards.length){
+    grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No data for your city yet.')+'</div>';
+  }else{
+    displayCards.forEach(c=>{
+      const isOwn=!USER?.isAdmin&&c.city.toUpperCase()===(USER?.city||'').toUpperCase();
+      const rp=pct(c.recoverable||0,Math.max(c.active||1,1));
+      const canDl=USER?.isAdmin||isOwn;
+      const el=document.createElement('div');
+      el.className='ccard'+(c.isRed?' red':'')+(SCITY===c.city?' sel':'');
+      el.innerHTML=`<div class="ctop"><div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}</div>
+      <div class="cstats">
+        <div class="cs bl"><div class="csl">Active</div><div class="csv">${c.active||0}</div></div>
+        <div class="cs rd"><div class="csl">Recoverable</div><div class="csv">${c.recoverable||0}</div></div>
+        <div class="cs am"><div class="csl">High Ageing</div><div class="csv">${c.highAgeing||0}</div></div>
+        <div class="cs pu"><div class="csl">SRN Pending</div><div class="csv">${c.srnPending||0}</div></div>
+        ${(c.codShortfall||0)>0?'<div class="cs rd"><div class="csl">COD Shortfall</div><div class="csv">'+c.codShortfall+'</div></div>':''}
+      </div>
+      <div class="cprog"><div class="cpbar"><div class="cpfill" style="width:${rp}%"></div></div><div class="cplbl"><span>${rp}% recoverable</span><span>${c.actionPending||0} AP</span></div></div>
+      <div class="cbtns">
+        ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
+        ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
+      </div>`;
+      el.onclick=()=>openDet(c.city);
+      grid.appendChild(el);
+    });
   }
-  displayCards.forEach(c=>{
-    const isOwn=!USER?.isAdmin&&c.city.toUpperCase()===(USER?.city||'').toUpperCase();
-    const rp=pct(c.recoverable||0,Math.max(c.active||1,1));
-    const canDl=USER?.isAdmin||isOwn;
-    const el=document.createElement('div');
-    el.className='ccard'+(c.isRed?' red':'')+(SCITY===c.city?' sel':'');
-    el.innerHTML=`<div class="ctop"><div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}</div>
-    <div class="cstats">
-      <div class="cs bl"><div class="csl">Active</div><div class="csv">${c.active||0}</div></div>
-      <div class="cs rd"><div class="csl">Recoverable</div><div class="csv">${c.recoverable||0}</div></div>
-      <div class="cs am"><div class="csl">High Ageing</div><div class="csv">${c.highAgeing||0}</div></div>
-      <div class="cs"><div class="csl">SRN Open</div><div class="csv">${c.srnOpen||0}</div></div>
-    </div>
-    <div class="cprog"><div class="cpbar"><div class="cpfill" style="width:${rp}%"></div></div><div class="cplbl"><span>${rp}% recoverable</span><span>${c.actionPending||0} AP</span></div></div>
-    <div class="cbtns">
-      ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
-      ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
-    </div>`;
-    el.onclick=()=>openDet(c.city);
-    grid.appendChild(el);
-  });
+  // Other cities SRN strip (city users only)
+  const existing=document.getElementById('other-city-strip');if(existing)existing.remove();
+  if(otherCityCards&&otherCityCards.length>0){
+    const strip=document.createElement('div');
+    strip.id='other-city-strip';strip.style.cssText='margin-top:14px;';
+    strip.innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px;">Other Cities · SRN Pending</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">${otherCityCards.map(c=>`<div style="background:var(--surface);border:1px solid ${c.srnPending>10?'#FECACA':'var(--border)'};border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:8px;">
+      <span style="font-size:12px;font-weight:700;color:var(--t1);">${c.city}</span>
+      <span style="font-size:11px;font-weight:700;color:${c.srnPending>10?'var(--red)':'var(--purple)'};background:${c.srnPending>10?'var(--redl)':'var(--purplel)'};padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span>
+    </div>`).join('')}</div>`;
+    grid.parentNode.appendChild(strip);
+  }
 }
 
 function canEdit(city){return USER?.isAdmin||(USER?.city||'').toUpperCase()===(city||'').toUpperCase();}
@@ -1006,7 +991,7 @@ function openDet(city){
   document.getElementById('f-city').value=city;
   document.getElementById('cdet').classList.add('vis');
   document.getElementById('cdet').style.display='block';
-  const isOwn=!USER?.isAdmin&&city===USER?.city;
+  const isOwn=!USER?.isAdmin&&city===(USER?.city||'');
   $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
   const dlDiv=document.getElementById('cd-dl-btns');
   if(USER?.isAdmin||isOwn){dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}else{dlDiv.innerHTML='';}
@@ -1025,59 +1010,40 @@ function afterOrdersCity(){
   const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen).length;
   const rv=ORDERS.filter(o=>o.isRecoverable&&!o.isGreen).length;
   const tot=ORDERS.filter(o=>!o.isGreen).length;
+  const sp=ORDERS.filter(o=>o.srnPending).length;
+  const cs=ORDERS.filter(o=>o.hasCODShortfall).length;
   $('ap-cnt',ap+' action pending');
   document.getElementById('cd-kpis').innerHTML=`
     <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Active</div><div class="kv">${tot}</div></div>
     <div class="kpi aa click" onclick="togGAP()"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="kh">Click to filter</div></div>
     <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">Recoverable</div><div class="kv">${rv}</div></div>
-    <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${ha}</div><div class="kh">Click to view</div></div>`;
-
-  // v23: Pivot using server-computed SUM.allCityCards (not paginated ORDERS)
+    <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${ha}</div><div class="kh">Click to view</div></div>
+    <div class="kpi ap"><div class="ki">&#128257;</div><div class="kl">SRN Pending</div><div class="kv">${sp}</div></div>
+    ${cs>0?`<div class="kpi ar"><div class="ki">&#128176;</div><div class="kl">COD Shortfall</div><div class="kv">${cs}</div></div>`:''}`;
   rdPivot(SCITY);
-
   document.getElementById('cd-charts').innerHTML=`<div class="chcard"><div class="chhd"><h3>Partner</h3></div><canvas id="cd-pt"></canvas></div><div class="chcard"><div class="chhd"><h3>BU</h3></div><canvas id="cd-bu"></canvas></div><div class="chcard"><div class="chhd"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
-  const byPt={INHOUSE:0,'3PL':0,PSP:0},byBU={'E-Pharma':0,PSP:0},byAct={};
+  const byPt={INHOUSE:0,'3PL':0},byBU={'E-Pharma':0,PSP:0},byAct={};
   ORDERS.forEach(o=>{
-    const pt=o.partner||'INHOUSE';if(byPt[pt]!==undefined)byPt[pt]++;else byPt[pt]=(byPt[pt]||0)+1;
+    const pt=o.partner||'INHOUSE';byPt[pt]=(byPt[pt]||0)+1;
     const bu=o.businessUnit||'E-Pharma';if(byBU[bu]!==undefined)byBU[bu]++;
     const a=o.currentAction||'No action';byAct[a]=(byAct[a]||0)+1;
   });
-  drawDn('cd-pt',Object.keys(byPt),Object.values(byPt),['#059669','#D97706','#7C3AED']);
+  drawDn('cd-pt',Object.keys(byPt),Object.values(byPt),['#059669','#D97706']);
   drawDn('cd-bu',['E-Pharma','PSP'],[byBU['E-Pharma'],byBU['PSP']],['#2563EB','#7C3AED']);
   const top=Object.entries(byAct).sort((x,y)=>y[1]-x[1]).slice(0,6);
   drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
-
-  // v23: Recovery section — loads from Loss_Lost_History via API
   loadRecSec(SCITY);
 }
 
-// v23: Pivot using server-computed allCityCards — always correct, not paginated
 function rdPivot(city){
   const pw=document.getElementById('pivot-wrap');if(!pw)return;
-  const cityData=(SUM.allCityCards||[]).find(c=>c.city.toUpperCase()===city.toUpperCase());
-  const fc  =cityData?(cityData.fcCount||0):0;
-  const rt  =cityData?(cityData.retailCount||0):0;
-  const tpl =cityData?(cityData.preMDQ3PLCount||0):0;
-  const tot =cityData?(cityData.active||0):0;
+  const cityData=(SUM&&SUM.allCityCards||[]).find(c=>c.city.toUpperCase()===city.toUpperCase());
+  const fc=cityData?(cityData.fcCount||0):0;
+  const rt=cityData?(cityData.retailCount||0):0;
+  const tpl=cityData?(cityData.preMDQ3PLCount||0):0;
+  const tot=cityData?(cityData.active||0):0;
   const other=Math.max(0,tot-fc-rt-tpl);
-  pw.innerHTML=`<div class="pivot-section">
-    <div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div>
-    <div class="pivot-body">
-      <table class="pivot-table">
-        <thead><tr>
-          <th>FC</th><th>Retail</th><th>3PL (Pre MDQ)</th>${other?'<th>Other</th>':''}
-          <th>Total</th>
-        </tr></thead>
-        <tbody><tr>
-          <td class="pv-fc">${fc}</td>
-          <td class="pv-rt">${rt}</td>
-          <td class="pv-3pl">${tpl}</td>
-          ${other?`<td class="pv-oth">${other}</td>`:''}
-          <td class="pv-tot">${tot}</td>
-        </tr></tbody>
-      </table>
-    </div>
-  </div>`;
+  pw.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div><div class="pivot-body"><table class="pivot-table"><thead><tr><th>FC</th><th>Retail</th><th>3PL (Pre MDQ)</th>${other?'<th>Other</th>':''}<th>Total</th></tr></thead><tbody><tr><td class="pv-fc">${fc}</td><td class="pv-rt">${rt}</td><td class="pv-3pl">${tpl}</td>${other?`<td class="pv-oth">${other}</td>`:''}<td class="pv-tot">${tot}</td></tr></tbody></table></div></div>`;
   pw.style.display='block';
 }
 
@@ -1095,7 +1061,6 @@ function openCityAP(city){if(SCITY!==city)openDet(city);GAP=true;document.getEle
 function goHome(){if(SCITY){closeDet();}else{window.scrollTo({top:0,behavior:'smooth'});}}
 window.addEventListener('scroll',()=>{document.getElementById('home-btn').classList.toggle('vis',SCITY&&window.scrollY>200);});
 
-// v23: Recovery section — loads from getRecovery API (reads Loss_Lost_History, not paginated ORDERS)
 function loadRecSec(city){
   const rs=document.getElementById('rec-sec');
   rs.style.display='none';rs.innerHTML='';
@@ -1105,28 +1070,9 @@ function loadRecSec(city){
     .then(r=>r.json()).then(d=>{
       if(!d.success||!d.rows||!d.rows.length) return;
       rs.style.display='block';
-      rs.innerHTML=`<div class="rec-sec">
-        <div class="rec-hdr">
-          <h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3>
-          <span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required</span>
-        </div>
-        <div class="rec-body">${d.rows.map(r=>`<div class="rec-row" id="rr-${r.orderId}">
-          <span class="rec-id">${r.orderId}</span>
-          <span style="color:var(--t3);font-size:11px;">${r.lossType||''}</span>
-          <span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>
-          ${r.recoveredAmount>0
-            ?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`
-            :'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}
-          ${r.recoveryStatus!=='Fully Recovered'?`
-            <input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount" min="0"/>
-            <input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/>
-            <button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save</button>
-          `:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}
-        </div>`).join('')}</div>
-      </div>`;
+      rs.innerHTML=`<div class="rec-sec"><div class="rec-hdr"><h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3><span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required</span></div><div class="rec-body">${d.rows.map(r=>`<div class="rec-row" id="rr-${r.orderId}"><span class="rec-id">${r.orderId}</span><span style="color:var(--t3);font-size:11px;">${r.lossType||''}</span><span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>${r.recoveredAmount>0?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`:'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}${r.recoveryStatus!=='Fully Recovered'?`<input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount" min="0"/><input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/><button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save</button>`:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}</div>`).join('')}</div></div>`;
     }).catch(()=>{});
 }
-
 function saveRec(orderId,gmv){
   const amount=parseFloat(document.getElementById('ra-'+orderId)?.value)||0;
   const refNumber=(document.getElementById('rr2-'+orderId)?.value||'').trim();
@@ -1135,16 +1081,34 @@ function saveRec(orderId,gmv){
   if(amount>gmv){toast('Amount cannot exceed GMV ₹'+gmv.toLocaleString('en-IN'),'red');return;}
   fetch(API+'?action=addRecovery&orderId='+encodeURIComponent(orderId)+'&amount='+amount+'&refNumber='+encodeURIComponent(refNumber)+'&email='+encodeURIComponent(USER?.email||''))
     .then(r=>r.json()).then(res=>{
-      if(res.success){
-        const msg=res.fullyRecovered?'✅ Fully recovered — moved out of Loss':'⚡ Partial recovery saved for '+orderId;
-        toast(msg,'green');
-        loadRecSec(SCITY); // refresh
-        if(res.fullyRecovered) localStorage.removeItem(LC_KEY);
-      }else toast(res.error||'Failed','red');
+      if(res.success){toast(res.fullyRecovered?'✅ Fully recovered':'⚡ Partial recovery saved for '+orderId,'green');loadRecSec(SCITY);if(res.fullyRecovered)localStorage.removeItem(LC_KEY);}
+      else toast(res.error||'Failed','red');
     }).catch(()=>toast('Network error','red'));
 }
 
-// v23: AP Download
+// ── ORDER HISTORY ──────────────────────────────────────────────────────────────
+function openHist(orderId){
+  $('hist-id','— '+orderId);
+  document.getElementById('hist-body').innerHTML='<div class="emp"><div class="emp-i">&#8987;</div>Loading history…</div>';
+  document.getElementById('hist-modal').classList.remove('hide');
+  fetch(API+'?action=getHistory&email='+encodeURIComponent(USER.email||'')+'&orderId='+encodeURIComponent(orderId))
+    .then(r=>r.json()).then(d=>{
+      const body=document.getElementById('hist-body');
+      if(!d.success||!d.history||!d.history.length){body.innerHTML='<div class="emp"><div class="emp-i">&#128203;</div>No history found for this order.</div>';return;}
+      body.innerHTML=d.history.map(h=>`<div class="htx">
+        <div><div class="htx-ts">${h.timestamp||'—'}</div><div class="htx-user">${h.user||'—'}</div></div>
+        <div class="htx-body">
+          ${h.newAction&&h.newAction!==h.oldAction?`<div>Action: <span style="color:var(--t3);text-decoration:line-through">${h.oldAction||'—'}</span> → <strong>${h.newAction}</strong></div>`:''}
+          ${h.newUpdate&&h.newUpdate!==h.oldUpdate?`<div>Update: <span style="color:var(--t3);text-decoration:line-through">${h.oldUpdate||'—'}</span> → <strong>${h.newUpdate}</strong></div>`:''}
+          ${(!h.newAction||h.newAction===h.oldAction)&&(!h.newUpdate||h.newUpdate===h.oldUpdate)?`<div style="color:var(--t3);">No changes recorded</div>`:''}
+          <div style="font-size:10px;color:var(--t3);margin-top:2px;">via ${h.source||'Dashboard'} · Case ${h.caseId||'—'}</div>
+        </div>
+      </div>`).join('');
+    }).catch(()=>{document.getElementById('hist-body').innerHTML='<div class="emp"><div class="emp-i">&#128203;</div>Failed to load history.</div>';});
+}
+function closeHist(){document.getElementById('hist-modal').classList.add('hide');}
+
+// ── AP DOWNLOAD ────────────────────────────────────────────────────────────────
 function downloadAP(){
   showOv('Preparing AP queue download…');
   let ep=API+'?action=downloadAP&email='+encodeURIComponent(USER.email||'');
@@ -1160,19 +1124,19 @@ function downloadAP(){
   }).catch(e=>{hideOv();toast(e.message,'red');});
 }
 
-// CHARTS
+// ── CHARTS ─────────────────────────────────────────────────────────────────────
 function dC(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
 const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}}};
 function drawDn(id,labels,data,colors){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
 function drawHB(id,labels,data){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2'][i%6]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
 function drawSB(id,labels,d1,d2,l1,l2,c1,c2){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:l1,data:d1,backgroundColor:c1,borderRadius:3},{label:l2,data:d2,backgroundColor:c2,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
-function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short'}),total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:'Today',total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
 function rdChartsKPI(k){
   drawDn('ch-ag',['Pending','Recoverable','High Ageing'],[k.pending||0,(k.recoverable||0)-(k.highAgeing||0),k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   drawDn('ch-st',['Action Pending','Closed','Other'],[k.actionPending||0,k.green||0,Math.max(0,(k.total||0)-(k.actionPending||0)-(k.green||0))],['#D97706','#059669','#9CA3AF']);
 }
 function rdChartsOrders(){
-  if(!ORDERS.length)return;
+  if(!ORDERS.length) return;
   const byBU={'E-Pharma':0,PSP:0},byAct={};
   const qcW=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE'&&o.serviceFlag==='QC').length;
   const nqcW=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE'&&o.serviceFlag!=='QC').length;
@@ -1184,7 +1148,7 @@ function rdChartsOrders(){
   drawSB('ch-qc',['Warehouse','Retail'],[qcW,qcR],[nqcW,nqcR],'QC','Non-QC','#2563EB','#7C3AED');
 }
 
-// v23: Table — new column order: Order ID | City | GMV | Store | Partner | BU | Stage | SRN | Service Type | Action | Update
+// ── TABLE ──────────────────────────────────────────────────────────────────────
 function rdTbl(){
   const tbody=document.getElementById('tbody'),emp=document.getElementById('temp');
   $('tcnt',TOTAL+' orders');$('pgi','Page '+PG+' of '+PAGES);
@@ -1226,7 +1190,8 @@ function rdTbl(){
       }else{
         const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
         const delBtn=hasChg?`<button class="del-btn" onclick="clearRow('${o.orderId}')" title="Clear">&#10005;</button>`:'';
-        actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
+        const histBtn=`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="View history">H</button>`;
+        actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}${histBtn}</div>`;
         if(o.actionEditCount===EDIT_LIMIT-1) actCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
       }
 
@@ -1235,7 +1200,7 @@ function rdTbl(){
       const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Order Lost/Rider Absconded';
       const lossHtml=isLoss?`<div class="loss-disp">&#128176; Loss: ${gmvFmt}</div>`:'';
       const showCN=CN_UPDS.has(selUpd);
-      const cnHtml=showCN?`<span class="cn-lbl">&#128373; CN Number (required):</span><input class="cn-inp" id="cn-${i}" placeholder="CN123456" value="${selCN}" oninput="onCN(${i},'${o.orderId}')"/>`:'';
+      const cnHtml=showCN?`<span class="cn-lbl">&#128373; CN Number (required):</span><input class="cn-inp" id="cn-${i}" placeholder="CN123456" value="${selCN}" oninput="onCN(${i},'${o.orderId}')"/>`:''
       const showRef=REF_UPDS.has(selUpd);
       const codHtml=showRef?`<span class="ref-lbl">&#128218; Amount Collected (required):</span><input class="cod-inp" id="cod-${i}" type="number" placeholder="Amount" value="${selCOD}" oninput="onCOD(${i},'${o.orderId}',${o.gmv})"/><span class="ref-lbl">Reference No. (required):</span><input class="ref-inp" id="ref-${i}" placeholder="REF123456" value="${selRef}" oninput="onRef(${i},'${o.orderId}')"/><span class="cod-warn" id="codw-${i}" style="display:none"></span>`:'';
 
@@ -1251,7 +1216,6 @@ function rdTbl(){
       }
     }
 
-    // v23: New column order
     return `<tr class="${trCls}" id="row-${o.orderId}">
       <td class="td-id">${o.orderId}</td>
       <td style="font-weight:600;">${o.city}</td>
@@ -1297,34 +1261,61 @@ function onCOD(idx,sid,gmv){
 }
 function clearRow(sid){delete CHANGES[sid];rdTbl();updSbar();}
 function clearAll(){if(!Object.keys(CHANGES).length)return;if(!confirm('Clear all pending changes?'))return;CHANGES={};rdTbl();updSbar();}
-function updSbar(){const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;document.getElementById('sbar').classList.toggle('hide',n===0);$('scnt',n+' change'+(n===1?'':'s')+' ready');}
+function updSbar(){
+  const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;
+  document.getElementById('sbar').classList.toggle('hide',n===0);
+  $('scnt',n+' change'+(n===1?'':'s')+' ready');
+}
 
+// ── SAVE (delta update — optimistic table, only re-fetch KPIs) ─────────────────
 async function saveAll(){
   const btn=document.getElementById('sbtn');
   const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
-  if(!sids.length)return;
+  if(!sids.length) return;
   for(const sid of sids){
     const ch=CHANGES[sid];
     if(CN_UPDS.has(ch.update)&&!ch.cnNumber){toast('CN Number required for "'+ch.update+'" — order '+sid,'red');return;}
     if(REF_UPDS.has(ch.update)&&!ch.refNumber){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
     if(REF_UPDS.has(ch.update)&&!(ch.codAmount>0)){toast('Amount required for "'+ch.update+'" — order '+sid,'red');return;}
   }
-  btn.disabled=true;btn.textContent='Saving...';
-  showOv('Saving changes…');
+  btn.disabled=true;btn.textContent='Saving...';showOv('Saving changes…');
   const updates=sids.map(sid=>({orderId:sid,action:CHANGES[sid].action||'',update:CHANGES[sid].update||'',cnNumber:CHANGES[sid].cnNumber||'',refNumber:CHANGES[sid].refNumber||'',codAmount:CHANGES[sid].codAmount||0}));
   try{
     const res=await fetch(API+'?action=batchSave&updates='+encodeURIComponent(JSON.stringify(updates))+'&email='+encodeURIComponent(USER?.email||'')).then(r=>r.json());
-    const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
-    (res.results||[]).forEach(r=>{if(r.codShortfall>0)toast('⚠ COD shortfall ₹'+r.codShortfall.toLocaleString('en-IN')+' recorded as loss for '+r.orderId,'amber');});
     hideOv();
+    const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
+    // Optimistic update: apply changes to ORDERS in memory
+    if(res.results){
+      res.results.forEach(r=>{
+        if(!r.success) return;
+        const o=ORDERS.find(x=>x.orderId===r.orderId);
+        if(!o) return;
+        const ch=CHANGES[r.orderId]||{};
+        if(ch.action) o.currentAction=ch.action;
+        if(ch.update) o.currentUpdate=ch.update;
+        if(ch.cnNumber) o.cnNumber=ch.cnNumber;
+        if(ch.refNumber) o.refNumber=ch.refNumber;
+        if(ch.codAmount) o.codAmount=ch.codAmount;
+        if(r.closureStatus==='CLOSED'){o.isGreen=true;o.actionPending=false;}
+        if(r.codShortfall>0) toast('⚠ COD shortfall ₹'+r.codShortfall.toLocaleString('en-IN')+' recorded as loss for '+r.orderId,'amber');
+      });
+    }
     toast('&#9989; '+ok+'/'+sids.length+' orders updated','green');
     CHANGES={};btn.textContent='&#10003; Save All';btn.disabled=false;
-    localStorage.removeItem(LC_KEY);setTimeout(()=>loadSummary(true),1500);
+    rdTbl(); // re-render with optimistic changes
+    // Re-fetch only KPIs in background (not full orders)
+    localStorage.removeItem(LC_KEY);
+    setTimeout(()=>{
+      fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||''))
+        .then(r=>r.json()).then(p=>{
+          if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],p.otherCityCards||null);}
+        }).catch(()=>{});
+    },1500);
   }catch(e){hideOv();btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
 }
 function chPg(d){PG+=d;showFSpin();showOv('Loading page…');loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
-// MODALS
+// ── MODALS ─────────────────────────────────────────────────────────────────────
 function openHA(){
   const body=document.getElementById('ha-body');
   const hm={};ORDERS.forEach(o=>{if(!o.isHighAgeing)return;if(!hm[o.city])hm[o.city]=[];hm[o.city].push(o);});
@@ -1346,18 +1337,14 @@ function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
 
 function jumpTo(sid){closeHA();closeAP();const idx=ORDERS.findIndex(o=>o.orderId===sid);if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{const rows=document.querySelectorAll('#tbody tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';setTimeout(()=>{rows[li].style.outline='';},2500);}},300);}
 
-// DOWNLOADS
+// ── DOWNLOADS ──────────────────────────────────────────────────────────────────
 function triggerDl(type){
   if(!USER)return;
   if(!USER.isAdmin&&type==='panIndia'){toast('Admin access required','red');return;}
   DL_PENDING={type,city:SCITY||''};
   if(type==='loss'){_execDl('loss','','complete');return;}
   if(type==='panIndia'&&!_hasFilters()){_execDl('panIndia','','complete');return;}
-  if(type==='filtered'||type==='panIndia'){
-    $('dlct',(SCITY||'PAN India')+' — Download');
-    $('dlcm','Active filters are applied. Download filtered subset or full dataset?');
-    document.getElementById('dl-modal').classList.remove('hide');return;
-  }
+  if(type==='filtered'||type==='panIndia'){$('dlct',(SCITY||'PAN India')+' — Download');$('dlcm','Active filters are applied. Download filtered subset or full dataset?');document.getElementById('dl-modal').classList.remove('hide');return;}
   _execDl(type,DL_PENDING.city,'complete');
 }
 function triggerCityDl(city){
@@ -1387,11 +1374,12 @@ function _buildXLSX(p,label){
   XLSX.writeFile(wb,'RTO_'+label.replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
-// UPLOAD
+// ── UPLOAD ─────────────────────────────────────────────────────────────────────
 function triggerUpload(){if(!SCITY){toast('Open a city first','red');return;}if(!canEdit(SCITY)){toast('No edit permission for '+SCITY,'red');return;}const fi=document.getElementById('upload-file');fi.value='';fi.click();}
 function closeUpload(){document.getElementById('upload-modal').classList.add('hide');UPLOAD_CHANGES={};}
 const _nm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
 function _fuzzy(input,candidates){if(!input||!candidates.length)return null;const ni=_nm(input);const exact=candidates.find(c=>_nm(c)===ni);if(exact)return{match:exact,corrected:false};const ti=new Set(ni.split(' ').filter(Boolean));let best=null,bestScore=0;candidates.forEach(c=>{const tc=new Set(_nm(c).split(' ').filter(Boolean));const inter=[...ti].filter(t=>tc.has(t)).length;const score=inter/Math.max(ti.size,tc.size);if(score>bestScore&&score>=0.45){bestScore=score;best=c;}});if(best)return{match:best,corrected:_nm(best)!==ni};return null;}
+
 function handleUpload(input){
   const file=input.files[0];if(!file)return;
   showOv('Reading file…');
@@ -1434,21 +1422,21 @@ function handleUpload(input){
   };
   reader.readAsArrayBuffer(file);
 }
+
 function _showUploadResults(results){
   const ok=results.filter(r=>r.status==='ok'),fail=results.filter(r=>r.status==='fail');
-  document.getElementById('usum').innerHTML=`<div class="ustat ok"><span>&#9989;</span>${ok.length} valid</div>${fail.length?`<div class="ustat fail"><span>&#10060;</span>${fail.length} failed</div>`:''}<div class="ustat tot">${results.length} rows</div>`;
-  document.getElementById('ubody').innerHTML=results.map(r=>{
-    if(r.status==='ok')return`<div class="ures ok"><span class="ui-icon">&#9989;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">Action: <strong>${r.action}</strong>${r.update?' → Update: <strong>'+r.update+'</strong>':''}</span></div>`;
-    return`<div class="ures fail"><span class="ui-icon">&#10060;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">${r.reason}</span></div>`;
-  }).join('');
+  document.getElementById('usum').innerHTML=`<div class="ustat ok"><span>&#9989;</span>${ok.length} valid</div>${fail.length?`<div class="ustat fail"><span>&#10060;</span>${fail.length} failed</div>`:''}<div class="ustat tot">${results.length} rows processed</div>`;
+  // Diff preview
+  const diffHtml=ok.length?`<div class="diff-preview"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;">📋 Changes Preview — ${ok.length} order${ok.length>1?'s':''} will be updated</div>${ok.map(r=>`<div class="diff-row"><span class="diff-id">${r.orderId}</span><span class="diff-badge" style="background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;">${r.action}</span>${r.update?`<span class="diff-badge" style="background:var(--amberl);color:var(--amber);border:1px solid #FDE68A;">→ ${r.update}</span>`:''}</div>`).join('')}</div>`:'';
+  document.getElementById('ubody').innerHTML=diffHtml+results.filter(r=>r.status==='fail').map(r=>`<div class="ures fail"><span class="ui-icon">&#10060;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">${r.reason}</span></div>`).join('');
   const sb=document.getElementById('usave-btn');
   sb.style.display=ok.length?'block':'none';
-  if(ok.length)sb.textContent='✓ Save '+ok.length+' Valid Update'+(ok.length>1?'s':'');
+  if(ok.length)sb.textContent='✓ Save '+ok.length+' Update'+(ok.length>1?'s':'');
   document.getElementById('upload-modal').classList.remove('hide');
 }
 function saveUploadChanges(){closeUpload();saveAll();}
 
-// TOAST
+// ── TOAST ──────────────────────────────────────────────────────────────────────
 function toast(msg,type='green'){
   const t=document.createElement('div');t.className='toast';
   t.style.background=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)';
