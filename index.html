@@ -8,7 +8,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-/* ── RESET + VARS ── */
 :root{
   --bg:#F1F4F9;--surface:#fff;--surf2:#F5F7FA;--surf3:#E8ECF2;
   --border:#DDE1EB;--border2:#C8CDD9;
@@ -27,34 +26,12 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
 
-/* ── LOGIN ── */
-#login-screen{
-  position:fixed;inset:0;z-index:1000;
-  background:linear-gradient(145deg,#0B1E3D 0%,#0F2C5C 35%,#1340A0 70%,#1A52CC 100%);
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(145deg,#0B1E3D 0%,#0F2C5C 35%,#1340A0 70%,#1A52CC 100%);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 #login-screen.hide{display:none}
-
-/* Floating ambient orbs */
-#login-screen::before{
-  content:'';position:absolute;width:500px;height:500px;border-radius:50%;
-  background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%);
-  top:-120px;left:-120px;pointer-events:none;
-}
-#login-screen::after{
-  content:'';position:absolute;width:400px;height:400px;border-radius:50%;
-  background:radial-gradient(circle,rgba(99,102,241,.2) 0%,transparent 70%);
-  bottom:-80px;right:-80px;pointer-events:none;
-}
-
-/* Floating stat chips on the background */
-.l-chip{
-  position:absolute;display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,.08);backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.15);border-radius:14px;
-  padding:12px 18px;pointer-events:none;z-index:1;
-  box-shadow:0 4px 20px rgba(0,0,0,.25);
-}
+#login-screen::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.25) 0%,transparent 70%);top:-120px;left:-120px;pointer-events:none;}
+#login-screen::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.2) 0%,transparent 70%);bottom:-80px;right:-80px;pointer-events:none;}
+.l-chip{position:absolute;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:12px 18px;pointer-events:none;z-index:1;box-shadow:0 4px 20px rgba(0,0,0,.25);}
 .l-chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .l-chip-dot.green{background:#22C55E;box-shadow:0 0 6px #22C55E;}
 .l-chip-dot.amber{background:#F59E0B;box-shadow:0 0 6px #F59E0B;}
@@ -64,104 +41,46 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .l-chip-lbl{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);}
 .l-chip-num{font-size:22px;font-weight:800;color:#fff;line-height:1;}
 .l-chip-sub{font-size:10px;color:rgba(255,255,255,.55);font-weight:500;}
-/* Chip positions */
-.lc1{top:15%;left:4%;}
-.lc2{top:40%;left:3%;}
-.lc3{top:65%;left:5%;}
-.lc4{top:25%;right:4%;}  /* Rs.1.2L */
-.lc5{top:50%;right:4%;}  /* Active RTOs */
-.lc6{top:72%;right:4%;}  /* Action Pending */
-
-/* Tata 1mg watermark */
-.l-watermark{
-  position:absolute;bottom:32px;right:40px;text-align:right;pointer-events:none;z-index:1;
-}
+.lc1{top:15%;left:4%;}.lc2{top:40%;left:3%;}.lc3{top:65%;left:5%;}
+.lc4{top:25%;right:4%;}.lc5{top:50%;right:4%;}.lc6{top:72%;right:4%;}
+.l-watermark{position:absolute;bottom:32px;right:40px;text-align:right;pointer-events:none;z-index:1;}
 .l-wm-title{font-size:28px;font-weight:900;color:rgba(255,255,255,.12);letter-spacing:1px;}
 .l-wm-sub{font-size:11px;color:rgba(255,255,255,.1);font-weight:500;margin-top:2px;}
-
-/* Card */
-.lcard{
-  position:relative;z-index:2;
-  background:rgba(255,255,255,.97);backdrop-filter:blur(20px);
-  border-radius:20px;padding:36px 38px 30px;width:100%;max-width:420px;
-  box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.1);
-}
+.lcard{position:relative;z-index:2;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);border-radius:20px;padding:36px 38px 30px;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.1);}
 .lcard .hide{display:none!important;}
-
-/* Card header */
 .l-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
-.l-icon{
-  width:46px;height:46px;border-radius:13px;
-  background:linear-gradient(135deg,#EFF6FF,#DBEAFE);
-  border:1.5px solid #BFDBFE;
-  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;
-}
+.l-icon{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1.5px solid #BFDBFE;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
 .l-title{font-size:19px;font-weight:800;color:#0F172A;line-height:1.2;}
 .l-sub{font-size:12px;color:#94A3B8;margin-top:2px;}
 .l-div{height:1px;background:#E2E8F0;margin-bottom:20px;}
-
-/* Fields */
 .lbl{font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;display:block;}
 .linp-wrap{position:relative;margin-bottom:16px;}
-.finp{
-  width:100%;padding:11px 14px;border-radius:9px;
-  border:1.5px solid #E2E8F0;background:#F8FAFC;
-  font-size:14px;color:#0F172A;outline:none;
-  transition:border-color .15s,background .15s;
-  font-family:var(--font);
-}
+.finp{width:100%;padding:11px 14px;border-radius:9px;border:1.5px solid #E2E8F0;background:#F8FAFC;font-size:14px;color:#0F172A;outline:none;transition:border-color .15s,background .15s;font-family:var(--font);}
 .finp:focus{border-color:#2563EB;background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08);}
 .finp.pwd-field{padding-right:44px;}
-.pwd-toggle{
-  position:absolute;right:12px;top:50%;transform:translateY(-50%);
-  background:none;border:none;cursor:pointer;color:#94A3B8;font-size:16px;
-  padding:4px;line-height:1;transition:color .12s;
-}
+.pwd-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94A3B8;font-size:16px;padding:4px;line-height:1;}
 .pwd-toggle:hover{color:#2563EB;}
-
-/* Sign in button */
-.lbtn{
-  width:100%;padding:12px;border-radius:9px;
-  background:linear-gradient(135deg,#2563EB,#1D4ED8);
-  color:#fff;border:none;font-size:14px;font-weight:700;
-  cursor:pointer;margin-top:2px;letter-spacing:.2px;
-  transition:opacity .15s,transform .1s;
-  box-shadow:0 4px 14px rgba(37,99,235,.35);
-}
+.lbtn{width:100%;padding:12px;border-radius:9px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;font-size:14px;font-weight:700;cursor:pointer;margin-top:2px;transition:opacity .15s,transform .1s;box-shadow:0 4px 14px rgba(37,99,235,.35);}
 .lbtn:hover:not(:disabled){opacity:.92;transform:translateY(-1px);}
-.lbtn:active{transform:translateY(0);}
-.lbtn:disabled{opacity:.55;cursor:default;transform:none;}
-
+.lbtn:disabled{opacity:.55;cursor:default;}
 .lerr{font-size:12px;color:#DC2626;text-align:center;min-height:18px;margin-top:10px;font-weight:500;}
 .lhint{font-size:12px;color:#94A3B8;text-align:center;margin-top:14px;}
 .lhint a{color:#2563EB;font-weight:600;text-decoration:none;}
-.lhint a:hover{text-decoration:underline;}
-
-/* City shortcut pills */
-.l-cities{
-  display:flex;flex-wrap:wrap;justify-content:center;gap:6px;
-  margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;
-}
-.l-city-pill{
-  padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
-  color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;
-  cursor:pointer;transition:all .12s;letter-spacing:.3px;
-}
+.l-cities{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;}
+.l-city-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;cursor:pointer;transition:all .12s;}
 .l-city-pill:hover{background:#2563EB;color:#fff;border-color:#2563EB;}
 
-/* ── FULL-PAGE OVERLAY (loading) ── */
+/* OVERLAY */
 #ov{position:fixed;inset:0;z-index:9999;background:rgba(241,244,249,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px);}
 #ov.hide{display:none;}
 .ov-ring{width:44px;height:44px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
 .ov-msg{font-size:13px;color:var(--t2);font-weight:500;}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* ── INLINE SPINNER (filter bar) ── */
 #filter-spinner{display:none;align-items:center;gap:6px;font-size:11px;color:var(--blue);font-weight:600;}
 #filter-spinner.vis{display:flex;}
 .fspin{width:14px;height:14px;border:2px solid #BFDBFE;border-top-color:var(--blue);border-radius:50%;animation:spin .6s linear infinite;}
 
-/* ── HEADER ── */
+/* HEADER */
 .hdr{height:56px;background:linear-gradient(135deg,#1E3A5F,#2563EB);padding:0 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(37,99,235,.3);}
 .hdr-brand{display:flex;align-items:center;gap:9px;}
 .hdr-icon{width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:15px;}
@@ -177,26 +96,25 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .hbtn.danger:hover{background:#DC2626;border-color:#DC2626;color:#fff;}
 .upill{font-size:11px;font-weight:600;color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);padding:3px 10px;border-radius:20px;}
 
-/* ── DOWNLOAD BAR ── */
+/* DOWNLOAD BAR */
 .dl-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 24px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
 .dl-bar.hide{display:none;}
 .dl-lbl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;}
 .dlb{padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .12s;}
 .dlb:disabled{opacity:.35;cursor:default;pointer-events:none;}
-.dlb-pi {background:var(--bluel);border-color:#BFDBFE;color:var(--blue);}
+.dlb-pi{background:var(--bluel);border-color:#BFDBFE;color:var(--blue);}
 .dlb-pi:not(:disabled):hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 .dlb-flt{background:var(--amberl);border-color:#FDE68A;color:var(--amber);}
 .dlb-flt:not(:disabled):hover{background:var(--amber);color:#fff;border-color:var(--amber);}
 .dlb-loss{background:var(--redl);border-color:#FECACA;color:var(--red);}
 .dlb-loss:not(:disabled):hover{background:var(--red);color:#fff;border-color:var(--red);}
 
-/* ── FILTER BAR ── */
+/* FILTER BAR */
 .fbar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;box-shadow:var(--xs);}
 .fg{display:flex;align-items:center;gap:5px;}
 .fg label{font-size:11px;font-weight:700;color:var(--t3);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
 .fg select,.fg input[type=date]{padding:6px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surf2);font-size:12px;color:var(--t1);cursor:pointer;min-width:110px;font-weight:500;}
 .fg select:focus,.fg input:focus{outline:none;border-color:var(--blue);background:#fff;}
-/* Checkbox multiselect */
 .ms-wrap{position:relative;}
 .ms-trig{padding:6px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surf2);font-size:12px;color:var(--t1);cursor:pointer;min-width:130px;display:flex;align-items:center;justify-content:space-between;gap:6px;user-select:none;}
 .ms-trig.act{border-color:var(--amber);background:var(--amberl);color:var(--amber);}
@@ -221,7 +139,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .btn-ref{background:var(--bluel);border-color:#BFDBFE;color:var(--blue);}
 .btn-ref:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
 
-/* ── MAIN ── */
+/* MAIN */
 .main{padding:20px 24px;max-width:1440px;margin:0 auto;}
 .sec{margin-bottom:28px;}
 .sec-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
@@ -229,7 +147,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .sec-ln{flex:1;height:1px;background:var(--border);}
 .sec-nt{font-size:11px;color:var(--t3);}
 
-/* ── KPI ── */
+/* KPI */
 .kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
@@ -244,7 +162,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .kpi.click{cursor:pointer;}
 .kh{font-size:10px;color:var(--t3);margin-top:6px;}
 
-/* ── AGEING ── */
+/* AGEING */
 .age-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .age-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--xs);}
 .age-ring{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
@@ -260,7 +178,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .age-fill{height:100%;border-radius:2px;transition:width .5s ease;}
 .age-card.p .age-fill{background:var(--blue)}.age-card.rv .age-fill{background:var(--amber)}.age-card.ha .age-fill{background:var(--red)}
 
-/* ── CITY CARDS ── */
+/* CITY CARDS */
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
 .ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .15s;box-shadow:var(--xs);}
 .ccard:hover{border-color:var(--blue);box-shadow:var(--md);transform:translateY(-2px);}
@@ -285,7 +203,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .cb-ap{background:var(--redl);border-color:#FECACA;color:var(--red);}
 .cb-ap:hover{background:var(--red);color:#fff;}
 
-/* ── CITY DETAIL ── */
+/* CITY DETAIL */
 #cdet{display:none;margin-bottom:32px;}
 #cdet.vis{display:block;}
 .cd-hdr{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);flex-wrap:wrap;}
@@ -296,36 +214,36 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .apfb.on{background:var(--amber);color:#fff;border-color:var(--amber);}
 .ap-cnt{background:var(--redl);color:var(--red);border:1px solid #FECACA;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;}
 
-/* ── PIVOT TABLE ── */
+/* PIVOT TABLE */
 .pivot-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);margin-bottom:16px;overflow:hidden;}
 .pivot-hdr{padding:12px 18px;background:linear-gradient(135deg,#1E3A5F,var(--blue));display:flex;align-items:center;justify-content:space-between;}
 .pivot-hdr h3{color:#fff;font-size:13px;font-weight:700;margin:0;}
 .pivot-hdr span{font-size:11px;color:rgba(255,255,255,.7);}
-.pivot-body{padding:0;}
-.pivot-table{width:100%;border-collapse:collapse;font-size:12px;}
-.pivot-table th{background:#E2E8F0;padding:9px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#334155;font-weight:700;border-bottom:2px solid #CBD5E1;}
-.pivot-table td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--t1);}
-.pivot-table tr:last-child td{border-bottom:none;}
-.pivot-table tr:hover td{background:var(--bluel);}
-.pv-fc{color:var(--blue);font-weight:700;}
-.pv-rt{color:var(--green);font-weight:700;}
-.pv-3pl{color:var(--amber);font-weight:700;}
-.pv-tot{font-weight:800;color:var(--t1);}
+.pivot-table{width:100%;border-collapse:collapse;font-size:13px;}
+.pivot-table th{background:#E2E8F0;padding:10px 18px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#334155;font-weight:700;border-bottom:2px solid #CBD5E1;}
+.pivot-table td{padding:16px 18px;text-align:center;border-bottom:1px solid var(--border);}
+.pv-fc{color:var(--blue);font-weight:800;font-size:20px;}
+.pv-rt{color:var(--green);font-weight:800;font-size:20px;}
+.pv-3pl{color:var(--amber);font-weight:800;font-size:20px;}
+.pv-oth{color:var(--t3);font-weight:800;font-size:20px;}
+.pv-tot{color:var(--t1);font-weight:800;font-size:20px;}
 
-/* ── RECOVERY ── */
+/* RECOVERY */
 .rec-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);margin-bottom:16px;overflow:hidden;}
 .rec-hdr{padding:12px 18px;background:linear-gradient(135deg,#4C1D95,var(--purple));display:flex;align-items:center;justify-content:space-between;}
 .rec-hdr h3{color:#fff;font-size:13px;font-weight:700;}
 .rec-body{padding:14px 18px;}
 .rec-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);margin-bottom:6px;background:var(--surf2);font-size:12px;flex-wrap:wrap;}
-.rec-id{font-weight:700;color:var(--blue);font-family:monospace;min-width:130px;}
+.rec-id{font-weight:700;color:var(--blue);font-family:monospace;min-width:140px;}
 .rec-gmv{color:var(--red);font-weight:700;}
 .rec-ok{color:var(--green);font-weight:700;}
-.rinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:110px;}
-.rrinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:160px;}
+.rec-partial{color:var(--amber);font-weight:700;}
+.rinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:120px;}
+.rrinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:170px;}
 .rsave{padding:5px 12px;border-radius:6px;border:none;background:var(--purple);color:#fff;font-size:11px;font-weight:700;cursor:pointer;}
+.rsave:hover{background:#6D28D9;}
 
-/* ── CHARTS ── */
+/* CHARTS */
 .chgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .chgrid .sp3{grid-column:1/-1;}
 .chcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--xs);}
@@ -333,7 +251,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .chhd h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--t2);}
 .chcard canvas{max-height:200px;}
 
-/* ── TABLE ── */
+/* TABLE */
 .twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);overflow:hidden;}
 .thdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:linear-gradient(135deg,#1E3A5F,var(--blue));gap:10px;flex-wrap:wrap;}
 .thdr h3{font-size:14px;font-weight:700;color:#fff;}
@@ -377,15 +295,13 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .ref-inp:focus{outline:none;border-color:var(--amber);}
 .ref-lbl{font-size:10px;font-weight:700;color:var(--amber);margin-top:4px;display:block;}
 .cod-inp{padding:5px 9px;border-radius:6px;border:1.5px solid #FDE68A;background:var(--amberl);font-size:12px;color:var(--t1);width:130px;margin-top:4px;}
-.cod-inp:focus{outline:none;border-color:var(--amber);}
 .cod-warn{font-size:10px;color:var(--red);font-weight:600;margin-top:3px;}
 .loss-disp{font-size:11px;font-weight:700;color:var(--red);margin-top:4px;padding:3px 8px;background:var(--redl);border-radius:4px;border:1px solid #FECACA;display:inline-block;}
 .ro{font-size:12px;color:var(--t2);}
-/* Edit limit notification */
-.edit-warn-popup{position:fixed;top:70px;right:24px;z-index:9998;background:#1E3A5F;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:var(--md);display:flex;align-items:center;gap:10px;transition:opacity .3s;border-left:4px solid var(--amber);}
+.edit-warn-popup{position:fixed;top:70px;right:24px;z-index:9998;background:#1E3A5F;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:var(--md);display:flex;align-items:center;gap:10px;border-left:4px solid var(--amber);}
 .edit-warn-popup.hide{display:none;}
 
-/* ── SAVE BAR ── */
+/* SAVE BAR */
 .sbar{position:sticky;bottom:0;z-index:50;background:linear-gradient(135deg,#1E3A5F,var(--blue));padding:12px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 -4px 20px rgba(37,99,235,.25);}
 .sbar.hide{display:none;}
 .scnt{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);}
@@ -395,14 +311,14 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .clrall{padding:8px 16px;border-radius:7px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:12px;font-weight:600;cursor:pointer;}
 .clrall:hover{background:rgba(220,38,38,.8);border-color:rgba(220,38,38,.8);color:#fff;}
 
-/* ── PAGINATION ── */
+/* PAGINATION */
 .pag{display:flex;align-items:center;gap:6px;padding:12px 20px;border-top:1px solid var(--border);justify-content:flex-end;background:var(--surf2);}
 .pag button{padding:6px 16px;border-radius:6px;border:1.5px solid var(--border);background:var(--surface);color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;}
 .pag button:disabled{opacity:.4;cursor:default;}
 .pag button:not(:disabled):hover{border-color:var(--blue);color:var(--blue);background:var(--bluel);}
 .pagi{font-size:12px;color:var(--t2);font-weight:600;padding:0 8px;}
 
-/* ── BADGES ── */
+/* BADGES */
 .b{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;gap:3px;white-space:nowrap;}
 .bb{background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;}
 .bg{background:var(--greenl);color:var(--green);border:1px solid #A7F3D0;}
@@ -414,7 +330,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .flash{animation:flash 1.4s infinite;}
 @keyframes flash{0%,100%{opacity:1}50%{opacity:.45}}
 
-/* ── MODALS ── */
+/* MODALS */
 .mbg{position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;}
 .mbg.hide{display:none;}
 .modal{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:780px;max-height:84vh;display:flex;flex-direction:column;overflow:hidden;}
@@ -429,7 +345,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .mor-id{font-size:12px;font-weight:700;color:var(--blue);min-width:140px;font-family:monospace;}
 .mor-meta{flex:1;font-size:11px;color:var(--t2);}
 .mor-age{font-size:11px;font-weight:800;padding:3px 9px;border-radius:20px;background:var(--redl);color:var(--red);border:1px solid #FECACA;}
-/* Upload modal */
 .umodal{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:900px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;}
 .usum{padding:14px 22px;border-bottom:1px solid var(--border);display:flex;gap:20px;align-items:center;background:var(--surf2);}
 .ustat{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;}
@@ -440,7 +355,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .ui-icon{font-size:16px;flex-shrink:0;}
 .ui-id{font-weight:700;font-size:12px;min-width:140px;font-family:monospace;color:var(--blue);}
 .ui-msg{color:var(--t2);flex:1;line-height:1.5;}
-/* DL confirm */
 .dlconf{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:480px;overflow:hidden;}
 .dlcb{padding:24px 28px;}
 .dlct{font-size:16px;font-weight:800;color:var(--t1);margin-bottom:8px;}
@@ -448,11 +362,10 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .dlcbtns{display:flex;gap:10px;flex-wrap:wrap;}
 .dlc-y{padding:10px 20px;border-radius:7px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;flex:1;}
 .dlc-n{padding:10px 20px;border-radius:7px;background:var(--surf2);color:var(--t2);border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;}
-
 .emp{text-align:center;padding:48px;color:var(--t3);font-size:13px;}
 .emp-i{font-size:32px;margin-bottom:8px;}
 
-/* ── TOAST ── */
+/* TOAST */
 .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:var(--md);transition:opacity .35s;color:#fff;}
 #home-btn{position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;}
 #home-btn.vis{display:flex;}
@@ -470,85 +383,24 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <!-- LOGIN -->
 <div id="login-screen">
-
-  <!-- Floating stat chips — left side -->
-  <div class="l-chip lc1">
-    <div class="l-chip-dot red"></div>
-    <div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div>
-    <div class="l-chip-lbl">High Ageing</div>
-  </div>
-  <div class="l-chip lc2">
-    <div class="l-chip-dot green"></div>
-    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
-    <div class="l-chip-lbl">COD Collected</div>
-  </div>
-  <div class="l-chip lc3">
-    <div class="l-chip-dot amber"></div>
-    <div class="l-chip-lines"><div class="l-chip-line" style="width:26px"></div><div class="l-chip-line" style="width:16px"></div></div>
-    <div class="l-chip-lbl">Recoverable</div>
-  </div>
-
-  <!-- Floating stat chips — right side -->
-  <div class="l-chip lc4" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
-    <div class="l-chip-sub">Recoverable</div>
-    <div class="l-chip-num">Rs.1.2L</div>
-  </div>
-  <div class="l-chip lc5" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
-    <div class="l-chip-sub">Active RTOs</div>
-    <div class="l-chip-num">247</div>
-  </div>
-  <div class="l-chip lc6" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;">
-    <div class="l-chip-sub" style="color:rgba(255,200,100,.75)">Action Pending</div>
-    <div class="l-chip-num" style="color:#FBBF24;">18</div>
-  </div>
-
-  <!-- Right side chip: CN Received (between lc4 & lc5 visually) -->
-  <div class="l-chip" style="top:37%;right:4%;min-width:130px;">
-    <div class="l-chip-dot green"></div>
-    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
-    <div class="l-chip-lbl">CN Received</div>
-  </div>
-  <div class="l-chip" style="top:61%;right:4%;min-width:130px;">
-    <div class="l-chip-dot amber"></div>
-    <div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div>
-    <div class="l-chip-lbl">Pending with Rider</div>
-  </div>
-
-  <!-- Tata 1mg watermark -->
-  <div class="l-watermark">
-    <div class="l-wm-title">TATA 1mg</div>
-    <div class="l-wm-sub">Together bringing trust to healthcare</div>
-  </div>
-
-  <!-- Card -->
+  <div class="l-chip lc1"><div class="l-chip-dot red"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div><div class="l-chip-lbl">High Ageing</div></div>
+  <div class="l-chip lc2"><div class="l-chip-dot green"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div><div class="l-chip-lbl">COD Collected</div></div>
+  <div class="l-chip lc3"><div class="l-chip-dot amber"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:26px"></div><div class="l-chip-line" style="width:16px"></div></div><div class="l-chip-lbl">Recoverable</div></div>
+  <div class="l-chip lc4" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;"><div class="l-chip-sub">Recoverable GMV</div><div class="l-chip-num">Rs.1.2L</div></div>
+  <div class="l-chip lc5" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;"><div class="l-chip-sub">Active RTOs</div><div class="l-chip-num">247</div></div>
+  <div class="l-chip lc6" style="flex-direction:column;align-items:flex-start;gap:2px;min-width:130px;"><div class="l-chip-sub" style="color:rgba(255,200,100,.75)">Action Pending</div><div class="l-chip-num" style="color:#FBBF24;">18</div></div>
+  <div class="l-watermark"><div class="l-wm-title">TATA 1mg</div><div class="l-wm-sub">Together bringing trust to healthcare</div></div>
   <div class="lcard">
-    <!-- LOGIN FORM -->
     <div id="login-form">
-      <div class="l-head">
-        <div class="l-icon">&#128667;</div>
-        <div>
-          <div class="l-title">RTO Dashboard</div>
-          <div class="l-sub">Update your RTO orders here</div>
-        </div>
-      </div>
+      <div class="l-head"><div class="l-icon">&#128667;</div><div><div class="l-title">RTO Dashboard</div><div class="l-sub">Update your RTO orders here</div></div></div>
       <div class="l-div"></div>
-
       <label class="lbl" for="l-email">Email address</label>
-      <div class="linp-wrap">
-        <input class="finp" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/>
-      </div>
-
+      <div class="linp-wrap"><input class="finp" type="email" id="l-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <label class="lbl" for="l-pwd">Password</label>
-      <div class="linp-wrap">
-        <input class="finp pwd-field" type="password" id="l-pwd" placeholder="Your city password" onkeydown="if(event.key==='Enter')doLogin()"/>
-        <button class="pwd-toggle" type="button" onclick="togglePwd('l-pwd',this)" tabindex="-1" title="Show/hide password">&#128065;</button>
-      </div>
-
+      <div class="linp-wrap"><input class="finp pwd-field" type="password" id="l-pwd" placeholder="Your city password" onkeydown="if(event.key==='Enter')doLogin()"/><button class="pwd-toggle" type="button" onclick="togglePwd('l-pwd',this)" tabindex="-1">&#128065;</button></div>
       <button class="lbtn" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
       <div class="lerr" id="l-err"></div>
       <div class="lhint"><a href="#" onclick="showReset();return false">Forgot password?</a></div>
-
-      <!-- City shortcut pills -->
       <div class="l-cities">
         <button class="l-city-pill" onclick="prefillCity('DEL')">DEL</button>
         <button class="l-city-pill" onclick="prefillCity('MUM')">MUM</button>
@@ -560,20 +412,11 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <button class="l-city-pill" onclick="prefillCity('KOL')">KOL</button>
       </div>
     </div>
-
-    <!-- RESET FORM -->
     <div id="reset-form" class="hide">
-      <div class="l-head">
-        <div class="l-icon">&#128274;</div>
-        <div><div class="l-title">Reset Password</div><div class="l-sub">We'll send your password to your email</div></div>
-      </div>
+      <div class="l-head"><div class="l-icon">&#128274;</div><div><div class="l-title">Reset Password</div><div class="l-sub">We'll send your password to your email</div></div></div>
       <div class="l-div"></div>
-
       <label class="lbl" for="r-email">Registered email</label>
-      <div class="linp-wrap">
-        <input class="finp" type="email" id="r-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doReset()"/>
-      </div>
-
+      <div class="linp-wrap"><input class="finp" type="email" id="r-email" placeholder="you@1mg.com" onkeydown="if(event.key==='Enter')doReset()"/></div>
       <button class="lbtn" id="r-btn" onclick="doReset()">Send Password &rarr;</button>
       <div class="lerr" id="r-err"></div>
       <div class="lhint"><a href="#" onclick="showLogin();return false">&larr; Back to Sign In</a></div>
@@ -581,10 +424,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 
-<!-- EDIT LIMIT POPUP -->
-<div class="edit-warn-popup hide" id="edit-warn">
-  <span>&#9888;</span><span id="edit-warn-msg"></span>
-</div>
+<div class="edit-warn-popup hide" id="edit-warn"><span>&#9888;</span><span id="edit-warn-msg"></span></div>
 
 <!-- UPLOAD MODAL -->
 <div class="mbg hide" id="upload-modal" onclick="if(event.target===this)closeUpload()">
@@ -599,7 +439,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 
-<!-- FULL OVERLAY -->
 <div id="ov" class="hide"><div class="ov-ring"></div><div class="ov-msg" id="ov-msg">Loading&hellip;</div></div>
 
 <!-- HIGH AGEING MODAL -->
@@ -656,7 +495,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   <div class="dl-bar hide" id="adl-bar">
     <span class="dl-lbl">&#11015; Downloads</span>
     <button class="dlb dlb-pi" onclick="triggerDl('panIndia')">&#11015; PAN India</button>
-    <button class="dlb dlb-flt" id="dlbflt" onclick="triggerDl('filtered')" disabled title="Apply a filter to enable">&#9660; Filtered</button>
+    <button class="dlb dlb-flt" id="dlbflt" onclick="triggerDl('filtered')" disabled>&#9660; Filtered</button>
     <button class="dlb dlb-loss" onclick="triggerDl('loss')">&#11015; Loss Report</button>
   </div>
 
@@ -668,7 +507,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage" onchange="apF()"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
     <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">Pending (0-2d)</option><option value="Recoverable">Recoverable</option><option value="High Ageing">High Ageing</option></select></div>
-    <!-- Action: admin=checkbox multiselect, city user=single select -->
     <div class="fg" id="fgact"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
     <div class="fdiv"></div>
     <div class="fg"><label>From</label><input type="date" id="f-from" onchange="apF()"/></div>
@@ -682,7 +520,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 
   <div class="main" id="main-top">
-    <!-- PAN INDIA KPIs -->
+    <!-- KPIs -->
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
       <div class="kgrid">
@@ -706,9 +544,9 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       </div>
     </div>
 
-    <!-- CITY CARDS (admin=red only, city user=own city) -->
+    <!-- CITY CARDS -->
     <div class="sec">
-      <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;50 active · Click to drill down · Use City dropdown to view any city</span></div>
+      <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;threshold active · Click to drill down</span></div>
       <div class="cgrid" id="cgrid"></div>
     </div>
 
@@ -728,13 +566,9 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <button class="apfb" id="ap-tog" onclick="togAP()">Show Only AP</button>
         <span class="ap-cnt" id="ap-cnt">0 pending</span>
       </div>
-      <!-- City KPIs -->
       <div class="kgrid" id="cd-kpis" style="margin-bottom:16px;"></div>
-      <!-- Pivot table -->
       <div id="pivot-wrap" style="display:none;margin-bottom:16px;"></div>
-      <!-- City charts -->
       <div class="chgrid" id="cd-charts" style="margin-bottom:16px;"></div>
-      <!-- Recovery -->
       <div id="rec-sec" style="display:none;"></div>
     </div>
 
@@ -761,15 +595,26 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
           <div class="thdr-r">
             <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; Action Pending <span class="apn" id="gapc">0</span></button>
             <button class="qbtn" onclick="openAPModal()">View Queue</button>
+            <!-- v23: AP download button -->
+            <button class="qbtn" onclick="downloadAP()" title="Download full AP queue as Excel">&#11015;</button>
             <span class="tmeta" id="tcnt">— orders</span>
           </div>
         </div>
         <div class="tscroll">
           <table>
+            <!-- v23: Updated column order -->
             <thead><tr>
-              <th style="min-width:155px">Order ID</th><th>City</th><th>BU</th><th>Partner</th>
-              <th>Store</th><th>QC Flag</th><th>Stage</th><th>GMV</th>
-              <th>SRN</th><th style="min-width:240px">Action</th><th style="min-width:220px">Update</th>
+              <th style="min-width:155px">Order ID</th>
+              <th>City</th>
+              <th>GMV</th>
+              <th>Store</th>
+              <th>Partner</th>
+              <th>BU</th>
+              <th>Stage</th>
+              <th>SRN</th>
+              <th>Service Type</th>
+              <th style="min-width:240px">Action</th>
+              <th style="min-width:220px">Update</th>
             </tr></thead>
             <tbody id="tbody"></tbody>
           </table>
@@ -794,14 +639,13 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v21';
+const LC_KEY='rto_sum_v23';
 const LC_TTL=5*60*1000;
 const EDIT_LIMIT=2;
 const CN_UPDS=new Set(['CN Received']);
 const REF_UPDS=new Set(['COD Collected']);
 const LOSS_UPDS=new Set(['Loss','Order Lost(rider absconded)','Lost']);
 
-// ── STATE ──
 let SUM=null,ORDERS=[],TOTAL=0,PAGES=1,PG=1,PSZ=50;
 let TRD=[],AM={},ACTIVE_CITIES=[],ALL_ACTIONS=[];
 let QF='Overall',SCITY=null,APF=false,GAP=false;
@@ -810,52 +654,23 @@ let STIMER=null,ORDERS_LOADING=false,DL_PENDING=null;
 let MS_SEL=new Set();
 let _chartsReady=false;
 
-// ── UTILS ──
 function _initCharts(){if(_chartsReady)return true;try{if(typeof Chart!=='undefined'&&typeof ChartDataLabels!=='undefined'){Chart.register(ChartDataLabels);_chartsReady=true;}}catch(e){}return _chartsReady;}
 const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
 const fmtK=n=>{n=Number(n||0);if(n>=10000000)return'₹'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return'₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return'₹'+(n/1000).toFixed(1)+'K';return'₹'+n;};
 const fmtN=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 
-// ── OVERLAY ──
 function showOv(msg){$('ov-msg',msg||'Loading…');document.getElementById('ov').classList.remove('hide');}
 function hideOv(){document.getElementById('ov').classList.add('hide');}
 function showFSpin(){document.getElementById('filter-spinner').classList.add('vis');}
 function hideFSpin(){document.getElementById('filter-spinner').classList.remove('vis');}
 
-// ── EDIT LIMIT POPUP ──
 let _warnTimer=null;
-function showEditWarn(msg){
-  const el=document.getElementById('edit-warn'),mel=document.getElementById('edit-warn-msg');
-  if(!el||!mel)return;
-  mel.textContent=msg;el.classList.remove('hide');
-  clearTimeout(_warnTimer);_warnTimer=setTimeout(()=>el.classList.add('hide'),4000);
-}
+function showEditWarn(msg){const el=document.getElementById('edit-warn'),mel=document.getElementById('edit-warn-msg');if(!el||!mel)return;mel.textContent=msg;el.classList.remove('hide');clearTimeout(_warnTimer);_warnTimer=setTimeout(()=>el.classList.add('hide'),4000);}
 
-// ── PASSWORD TOGGLE ──
-function togglePwd(inputId,btn){
-  const inp=document.getElementById(inputId);if(!inp)return;
-  const show=inp.type==='password';
-  inp.type=show?'text':'password';
-  btn.textContent=show?'🙈':'👁';
-}
+function togglePwd(inputId,btn){const inp=document.getElementById(inputId);if(!inp)return;const show=inp.type==='password';inp.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
+function prefillCity(code){const em=document.getElementById('l-email');if(!em)return;if(!em.value||em.dataset.pill==='1'){em.value=code.toLowerCase()+'@1mg.com';em.dataset.pill='1';}document.getElementById('l-pwd')?.focus();}
 
-// ── CITY PILL PREFILL ──
-// Pills fill the email field with the city code so the user only types the password.
-// In production, city users log in with their full email — the pills are a UX shortcut
-// to type the city abbreviation; the user completes the @domain part.
-function prefillCity(code){
-  const em=document.getElementById('l-email');
-  if(!em)return;
-  // Only prefill if field is empty or was set by a previous pill click
-  if(!em.value||em.dataset.pill==='1'){
-    em.value=code.toLowerCase()+'@1mg.com';
-    em.dataset.pill='1';
-  }
-  document.getElementById('l-pwd')?.focus();
-}
-
-// ── LOGIN ──
 function showReset(){document.getElementById('login-form').classList.add('hide');document.getElementById('reset-form').classList.remove('hide');$('r-err','');document.getElementById('r-btn').disabled=false;document.getElementById('r-btn').textContent='Send Password →';}
 function showLogin(){document.getElementById('reset-form').classList.add('hide');document.getElementById('login-form').classList.remove('hide');}
 function doReset(){
@@ -876,15 +691,9 @@ function doLogin(){
         USER=res;
         document.getElementById('login-screen').classList.add('hide');
         $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
-        if(res.isAdmin){
-          document.getElementById('adl-bar').classList.remove('hide');
-          document.getElementById('k-ls-card').onclick=()=>triggerDl('loss');
-          _buildAdminMS();
-        }
+        if(res.isAdmin){document.getElementById('adl-bar').classList.remove('hide');_buildAdminMS();}
         loadSummary();
-      } else {
-        $('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In →';
-      }
+      }else{$('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In →';}
     }).catch(()=>{$('l-err','Network error');btn.disabled=false;btn.textContent='Sign In →';});
 }
 function logout(){
@@ -897,26 +706,13 @@ function logout(){
   $('l-err','');document.getElementById('l-btn').disabled=false;document.getElementById('l-btn').textContent='Sign In →';
 }
 
-// ── ADMIN CHECKBOX MULTISELECT ──
+// ADMIN MULTISELECT
 function _buildAdminMS(){
   const wrap=document.getElementById('fgact');
-  wrap.innerHTML=`<label>Action</label>
-  <div class="ms-wrap" id="mswrap">
-    <div class="ms-trig" id="mstrig" onclick="toggleMS()">
-      <span id="mslbl">All Actions</span><span class="ms-arrow">&#9660;</span>
-    </div>
-    <div class="ms-drop" id="msdrop">
-      <div class="ms-srch"><input type="text" id="mssi" placeholder="Search actions…" oninput="filterMSOpts()"/></div>
-      <div id="mslist"></div>
-      <div class="ms-acts"><button class="ms-act" onclick="msSelAll()">Select All</button><button class="ms-act" onclick="msClear()">Clear</button></div>
-    </div>
-  </div>`;
+  wrap.innerHTML=`<label>Action</label><div class="ms-wrap" id="mswrap"><div class="ms-trig" id="mstrig" onclick="toggleMS()"><span id="mslbl">All Actions</span><span class="ms-arrow">&#9660;</span></div><div class="ms-drop" id="msdrop"><div class="ms-srch"><input type="text" id="mssi" placeholder="Search actions…" oninput="filterMSOpts()"/></div><div id="mslist"></div><div class="ms-acts"><button class="ms-act" onclick="msSelAll()">Select All</button><button class="ms-act" onclick="msClear()">Clear</button></div></div></div>`;
   document.addEventListener('click',e=>{const w=document.getElementById('mswrap');if(w&&!w.contains(e.target))closeMSDrop();});
 }
-function _populateMSOpts(actions){
-  const list=document.getElementById('mslist');if(!list)return;
-  list.innerHTML=actions.map(a=>`<div class="ms-opt"><input type="checkbox" data-orig="${a.replace(/"/g,'&quot;')}" id="mso_${_esc(a)}" ${MS_SEL.has(a)?'checked':''} onchange="onMSChange(this)"/><label for="mso_${_esc(a)}">${a}</label></div>`).join('');
-}
+function _populateMSOpts(actions){const list=document.getElementById('mslist');if(!list)return;list.innerHTML=actions.map(a=>`<div class="ms-opt"><input type="checkbox" data-orig="${a.replace(/"/g,'&quot;')}" id="mso_${_esc(a)}" ${MS_SEL.has(a)?'checked':''} onchange="onMSChange(this)"/><label for="mso_${_esc(a)}">${a}</label></div>`).join('');}
 const _esc=s=>s.replace(/[^a-z0-9]/gi,'_');
 function toggleMS(){const d=document.getElementById('msdrop'),t=document.getElementById('mstrig');d.classList.toggle('open');t.classList.toggle('open');}
 function closeMSDrop(){const d=document.getElementById('msdrop'),t=document.getElementById('mstrig');if(d)d.classList.remove('open');if(t)t.classList.remove('open');}
@@ -924,13 +720,8 @@ function filterMSOpts(){const q=(document.getElementById('mssi')?.value||'').toL
 function onMSChange(cb){const orig=cb.dataset.orig;if(cb.checked)MS_SEL.add(orig);else MS_SEL.delete(orig);updateMSLbl();apF();}
 function msSelAll(){document.querySelectorAll('#mslist input[type=checkbox]').forEach(cb=>{cb.checked=true;MS_SEL.add(cb.dataset.orig);});updateMSLbl();apF();}
 function msClear(){document.querySelectorAll('#mslist input[type=checkbox]').forEach(cb=>{cb.checked=false;});MS_SEL.clear();updateMSLbl();apF();}
-function updateMSLbl(){
-  const l=document.getElementById('mslbl'),t=document.getElementById('mstrig');if(!l||!t)return;
-  if(!MS_SEL.size){l.textContent='All Actions';t.classList.remove('act');}
-  else{l.innerHTML=MS_SEL.size+' selected <span class="ms-badge">'+MS_SEL.size+'</span>';t.classList.add('act');}
-}
+function updateMSLbl(){const l=document.getElementById('mslbl'),t=document.getElementById('mstrig');if(!l||!t)return;if(!MS_SEL.size){l.textContent='All Actions';t.classList.remove('act');}else{l.innerHTML=MS_SEL.size+' selected <span class="ms-badge">'+MS_SEL.size+'</span>';t.classList.add('act');}}
 
-// ── FILTER PARAMS ──
 function _fp(){
   const p=new URLSearchParams();
   if(QF!=='Overall') p.set('fQC',QF);
@@ -942,8 +733,8 @@ function _fp(){
   if(v('f-age'))     p.set('fAge',v('f-age'));
   if(v('f-from'))    p.set('fFrom',v('f-from'));
   if(v('f-to'))      p.set('fTo',v('f-to'));
-  if(USER?.isAdmin){ if(MS_SEL.size) p.set('fActions',[...MS_SEL].join(',')); }
-  else { if(v('f-act')) p.set('fAction',v('f-act')); }
+  if(USER?.isAdmin){if(MS_SEL.size)p.set('fActions',[...MS_SEL].join(','));}
+  else{if(v('f-act'))p.set('fAction',v('f-act'));}
   return p.toString();
 }
 function _hasFilters(){
@@ -955,7 +746,6 @@ function _hasFilters(){
 }
 function _updFltDlBtn(){const btn=document.getElementById('dlbflt');if(!btn)return;const h=_hasFilters();btn.disabled=!h;btn.title=h?'Download filtered data':'Apply a filter to enable';}
 
-// ── LOAD SUMMARY ──
 function loadSummary(force=false){
   showOv('Loading dashboard…');
   if(!force){try{const c=localStorage.getItem(LC_KEY);if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){onSummaryLoad(data);return;}}}catch(e){}}
@@ -969,7 +759,7 @@ function loadSummary(force=false){
   });
 }
 function onSummaryLoad(p){
-  if(!p||!p.success){hideOv();toast((p&&p.error)||'Load failed — check Apps Script deployment','red');return;}
+  if(!p||!p.success){hideOv();toast((p&&p.error)||'Load failed','red');return;}
   try{
     SUM=p;TRD=p.trend||[];AM=p.actionMap||{};
     ACTIVE_CITIES=p.activeCities||[];ALL_ACTIONS=p.allActions||[];
@@ -978,19 +768,14 @@ function onSummaryLoad(p){
     rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
     rdCityCards(p.homepageCards||[]);
     rdChartsKPI(p.kpi||{});drawTrend();
-    const dash=document.getElementById('dash');
-    if(dash) dash.style.display='block';
-    hideOv();_updFltDlBtn();
+    document.getElementById('dash').style.display='block';
+    _updFltDlBtn();
+    showOv('Loading orders…');
     loadOrders();
-  }catch(err){
-    hideOv();
-    console.error('onSummaryLoad error:',err);
-    toast('Render error: '+err.message,'red');
-  }
+  }catch(err){hideOv();toast('Render error: '+err.message,'red');}
 }
 function fref(){localStorage.removeItem(LC_KEY);loadSummary(true);}
 
-// ── LOAD ORDERS ──
 function loadOrders(){
   if(ORDERS_LOADING)return;
   ORDERS_LOADING=true;
@@ -998,13 +783,12 @@ function loadOrders(){
   document.getElementById('tload').style.display='block';
   showFSpin();
   const srch=(document.getElementById('tsch')?.value||'').trim();
-  let ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')
-    +'&page='+PG+'&pageSize='+PSZ+'&'+_fp();
+  let ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page='+PG+'&pageSize='+PSZ+'&'+_fp();
   if(SCITY) ep+='&fCity='+encodeURIComponent(SCITY);
   if(APF||GAP) ep+='&fAP=1';
   if(srch) ep+='&fSearch='+encodeURIComponent(srch);
   fetch(ep).then(r=>r.json()).then(d=>{
-    ORDERS_LOADING=false;hideFSpin();
+    ORDERS_LOADING=false;hideFSpin();hideOv();
     document.getElementById('tload').style.display='none';
     if(!d.success){toast(d.error||'Order load failed','red');ORDERS=[];rdTbl();return;}
     if(d.actionMap) AM=d.actionMap;
@@ -1012,21 +796,20 @@ function loadOrders(){
     $('gapc',ORDERS.filter(o=>o.actionPending).length);
     rdTbl();rdChartsOrders();
     if(SCITY) afterOrdersCity();
-  }).catch(e=>{ORDERS_LOADING=false;hideFSpin();document.getElementById('tload').style.display='none';toast('Order load failed: '+e.message,'red');});
+  }).catch(e=>{
+    ORDERS_LOADING=false;hideFSpin();hideOv();
+    document.getElementById('tload').style.display='none';
+    toast('Order load failed: '+e.message,'red');
+  });
 }
-function apF(){PG=1;_updFltDlBtn();
-  showFSpin();
-  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp();
-  fetch(ep).then(r=>r.json()).then(p=>{
-    hideFSpin();
-    if(!p||!p.success)return;
+function apF(){PG=1;_updFltDlBtn();showFSpin();showOv('Applying filters…');
+  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp()).then(r=>r.json()).then(p=>{
+    hideFSpin();if(!p||!p.success){hideOv();return;}
     SUM=p;TRD=p.trend||[];
     if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
-    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-    rdCityCards(p.homepageCards||[]);
-    rdChartsKPI(p.kpi||{});
-  }).catch(()=>hideFSpin());
-  loadOrders();
+    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[]);rdChartsKPI(p.kpi||{});drawTrend();
+    showOv('Loading orders…');loadOrders();
+  }).catch(()=>{hideFSpin();hideOv();});
 }
 function rstF(){
   ['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -1035,13 +818,12 @@ function rstF(){
   const fs=document.getElementById('f-act');if(fs)fs.value='';
   const fc=document.getElementById('f-city');if(fc)fc.value='';
   SCITY=null;APF=false;GAP=false;
-  const gb=document.getElementById('gapbtn');if(gb)gb.classList.remove('on');
-  const at=document.getElementById('ap-tog');if(at)at.classList.remove('on');
-  if(SCITY){closeDet();}
+  document.getElementById('gapbtn')?.classList.remove('on');
+  document.getElementById('ap-tog')?.classList.remove('on');
   QF='Overall';
   document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
-  _updFltDlBtn();
-  loadSummary(true);
+  if(SCITY){closeDet();}
+  _updFltDlBtn();loadSummary(true);
 }
 function setQC(v){QF=v;document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(USER)apF();}
 function onCityFilter(){const city=document.getElementById('f-city').value;if(city){SCITY=city;openDet(city);}else if(SCITY){SCITY=null;closeDet();}else apF();}
@@ -1049,17 +831,14 @@ function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on
 function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);loadOrders();}
 function onSearch(){clearTimeout(STIMER);STIMER=setTimeout(()=>{PG=1;loadOrders();},400);}
 
-// ── POPULATE FILTERS ──
 function popFilters(){
   const cs=document.getElementById('f-city');
   while(cs.options.length>1)cs.remove(1);
-  // Use activeCities from City Master
   ACTIVE_CITIES.forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;cs.appendChild(op);});
   if(USER?.isAdmin){_populateMSOpts(ALL_ACTIONS);}
   else{const fs=document.getElementById('f-act');while(fs.options.length>1)fs.remove(1);ALL_ACTIONS.forEach(a=>{const op=document.createElement('option');op.value=a;op.textContent=a;fs.appendChild(op);});}
 }
 
-// ── KPI ──
 function rdKPI(k){
   $('k-ap',k.actionPending||0);
   $('k-tot',k.total||0);$('k-tots',fmtN(k.totalAmount||0)+' total');
@@ -1067,7 +846,6 @@ function rdKPI(k){
   $('k-rv',k.recoverable||0);$('k-rvs',fmtN(k.recoverableAmt||0));
   $('k-ha',k.highAgeing||0);$('k-has',fmtN(k.highAgeingAmt||0)+' exposure');
   $('k-gr',k.green||0);
-  // Loss visible to all users
   $('k-ls',fmtK(k.lossTotal||0));$('k-lss','In-house: '+(k.inhouseLoss||0));
   $('gapc',k.actionPending||0);
 }
@@ -1080,31 +858,23 @@ function rdAgeing(k){
   [['ag-pb',pp],['ag-rb',rp],['ag-hb',hp]].forEach(([id,w])=>{const e=document.getElementById(id);if(e)e.style.width=w+'%';});
 }
 
-// ── CITY CARDS ── (admin=red only on homepage, city user=own city)
 function rdCityCards(cards){
   const grid=document.getElementById('cgrid');grid.innerHTML='';
-  if(!cards||!cards.length){
-    grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities currently in RED status. Use the City dropdown above to view any city.':'No city card available.')+'</div>';
-    return;
-  }
+  if(!cards||!cards.length){grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No city card available.')+'</div>';return;}
   cards.forEach(c=>{
     const isOwn=!USER?.isAdmin&&c.city===USER?.city;
     const rp=pct(c.recoverable||0,Math.max(c.active||1,1));
     const canDl=USER?.isAdmin||isOwn;
     const el=document.createElement('div');
     el.className='ccard'+(c.isRed?' red':'')+(SCITY===c.city?' sel':'');
-    el.innerHTML=`<div class="ctop">
-      <div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>
-      ${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}
-    </div>
+    el.innerHTML=`<div class="ctop"><div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}</div>
     <div class="cstats">
       <div class="cs bl"><div class="csl">Active</div><div class="csv">${c.active||0}</div></div>
       <div class="cs rd"><div class="csl">Recoverable</div><div class="csv">${c.recoverable||0}</div></div>
       <div class="cs am"><div class="csl">High Ageing</div><div class="csv">${c.highAgeing||0}</div></div>
       <div class="cs"><div class="csl">SRN Open</div><div class="csv">${c.srnOpen||0}</div></div>
     </div>
-    <div class="cprog"><div class="cpbar"><div class="cpfill" style="width:${rp}%"></div></div>
-    <div class="cplbl"><span>${rp}% recoverable</span><span>${c.actionPending||0} AP</span></div></div>
+    <div class="cprog"><div class="cpbar"><div class="cpfill" style="width:${rp}%"></div></div><div class="cplbl"><span>${rp}% recoverable</span><span>${c.actionPending||0} AP</span></div></div>
     <div class="cbtns">
       ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
       ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
@@ -1114,28 +884,27 @@ function rdCityCards(cards){
   });
 }
 
-// ── CITY DETAIL ──
 function canEdit(city){return USER?.isAdmin||(USER?.city||'').toUpperCase()===(city||'').toUpperCase();}
+
 function openDet(city){
   SCITY=city;APF=false;
   document.getElementById('f-city').value=city;
   document.getElementById('cdet').classList.add('vis');
   document.getElementById('cdet').style.display='block';
   const isOwn=!USER?.isAdmin&&city===USER?.city;
-  const isAdmin=USER?.isAdmin;
   $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
   const dlDiv=document.getElementById('cd-dl-btns');
-  if(isAdmin||isOwn){
-    dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-  } else { dlDiv.innerHTML=''; }
+  if(USER?.isAdmin||isOwn){dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}else{dlDiv.innerHTML='';}
   document.getElementById('upload-btn').style.display=canEdit(city)?'':'none';
   document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
   document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
   document.getElementById('pivot-wrap').style.display='none';
+  document.getElementById('rec-sec').style.display='none';
   $('ap-cnt','— pending');
   PG=1;loadOrders();
   document.getElementById('cdet').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
 function afterOrdersCity(){
   const ap=ORDERS.filter(o=>o.actionPending).length;
   const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen).length;
@@ -1147,9 +916,10 @@ function afterOrdersCity(){
     <div class="kpi aa click" onclick="togGAP()"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="kh">Click to filter</div></div>
     <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">Recoverable</div><div class="kv">${rv}</div></div>
     <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${ha}</div><div class="kh">Click to view</div></div>`;
-  // Pivot table
-  rdPivot(SCITY,ORDERS);
-  // City charts
+
+  // v23: Pivot using server-computed SUM.allCityCards (not paginated ORDERS)
+  rdPivot(SCITY);
+
   document.getElementById('cd-charts').innerHTML=`<div class="chcard"><div class="chhd"><h3>Partner</h3></div><canvas id="cd-pt"></canvas></div><div class="chcard"><div class="chhd"><h3>BU</h3></div><canvas id="cd-bu"></canvas></div><div class="chcard"><div class="chhd"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
   const byPt={INHOUSE:0,'3PL':0,PSP:0},byBU={'E-Pharma':0,PSP:0},byAct={};
   ORDERS.forEach(o=>{
@@ -1161,35 +931,35 @@ function afterOrdersCity(){
   drawDn('cd-bu',['E-Pharma','PSP'],[byBU['E-Pharma'],byBU['PSP']],['#2563EB','#7C3AED']);
   const top=Object.entries(byAct).sort((x,y)=>y[1]-x[1]).slice(0,6);
   drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
-  // Recovery
+
+  // v23: Recovery section — loads from Loss_Lost_History via API
   loadRecSec(SCITY);
 }
 
-// ── PIVOT TABLE ──
-function rdPivot(city,orders){
+// v23: Pivot using server-computed allCityCards — always correct, not paginated
+function rdPivot(city){
   const pw=document.getElementById('pivot-wrap');if(!pw)return;
-  // Aggregate pivot for the current city's orders
-  // Columns: FC (INHOUSE+WAREHOUSE), Retail (INHOUSE+RETAIL), Pre MDQ 3PL (3PL+Pre MDQ)
-  let fc=0,rt=0,tpl=0,other=0;
-  orders.forEach(o=>{
-    if(o.pivotCategory==='FC') fc++;
-    else if(o.pivotCategory==='Retail') rt++;
-    else if(o.pivotCategory==='Pre MDQ 3PL') tpl++;
-    else other++;
-  });
-  const tot=orders.length;
+  const cityData=(SUM.allCityCards||[]).find(c=>c.city.toUpperCase()===city.toUpperCase());
+  const fc  =cityData?(cityData.fcCount||0):0;
+  const rt  =cityData?(cityData.retailCount||0):0;
+  const tpl =cityData?(cityData.preMDQ3PLCount||0):0;
+  const tot =cityData?(cityData.active||0):0;
+  const other=Math.max(0,tot-fc-rt-tpl);
   pw.innerHTML=`<div class="pivot-section">
-    <div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>FC · Retail · Pre MDQ 3PL</span></div>
+    <div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div>
     <div class="pivot-body">
       <table class="pivot-table">
-        <thead><tr><th>Category</th><th>Orders</th><th>% of Total</th></tr></thead>
-        <tbody>
-          <tr><td class="pv-fc">&#127974; FC (Inhouse Warehouse)</td><td class="pv-fc">${fc}</td><td>${pct(fc,tot)}%</td></tr>
-          <tr><td class="pv-rt">&#127978; Retail (Inhouse Retail)</td><td class="pv-rt">${rt}</td><td>${pct(rt,tot)}%</td></tr>
-          <tr><td class="pv-3pl">&#128666; Pre MDQ 3PL</td><td class="pv-3pl">${tpl}</td><td>${pct(tpl,tot)}%</td></tr>
-          ${other?`<tr><td style="color:var(--t3)">Other</td><td style="color:var(--t3)">${other}</td><td>${pct(other,tot)}%</td></tr>`:''}
-          <tr><td class="pv-tot">Total</td><td class="pv-tot">${tot}</td><td>100%</td></tr>
-        </tbody>
+        <thead><tr>
+          <th>FC</th><th>Retail</th><th>3PL (Pre MDQ)</th>${other?'<th>Other</th>':''}
+          <th>Total</th>
+        </tr></thead>
+        <tbody><tr>
+          <td class="pv-fc">${fc}</td>
+          <td class="pv-rt">${rt}</td>
+          <td class="pv-3pl">${tpl}</td>
+          ${other?`<td class="pv-oth">${other}</td>`:''}
+          <td class="pv-tot">${tot}</td>
+        </tr></tbody>
       </table>
     </div>
   </div>`;
@@ -1202,6 +972,7 @@ function closeDet(){
   document.getElementById('cdet').classList.remove('vis');
   document.getElementById('cdet').style.display='none';
   document.getElementById('pivot-wrap').style.display='none';
+  document.getElementById('rec-sec').style.display='none';
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   PG=1;loadOrders();
 }
@@ -1209,41 +980,78 @@ function openCityAP(city){if(SCITY!==city)openDet(city);GAP=true;document.getEle
 function goHome(){if(SCITY){closeDet();}else{window.scrollTo({top:0,behavior:'smooth'});}}
 window.addEventListener('scroll',()=>{document.getElementById('home-btn').classList.toggle('vis',SCITY&&window.scrollY>200);});
 
-// ── RECOVERY ──
+// v23: Recovery section — loads from getRecovery API (reads Loss_Lost_History, not paginated ORDERS)
 function loadRecSec(city){
-  const rs=document.getElementById('rec-sec');rs.style.display='none';rs.innerHTML='';
-  if(!canEdit(city))return;
-  const lossOrders=ORDERS.filter(o=>o.city===city&&o.requiresLoss);
-  if(!lossOrders.length)return;
-  rs.style.display='block';
-  rs.innerHTML=`<div class="rec-sec">
-    <div class="rec-hdr"><h3>&#128257; Recovery Tracker — ${city} (${lossOrders.length} loss order${lossOrders.length>1?'s':''})</h3><span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Ref. required</span></div>
-    <div class="rec-body">${lossOrders.map(o=>`<div class="rec-row" id="rr-${o.orderId}">
-      <span class="rec-id">${o.orderId}</span>
-      <span style="color:var(--t3);font-size:11px;">${o.stage||''} · ${o.partner||''}</span>
-      <span class="rec-gmv">GMV: ${fmtN(o.gmv)}</span>
-      ${o.hasRecovery?`<span class="rec-ok">&#9989; Recovered: ${fmtN(o.recoveredAmount)}</span>`:'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}
-      <input class="rinp" type="number" id="ra-${o.orderId}" placeholder="Amount" min="0" value="${o.recoveredAmount||''}"/>
-      <input class="rrinp" type="text" id="rr2-${o.orderId}" placeholder="Reference Number *" value="${o.recoveryRefNumber||''}"/>
-      <button class="rsave" onclick="saveRec('${o.orderId}')">Save</button>
-    </div>`).join('')}</div></div>`;
+  const rs=document.getElementById('rec-sec');
+  rs.style.display='none';rs.innerHTML='';
+  if(!canEdit(city)) return;
+  const cityParam=USER.isAdmin?'&fCity='+encodeURIComponent(city):'';
+  fetch(API+'?action=getRecovery&email='+encodeURIComponent(USER.email||'')+cityParam)
+    .then(r=>r.json()).then(d=>{
+      if(!d.success||!d.rows||!d.rows.length) return;
+      rs.style.display='block';
+      rs.innerHTML=`<div class="rec-sec">
+        <div class="rec-hdr">
+          <h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3>
+          <span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required</span>
+        </div>
+        <div class="rec-body">${d.rows.map(r=>`<div class="rec-row" id="rr-${r.orderId}">
+          <span class="rec-id">${r.orderId}</span>
+          <span style="color:var(--t3);font-size:11px;">${r.lossType||''}</span>
+          <span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>
+          ${r.recoveredAmount>0
+            ?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`
+            :'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}
+          ${r.recoveryStatus!=='Fully Recovered'?`
+            <input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount" min="0"/>
+            <input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/>
+            <button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save</button>
+          `:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}
+        </div>`).join('')}</div>
+      </div>`;
+    }).catch(()=>{});
 }
-function saveRec(orderId){
+
+function saveRec(orderId,gmv){
   const amount=parseFloat(document.getElementById('ra-'+orderId)?.value)||0;
   const refNumber=(document.getElementById('rr2-'+orderId)?.value||'').trim();
   if(amount<=0){toast('Enter a valid recovery amount','red');return;}
   if(!refNumber){toast('Reference Number is required','red');return;}
+  if(amount>gmv){toast('Amount cannot exceed GMV ₹'+gmv.toLocaleString('en-IN'),'red');return;}
   fetch(API+'?action=addRecovery&orderId='+encodeURIComponent(orderId)+'&amount='+amount+'&refNumber='+encodeURIComponent(refNumber)+'&email='+encodeURIComponent(USER?.email||''))
-    .then(r=>r.json()).then(res=>{if(res.success)toast('&#9989; Recovery saved for '+orderId,'green');else toast(res.error||'Failed','red');}).catch(()=>toast('Network error','red'));
+    .then(r=>r.json()).then(res=>{
+      if(res.success){
+        const msg=res.fullyRecovered?'✅ Fully recovered — moved out of Loss':'⚡ Partial recovery saved for '+orderId;
+        toast(msg,'green');
+        loadRecSec(SCITY); // refresh
+        if(res.fullyRecovered) localStorage.removeItem(LC_KEY);
+      }else toast(res.error||'Failed','red');
+    }).catch(()=>toast('Network error','red'));
 }
 
-// ── CHARTS ──
+// v23: AP Download
+function downloadAP(){
+  showOv('Preparing AP queue download…');
+  let ep=API+'?action=downloadAP&email='+encodeURIComponent(USER.email||'');
+  if(SCITY&&USER.isAdmin) ep+='&fCity='+encodeURIComponent(SCITY);
+  fetch(ep).then(r=>r.json()).then(p=>{
+    hideOv();
+    if(!p.success){toast(p.error||'Download failed','red');return;}
+    if(!p.orders||!p.orders.length){toast('No AP orders to download','amber');return;}
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.orders),'Action Pending Orders');
+    XLSX.writeFile(wb,'RTO_AP_Queue_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('&#9989; Downloaded '+p.count+' AP orders','green');
+  }).catch(e=>{hideOv();toast(e.message,'red');});
+}
+
+// CHARTS
 function dC(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
 const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}}};
 function drawDn(id,labels,data,colors){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
 function drawHB(id,labels,data){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2'][i%6]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
 function drawSB(id,labels,d1,d2,l1,l2,c1,c2){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:l1,data:d1,backgroundColor:c1,borderRadius:3},{label:l2,data:d2,backgroundColor:c2,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
-function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){const l=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short'});trd=[{date:l,total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short'}),total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
 function rdChartsKPI(k){
   drawDn('ch-ag',['Pending','Recoverable','High Ageing'],[k.pending||0,(k.recoverable||0)-(k.highAgeing||0),k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   drawDn('ch-st',['Action Pending','Closed','Other'],[k.actionPending||0,k.green||0,Math.max(0,(k.total||0)-(k.actionPending||0)-(k.green||0))],['#D97706','#059669','#9CA3AF']);
@@ -1261,7 +1069,7 @@ function rdChartsOrders(){
   drawSB('ch-qc',['Warehouse','Retail'],[qcW,qcR],[nqcW,nqcR],'QC','Non-QC','#2563EB','#7C3AED');
 }
 
-// ── TABLE ──
+// v23: Table — new column order: Order ID | City | GMV | Store | Partner | BU | Stage | SRN | Service Type | Action | Update
 function rdTbl(){
   const tbody=document.getElementById('tbody'),emp=document.getElementById('temp');
   $('tcnt',TOTAL+' orders');$('pgi','Page '+PG+' of '+PAGES);
@@ -1273,22 +1081,22 @@ function rdTbl(){
     const edit=canEdit(o.city);
     const isLossRow=o.requiresLoss&&!o.isGreen;
     const trCls=o.isGreen?'tg':isLossRow?'tl':o.actionPending?'tr':'';
-    const srnBdg=o.srnDone?`<span class="b bg">&#9989; SRN Closed</span>`:isLossRow?`<span class="b bp">&#128176; Loss/Lost</span>`:o.actionPending?`<span class="b br flash">&#9888; AP</span>`:`<span class="b bs">SRN Open</span>`;
+    const srnBdg=o.srnDone?`<span class="b bg">&#9989; SRN Closed</span>`:isLossRow?`<span class="b bp">&#128176; Loss</span>`:o.actionPending?`<span class="b br flash">&#9888; AP</span>`:`<span class="b bs">SRN Open</span>`;
     const gmvFmt='₹'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
-    const buBdg=o.businessUnit==='PSP'?'bp':'bb';
-    const ptBdg=o.partner==='3PL'?'ba':o.partner==='PSP'?'bp':'bg';
     const stBdg=o.storeType==='RETAIL'?'bt':'bb';
-    const sfBdg=(o.serviceFlag||'').includes('Non')?'bp':'bb';
+    const ptBdg=o.partner==='3PL'?'ba':o.partner==='PSP'?'bp':'bg';
+    const buBdg=o.businessUnit==='PSP'?'bp':'bb';
     const sgBdg=(o.stage||'').includes('Pre')?'ba':'bs';
+    const sfBdg=(o.serviceFlag||'').toUpperCase().includes('NON')?'bp':'bb';
 
     let actCell,updCell;
     if(o.isGreen){
       actCell=`<span class="ro" style="color:var(--green);">${o.currentAction||'—'}</span>`;
       updCell=`<span class="ro" style="color:var(--green);">${o.currentUpdate||'—'}${o.cnNumber?' (CN: '+o.cnNumber+')':''}</span>`;
-    } else if(!edit){
+    }else if(!edit){
       actCell=`<span class="ro">${o.currentAction||'—'}</span>`;
       updCell=`<span class="ro">${o.currentUpdate||'—'}</span>`;
-    } else {
+    }else{
       const oa=AM[o.caseId]||{actions:[],updates:{}};
       const pc=CHANGES[o.orderId]||{};
       const selAct=pc.action!==undefined?pc.action:(o.currentAction||'');
@@ -1298,18 +1106,15 @@ function rdTbl(){
       const selCOD=pc.codAmount!==undefined?pc.codAmount:'';
       const hasChg=pc.action!==undefined;
 
-      // Action cell
       if(o.actionLocked&&!pc.action){
         actCell=`<div><span class="ro">${o.currentAction||'—'}</span><span class="lkchip" style="margin-left:6px;">Max edits (${EDIT_LIMIT})</span></div>`;
-      } else {
+      }else{
         const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
         const delBtn=hasChg?`<button class="del-btn" onclick="clearRow('${o.orderId}')" title="Clear">&#10005;</button>`:'';
         actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
-        // Edit limit warning hint
         if(o.actionEditCount===EDIT_LIMIT-1) actCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
       }
 
-      // Update cell
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
       const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Lost';
@@ -1317,31 +1122,31 @@ function rdTbl(){
       const showCN=CN_UPDS.has(selUpd);
       const cnHtml=showCN?`<span class="cn-lbl">&#128373; CN Number (required):</span><input class="cn-inp" id="cn-${i}" placeholder="CN123456" value="${selCN}" oninput="onCN(${i},'${o.orderId}')"/>`:'';
       const showRef=REF_UPDS.has(selUpd);
-      // COD: amount + ref
       const codHtml=showRef?`<span class="ref-lbl">&#128218; Amount Collected (required):</span><input class="cod-inp" id="cod-${i}" type="number" placeholder="Amount" value="${selCOD}" oninput="onCOD(${i},'${o.orderId}',${o.gmv})"/><span class="ref-lbl">Reference No. (required):</span><input class="ref-inp" id="ref-${i}" placeholder="REF123456" value="${selRef}" oninput="onRef(${i},'${o.orderId}')"/><span class="cod-warn" id="codw-${i}" style="display:none"></span>`:'';
 
       if(o.shipmentFollowupPending&&o.shipmentFollowup&&o.shipmentFollowup.length){
         updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px;">&#128230; Shipment received — select next step</div><select class="isel ch" id="upd-${i}" onchange="onUpd(${i},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}</select>`;
-      } else if(curU.length===0){
+      }else if(curU.length===0){
         updCell=selAct?`<span class="lknote">Awaiting SRN completion</span>${lossHtml}`:`<span class="lknote">Select action first</span>`;
-      } else if(o.updateLocked&&!pc.update){
+      }else if(o.updateLocked&&!pc.update){
         updCell=`<span class="ro">${o.currentUpdate||'—'}</span><span class="lkchip" style="margin-left:6px;">Max edits</span>`;
-      } else {
+      }else{
         updCell=`<select class="isel${pc.update!==undefined?' ch':''}" id="upd-${i}" onchange="onUpd(${i},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${codHtml}`;
         if(o.updateEditCount===EDIT_LIMIT-1) updCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
       }
     }
 
+    // v23: New column order
     return `<tr class="${trCls}" id="row-${o.orderId}">
       <td class="td-id">${o.orderId}</td>
       <td style="font-weight:600;">${o.city}</td>
-      <td><span class="b ${buBdg}" style="font-size:10px;">${o.businessUnit||'E-Pharma'}</span></td>
-      <td><span class="b ${ptBdg}">${o.partner||'—'}</span></td>
-      <td><span class="b ${stBdg}" style="font-size:10px;">${o.storeType==='RETAIL'?'Retail':'Warehouse'}</span></td>
-      <td><span class="b ${sfBdg}" style="font-size:10px;">${o.serviceFlag||'—'}</span></td>
-      <td><span class="b ${sgBdg}" style="font-size:10px;">${o.stage||'—'}</span></td>
       <td style="font-weight:700;">${gmvFmt}</td>
+      <td><span class="b ${stBdg}" style="font-size:10px;">${o.storeType==='RETAIL'?'Retail':'Warehouse'}</span></td>
+      <td><span class="b ${ptBdg}">${o.partner||'—'}</span></td>
+      <td><span class="b ${buBdg}" style="font-size:10px;">${o.businessUnit||'E-Pharma'}</span></td>
+      <td><span class="b ${sgBdg}" style="font-size:10px;">${o.stage||'—'}</span></td>
       <td>${srnBdg}</td>
+      <td><span class="b ${sfBdg}" style="font-size:10px;">${o.serviceFlag||'—'}</span></td>
       <td style="vertical-align:top;padding-top:10px;">${actCell}</td>
       <td style="vertical-align:top;padding-top:10px;">${updCell}</td>
     </tr>`;
@@ -1351,10 +1156,8 @@ function rdTbl(){
 
 function onAct(idx,sid,caseId){
   const as=document.getElementById('act-'+idx);if(!as)return;
-  const oa=AM[caseId]||{actions:[],updates:{}};
   if(!CHANGES[sid])CHANGES[sid]={};
   CHANGES[sid].action=as.value;CHANGES[sid].update='';CHANGES[sid].cnNumber='';CHANGES[sid].refNumber='';CHANGES[sid].codAmount='';
-  // Edit limit notification
   const o=ORDERS.find(x=>x.orderId===sid);
   if(o&&o.actionEditCount===EDIT_LIMIT-1) showEditWarn('⚠ Last action edit allowed for this order');
   updSbar();rdTbl();
@@ -1385,11 +1188,10 @@ async function saveAll(){
   const btn=document.getElementById('sbtn');
   const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
   if(!sids.length)return;
-  // Validate
   for(const sid of sids){
     const ch=CHANGES[sid];
     if(CN_UPDS.has(ch.update)&&!ch.cnNumber){toast('CN Number required for "'+ch.update+'" — order '+sid,'red');return;}
-    if(REF_UPDS.has(ch.update)&&(!ch.refNumber)){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
+    if(REF_UPDS.has(ch.update)&&!ch.refNumber){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
     if(REF_UPDS.has(ch.update)&&!(ch.codAmount>0)){toast('Amount required for "'+ch.update+'" — order '+sid,'red');return;}
   }
   btn.disabled=true;btn.textContent='Saving...';
@@ -1397,7 +1199,6 @@ async function saveAll(){
   try{
     const res=await fetch(API+'?action=batchSave&updates='+encodeURIComponent(JSON.stringify(updates))+'&email='+encodeURIComponent(USER?.email||'')).then(r=>r.json());
     const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
-    // Show COD shortfall notifications
     (res.results||[]).forEach(r=>{if(r.codShortfall>0)toast('⚠ COD shortfall ₹'+r.codShortfall.toLocaleString('en-IN')+' recorded as loss for '+r.orderId,'amber');});
     toast('&#9989; '+ok+'/'+sids.length+' orders updated','green');
     CHANGES={};btn.textContent='&#10003; Save All';btn.disabled=false;
@@ -1406,7 +1207,7 @@ async function saveAll(){
 }
 function chPg(d){PG+=d;loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
-// ── MODALS ──
+// MODALS
 function openHA(){
   const body=document.getElementById('ha-body');
   const hm={};ORDERS.forEach(o=>{if(!o.isHighAgeing)return;if(!hm[o.city])hm[o.city]=[];hm[o.city].push(o);});
@@ -1428,16 +1229,15 @@ function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
 
 function jumpTo(sid){closeHA();closeAP();const idx=ORDERS.findIndex(o=>o.orderId===sid);if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{const rows=document.querySelectorAll('#tbody tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';setTimeout(()=>{rows[li].style.outline='';},2500);}},300);}
 
-// ── DOWNLOADS ──
+// DOWNLOADS
 function triggerDl(type){
   if(!USER)return;
-  if(!USER.isAdmin&&(type==='panIndia')){toast('Admin access required','red');return;}
+  if(!USER.isAdmin&&type==='panIndia'){toast('Admin access required','red');return;}
   DL_PENDING={type,city:SCITY||''};
   if(type==='loss'){_execDl('loss','','complete');return;}
   if(type==='panIndia'&&!_hasFilters()){_execDl('panIndia','','complete');return;}
   if(type==='filtered'||type==='panIndia'){
-    const city=SCITY||'';
-    $('dlct',(city||'PAN India')+' — Download');
+    $('dlct',(SCITY||'PAN India')+' — Download');
     $('dlcm','Active filters are applied. Download filtered subset or full dataset?');
     document.getElementById('dl-modal').classList.remove('hide');return;
   }
@@ -1447,18 +1247,16 @@ function triggerCityDl(city){
   if(!USER)return;
   if(!USER.isAdmin&&city!==USER.city){toast('Can only download your own city','red');return;}
   DL_PENDING={type:'city',city};
-  if(_hasFilters()){
-    $('dlct',city+' — Download');$('dlcm','Filters active. Download filtered or full city data?');
-    document.getElementById('dl-modal').classList.remove('hide');
-  } else { _execDl('city',city,'complete'); }
+  if(_hasFilters()){$('dlct',city+' — Download');$('dlcm','Filters active. Download filtered or full city data?');document.getElementById('dl-modal').classList.remove('hide');}
+  else{_execDl('city',city,'complete');}
 }
 function dlGo(mode){closeDlConf();if(!DL_PENDING)return;_execDl(DL_PENDING.type,DL_PENDING.city,mode);DL_PENDING=null;}
 function closeDlConf(){document.getElementById('dl-modal').classList.add('hide');}
 function _execDl(type,city,mode){
   showOv('Preparing download…');
-  let ep=API+'?email='+encodeURIComponent(USER.email||'');
+  let ep=API+'?email='+encodeURIComponent(USER.email||'')+'&mode='+mode;
   const fstr=mode==='filtered'?('&'+_fp()):'';
-  if(type==='loss')      ep+='&action=downloadLoss';
+  if(type==='loss')       ep+='&action=downloadLoss';
   else if(type==='panIndia') ep+='&action=downloadAdmin'+fstr;
   else ep+='&action=downloadCity&city='+encodeURIComponent(city)+fstr;
   fetch(ep).then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error||'Download failed','red');return;}_buildXLSX(p,p.city||city||'Download');}).catch(e=>{hideOv();toast(e.message,'red');});
@@ -1472,7 +1270,7 @@ function _buildXLSX(p,label){
   XLSX.writeFile(wb,'RTO_'+label.replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
-// ── UPLOAD ──
+// UPLOAD
 function triggerUpload(){if(!SCITY){toast('Open a city first','red');return;}if(!canEdit(SCITY)){toast('No edit permission for '+SCITY,'red');return;}const fi=document.getElementById('upload-file');fi.value='';fi.click();}
 function closeUpload(){document.getElementById('upload-modal').classList.add('hide');UPLOAD_CHANGES={};}
 const _nm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
@@ -1497,7 +1295,8 @@ function handleUpload(input){
         if(order.isGreen){results.push({orderId,status:'fail',reason:'Order already closed'});return;}
         if(order.actionLocked){results.push({orderId,status:'fail',reason:'Action edit limit reached'});return;}
         const rawAction=String(row['Action']||'').trim(),rawUpdate=String(row['Update']||'').trim();
-        const rawCN=String(row['CN Number']||'').trim(),rawRef=String(row['Reference Number']||'').trim();
+        const rawCN=String(row['CN_Number']||row['CN Number']||'').trim();
+        const rawRef=String(row['Reference_Number']||row['Reference Number']||'').trim();
         const rawCOD=parseFloat(row['COD Amount'])||0;
         if(!rawAction){results.push({orderId,status:'fail',reason:'Action column empty'});return;}
         const oa=AM[order.caseId]||{actions:[],updates:{}};
@@ -1532,7 +1331,7 @@ function _showUploadResults(results){
 }
 function saveUploadChanges(){closeUpload();saveAll();}
 
-// ── TOAST ──
+// TOAST
 function toast(msg,type='green'){
   const t=document.createElement('div');t.className='toast';
   t.style.background=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)';
