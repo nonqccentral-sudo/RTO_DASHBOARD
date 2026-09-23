@@ -532,6 +532,25 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">Green / Closed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
         <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">—</div><div class="ks" id="k-lss">In-house: —</div><div class="kh">Click for Loss Report</div></div>
       </div>
+      <!-- SRN Pending + Action Pending sub-info -->
+      <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;">
+        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">⚠️</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#D97706;">Action Pending</div>
+            <div style="font-size:20px;font-weight:800;color:#D97706;line-height:1;" id="sub-ap">—</div>
+            <div style="font-size:10px;color:#92400E;margin-top:1px;">No action / update / both missing</div>
+          </div>
+        </div>
+        <div style="background:#F5F3FF;border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:10px;">
+          <span style="font-size:18px;">🔄</span>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7C3AED;">SRN Pending</div>
+            <div style="font-size:20px;font-weight:800;color:#7C3AED;line-height:1;" id="sub-srn">—</div>
+            <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done, SRN not closed</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- AGEING -->
@@ -644,7 +663,7 @@ const LC_TTL=5*60*1000;
 const EDIT_LIMIT=2;
 const CN_UPDS=new Set(['CN Received']);
 const REF_UPDS=new Set(['COD Collected']);
-const LOSS_UPDS=new Set(['Loss','Order Lost(rider absconded)','Lost']);
+const LOSS_UPDS=new Set(['Loss','Order Lost(rider absconded)']);
 
 let SUM=null,ORDERS=[],TOTAL=0,PAGES=1,PG=1,PSZ=50;
 let TRD=[],AM={},ACTIVE_CITIES=[],ALL_ACTIONS=[];
@@ -802,14 +821,18 @@ function loadOrders(){
     toast('Order load failed: '+e.message,'red');
   });
 }
-function apF(){PG=1;_updFltDlBtn();showFSpin();showOv('Applying filters…');
-  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp()).then(r=>r.json()).then(p=>{
-    hideFSpin();if(!p||!p.success){hideOv();return;}
-    SUM=p;TRD=p.trend||[];
-    if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
-    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[]);rdChartsKPI(p.kpi||{});drawTrend();
-    showOv('Loading orders…');loadOrders();
-  }).catch(()=>{hideFSpin();hideOv();});
+function apF(){
+  PG=1;_updFltDlBtn();
+  showFSpin();showOv('Applying filters…');
+  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp())
+    .then(r=>r.json()).then(p=>{
+      hideFSpin();
+      if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
+      SUM=p;TRD=p.trend||[];
+      if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
+      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[]);rdChartsKPI(p.kpi||{});drawTrend();
+      showOv('Loading orders…');loadOrders();
+    }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
 function rstF(){
   ['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
@@ -825,10 +848,10 @@ function rstF(){
   if(SCITY){closeDet();}
   _updFltDlBtn();loadSummary(true);
 }
-function setQC(v){QF=v;document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(USER)apF();}
+function setQC(v){QF=v;document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(USER){showFSpin();showOv('Switching view…');setTimeout(()=>apF(),50);}}
 function onCityFilter(){const city=document.getElementById('f-city').value;if(city){SCITY=city;openDet(city);}else if(SCITY){SCITY=null;closeDet();}else apF();}
-function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);loadOrders();}
-function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);loadOrders();}
+function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);showFSpin();showOv('Filtering…');loadOrders();}
+function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);showFSpin();showOv('Filtering…');loadOrders();}
 function onSearch(){clearTimeout(STIMER);STIMER=setTimeout(()=>{PG=1;loadOrders();},400);}
 
 function popFilters(){
@@ -848,6 +871,8 @@ function rdKPI(k){
   $('k-gr',k.green||0);
   $('k-ls',fmtK(k.lossTotal||0));$('k-lss','In-house: '+(k.inhouseLoss||0));
   $('gapc',k.actionPending||0);
+  $('sub-ap',k.actionPending||0);
+  $('sub-srn',k.srnPending||0);
 }
 function rdAgeing(k){
   const t=k.total||1;
@@ -1117,7 +1142,7 @@ function rdTbl(){
 
       const curU=(selAct&&oa.updates[selAct])||[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-      const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Lost';
+      const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Order Lost/Rider Absconded';
       const lossHtml=isLoss?`<div class="loss-disp">&#128176; Loss: ${gmvFmt}</div>`:'';
       const showCN=CN_UPDS.has(selUpd);
       const cnHtml=showCN?`<span class="cn-lbl">&#128373; CN Number (required):</span><input class="cn-inp" id="cn-${i}" placeholder="CN123456" value="${selCN}" oninput="onCN(${i},'${o.orderId}')"/>`:'';
@@ -1195,17 +1220,19 @@ async function saveAll(){
     if(REF_UPDS.has(ch.update)&&!(ch.codAmount>0)){toast('Amount required for "'+ch.update+'" — order '+sid,'red');return;}
   }
   btn.disabled=true;btn.textContent='Saving...';
+  showOv('Saving changes…');
   const updates=sids.map(sid=>({orderId:sid,action:CHANGES[sid].action||'',update:CHANGES[sid].update||'',cnNumber:CHANGES[sid].cnNumber||'',refNumber:CHANGES[sid].refNumber||'',codAmount:CHANGES[sid].codAmount||0}));
   try{
     const res=await fetch(API+'?action=batchSave&updates='+encodeURIComponent(JSON.stringify(updates))+'&email='+encodeURIComponent(USER?.email||'')).then(r=>r.json());
     const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
     (res.results||[]).forEach(r=>{if(r.codShortfall>0)toast('⚠ COD shortfall ₹'+r.codShortfall.toLocaleString('en-IN')+' recorded as loss for '+r.orderId,'amber');});
+    hideOv();
     toast('&#9989; '+ok+'/'+sids.length+' orders updated','green');
     CHANGES={};btn.textContent='&#10003; Save All';btn.disabled=false;
     localStorage.removeItem(LC_KEY);setTimeout(()=>loadSummary(true),1500);
-  }catch(e){btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
+  }catch(e){hideOv();btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
 }
-function chPg(d){PG+=d;loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function chPg(d){PG+=d;showFSpin();showOv('Loading page…');loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // MODALS
 function openHA(){
