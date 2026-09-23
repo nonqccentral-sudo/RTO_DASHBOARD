@@ -148,7 +148,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .sec-nt{font-size:11px;color:var(--t3);}
 
 /* KPI */
-.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:12px;}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--blue));border-radius:var(--r) var(--r) 0 0;}
@@ -370,12 +370,31 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 #home-btn{position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;}
 #home-btn.vis{display:flex;}
 
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .kgrid{grid-template-columns:repeat(4,1fr);}
+  .chgrid{grid-template-columns:repeat(2,1fr);}
+  .chgrid .sp3{grid-column:1/-1;}
+}
 @media(max-width:768px){
-  .main{padding:14px;}.hdr{padding:0 14px;}.fbar{padding:8px 14px;}
+  .main{padding:12px;}.hdr{padding:0 12px;height:auto;min-height:56px;flex-wrap:wrap;gap:6px;padding:8px 12px;}
+  .fbar{padding:8px 12px;gap:6px;}
   .kgrid{grid-template-columns:repeat(2,1fr);gap:8px;}.kv{font-size:24px;}
-  .age-strip{grid-template-columns:1fr;}.cgrid{grid-template-columns:repeat(2,1fr);}
+  .age-strip{grid-template-columns:1fr;}
+  .cgrid{grid-template-columns:repeat(2,1fr);}
   .chgrid{grid-template-columns:1fr;}.chgrid .sp3{grid-column:1;}
   table{font-size:12px;}th,td{padding:8px 10px;}
+  .thdr{flex-wrap:wrap;gap:6px;}
+  .thdr-r{flex-wrap:wrap;gap:4px;}
+  .tsch-w input{width:160px;}
+  .hdr-r{gap:5px;}
+  .qc-tabs button{padding:4px 10px;font-size:11px;}
+  .dl-bar{padding:6px 12px;}
+}
+@media(max-width:480px){
+  .kgrid{grid-template-columns:1fr 1fr;}
+  .cgrid{grid-template-columns:1fr;}
+  .age-strip{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -532,22 +551,14 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">Green / Closed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
         <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">—</div><div class="ks" id="k-lss">In-house: —</div><div class="kh">Click for Loss Report</div></div>
       </div>
-      <!-- SRN Pending + Action Pending sub-info -->
-      <div style="display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;">
-        <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:10px;">
-          <span style="font-size:18px;">⚠️</span>
-          <div>
-            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#D97706;">Action Pending</div>
-            <div style="font-size:20px;font-weight:800;color:#D97706;line-height:1;" id="sub-ap">—</div>
-            <div style="font-size:10px;color:#92400E;margin-top:1px;">No action / update / both missing</div>
-          </div>
-        </div>
-        <div style="background:#F5F3FF;border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;display:flex;align-items:center;gap:10px;">
-          <span style="font-size:18px;">🔄</span>
+      <!-- SRN Pending sub-info -->
+      <div style="margin-top:10px;">
+        <div style="display:inline-flex;background:#F5F3FF;border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;align-items:center;gap:10px;">
+          <span style="font-size:16px;">🔄</span>
           <div>
             <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7C3AED;">SRN Pending</div>
             <div style="font-size:20px;font-weight:800;color:#7C3AED;line-height:1;" id="sub-srn">—</div>
-            <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done, SRN not closed</div>
+            <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done · SRN not yet closed</div>
           </div>
         </div>
       </div>
@@ -658,8 +669,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v23';
-const LC_TTL=5*60*1000;
+const LC_KEY='rto_sum_v233';
+const LC_TTL=3*60*1000; // 3 min cache — summary only, orders always fresh
 const EDIT_LIMIT=2;
 const CN_UPDS=new Set(['CN Received']);
 const REF_UPDS=new Set(['COD Collected']);
@@ -767,13 +778,68 @@ function _updFltDlBtn(){const btn=document.getElementById('dlbflt');if(!btn)retu
 
 function loadSummary(force=false){
   showOv('Loading dashboard…');
-  if(!force){try{const c=localStorage.getItem(LC_KEY);if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){onSummaryLoad(data);return;}}}catch(e){}}
-  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER.email||'')+'&'+_fp();
-  fetch(ep).then(r=>r.json()).then(d=>{
-    try{localStorage.setItem(LC_KEY,JSON.stringify({data:d,ts:Date.now()}));}catch(e){}
-    onSummaryLoad(d);
+  // Try local cache for summary (fast path — skip if forced)
+  if(!force){
+    try{
+      const c=localStorage.getItem(LC_KEY);
+      if(c){
+        const{data,ts}=JSON.parse(c);
+        if(Date.now()-ts<LC_TTL){
+          // Cache hit: render summary immediately, load orders in parallel
+          onSummaryLoad(data);
+          return;
+        }
+      }
+    }catch(e){}
+  }
+  // Cache miss: fetch summary + orders in parallel
+  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER.email||'')+'&'+_fp();
+  const ordEp=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page=1&pageSize='+PSZ+'&'+_fp()
+    +((!USER?.isAdmin&&USER?.city)?'&fCity='+encodeURIComponent(USER.city):'');
+
+  Promise.all([
+    fetch(sumEp).then(r=>r.json()),
+    fetch(ordEp).then(r=>r.json()),
+  ]).then(([sumData,ordData])=>{
+    try{localStorage.setItem(LC_KEY,JSON.stringify({data:sumData,ts:Date.now()}));}catch(e){}
+    // Render summary first
+    if(!sumData||!sumData.success){hideOv();toast((sumData&&sumData.error)||'Load failed','red');return;}
+    SUM=sumData;TRD=sumData.trend||[];AM=sumData.actionMap||{};
+    ACTIVE_CITIES=sumData.activeCities||[];ALL_ACTIONS=sumData.allActions||[];
+    $('asof','As of '+(sumData.asOf||'—'));
+    popFilters();
+    rdKPI(sumData.kpi||{});rdAgeing(sumData.kpi||{});
+    rdCityCards(sumData.homepageCards||[]);
+    rdChartsKPI(sumData.kpi||{});drawTrend();
+    document.getElementById('dash').style.display='block';
+    _updFltDlBtn();
+    // City users: auto-open their city
+    if(!USER?.isAdmin&&USER?.city&&!SCITY){
+      SCITY=USER.city;
+      document.getElementById('f-city').value=USER.city;
+      document.getElementById('cdet').classList.add('vis');
+      document.getElementById('cdet').style.display='block';
+      $('cd-ttl',USER.city);
+      const dlDiv=document.getElementById('cd-dl-btns');
+      if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+      document.getElementById('upload-btn').style.display='';
+      document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
+    }
+    // Render orders from parallel fetch
+    hideOv();hideFSpin();
+    document.getElementById('tload').style.display='none';
+    if(ordData&&ordData.success){
+      if(ordData.actionMap) AM=ordData.actionMap;
+      ORDERS=ordData.orders||[];TOTAL=ordData.total||0;PAGES=ordData.pages||1;PG=1;
+      $('gapc',ORDERS.filter(o=>o.actionPending).length);
+      rdTbl();rdChartsOrders();
+      if(SCITY) afterOrdersCity();
+    }else{
+      ORDERS=[];rdTbl();
+    }
   }).catch(e=>{
-    try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);onSummaryLoad(data);toast('Cached data (offline?)','amber');return;}}catch(e2){}
+    // Fallback to cached summary if available
+    try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);onSummaryLoad(data);toast('Cached data','amber');return;}}catch(e2){}
     hideOv();toast('Load failed: '+(e.message||'Network error'),'red');
   });
 }
@@ -789,6 +855,18 @@ function onSummaryLoad(p){
     rdChartsKPI(p.kpi||{});drawTrend();
     document.getElementById('dash').style.display='block';
     _updFltDlBtn();
+    // City users: auto-open their city detail immediately
+    if(!USER?.isAdmin&&USER?.city&&!SCITY){
+      SCITY=USER.city;
+      document.getElementById('f-city').value=USER.city;
+      document.getElementById('cdet').classList.add('vis');
+      document.getElementById('cdet').style.display='block';
+      $('cd-ttl',USER.city);
+      const dlDiv=document.getElementById('cd-dl-btns');
+      if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+      document.getElementById('upload-btn').style.display='';
+      document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
+    }
     showOv('Loading orders…');
     loadOrders();
   }catch(err){hideOv();toast('Render error: '+err.message,'red');}
@@ -871,7 +949,6 @@ function rdKPI(k){
   $('k-gr',k.green||0);
   $('k-ls',fmtK(k.lossTotal||0));$('k-lss','In-house: '+(k.inhouseLoss||0));
   $('gapc',k.actionPending||0);
-  $('sub-ap',k.actionPending||0);
   $('sub-srn',k.srnPending||0);
 }
 function rdAgeing(k){
@@ -885,9 +962,22 @@ function rdAgeing(k){
 
 function rdCityCards(cards){
   const grid=document.getElementById('cgrid');grid.innerHTML='';
-  if(!cards||!cards.length){grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No city card available.')+'</div>';return;}
-  cards.forEach(c=>{
-    const isOwn=!USER?.isAdmin&&c.city===USER?.city;
+  // For city users: always show their own city card even if not red
+  let displayCards=cards;
+  if(!USER?.isAdmin&&USER?.city){
+    const userCityUC=(USER.city||'').toUpperCase();
+    const hasOwn=cards.some(c=>c.city.toUpperCase()===userCityUC);
+    if(!hasOwn&&SUM&&SUM.allCityCards){
+      const ownCard=SUM.allCityCards.find(c=>c.city.toUpperCase()===userCityUC);
+      if(ownCard) displayCards=[ownCard,...cards];
+    }
+  }
+  if(!displayCards||!displayCards.length){
+    grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No city card available.')+'</div>';
+    return;
+  }
+  displayCards.forEach(c=>{
+    const isOwn=!USER?.isAdmin&&c.city.toUpperCase()===(USER?.city||'').toUpperCase();
     const rp=pct(c.recoverable||0,Math.max(c.active||1,1));
     const canDl=USER?.isAdmin||isOwn;
     const el=document.createElement('div');
