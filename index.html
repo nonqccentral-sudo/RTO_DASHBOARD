@@ -970,17 +970,50 @@ function rdCityCards(cards,otherCityCards){
       grid.appendChild(el);
     });
   }
-  // Other cities SRN strip (city users only)
+  // Other cities strip (city users only): red ones as compact cards, rest in dropdown
   const existing=document.getElementById('other-city-strip');if(existing)existing.remove();
   if(otherCityCards&&otherCityCards.length>0){
+    const redCities=otherCityCards.filter(c=>c.srnPending>10);
+    const otherCities=otherCityCards.filter(c=>c.srnPending<=10);
     const strip=document.createElement('div');
-    strip.id='other-city-strip';strip.style.cssText='margin-top:14px;';
-    strip.innerHTML=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:8px;">Other Cities · SRN Pending</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;">${otherCityCards.map(c=>`<div style="background:var(--surface);border:1px solid ${c.srnPending>10?'#FECACA':'var(--border)'};border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:8px;">
-      <span style="font-size:12px;font-weight:700;color:var(--t1);">${c.city}</span>
-      <span style="font-size:11px;font-weight:700;color:${c.srnPending>10?'var(--red)':'var(--purple)'};background:${c.srnPending>10?'var(--redl)':'var(--purplel)'};padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span>
-    </div>`).join('')}</div>`;
+    strip.id='other-city-strip';
+    strip.style.cssText='margin-top:16px;';
+    let html=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);">Other Cities · SRN Pending</div>`;
+    if(otherCities.length){
+      html+=`<div style="position:relative;display:inline-block;" id="ocd-wrap">
+        <button onclick="const d=document.getElementById('ocd-drop');d.style.display=d.style.display==='none'?'block':'none';" style="padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px;">
+          +${otherCities.length} more cities &#9660;
+        </button>
+        <div id="ocd-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--md);z-index:400;min-width:220px;max-height:260px;overflow-y:auto;padding:8px 0;">
+          ${otherCities.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px;font-size:12px;font-weight:600;color:var(--t1);border-bottom:1px solid var(--border);">${c.city}<span style="font-size:11px;font-weight:700;color:var(--purple);background:var(--purplel);padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span></div>`).join('')}
+        </div>
+      </div>`;
+    }
+    html+=`</div>`;
+    if(redCities.length){
+      html+=`<div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${redCities.map(c=>`<div style="background:var(--redl);border:1px solid #FECACA;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:8px;">
+          <span style="font-size:12px;font-weight:700;color:var(--t1);">${c.city}</span>
+          <span style="font-size:11px;font-weight:700;color:var(--red);background:rgba(220,38,38,.1);padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span>
+        </div>`).join('')}
+      </div>`;
+    }else{
+      html+=`<div style="font-size:12px;color:var(--t3);padding:8px 0;">No other cities with high SRN pending (&gt;10).</div>`;
+    }
+    strip.innerHTML=html;
     grid.parentNode.appendChild(strip);
+    // Close dropdown on outside click
+    setTimeout(()=>{
+      document.addEventListener('click',function _ocd(e){
+        const wrap=document.getElementById('ocd-wrap');
+        if(wrap&&!wrap.contains(e.target)){
+          const drop=document.getElementById('ocd-drop');
+          if(drop)drop.style.display='none';
+          document.removeEventListener('click',_ocd);
+        }
+      });
+    },0);
   }
 }
 
@@ -1037,13 +1070,27 @@ function afterOrdersCity(){
 
 function rdPivot(city){
   const pw=document.getElementById('pivot-wrap');if(!pw)return;
-  const cityData=(SUM&&SUM.allCityCards||[]).find(c=>c.city.toUpperCase()===city.toUpperCase());
-  const fc=cityData?(cityData.fcCount||0):0;
-  const rt=cityData?(cityData.retailCount||0):0;
-  const tpl=cityData?(cityData.preMDQ3PLCount||0):0;
-  const tot=cityData?(cityData.active||0):0;
+  // Compute from live ORDERS so it works for city users (allCityCards may not have city user's data)
+  const cityOrders=ORDERS.filter(o=>!o.isGreen);
+  const fc=cityOrders.filter(o=>o.pivotCategory==='FC').length;
+  const rt=cityOrders.filter(o=>o.pivotCategory==='Retail').length;
+  const tpl=cityOrders.filter(o=>o.pivotCategory==='Pre MDQ 3PL').length;
+  const tot=cityOrders.length;
   const other=Math.max(0,tot-fc-rt-tpl);
-  pw.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div><div class="pivot-body"><table class="pivot-table"><thead><tr><th>FC</th><th>Retail</th><th>3PL (Pre MDQ)</th>${other?'<th>Other</th>':''}<th>Total</th></tr></thead><tbody><tr><td class="pv-fc">${fc}</td><td class="pv-rt">${rt}</td><td class="pv-3pl">${tpl}</td>${other?`<td class="pv-oth">${other}</td>`:''}<td class="pv-tot">${tot}</td></tr></tbody></table></div></div>`;
+  if(!tot){pw.style.display='none';return;}
+  pw.innerHTML=`<div class="pivot-section">
+    <div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div>
+    <div class="pivot-body"><table class="pivot-table">
+      <thead><tr><th>Warehouse (FC)</th><th>Retail</th><th>3PL Pre-MDQ</th>${other?'<th>Other</th>':''}<th>Total</th></tr></thead>
+      <tbody><tr>
+        <td class="pv-fc">${fc}</td>
+        <td class="pv-rt">${rt}</td>
+        <td class="pv-3pl">${tpl}</td>
+        ${other?`<td class="pv-oth">${other}</td>`:''}
+        <td class="pv-tot">${tot}</td>
+      </tr></tbody>
+    </table></div>
+  </div>`;
   pw.style.display='block';
 }
 
@@ -1063,6 +1110,7 @@ window.addEventListener('scroll',()=>{document.getElementById('home-btn').classL
 
 function loadRecSec(city){
   const rs=document.getElementById('rec-sec');
+  if(!rs)return;
   rs.style.display='none';rs.innerHTML='';
   if(!canEdit(city)) return;
   const cityParam=USER.isAdmin?'&fCity='+encodeURIComponent(city):'';
@@ -1070,7 +1118,28 @@ function loadRecSec(city){
     .then(r=>r.json()).then(d=>{
       if(!d.success||!d.rows||!d.rows.length) return;
       rs.style.display='block';
-      rs.innerHTML=`<div class="rec-sec"><div class="rec-hdr"><h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3><span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required</span></div><div class="rec-body">${d.rows.map(r=>`<div class="rec-row" id="rr-${r.orderId}"><span class="rec-id">${r.orderId}</span><span style="color:var(--t3);font-size:11px;">${r.lossType||''}</span><span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>${r.recoveredAmount>0?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`:'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}${r.recoveryStatus!=='Fully Recovered'?`<input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount" min="0"/><input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/><button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save</button>`:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}</div>`).join('')}</div></div>`;
+      rs.className='rec-sec';
+      rs.innerHTML=`
+        <div class="rec-hdr">
+          <h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3>
+          <span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required to record recovery</span>
+        </div>
+        <div class="rec-body">
+          ${d.rows.map(r=>`
+            <div class="rec-row" id="rr-${r.orderId}">
+              <span class="rec-id">${r.orderId}</span>
+              <span style="color:var(--t3);font-size:11px;min-width:90px;">${r.lossType||''}</span>
+              <span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>
+              ${r.recoveredAmount>0
+                ?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`
+                :'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}
+              ${r.recoveryStatus!=='Fully Recovered'?`
+                <input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount recovered" min="0"/>
+                <input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/>
+                <button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save Recovery</button>
+              `:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}
+            </div>`).join('')}
+        </div>`;
     }).catch(()=>{});
 }
 function saveRec(orderId,gmv){
@@ -1190,8 +1259,7 @@ function rdTbl(){
       }else{
         const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
         const delBtn=hasChg?`<button class="del-btn" onclick="clearRow('${o.orderId}')" title="Clear">&#10005;</button>`:'';
-        const histBtn=`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="View history">H</button>`;
-        actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}${histBtn}</div>`;
+        actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
         if(o.actionEditCount===EDIT_LIMIT-1) actCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
       }
 
@@ -1217,7 +1285,12 @@ function rdTbl(){
     }
 
     return `<tr class="${trCls}" id="row-${o.orderId}">
-      <td class="td-id">${o.orderId}</td>
+      <td class="td-id">
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <span>${o.orderId}</span>
+          <button class="hist-btn" onclick="openHist('${o.orderId}')" title="View change history" style="align-self:flex-start;font-size:10px;padding:2px 7px;width:auto;height:auto;">&#128203; History</button>
+        </div>
+      </td>
       <td style="font-weight:600;">${o.city}</td>
       <td style="font-weight:700;">${gmvFmt}</td>
       <td><span class="b ${stBdg}" style="font-size:10px;">${o.storeType==='RETAIL'?'Retail':'Warehouse'}</span></td>
