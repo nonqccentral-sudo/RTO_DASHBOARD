@@ -67,10 +67,33 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .l-cities{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;}
 .l-city-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;cursor:pointer;transition:all .12s;}
 .l-city-pill:hover{background:#2563EB;color:#fff;border-color:#2563EB;}
-#ov{position:fixed;inset:0;z-index:9999;background:rgba(241,244,249,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;backdrop-filter:blur(4px);}
+/* ── FULL-SCREEN LOADING OVERLAY ── */
+#ov{
+  position:fixed;inset:0;z-index:9000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+  background:rgba(15,23,42,.45);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:opacity .25s;
+}
 #ov.hide{display:none;}
-.ov-ring{width:44px;height:44px;border:3px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
-.ov-msg{font-size:13px;color:var(--t2);font-weight:500;}
+.ov-card{
+  background:rgba(255,255,255,.97);border-radius:18px;
+  padding:36px 48px;display:flex;flex-direction:column;align-items:center;gap:18px;
+  box-shadow:0 24px 80px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.15);
+  min-width:240px;
+}
+.ov-ring{
+  width:52px;height:52px;
+  border:4px solid #E2E8F0;border-top-color:var(--blue);
+  border-radius:50%;animation:spin .75s linear infinite;
+}
+.ov-dots{display:flex;gap:7px;margin-top:-4px;}
+.ov-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);opacity:.25;animation:dot-pulse 1.2s ease-in-out infinite;}
+.ov-dot:nth-child(2){animation-delay:.2s;}
+.ov-dot:nth-child(3){animation-delay:.4s;}
+@keyframes dot-pulse{0%,80%,100%{opacity:.2;transform:scale(.85)}40%{opacity:1;transform:scale(1)}}
+.ov-msg{font-size:14px;color:var(--t2);font-weight:600;letter-spacing:.1px;}
+.ov-sub{font-size:11px;color:var(--t3);margin-top:-10px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 #filter-spinner{display:none;align-items:center;gap:6px;font-size:11px;color:var(--blue);font-weight:600;}
 #filter-spinner.vis{display:flex;}
@@ -426,7 +449,14 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 
-<div id="ov" class="hide"><div class="ov-ring"></div><div class="ov-msg" id="ov-msg">Loading&hellip;</div></div>
+<div id="ov" class="hide">
+  <div class="ov-card">
+    <div class="ov-ring"></div>
+    <div class="ov-msg" id="ov-msg">Loading…</div>
+    <div class="ov-dots"><div class="ov-dot"></div><div class="ov-dot"></div><div class="ov-dot"></div></div>
+    <div class="ov-sub" id="ov-sub"></div>
+  </div>
+</div>
 
 <!-- HA MODAL -->
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
@@ -560,7 +590,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="chcard"><div class="chhd"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Business Unit</h3></div><canvas id="ch-bu"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
-        <div class="chcard"><div class="chhd"><h3>QC Split by Store</h3></div><canvas id="ch-qc"></canvas></div>
+        <div class="chcard"><div class="chhd"><h3>Service Type Split</h3></div><canvas id="ch-qc"></canvas></div>
         <div class="chcard sp3"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">—</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
       </div>
     </div>
@@ -636,7 +666,11 @@ const fmtK=n=>{n=Number(n||0);if(n>=10000000)return'₹'+(n/10000000).toFixed(1)
 const fmtN=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 
-function showOv(msg){$('ov-msg',msg||'Loading…');document.getElementById('ov').classList.remove('hide');}
+function showOv(msg,sub){
+  $('ov-msg',msg||'Loading…');
+  const s=document.getElementById('ov-sub');if(s)s.textContent=sub||'';
+  document.getElementById('ov').classList.remove('hide');
+}
 function hideOv(){document.getElementById('ov').classList.add('hide');}
 function showFSpin(){document.getElementById('filter-spinner').classList.add('vis');}
 function hideFSpin(){document.getElementById('filter-spinner').classList.remove('vis');}
@@ -787,13 +821,13 @@ function _openCityPanel(city){
 
 // ── LOAD SUMMARY ───────────────────────────────────────────────────────────────
 function loadSummary(force=false){
-  showOv('Loading dashboard…');
+  showOv('Loading dashboard…','Fetching summary + orders in parallel');
   WARM_DONE=false;
   // Cache hit
   if(!force){
     try{
       const c=localStorage.getItem(LC_KEY);
-      if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){_renderSummary(data);showOv('Loading orders…');loadOrders();return;}}
+      if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){_renderSummary(data);showOv('Loading orders…','Please wait');loadOrders();return;}}
     }catch(e){}
   }
   // Parallel fetch: summary + orders together
@@ -815,13 +849,13 @@ function loadSummary(force=false){
       }else{ORDERS=[];rdTbl();}
       setTimeout(warmCache,1500);
     }).catch(e=>{
-      try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);_renderSummary(data);showOv('Loading orders…');loadOrders();toast('Cached data','amber');return;}}catch(e2){}
+      try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);_renderSummary(data);showOv('Loading orders…','Please wait');loadOrders();toast('Cached data','amber');return;}}catch(e2){}
       hideOv();toast('Load failed: '+(e.message||'Network error'),'red');
     });
 }
 function onSummaryLoad(p){
   if(!p||!p.success){hideOv();toast((p&&p.error)||'Load failed','red');return;}
-  try{_renderSummary(p);showOv('Loading orders…');loadOrders();}catch(err){hideOv();toast('Render error: '+err.message,'red');}
+  try{_renderSummary(p);showOv('Loading orders…','Please wait');loadOrders();}catch(err){hideOv();toast('Render error: '+err.message,'red');}
 }
 function fref(){localStorage.removeItem(LC_KEY);WARM_DONE=false;Object.keys(SC_ORDERS).forEach(k=>delete SC_ORDERS[k]);loadSummary(true);}
 
@@ -833,6 +867,8 @@ function loadOrders(){
   showFSpin();
   const srch=(document.getElementById('tsch')?.value||'').trim();
   let ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page='+PG+'&pageSize='+PSZ+'&'+_fp();
+  // Always include SCITY so admin city-drill orders are correctly filtered
+  if(SCITY&&!document.getElementById('f-city')?.value) ep+='&fCity='+encodeURIComponent(SCITY);
   if(APF||GAP) ep+='&fAP=1';
   if(srch) ep+='&fSearch='+encodeURIComponent(srch);
   fetch(ep).then(r=>r.json()).then(d=>{
@@ -852,14 +888,17 @@ function loadOrders(){
 }
 
 function _updTitle(){
-  const ap=ORDERS.filter(o=>o.actionPending).length;
+  // AP count from server-side KPI (covers all orders, not just current page)
+  const ap=(SUM&&SUM.kpi&&SUM.kpi.actionPending)||ORDERS.filter(o=>o.actionPending).length;
   $('gapc',ap);
   document.title=ap>0?'('+ap+') RTO Operations':'RTO Operations Dashboard';
+  // Table count: show server total, not just current page length
+  $('tcnt',TOTAL+' orders total');
 }
 
 function apF(){
   PG=1;_updFltDlBtn();
-  showFSpin();showOv('Applying filters…');
+  showFSpin();showOv('Applying filters…','Recalculating KPIs');
   fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp())
     .then(r=>r.json()).then(p=>{
       hideFSpin();
@@ -869,7 +908,7 @@ function apF(){
       rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
       rdCityCards(p.homepageCards||[],p.otherCityCards||null);
       rdChartsKPI(p.kpi||{});drawTrend();
-      showOv('Loading orders…');loadOrders();
+      showOv('Loading orders…','Please wait');loadOrders();
     }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
 function rstF(){
@@ -901,11 +940,30 @@ function setQC(v){
       }).catch(()=>{});
     return;
   }
-  showFSpin();showOv('Switching view…');setTimeout(()=>apF(),50);
+  showFSpin();showOv('Switching view…','Loading tab data');setTimeout(()=>apF(),50);
 }
-function onCityFilter(){const city=document.getElementById('f-city').value;if(city){SCITY=city;openDet(city);}else if(SCITY){SCITY=null;closeDet();}else apF();}
-function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);showFSpin();showOv('Filtering…');loadOrders();}
-function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);showFSpin();showOv('Filtering…');loadOrders();}
+function onCityFilter(){
+  const city=document.getElementById('f-city').value;
+  if(!city){if(SCITY){SCITY=null;closeDet();}else apF();return;}
+  SCITY=city;
+  // Fetch city-specific summary so KPIs update immediately for the chosen city
+  showOv('Loading '+city+'…','Fetching city summary');
+  const fp=_fp();
+  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')
+    +(fp?'&'+fp:'')+'&fCity='+encodeURIComponent(city);
+  fetch(ep).then(r=>r.json()).then(p=>{
+    if(p&&p.success){
+      SUM=p;
+      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
+      rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+      rdChartsKPI(p.kpi||{});drawTrend();
+      $('kpi-ttl',city+' Overview');
+    }
+    openDet(city);
+  }).catch(()=>openDet(city));
+}
+function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);showFSpin();showOv('Filtering orders…','Applying AP filter');loadOrders();}
+function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);showFSpin();showOv('Filtering orders…','Applying AP filter');loadOrders();}
 function onSearch(){clearTimeout(STIMER);STIMER=setTimeout(()=>{PG=1;loadOrders();},400);}
 
 function popFilters(){
@@ -970,46 +1028,56 @@ function rdCityCards(cards,otherCityCards){
       grid.appendChild(el);
     });
   }
-  // Other cities strip (city users only): red ones as compact cards, rest in dropdown
+  // Other cities strip (city users only): compact red cards with ONLY city name + SRN count
   const existing=document.getElementById('other-city-strip');if(existing)existing.remove();
   if(otherCityCards&&otherCityCards.length>0){
+    // Only show cities that have SRN pending (already filtered server-side)
+    // Red = srnPending > 10, others go in dropdown
     const redCities=otherCityCards.filter(c=>c.srnPending>10);
     const otherCities=otherCityCards.filter(c=>c.srnPending<=10);
     const strip=document.createElement('div');
     strip.id='other-city-strip';
     strip.style.cssText='margin-top:16px;';
-    let html=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
-      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);">Other Cities · SRN Pending</div>`;
+    let html=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
+      <span>Other Cities · SRN Pending</span>`;
+    // Dropdown for cities with ≤10 SRN pending
     if(otherCities.length){
       html+=`<div style="position:relative;display:inline-block;" id="ocd-wrap">
-        <button onclick="const d=document.getElementById('ocd-drop');d.style.display=d.style.display==='none'?'block':'none';" style="padding:4px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:5px;">
-          +${otherCities.length} more cities &#9660;
+        <button onclick="const d=document.getElementById('ocd-drop');d.style.display=d.style.display==='none'?'block':'none';"
+          style="padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px;">
+          +${otherCities.length} more &#9660;
         </button>
-        <div id="ocd-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--md);z-index:400;min-width:220px;max-height:260px;overflow-y:auto;padding:8px 0;">
-          ${otherCities.map(c=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 14px;font-size:12px;font-weight:600;color:var(--t1);border-bottom:1px solid var(--border);">${c.city}<span style="font-size:11px;font-weight:700;color:var(--purple);background:var(--purplel);padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span></div>`).join('')}
+        <div id="ocd-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--md);z-index:400;min-width:200px;max-height:240px;overflow-y:auto;padding:4px 0;">
+          ${otherCities.map(c=>`
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 14px;font-size:12px;font-weight:600;color:var(--t1);border-bottom:1px solid var(--border);">
+              <span>${c.city}</span>
+              <span style="font-size:11px;font-weight:700;color:var(--purple);background:var(--purplel);padding:2px 8px;border-radius:20px;white-space:nowrap;">${c.srnPending} SRN</span>
+            </div>`).join('')}
         </div>
       </div>`;
     }
     html+=`</div>`;
+    // Red city cards — ONLY city name + SRN count, nothing else
     if(redCities.length){
       html+=`<div style="display:flex;flex-wrap:wrap;gap:8px;">
-        ${redCities.map(c=>`<div style="background:var(--redl);border:1px solid #FECACA;border-radius:8px;padding:6px 12px;display:flex;align-items:center;gap:8px;">
-          <span style="font-size:12px;font-weight:700;color:var(--t1);">${c.city}</span>
-          <span style="font-size:11px;font-weight:700;color:var(--red);background:rgba(220,38,38,.1);padding:2px 7px;border-radius:20px;">${c.srnPending} SRN</span>
-        </div>`).join('')}
+        ${redCities.map(c=>`
+          <div style="background:var(--redl);border:1.5px solid #FECACA;border-radius:8px;padding:10px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:90px;text-align:center;">
+            <div style="font-size:12px;font-weight:800;color:var(--t1);">${c.city}</div>
+            <div style="font-size:16px;font-weight:900;color:var(--red);line-height:1;">${c.srnPending}</div>
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--red);opacity:.7;">SRN Pending</div>
+          </div>`).join('')}
       </div>`;
-    }else{
-      html+=`<div style="font-size:12px;color:var(--t3);padding:8px 0;">No other cities with high SRN pending (&gt;10).</div>`;
+    }else if(!otherCities.length){
+      html+=`<div style="font-size:12px;color:var(--t3);padding:6px 0;">No other cities with active SRN pending.</div>`;
     }
     strip.innerHTML=html;
     grid.parentNode.appendChild(strip);
     // Close dropdown on outside click
     setTimeout(()=>{
       document.addEventListener('click',function _ocd(e){
-        const wrap=document.getElementById('ocd-wrap');
-        if(wrap&&!wrap.contains(e.target)){
-          const drop=document.getElementById('ocd-drop');
-          if(drop)drop.style.display='none';
+        const w=document.getElementById('ocd-wrap');
+        if(w&&!w.contains(e.target)){
+          const d=document.getElementById('ocd-drop');if(d)d.style.display='none';
           document.removeEventListener('click',_ocd);
         }
       });
@@ -1179,7 +1247,7 @@ function closeHist(){document.getElementById('hist-modal').classList.add('hide')
 
 // ── AP DOWNLOAD ────────────────────────────────────────────────────────────────
 function downloadAP(){
-  showOv('Preparing AP queue download…');
+  showOv('Preparing download…','Action Pending queue');
   let ep=API+'?action=downloadAP&email='+encodeURIComponent(USER.email||'');
   if(SCITY&&USER.isAdmin) ep+='&fCity='+encodeURIComponent(SCITY);
   fetch(ep).then(r=>r.json()).then(p=>{
@@ -1207,14 +1275,16 @@ function rdChartsKPI(k){
 function rdChartsOrders(){
   if(!ORDERS.length) return;
   const byBU={'E-Pharma':0,PSP:0},byAct={};
-  const qcW=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE'&&o.serviceFlag==='QC').length;
-  const nqcW=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE'&&o.serviceFlag!=='QC').length;
-  const qcR=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL'&&o.serviceFlag==='QC').length;
-  const nqcR=ORDERS.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL'&&o.serviceFlag!=='QC').length;
+  // Service Type Split: QC vs Non-QC, stacked by INHOUSE vs 3PL
+  const qcIn  =ORDERS.filter(o=>o.serviceFlag==='QC'   &&o.partner==='INHOUSE').length;
+  const qcTpl =ORDERS.filter(o=>o.serviceFlag==='QC'   &&o.partner==='3PL').length;
+  const nqcIn =ORDERS.filter(o=>o.serviceFlag!=='QC'   &&o.partner==='INHOUSE').length;
+  const nqcTpl=ORDERS.filter(o=>o.serviceFlag!=='QC'   &&o.partner==='3PL').length;
   ORDERS.forEach(o=>{const bu=o.businessUnit||'E-Pharma';if(byBU[bu]!==undefined)byBU[bu]++;const a=o.currentAction||'No action';byAct[a]=(byAct[a]||0)+1;});
   drawDn('ch-bu',['E-Pharma','PSP'],[byBU['E-Pharma'],byBU['PSP']],['#2563EB','#7C3AED']);
   const top=Object.entries(byAct).sort((x,y)=>y[1]-x[1]).slice(0,8);drawHB('ch-ac',top.map(c=>c[0].substring(0,24)),top.map(c=>c[1]));
-  drawSB('ch-qc',['Warehouse','Retail'],[qcW,qcR],[nqcW,nqcR],'QC','Non-QC','#2563EB','#7C3AED');
+  // x-axis: QC | Non-QC; stacked: Inhouse (blue) + 3PL (amber)
+  drawSB('ch-qc',['QC','Non-QC'],[qcIn,nqcIn],[qcTpl,nqcTpl],'Inhouse','3PL','#2563EB','#D97706');
 }
 
 // ── TABLE ──────────────────────────────────────────────────────────────────────
@@ -1351,7 +1421,7 @@ async function saveAll(){
     if(REF_UPDS.has(ch.update)&&!ch.refNumber){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
     if(REF_UPDS.has(ch.update)&&!(ch.codAmount>0)){toast('Amount required for "'+ch.update+'" — order '+sid,'red');return;}
   }
-  btn.disabled=true;btn.textContent='Saving...';showOv('Saving changes…');
+  btn.disabled=true;btn.textContent='Saving...';showOv('Saving changes…','Writing to sheet');
   const updates=sids.map(sid=>({orderId:sid,action:CHANGES[sid].action||'',update:CHANGES[sid].update||'',cnNumber:CHANGES[sid].cnNumber||'',refNumber:CHANGES[sid].refNumber||'',codAmount:CHANGES[sid].codAmount||0}));
   try{
     const res=await fetch(API+'?action=batchSave&updates='+encodeURIComponent(JSON.stringify(updates))+'&email='+encodeURIComponent(USER?.email||'')).then(r=>r.json());
@@ -1386,7 +1456,7 @@ async function saveAll(){
     },1500);
   }catch(e){hideOv();btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
 }
-function chPg(d){PG+=d;showFSpin();showOv('Loading page…');loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
+function chPg(d){PG+=d;showFSpin();showOv('Loading page…','Fetching next batch');loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
 // ── MODALS ─────────────────────────────────────────────────────────────────────
 function openHA(){
@@ -1430,7 +1500,7 @@ function triggerCityDl(city){
 function dlGo(mode){closeDlConf();if(!DL_PENDING)return;_execDl(DL_PENDING.type,DL_PENDING.city,mode);DL_PENDING=null;}
 function closeDlConf(){document.getElementById('dl-modal').classList.add('hide');}
 function _execDl(type,city,mode){
-  showOv('Preparing download…');
+  showOv('Preparing download…','Building Excel file');
   let ep=API+'?email='+encodeURIComponent(USER.email||'')+'&mode='+mode;
   const fstr=mode==='filtered'?('&'+_fp()):'';
   if(type==='loss')       ep+='&action=downloadLoss';
@@ -1455,56 +1525,85 @@ function _fuzzy(input,candidates){if(!input||!candidates.length)return null;cons
 
 function handleUpload(input){
   const file=input.files[0];if(!file)return;
-  showOv('Reading file…');
+  showOv('Reading file…','Parsing Excel');
   const reader=new FileReader();
   reader.onload=function(e){
-    hideOv();
     try{
       const wb=XLSX.read(e.target.result,{type:'array'});
       const ws=wb.Sheets[wb.SheetNames.find(n=>n==='Order Data')||wb.SheetNames[0]];
       const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
-      if(!rows.length){toast('Empty file or wrong tab','red');return;}
-      const results=[];UPLOAD_CHANGES={};
-      rows.forEach(row=>{
-        const orderId=String(row['shipment_order_id']||row['Order ID']||'').trim();if(!orderId)return;
-        const order=ORDERS.find(o=>o.orderId===orderId);
-        if(!order){results.push({orderId,status:'fail',reason:'Order not found in current view'});return;}
-        if(!canEdit(order.city)){results.push({orderId,status:'fail',reason:'No edit permission for '+order.city});return;}
-        if(order.isGreen){results.push({orderId,status:'fail',reason:'Order already closed'});return;}
-        if(order.actionLocked){results.push({orderId,status:'fail',reason:'Action edit limit reached'});return;}
-        const rawAction=String(row['Action']||'').trim(),rawUpdate=String(row['Update']||'').trim();
-        const rawCN=String(row['CN_Number']||row['CN Number']||'').trim();
-        const rawRef=String(row['Reference_Number']||row['Reference Number']||'').trim();
-        const rawCOD=parseFloat(row['COD Amount'])||0;
-        if(!rawAction){results.push({orderId,status:'fail',reason:'Action column empty'});return;}
-        const oa=AM[order.caseId]||{actions:[],updates:{}};
-        const ar=_fuzzy(rawAction,oa.actions);
-        if(!ar){results.push({orderId,status:'fail',reason:'"'+rawAction+'" not valid for case '+order.caseId});return;}
-        let mu='',uc=false;
-        const vUpds=oa.updates[ar.match]||[];
-        if(rawUpdate&&vUpds.length){const ur=_fuzzy(rawUpdate,vUpds);if(ur){mu=ur.match;uc=ur.corrected&&_nm(ur.match)!==_nm(rawUpdate);}else{results.push({orderId,status:'fail',reason:'"'+rawUpdate+'" not valid for action "'+ar.match+'"'});return;}}
-        if(CN_UPDS.has(mu)&&!rawCN){results.push({orderId,status:'fail',reason:'CN Number required for "'+mu+'"'});return;}
-        if(REF_UPDS.has(mu)&&!rawRef){results.push({orderId,status:'fail',reason:'Reference Number required for "'+mu+'"'});return;}
-        if(REF_UPDS.has(mu)&&!(rawCOD>0)){results.push({orderId,status:'fail',reason:'COD Amount required for "'+mu+'"'});return;}
-        UPLOAD_CHANGES[orderId]={action:ar.match,update:mu,cnNumber:rawCN,refNumber:rawRef,codAmount:rawCOD};
-        CHANGES[orderId]={action:ar.match,update:mu,cnNumber:rawCN,refNumber:rawRef,codAmount:rawCOD};
-        results.push({orderId,status:'ok',action:ar.match,update:mu,actionCorrected:ar.corrected,updateCorrected:uc});
-      });
-      _showUploadResults(results);rdTbl();updSbar();
-    }catch(err){toast('File read failed: '+err.message,'red');}
+      if(!rows.length){hideOv();toast('Empty file or wrong tab','red');return;}
+      // Map to a minimal payload with known column names
+      const payload=rows.map(row=>({
+        orderId  : String(row['shipment_order_id']||row['Order ID']||'').trim(),
+        action   : String(row['Action']||'').trim(),
+        update   : String(row['Update']||'').trim(),
+        cnNumber : String(row['CN_Number']||row['CN Number']||'').trim(),
+        refNumber: String(row['Reference_Number']||row['Reference Number']||'').trim(),
+        codAmount: parseFloat(row['COD Amount'])||0,
+      })).filter(r=>r.orderId);
+      if(!payload.length){hideOv();toast('No order IDs found in file','red');return;}
+      showOv('Validating '+payload.length+' orders…','Checking against full dataset on server');
+      // Send to backend for validation against the FULL dataset (not just current page)
+      const ep=API+'?action=validateUpload&email='+encodeURIComponent(USER.email||'')
+        +'&rows='+encodeURIComponent(JSON.stringify(payload));
+      fetch(ep).then(r=>r.json()).then(res=>{
+        hideOv();
+        if(!res.success){toast(res.error||'Validation failed','red');return;}
+        // Apply validated changes to CHANGES map so Save All can commit them
+        UPLOAD_CHANGES={};
+        res.results.forEach(r=>{
+          if(r.status==='ok'){
+            UPLOAD_CHANGES[r.orderId]={action:r.action,update:r.update,cnNumber:r.cnNumber,refNumber:r.refNumber,codAmount:r.codAmount};
+            CHANGES[r.orderId]={action:r.action,update:r.update,cnNumber:r.cnNumber,refNumber:r.refNumber,codAmount:r.codAmount};
+          }
+        });
+        _showUploadResults(res.results);
+        updSbar();
+        // Re-render table to show pending changes for orders on current page
+        rdTbl();
+      }).catch(err=>{hideOv();toast('Upload validation failed: '+err.message,'red');});
+    }catch(err){hideOv();toast('File read failed: '+err.message,'red');}
   };
   reader.readAsArrayBuffer(file);
 }
 
 function _showUploadResults(results){
-  const ok=results.filter(r=>r.status==='ok'),fail=results.filter(r=>r.status==='fail');
-  document.getElementById('usum').innerHTML=`<div class="ustat ok"><span>&#9989;</span>${ok.length} valid</div>${fail.length?`<div class="ustat fail"><span>&#10060;</span>${fail.length} failed</div>`:''}<div class="ustat tot">${results.length} rows processed</div>`;
-  // Diff preview
-  const diffHtml=ok.length?`<div class="diff-preview"><div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;">📋 Changes Preview — ${ok.length} order${ok.length>1?'s':''} will be updated</div>${ok.map(r=>`<div class="diff-row"><span class="diff-id">${r.orderId}</span><span class="diff-badge" style="background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;">${r.action}</span>${r.update?`<span class="diff-badge" style="background:var(--amberl);color:var(--amber);border:1px solid #FDE68A;">→ ${r.update}</span>`:''}</div>`).join('')}</div>`:'';
-  document.getElementById('ubody').innerHTML=diffHtml+results.filter(r=>r.status==='fail').map(r=>`<div class="ures fail"><span class="ui-icon">&#10060;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">${r.reason}</span></div>`).join('');
+  const ok=results.filter(r=>r.status==='ok');
+  const fail=results.filter(r=>r.status==='fail');
+  const offPage=ok.filter(r=>!ORDERS.find(o=>o.orderId===r.orderId)); // valid but not on current page
+
+  document.getElementById('usum').innerHTML=
+    `<div class="ustat ok"><span>&#9989;</span>${ok.length} valid</div>`+
+    (fail.length?`<div class="ustat fail"><span>&#10060;</span>${fail.length} failed</div>`:'')+
+    `<div class="ustat tot">${results.length} rows processed</div>`;
+
+  // Info note when some orders are on other pages — they will still be saved correctly
+  const offPageNote=offPage.length
+    ?`<div style="background:var(--bluel);border:1px solid var(--bluem);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#1E3A5F;">
+        <b>&#128221; ${offPage.length} order${offPage.length>1?'s are':' is'} on other pages</b> — validated against the full dataset. 
+        They will be saved correctly when you click Save. The table will update for orders visible on the current page only.
+      </div>`
+    :'';
+
+  const diffHtml=ok.length?`<div class="diff-preview">
+    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;">&#128203; Changes Preview — ${ok.length} order${ok.length>1?'s':''} will be updated</div>
+    ${ok.map(r=>`<div class="diff-row">
+      <span class="diff-id">${r.orderId}</span>
+      ${r.city?`<span style="font-size:10px;color:var(--t3);margin-right:2px;">${r.city}</span>`:''}
+      <span class="diff-badge" style="background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;">${r.action}${r.actionCorrected?' ✏':''}</span>
+      ${r.update?`<span class="diff-badge" style="background:var(--amberl);color:var(--amber);border:1px solid #FDE68A;">→ ${r.update}${r.updateCorrected?' ✏':''}</span>`:''}
+    </div>`).join('')}
+  </div>`:'';
+
+  document.getElementById('ubody').innerHTML=
+    offPageNote+
+    diffHtml+
+    fail.map(r=>`<div class="ures fail"><span class="ui-icon">&#10060;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">${r.reason}</span></div>`).join('');
+
   const sb=document.getElementById('usave-btn');
   sb.style.display=ok.length?'block':'none';
-  if(ok.length)sb.textContent='✓ Save '+ok.length+' Update'+(ok.length>1?'s':'');
+  if(ok.length) sb.textContent='✓ Save '+ok.length+' Update'+(ok.length>1?'s':'');
   document.getElementById('upload-modal').classList.remove('hide');
 }
 function saveUploadChanges(){closeUpload();saveAll();}
