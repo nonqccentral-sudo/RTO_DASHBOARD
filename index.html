@@ -145,7 +145,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--blue));border-radius:var(--r) var(--r) 0 0;}
-.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber);background:#FFFBEB;}.kpi.ap{--acc:var(--purple)}
+.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber);background:#FFFBEB;}.kpi.ap{--acc:var(--purple);background:var(--purplel);}
 .ki{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
 .ab .ki{background:var(--bluel)}.ar .ki{background:var(--redl)}.ag .ki{background:var(--greenl)}.aa .ki{background:var(--amberl)}.ap .ki{background:var(--purplel)}
 .kl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
@@ -543,7 +543,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">&mdash;</div><div class="ks" id="k-grs">Visible 24h then removed</div></div>
         <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
-        <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">In-house: &mdash;</div><div class="kh">Click for Loss Report</div></div>
+        <div class="kpi ap click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">In-house: &mdash;</div><div class="kh">Click for Loss Report</div></div>
       </div>
     </div>
     <div class="sec">
@@ -574,8 +574,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <span class="ap-cnt" id="ap-cnt">0 pending</span>
       </div>
       <div class="kgrid" id="cd-kpis" style="margin-bottom:16px;"></div>
+      <div class="age-strip" id="cd-age-strip" style="display:none;margin-bottom:16px;"></div>
       <div id="pivot-wrap" style="display:none;margin-bottom:16px;"></div>
-      <div class="chgrid" id="cd-charts" style="margin-bottom:16px;"></div>
       <div id="rec-sec" style="display:none;"></div>
     </div>
     <div class="sec">
@@ -585,7 +585,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="chcard"><div class="chhd"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Service Type Split</h3></div><canvas id="ch-qc"></canvas></div>
-        <div class="chcard sp3" id="trend-sec"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">&mdash;</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
       </div>
     </div>
     <div class="sec">
@@ -656,6 +655,7 @@ let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF=
 /* ── helpers ─────────────────────────────────────────────────── */
 
 function $(id,v){if(v!=null){const el=document.getElementById(id);if(el)el.textContent=v;}else return document.getElementById(id);}
+function setHTML(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}  // always use innerHTML
 function fmtN(n){if(!n&&n!==0)return '—';if(n>=1e7)return '₹'+(n/1e7).toFixed(2)+'Cr';if(n>=1e5)return '₹'+(n/1e5).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'K';return '₹'+n.toFixed(0);}
 function fmtPct(p){return p%1===0?p+'%':p.toFixed(1)+'%';}
 function pct(n,d){return d?Math.round(n/d*100):0;}
@@ -727,7 +727,6 @@ function initDash(){
   $('fgact').style.display=ia?'none':'flex';
   $('qc-tabs').style.display=ia?'':'none';
   $('city-perf-sec').style.display=ia?'':'none';
-  $('trend-sec').style.display=ia?'':'none';
   if(!ia&&USER?.city){
     SCITY=USER.city.toUpperCase();
     $('f-city').value=SCITY;
@@ -826,9 +825,11 @@ function _renderSummary(sd){
   rdAgeing(sd.kpi||{});
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
   if(sd.allCities&&sd.allCities.length){popFilters();}
-  rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
+  // Only render city cards for admins
+  if(USER?.isAdmin) rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
+  // Ensure city-perf-sec stays hidden for city users
+  if(!USER?.isAdmin){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
   rdChartsKPI(sd.kpi||{});
-  drawTrend();
   _updFltDlBtn();
 }
 
@@ -878,8 +879,10 @@ function rdAgeing(k){
 /* ── CITY CARDS ──────────────────────────────────────────────── */
 function rdCityCards(cards,fullMap){
   const grid=$('cgrid');if(!grid)return;
+  // City users: hide city performance section entirely (other cities not relevant)
+  if(!USER?.isAdmin){grid.innerHTML='';return;}
   if(!cards||!cards.length){grid.innerHTML='<div class="emp"><div class="emp-i">🏙</div>No city data.</div>';return;}
-  const isOwn=c=>!USER?.isAdmin&&(USER?.city||'').toUpperCase()===c.toUpperCase();
+  const isOwn=c=>false; // admin view - no "YOUR CITY" badge
   grid.innerHTML=cards.map(c=>{
     const isRed=c.isRed;
     const tot=c.total||c.active||0;
@@ -1015,7 +1018,7 @@ function apF(){
     if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
     rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
     rdCityCards(p.homepageCards||[],null);
-    rdChartsKPI(p.kpi||{});drawTrend();
+    rdChartsKPI(p.kpi||{});
     showOv('Loading orders…','Please wait');loadOrders();
   }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
@@ -1078,34 +1081,105 @@ function chPg(d){
 /* ── AFTER CITY ORDERS LOAD ──────────────────────────────────────
    FIX8: use server-side KPI for AP/total counts (page-safe)       */
 function afterOrdersCity(){
-  // FIX8 v2: admin SUM.kpi is PAN India; use cityCard for city-scoped counts
-  const _cityCard=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);
+  // City-scoped KPIs: prefer server cityCard > SUM.kpi (city user) > page ORDERS
+  const _cc=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);
   const _sk=USER&&!USER.isAdmin?(SUM&&SUM.kpi):null;
-  const _src=_cityCard||_sk;
-  const ap=_src?(_src.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
-  const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen).length;
-  const rv=ORDERS.filter(o=>o.isRecoverable&&!o.isGreen&&!o.isHighAgeing).length;
-  const _rawTot=ORDERS.filter(o=>!o.isGreen).length;
-  const tot=_src?(_src.active||_src.totalRTO||_rawTot):(_rawTot>0?_rawTot:(ap||(ORDERS.length||0)));
-  const sp=ORDERS.filter(o=>o.srnPending).length;
-  const cs=ORDERS.filter(o=>o.hasCODShortfall).length;
-  $('ap-cnt',ap+' action pending');
-  const snr=(_sk&&_sk.srnCompleted)||0;
-  const cr=(_sk&&_sk.closureRemarks)||0;
+  const _src=_cc||_sk;
+  const ap  =_src?(_src.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
   const lossT=(_sk&&_sk.lossTotal)||0;
   const lossS=(_sk&&_sk.inhouseLoss)||0;
-  $('cd-kpis',`
-    <div class="kpi aa"><div class="ki">⚠</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="ks">Needs immediate update</div></div>
-    <div class="kpi ab"><div class="ki">📦</div><div class="kl">Total Active RTO</div><div class="kv">${tot}</div><div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} total</div></div>
-    <div class="kpi ab"><div class="ki">⏳</div><div class="kl">Pending (0–2D)</div><div class="kv">${(_sk&&_sk.pending)||ORDERS.filter(o=>o.isPending&&!o.isGreen).length}</div><div class="ks">₹${fmtN((_sk&&_sk.pendingAmt)||0)} at risk</div></div>
-    <div class="kpi aa"><div class="ki">📈</div><div class="kl">Recoverable (>2D)</div><div class="kv">${rv}</div><div class="ks">₹${fmtN(0)}</div></div>
-    <div class="kpi ar"><div class="ki">🔴</div><div class="kl">High Ageing (>5D)</div><div class="kv">${ha}</div><div class="ks" onclick="openHA()" style="cursor:pointer;color:var(--red);">₹${fmtN((_sk&&_sk.highAgeingAmt)||0)} exposure · Click to view</div></div>
-    <div class="kpi ag"><div class="ki">✅</div><div class="kl">SRN Completed</div><div class="kv">${snr}</div><div class="ks">Visible 24h then removed</div></div>
-    <div class="kpi ar click" onclick="triggerCityDl('${SCITY}','loss')"><div class="ki">💰</div><div class="kl">Total Loss Amount</div><div class="kv">${lossT?fmtN(lossT):'₹0'}</div><div class="ks">In-house: ${lossS?fmtN(lossS):'0'} · Click for Loss Report</div></div>
-  `);
-  if(sp){const srn=$('cd-kpis');if(srn)srn.innerHTML+='<div class="kpi ap"><div class="ki">📄</div><div class="kl">SRN Pending</div><div class="kv">'+sp+'</div><div class="ks">Action+update done · SRN not yet closed</div></div>';}
-  if(cs){const srn=$('cd-kpis');if(srn)srn.innerHTML+='<div class="kpi ar"><div class="ki">💸</div><div class="kl">COD Shortfall</div><div class="kv">'+cs+'</div><div class="ks">COD amount not collected in full</div></div>';}
-  rdChartsKPI(_sk||{ap,tot,pending:0,moreThan2:0,highAgeing:ha});
+  const pend02  =(_src&&(_src.pending02||_src.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
+  const pendMore2=((_src&&((_src.midAgeing35||0)+(_src.highAgeing6||0)))||
+                   (_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||
+                   ORDERS.filter(o=>!o.isPending&&o.actionPending).length);
+  const ha  =(_src&&(_src.highAgeing6||_src.highAgeing))||(_sk&&_sk.highAgeing)||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
+  const totAct=(_src&&(_src.active||_src.totalRTO))||ap;
+
+  $('ap-cnt',ap+' action pending');
+
+  // ── TOP: 5 KPI cards — same as admin, but city-scoped ──
+  const totAct2=(_src&&(_src.active||_src.totalRTO))||0;
+  const snr=(_sk&&_sk.srnCompleted)||0;
+  const cr=(_sk&&_sk.closureRemarks)||0;
+  const _kTot2=totAct2>0?totAct2:((ap||0)+(cr||0)+(snr||0))||0;
+  const _b2=_kTot2||1;
+  const _apP=Math.round(ap/_b2*100);
+  const _crP=Math.round(cr/_b2*100);
+  const _snP=Math.round(snr/_b2*100);
+  setHTML('cd-kpis',
+    '<div class="kpi ab"><div class="ki">📦</div>'
+      +'<div class="kl">Total Active RTO</div>'
+      +'<div class="kv">'+_kTot2+'</div>'
+      +'<div class="ks">'+fmtN((_sk&&_sk.totalAmount)||0)+' total</div></div>'
+    +'<div class="kpi ag"><div class="ki">✅</div>'
+      +'<div class="kl">SRN Completed</div>'
+      +'<div class="kv">'+_snP+'%</div>'
+      +'<div class="ks">('+snr+') · Visible 24h</div></div>'
+    +'<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>'
+      +'<div class="kl">Closure Remarks</div>'
+      +'<div class="kv">'+_crP+'%</div>'
+      +'<div class="ks">('+cr+') · Click to view</div></div>'
+    +'<div class="kpi aa"><div class="ki">⚠</div>'
+      +'<div class="kl">Action Pending</div>'
+      +'<div class="kv">'+_apP+'%</div>'
+      +'<div class="ks">('+ap+') · Needs update</div></div>'
+    +'<div class="kpi ap click" onclick="triggerCityDl(''+SCITY+'','loss')">'
+      +'<div class="ki">💰</div><div class="kl">Total Loss Amount</div>'
+      +'<div class="kv">'+(lossT?fmtN(lossT):'₹0')+'</div>'
+      +'<div class="ks">In-house: '+(lossS?fmtN(lossS):'0')+'</div></div>'
+  );
+
+  // ── AGEING BREAKDOWN STRIP ────────────────────────────
+  const t=totAct||1;
+  const pp=Math.min(100,Math.round(pend02/t*100));
+  const rp=Math.min(100,Math.round(pendMore2/t*100));
+  const hp=Math.min(100,Math.round(ha/t*100));
+  const ageEl=$('cd-age-strip');
+  if(ageEl){
+    ageEl.style.display='grid';
+    ageEl.innerHTML=
+      '<div class="age-card p">'
+        +'<div class="age-ring" style="background:var(--bluel);color:var(--blue)">'+pp+'%</div>'
+        +'<div class="age-info"><div class="age-lbl">0\u20132 Days</div>'
+        +'<div class="age-cnt" style="color:var(--blue)">'+pend02+'</div>'
+        +'<div class="age-bar"><div class="age-fill" style="width:'+pp+'%;background:var(--blue)"></div></div></div></div>'
+      +'<div class="age-card rv">'
+        +'<div class="age-ring" style="background:var(--amberl);color:var(--amber)">'+rp+'%</div>'
+        +'<div class="age-info"><div class="age-lbl">&gt;2 Days</div>'
+        +'<div class="age-cnt" style="color:var(--amber)">'+pendMore2+'</div>'
+        +'<div class="age-bar"><div class="age-fill" style="width:'+rp+'%;background:var(--amber)"></div></div></div></div>'
+      +'<div class="age-card ha" style="background:#FFF1F1">'
+        +'<div class="age-ring" style="background:var(--redl);color:var(--red)">'+hp+'%</div>'
+        +'<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>'
+        +'<div class="age-cnt" style="color:var(--red)">'+ha+'</div>'
+        +'<div class="age-bar"><div class="age-fill" style="width:'+hp+'%;background:var(--red)"></div></div></div></div>';
+  }
+
+  // ── PIVOT: AP orders breakdown ────────────────────────
+  _renderCityPivot();
+}
+
+function _renderCityPivot(){
+  const pvt=$('pivot-wrap'); if(!pvt)return;
+  const ap=ORDERS.filter(o=>o.actionPending);
+  if(!ap.length){pvt.style.display='none';return;}
+  const total=ap.length;
+  const retail=ap.filter(o=>o.storeType==='RETAIL').length;
+  const wh=ap.filter(o=>o.storeType==='WAREHOUSE').length;
+  const tpl=ap.filter(o=>o.partner==='3PL').length;
+  const pre=ap.filter(o=>(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
+  const pct=n=>total?Math.round(n/total*100)+'%':'0%';
+  pvt.style.display='block';
+  pvt.innerHTML=
+    '<div class="pivot-section">'
+    +'<div class="pivot-hdr"><h3>Action Pending \u2014 Breakdown</h3><span>'+total+' AP orders on this page</span></div>'
+    +'<table class="pivot-table"><thead><tr><th>Category</th><th>Count</th><th>%</th></tr></thead><tbody>'
+    +'<tr><td>Retail</td><td class="pv-rt">'+retail+'</td><td>'+pct(retail)+'</td></tr>'
+    +'<tr><td>Warehouse</td><td class="pv-fc">'+wh+'</td><td>'+pct(wh)+'</td></tr>'
+    +'<tr><td>3PL</td><td class="pv-3pl">'+tpl+'</td><td>'+pct(tpl)+'</td></tr>'
+    +'<tr><td>Pre\u2011MDQ</td><td class="pv-oth">'+pre+'</td><td>'+pct(pre)+'</td></tr>'
+    +'<tr style="font-weight:700;border-top:2px solid var(--border2)"><td>Total AP</td><td class="pv-tot">'+total+'</td><td>100%</td></tr>'
+    +'</tbody></table></div>';
 }
 
 /* ── ROW RENDERING ───────────────────────────────────────────── */
@@ -1311,21 +1385,21 @@ async function openAPModal(){
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
 async function openCRModal(){
-  // Live fetch from backend — not from page-local ORDERS (page-limited)
-  $('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
-  $('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  // Use setHTML (innerHTML) not $() which sets textContent
+  setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('cr-modal').classList.remove('hide');
   const eml=encodeURIComponent(USER?.email||'');
   const cq=SCITY?'&fCity='+encodeURIComponent(SCITY):'';
   const render=(rows,emptyMsg)=>{
     if(!rows||!rows.length) return '<div class="emp"><div class="emp-i">✅</div>'+emptyMsg+'</div>';
     const total=rows.length;
-    const totalGmv=rows.reduce((s,o)=>s+(o.gmv||0),0);
+    const totalGmv=rows.reduce((acc,o)=>acc+(o.gmv||0),0);
     return '<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--t2);">'
       +'<span>'+total+' orders</span>'
-      +'<span style="color:var(--red);">Total GMV: '+fmtN(totalGmv)+'</span></div>'
+      +'<span style="color:var(--red);">GMV: '+fmtN(totalGmv)+'</span></div>'
       +rows.map(o=>'<div class="mor"><div class="mor-id">'+o.orderId+'</div>'
-        +'<div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+' / '+(o.currentUpdate||'—')+' · SRN:'+(o.srnStatus||'—')+'</div>'
+        +'<div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+(o.currentUpdate?' / '+o.currentUpdate:'')+' · SRN:'+(o.srnStatus||'—')+'</div>'
         +'<div class="mor-age">'+(o.ageingDays||0)+'d</div></div>').join('');
   };
   try{
@@ -1333,11 +1407,11 @@ async function openCRModal(){
       fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=500&page=1'+cq).then(r=>r.json()),
       fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=500&page=1'+cq).then(r=>r.json()),
     ]);
-    $('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
-    $('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
+    setHTML('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
+    setHTML('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
   } catch(e){
-    $('cr-pane-1','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
-    $('cr-pane-2','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
+    setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
+    setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
   }
 }
 function closeCR(){$('cr-modal').classList.add('hide');}
@@ -1394,10 +1468,12 @@ async function downloadAP(){
 /* ── CHARTS ──────────────────────────────────────────────────── */
 const CC={pending:'#2563EB',moreThan2:'#D97706',highAgeing:'#DC2626',inhouse:'#7C3AED',tpl:'#0891B2',retail:'#059669',warehouse:'#D97706'};
 function rdChartsKPI(k){
+  // Ageing chart (distinct buckets: 0-2 | 2-5 | >5)
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
   _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown)_mkChart('ch-ac','bar',Object.keys(k.actionBreakdown),Object.values(k.actionBreakdown),['#2563EB']);
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
+  // BU chart removed; backlog trend removed
 }
 function _mkChart(id,type,labels,data,colors){
   try{
