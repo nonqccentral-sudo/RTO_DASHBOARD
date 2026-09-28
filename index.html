@@ -640,14 +640,14 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v234';
-const LC_TTL=4*60*1000; // 4 min — matches backend 4.5 min TTL
+const LC_KEY='rto_sum_v2341';  // bumped: clears stale city data from localStorage
+const LC_TTL=8*60*1000;
 const EDIT_LIMIT=2;
 const CN_UPDS=new Set(['CN Received']);
 const REF_UPDS=new Set(['COD Collected']);
 const LOSS_UPDS=new Set(['Loss','Order Lost(rider absconded)']);
 
-let SUM=null,ORDERS=[],TOTAL=0,PAGES=1,PG=1,PSZ=50;
+let SUM=null,ORDERS=[],TOTAL=0,PAGES=1,PG=1,PSZ=100;
 let TRD=[],AM={},ACTIVE_CITIES=[],ALL_ACTIONS=[];
 let QF='Overall',SCITY=null,APF=false,GAP=false;
 let USER=null,CHANGES={},UPLOAD_CHANGES={},CHS={};
@@ -719,7 +719,7 @@ function logout(){
   document.title='RTO Operations Dashboard';
 }
 
-// ── AUTO-REFRESH (silent, every 10 min, skips if tab hidden) ─────────────────
+// ── AUTO-REFRESH (silent, every 8 min, skips if tab hidden) ──────────────────
 function _startAutoRefresh(){
   clearInterval(_arTimer);
   _arTimer=setInterval(()=>{
@@ -731,9 +731,10 @@ function _startAutoRefresh(){
         rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
         rdCityCards(p.homepageCards||[],p.otherCityCards||null);
         rdChartsKPI(p.kpi||{});
+        // Update localStorage so next load is instant even after tab close/reopen
         try{localStorage.setItem(LC_KEY,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
       }).catch(()=>{});
-  },10*60*1000);
+  }, 8*60*1000); // every 8 min — aligns with backend keepCacheWarm cycle
 }
 
 // ── WARM CACHE: pre-fetch QC/Non-QC tabs after homepage loads ─────────────────
@@ -1327,13 +1328,17 @@ function rdTbl(){
       if(o.actionLocked&&!pc.action){
         actCell=`<div><span class="ro">${o.currentAction||'—'}</span><span class="lkchip" style="margin-left:6px;">Max edits (${EDIT_LIMIT})</span></div>`;
       }else{
-        const aOpts=oa.actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
+        // Use o.availableActions (includes sheet-filled value if not in AM) not just AM actions
+        const actions=o.availableActions&&o.availableActions.length?o.availableActions:(oa.actions||[]);
+        const aOpts=actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
         const delBtn=hasChg?`<button class="del-btn" onclick="clearRow('${o.orderId}')" title="Clear">&#10005;</button>`:'';
-        actCell=`<div class="ec"><select class="isel${hasChg?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
+        actCell=`<div class="ec"><select class="isel${selAct?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
         if(o.actionEditCount===EDIT_LIMIT-1) actCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
       }
 
-      const curU=(selAct&&oa.updates[selAct])||[];
+      // Use o.availableUpdates (includes sheet-filled update if not in AM)
+      const updates=o.availableUpdates&&o.availableUpdates.length?o.availableUpdates:(oa.updates[selAct]||[]);
+      const curU=selAct?(selAct===o.currentAction?updates:(oa.updates[selAct]||[])):[];
       const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
       const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Order Lost/Rider Absconded';
       const lossHtml=isLoss?`<div class="loss-disp">&#128176; Loss: ${gmvFmt}</div>`:'';
