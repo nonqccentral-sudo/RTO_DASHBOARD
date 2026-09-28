@@ -731,6 +731,10 @@ function initDash(){
     SCITY=USER.city.toUpperCase();
     $('f-city').value=SCITY;
     $('kpi-ttl',(SCITY||'City')+' Overview');
+    // Auto-show #cdet so pivot is visible (no openDet call = no extra loadOrders)
+    const _cd=$('cdet');
+    if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
+    $('cd-ttl',USER.city+' Orders');
     popFilters();
   }
   loadSummary();
@@ -1097,6 +1101,9 @@ function afterOrdersCity(){
 
   $('ap-cnt',ap+' action pending');
 
+  // ── FOR ADMIN ONLY: city detail KPI cards + ageing strip ──
+  // City users already see these in the main section (getSummary city-scoped)
+  if(USER?.isAdmin){
   // ── TOP: 5 KPI cards — same as admin, but city-scoped ──
   const totAct2=(_src&&(_src.active||_src.totalRTO))||0;
   const snr=(_sk&&_sk.srnCompleted)||0;
@@ -1155,6 +1162,7 @@ function afterOrdersCity(){
         +`<div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
   }
 
+  }
   // ── PIVOT: AP orders breakdown ────────────────────────
   _renderCityPivot();
 }
@@ -1164,20 +1172,21 @@ function _renderCityPivot(){
   const ap=ORDERS.filter(o=>o.actionPending);
   if(!ap.length){pvt.style.display='none';return;}
   const total=ap.length;
-  const retail=ap.filter(o=>o.storeType==='RETAIL').length;
-  const wh=ap.filter(o=>o.storeType==='WAREHOUSE').length;
-  const tpl=ap.filter(o=>o.partner==='3PL').length;
-  const pre=ap.filter(o=>(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
+  // Mutually exclusive split: every order is FC OR Retail OR 3PL
+  const fc   = ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
+  const retail = ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
+  const tpl  = ap.filter(o=>o.partner!=='INHOUSE').length;  // all non-INHOUSE = 3PL
+  const pre  = ap.filter(o=>(o.cancellationStage||'').toUpperCase().includes('PRE')).length; // cross-cutting
   const pct=n=>total?Math.round(n/total*100)+'%':'0%';
   pvt.style.display='block';
   pvt.innerHTML=`
     <div class="pivot-section">
-      <div class="pivot-hdr"><h3>Action Pending — Breakdown</h3><span>${total} AP orders on this page</span></div>
-      <table class="pivot-table"><thead><tr><th>Category</th><th>Count</th><th>%</th></tr></thead><tbody>
+      <div class="pivot-hdr"><h3>Action Pending — Breakdown</h3><span>${total} AP orders</span></div>
+      <table class="pivot-table"><thead><tr><th>Category</th><th>Orders</th><th>%</th></tr></thead><tbody>
+        <tr><td>FC / Warehouse</td><td class="pv-fc">${fc}</td><td>${pct(fc)}</td></tr>
         <tr><td>Retail</td><td class="pv-rt">${retail}</td><td>${pct(retail)}</td></tr>
-        <tr><td>Warehouse</td><td class="pv-fc">${wh}</td><td>${pct(wh)}</td></tr>
         <tr><td>3PL</td><td class="pv-3pl">${tpl}</td><td>${pct(tpl)}</td></tr>
-        <tr><td>Pre-MDQ</td><td class="pv-oth">${pre}</td><td>${pct(pre)}</td></tr>
+        <tr><td style="color:var(--t3);font-style:italic">Pre-MDQ (cross-cut)</td><td class="pv-oth">${pre}</td><td>${pct(pre)}</td></tr>
         <tr style="font-weight:700;border-top:2px solid var(--border2)"><td>Total AP</td><td class="pv-tot">${total}</td><td>100%</td></tr>
       </tbody></table>
     </div>`;
