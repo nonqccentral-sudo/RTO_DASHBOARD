@@ -67,26 +67,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .l-cities{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:18px;padding-top:16px;border-top:1px solid #F1F5F9;}
 .l-city-pill{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:#64748B;background:#F1F5F9;border:1px solid #E2E8F0;cursor:pointer;transition:all .12s;}
 .l-city-pill:hover{background:#2563EB;color:#fff;border-color:#2563EB;}
-/* ── FULL-SCREEN LOADING OVERLAY ── */
-#ov{
-  position:fixed;inset:0;z-index:9000;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;
-  background:rgba(15,23,42,.45);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  transition:opacity .25s;
-}
+#ov{position:fixed;inset:0;z-index:9000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:rgba(15,23,42,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:opacity .25s;}
 #ov.hide{display:none;}
-.ov-card{
-  background:rgba(255,255,255,.97);border-radius:18px;
-  padding:36px 48px;display:flex;flex-direction:column;align-items:center;gap:18px;
-  box-shadow:0 24px 80px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.15);
-  min-width:240px;
-}
-.ov-ring{
-  width:52px;height:52px;
-  border:4px solid #E2E8F0;border-top-color:var(--blue);
-  border-radius:50%;animation:spin .75s linear infinite;
-}
+.ov-card{background:rgba(255,255,255,.97);border-radius:18px;padding:36px 48px;display:flex;flex-direction:column;align-items:center;gap:18px;box-shadow:0 24px 80px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.15);min-width:240px;}
+.ov-ring{width:52px;height:52px;border:4px solid #E2E8F0;border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite;}
 .ov-dots{display:flex;gap:7px;margin-top:-4px;}
 .ov-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);opacity:.25;animation:dot-pulse 1.2s ease-in-out infinite;}
 .ov-dot:nth-child(2){animation-delay:.2s;}
@@ -157,11 +141,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .sec-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--t2);white-space:nowrap;}
 .sec-ln{flex:1;height:1px;background:var(--border);}
 .sec-nt{font-size:11px;color:var(--t3);}
-.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;}
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--blue));border-radius:var(--r) var(--r) 0 0;}
-.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber)}.kpi.ap{--acc:var(--purple)}
+.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber);background:#FFFBEB;}.kpi.ap{--acc:var(--purple)}
 .ki{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
 .ab .ki{background:var(--bluel)}.ar .ki{background:var(--redl)}.ag .ki{background:var(--greenl)}.aa .ki{background:var(--amberl)}.ap .ki{background:var(--purplel)}
 .kl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
@@ -184,7 +168,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .age-amt{font-size:11px;color:var(--t3);margin-top:2px;}
 .age-bar{height:4px;background:var(--surf3);border-radius:2px;margin-top:8px;overflow:hidden;}
 .age-fill{height:100%;border-radius:2px;transition:width .5s ease;}
-.age-card.p .age-fill{background:var(--blue)}.age-card.rv .age-fill{background:var(--amber)}.age-card.ha .age-fill{background:var(--red)}
+.age-card.p .age-fill{background:var(--blue)}.age-card.rv .age-fill{background:var(--amber)}.age-card.ha .age-fill{background:var(--red)}.age-card.ha{background:#FFF1F1;}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
 .ccard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:all .15s;box-shadow:var(--xs);}
 .ccard:hover{border-color:var(--blue);box-shadow:var(--md);transform:translateY(-2px);}
@@ -367,28 +351,46 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:var(--md);transition:opacity .35s;color:#fff;}
 #home-btn{position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;}
 #home-btn.vis{display:flex;}
-/* History modal */
 .hmod{background:var(--surface);border-radius:var(--rl);box-shadow:var(--lg);width:100%;max-width:680px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;}
 .htx{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);margin-bottom:6px;font-size:12px;background:var(--surf2);}
 .htx-ts{font-size:10px;color:var(--t3);min-width:110px;}
 .htx-user{font-size:11px;font-weight:700;color:var(--blue);min-width:80px;}
 .htx-body{flex:1;line-height:1.6;}
-/* Responsive */
-@media(max-width:1100px){.kgrid{grid-template-columns:repeat(4,1fr);}.chgrid{grid-template-columns:repeat(2,1fr);}.chgrid .sp3{grid-column:1/-1;}}
-@media(max-width:768px){
-  .main{padding:12px;}.hdr{padding:0 12px;height:auto;min-height:56px;flex-wrap:wrap;gap:6px;padding:8px 12px;}
-  .fbar{padding:8px 12px;gap:6px;}
-  .kgrid{grid-template-columns:repeat(2,1fr);gap:8px;}.kv{font-size:24px;}
-  .age-strip{grid-template-columns:1fr;}.cgrid{grid-template-columns:repeat(2,1fr);}
+/* ── RESPONSIVE (fixed) ── */
+@media(max-width:1100px){.kgrid{grid-template-columns:repeat(3,1fr);}.chgrid{grid-template-columns:repeat(2,1fr);}.chgrid .sp3{grid-column:1/-1;}}
+@media(max-width:900px){
+  .kgrid{grid-template-columns:repeat(2,1fr);}.age-strip{grid-template-columns:1fr 1fr;}.cgrid{grid-template-columns:repeat(2,1fr);}
   .chgrid{grid-template-columns:1fr;}.chgrid .sp3{grid-column:1;}
-  table{font-size:12px;}th,td{padding:8px 10px;}
-  .thdr{flex-wrap:wrap;gap:6px;}.thdr-r{flex-wrap:wrap;gap:4px;}
-  .tsch-w input{width:160px;}.hdr-r{gap:5px;}.qc-tabs button{padding:4px 10px;font-size:11px;}
+  .hdr{height:auto;min-height:56px;flex-wrap:wrap;padding:8px 16px;gap:6px;}
+  .hdr-r{width:100%;justify-content:flex-end;flex-wrap:wrap;}
+  .fbar{gap:6px;padding:8px 12px;}
+  .fg select,.fg input[type=date]{min-width:90px;font-size:11px;}.fg label{font-size:10px;}
+  .qc-tabs button{padding:4px 8px;font-size:11px;}.hbtn{font-size:11px;padding:4px 10px;}
+  .main{padding:12px 14px;}
 }
-@media(max-width:480px){.kgrid{grid-template-columns:1fr 1fr;}.cgrid{grid-template-columns:1fr;}}
+@media(max-width:680px){
+  .kgrid{grid-template-columns:1fr 1fr;gap:8px;}.kv{font-size:22px;}
+  .age-strip{grid-template-columns:1fr;}.cgrid{grid-template-columns:1fr;}
+  .fbar{flex-direction:column;align-items:flex-start;gap:6px;}
+  .fdiv{display:none;}
+  .fg{width:100%;}
+  .fg select,.fg input[type=date],.ms-trig{width:100%;min-width:unset;max-width:100%;}
+  .dl-bar{flex-wrap:wrap;gap:6px;padding:8px 12px;}.dlb{font-size:11px;padding:4px 10px;}
+  .thdr{flex-direction:column;align-items:flex-start;gap:6px;padding:10px 14px;}
+  .thdr-r{flex-wrap:wrap;gap:4px;width:100%;}
+  .tsch-w,.tsch-w input{width:100%;}
+  table{font-size:12px;}th,td{padding:8px 10px;}
+  .chgrid{gap:8px;}.sbar{flex-wrap:wrap;gap:8px;}.sbtn,.clrall{flex:1;}
+  .cd-hdr{flex-direction:column;align-items:flex-start;gap:8px;}.cd-r{flex-wrap:wrap;gap:6px;}
+  .pag{padding:8px 12px;}
+  #home-btn{bottom:16px;left:16px;font-size:12px;padding:7px 14px;}
+}
+@media(max-width:420px){
+  .kgrid{grid-template-columns:1fr;}.upill{display:none;}.hdr-title{font-size:13px;}
+  .cgrid{grid-template-columns:1fr;}.age-strip{grid-template-columns:1fr;}
+}
 </style>
-</head>
-<body>
+</head><body>
 <div id="login-screen">
   <div class="l-chip lc1"><div class="l-chip-dot red"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div><div class="l-chip-lbl">High Ageing</div></div>
   <div class="l-chip lc2"><div class="l-chip-dot green"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div><div class="l-chip-lbl">COD Collected</div></div>
@@ -430,9 +432,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-
 <div class="edit-warn-popup hide" id="edit-warn"><span>&#9888;</span><span id="edit-warn-msg"></span></div>
-
 <!-- UPLOAD MODAL -->
 <div class="mbg hide" id="upload-modal" onclick="if(event.target===this)closeUpload()">
   <div class="umodal">
@@ -445,7 +445,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-
 <!-- HISTORY MODAL -->
 <div class="mbg hide" id="hist-modal" onclick="if(event.target===this)closeHist()">
   <div class="hmod">
@@ -453,32 +452,27 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="mbody" id="hist-body"></div>
   </div>
 </div>
-
 <div id="ov" class="hide">
   <div class="ov-card">
     <div class="ov-ring"></div>
-    <div class="ov-msg" id="ov-msg">Loading…</div>
+    <div class="ov-msg" id="ov-msg">Loading&hellip;</div>
     <div class="ov-dots"><div class="ov-dot"></div><div class="ov-dot"></div><div class="ov-dot"></div></div>
     <div class="ov-sub" id="ov-sub"></div>
   </div>
 </div>
-
 <!-- HA MODAL -->
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
-  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(≥6 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
+  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&ge;6 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
 </div>
-
 <!-- AP MODAL -->
 <div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
   <div class="modal" style="max-width:960px"><div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div><div class="mbody" id="ap-body"></div></div>
 </div>
-
 <!-- CLOSURE REMARKS MODAL -->
 <div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
   <div class="modal" style="max-width:860px">
     <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
     <div class="mbody" id="cr-body">
-      <!-- Two tabs: Closure Remarks + Loss/Lost | COD Collected + CN Received -->
       <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
         <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">Closure Remarks &amp; Loss/Lost</button>
         <button id="cr-tab-2" onclick="setCRTab(2)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);">COD Collected &amp; CN Received</button>
@@ -488,7 +482,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-
 <!-- DL CONFIRM -->
 <div class="mbg hide" id="dl-modal" onclick="if(event.target===this)closeDlConf()">
   <div class="dlconf">
@@ -502,9 +495,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-
 <button id="home-btn" onclick="goHome()">&#8593; Home</button>
-
 <!-- DASHBOARD -->
 <div id="dash" style="display:none">
   <div class="hdr">
@@ -520,59 +511,53 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <button class="hbtn danger" onclick="logout()">Sign Out</button>
     </div>
   </div>
-
   <div class="dl-bar hide" id="adl-bar">
     <span class="dl-lbl">&#11015; Downloads</span>
     <button class="dlb dlb-pi" onclick="triggerDl('panIndia')">&#11015; PAN India</button>
     <button class="dlb dlb-flt" id="dlbflt" onclick="triggerDl('filtered')" disabled>&#9660; Filtered</button>
     <button class="dlb dlb-loss" onclick="triggerDl('loss')">&#11015; Loss Report</button>
   </div>
-
   <div class="fbar">
     <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
     <div class="fg"><label>Partner</label><select id="f-partner" onchange="apF()"><option value="">All</option><option>INHOUSE</option><option>3PL</option></select></div>
     <div class="fg"><label>BU</label><select id="f-bu" onchange="apF()"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
     <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage" onchange="apF()"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
-    <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">0–2 Days</option><option value="Recoverable">3–5 Days</option><option value="High Ageing">High Ageing ≥6d</option></select></div>
+    <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">0&ndash;2 Days</option><option value="Recoverable">3&ndash;5 Days</option><option value="High Ageing">High Ageing &ge;6d</option></select></div>
     <div class="fg" id="fgact"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
     <div class="fdiv"></div>
     <div class="fg"><label>From</label><input type="date" id="f-from" onchange="apF()"/></div>
     <div class="fg"><label>To</label><input type="date" id="f-to" onchange="apF()"/></div>
     <div class="fdiv"></div>
-    <div id="filter-spinner"><div class="fspin"></div>Loading…</div>
+    <div id="filter-spinner"><div class="fspin"></div>Loading&hellip;</div>
     <button class="fbtn btn-rst" onclick="rstF()">&#10005; Reset</button>
     <button class="fbtn btn-ref" id="btn-ref" onclick="fref()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>Refresh
     </button>
   </div>
-
   <div class="main" id="main-top">
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl" id="kpi-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
       <div class="kgrid">
-        <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">—</div><div class="ks" id="k-tots">—</div></div>
-        <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
-        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">—</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
-        <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">—</div><div class="ks" id="k-aps">Needs immediate update</div></div>
-        <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">—</div><div class="ks" id="k-lss">In-house: —</div><div class="kh">Click for Loss Report</div></div>
+        <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">&mdash;</div><div class="ks" id="k-tots">&mdash;</div></div>
+        <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">&mdash;</div><div class="ks" id="k-grs">Visible 24h then removed</div></div>
+        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
+        <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
+        <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">In-house: &mdash;</div><div class="kh">Click for Loss Report</div></div>
       </div>
     </div>
-
     <div class="sec">
-      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Total RTO · From cancellation date</span></div>
+      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Total RTO &middot; From cancellation date</span></div>
       <div class="age-strip">
-        <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0–2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">₹0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
-        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">3–5 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">₹0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
-        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">High Ageing ≥6 Days</div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">₹0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
+        <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0&ndash;2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
+        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">3&ndash;5 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
+        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">High Ageing &ge;6 Days</div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
       </div>
     </div>
-
     <div class="sec" id="city-perf-sec">
-      <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;threshold active · Click to drill down</span></div>
+      <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;threshold active &middot; Click to drill down</span></div>
       <div class="cgrid" id="cgrid"></div>
     </div>
-
     <div id="cdet">
       <div class="cd-hdr">
         <div class="cd-ttl" id="cd-ttl"></div>
@@ -593,30 +578,27 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="chgrid" id="cd-charts" style="margin-bottom:16px;"></div>
       <div id="rec-sec" style="display:none;"></div>
     </div>
-
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Analytics</span><div class="sec-ln"></div></div>
       <div class="chgrid">
         <div class="chcard"><div class="chhd"><h3>Ageing Brackets</h3></div><canvas id="ch-ag"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Status</h3></div><canvas id="ch-st"></canvas></div>
-        <div class="chcard"><div class="chhd"><h3>Business Unit</h3></div><canvas id="ch-bu"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Service Type Split</h3></div><canvas id="ch-qc"></canvas></div>
-        <div class="chcard sp3" id="trend-sec"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">—</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
+        <div class="chcard sp3" id="trend-sec"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">&mdash;</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
       </div>
     </div>
-
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Order Details</span><div class="sec-ln"></div></div>
       <div class="twrap">
         <div class="thdr">
           <h3>Active Orders</h3>
-          <div class="tsch-w"><span class="tsch-icon">&#128269;</span><input id="tsch" placeholder="Search Order ID / City…" oninput="onSearch()"/></div>
+          <div class="tsch-w"><span class="tsch-icon">&#128269;</span><input id="tsch" placeholder="Search Order ID / City&hellip;" oninput="onSearch()"/></div>
           <div class="thdr-r">
             <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; AP <span class="apn" id="gapc">0</span></button>
             <button class="qbtn" onclick="openAPModal()">Queue</button>
             <button class="qbtn" onclick="downloadAP()" title="Download AP queue">&#11015;</button>
-            <span class="tmeta" id="tcnt">— orders</span>
+            <span class="tmeta" id="tcnt">&mdash; orders</span>
           </div>
         </div>
         <div class="tscroll">
@@ -631,7 +613,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
             <tbody id="tbody"></tbody>
           </table>
           <div id="temp" class="emp" style="display:none"><div class="emp-i">&#128269;</div>No orders match.</div>
-          <div id="tload" class="emp" style="display:none"><div class="emp-i">&#8987;</div>Loading orders…</div>
+          <div id="tload" class="emp" style="display:none"><div class="emp-i">&#8987;</div>Loading orders&hellip;</div>
         </div>
         <div class="sbar hide" id="sbar">
           <span class="scnt" id="scnt">0 changes</span>
@@ -640,1089 +622,773 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
           <span style="font-size:12px;color:rgba(255,255,255,.8);" id="sst"></span>
         </div>
         <div class="pag">
-          <button id="btn-pv" onclick="chPg(-1)">&#8592; Prev</button>
+          <button id="btn-pv" onclick="chPg(-1)">&larr; Prev</button>
           <span class="pagi" id="pgi">Page 1 of 1</span>
-          <button id="btn-nx" onclick="chPg(1)">Next &#8594;</button>
+          <button id="btn-nx" onclick="chPg(1)">Next &rarr;</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <script>
+/* ═══════════════════════════════════════════════════════════════
+   RTO OPERATIONS DASHBOARD – COMPLETE FIXED JS  (index_fixed_v1)
+   Fixes applied:
+     FIX1 – loadOrders always sends fCity when SCITY is set
+     FIX2 – apF() includes city in summary+orders requests
+     FIX3 – rdAgeing denominator guarded (no ∞%)
+     FIX4 – _hasFilters() counts SCITY as a filter
+     FIX5 – openCityAP race condition (GAP set before loadOrders)
+     FIX6 – doLogin clears stale localStorage on every sign-in
+     FIX7 – rdKPI sanity guard (totalRTO=0 reconstructed from parts)
+     FIX8 – afterOrdersCity uses server-side KPI counts (page-safe)
+     FIX9 – responsive CSS (breakpoints at 1100/900/680/420)
+═══════════════════════════════════════════════════════════════ */
+
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v2341';  // bumped: clears stale city data from localStorage
+const LC_KEY='rto_sum_v2341';
 const LC_TTL=8*60*1000;
-const EDIT_LIMIT=2;
-const CN_UPDS=new Set(['CN Received']);
-const REF_UPDS=new Set(['COD Collected']);
-const LOSS_UPDS=new Set(['Loss','Order Lost(rider absconded)']);
+const PAGE_SZ=100;
+const AUTO_REF=8*60*1000;
 
-let SUM=null,ORDERS=[],TOTAL=0,PAGES=1,PG=1,PSZ=100;
-let TRD=[],AM={},ACTIVE_CITIES=[],ALL_ACTIONS=[];
-let QF='Overall',SCITY=null,APF=false,GAP=false;
-let USER=null,CHANGES={},UPLOAD_CHANGES={},CHS={};
-let STIMER=null,ORDERS_LOADING=false,DL_PENDING=null;
-let MS_SEL=new Set();
-let _chartsReady=false;
-// Warm cache: pre-fetched order sets for QC/Non-QC tabs
-const SC_ORDERS={};
-let WARM_DONE=false;
-// Auto-refresh timer
-let _arTimer=null;
+let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],MS_SEL=new Set(),_charts={},_autoTimer=null,_uplBatch=null;
 
-function _initCharts(){if(_chartsReady)return true;try{if(typeof Chart!=='undefined'&&typeof ChartDataLabels!=='undefined'){Chart.register(ChartDataLabels);_chartsReady=true;}}catch(e){}return _chartsReady;}
-const $=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-const fmtK=n=>{n=Number(n||0);if(n>=10000000)return'₹'+(n/10000000).toFixed(1)+'Cr';if(n>=100000)return'₹'+(n/100000).toFixed(1)+'L';if(n>=1000)return'₹'+(n/1000).toFixed(1)+'K';return'₹'+n;};
-const fmtN=n=>'₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0});
-const pct=(a,b)=>b?Math.round(a/b*100):0;
+/* ── helpers ─────────────────────────────────────────────────── */
 
-function showOv(msg,sub){
-  $('ov-msg',msg||'Loading…');
-  const s=document.getElementById('ov-sub');if(s)s.textContent=sub||'';
-  document.getElementById('ov').classList.remove('hide');
+function $(id,v){if(v!=null){const el=document.getElementById(id);if(el)el.textContent=v;}else return document.getElementById(id);}
+function fmtN(n){if(!n&&n!==0)return '—';if(n>=1e7)return '₹'+(n/1e7).toFixed(2)+'Cr';if(n>=1e5)return '₹'+(n/1e5).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'K';return '₹'+n.toFixed(0);}
+function fmtPct(p){return p%1===0?p+'%':p.toFixed(1)+'%';}
+function pct(n,d){return d?Math.round(n/d*100):0;}
+function fmtD(d){if(!d)return '—';try{const dt=new Date(d);return dt.toLocaleDateString('en-IN',{day:'2-digit',month:'short'})}catch{return d;}}
+function toast(msg,type='green'){const t=document.createElement('div');t.className='toast';t.style.background=type==='red'?'#DC2626':type==='amber'?'#D97706':'#059669';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),350)},2800);}
+function showOv(msg,sub=''){$('ov-msg',msg);$('ov-sub',sub||'');$('ov').classList.remove('hide');}
+function hideOv(){$('ov').classList.add('hide');}
+function showFSpin(){$('filter-spinner').classList.add('vis');}
+function hideFSpin(){$('filter-spinner').classList.remove('vis');}
+function togglePwd(id,btn){const el=$(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
+function prefillCity(c){
+  const m={'DEL':'DELHI/FARIDABAD','MUM':'MUMBAI','BLR':'BANGALORE','HYD':'HYDERABAD','CHD':'CHANDIGARH','JAI':'JAIPUR','PUN':'PUNE','KOL':'KOLKATA'};
+  const email=m[c]?(m[c].toLowerCase().replace(/\//g,'.').replace(/\s/g,'')+'@iwork.vanyakapoor.com'):'';
+  if(email)$('l-email').value=email;$('l-pwd').focus();
 }
-function hideOv(){document.getElementById('ov').classList.add('hide');}
-function showFSpin(){document.getElementById('filter-spinner').classList.add('vis');}
-function hideFSpin(){document.getElementById('filter-spinner').classList.remove('vis');}
+function showReset(){$('login-form').classList.add('hide');$('reset-form').classList.remove('hide');}
+function showLogin(){$('reset-form').classList.add('hide');$('login-form').classList.remove('hide');}
 
-let _warnTimer=null;
-function showEditWarn(msg){const el=document.getElementById('edit-warn'),mel=document.getElementById('edit-warn-msg');if(!el||!mel)return;mel.textContent=msg;el.classList.remove('hide');clearTimeout(_warnTimer);_warnTimer=setTimeout(()=>el.classList.add('hide'),4000);}
-function togglePwd(inputId,btn){const inp=document.getElementById(inputId);if(!inp)return;const show=inp.type==='password';inp.type=show?'text':'password';btn.textContent=show?'🙈':'👁';}
-function prefillCity(code){const em=document.getElementById('l-email');if(!em)return;if(!em.value||em.dataset.pill==='1'){em.value=code.toLowerCase()+'@1mg.com';em.dataset.pill='1';}document.getElementById('l-pwd')?.focus();}
-function showReset(){document.getElementById('login-form').classList.add('hide');document.getElementById('reset-form').classList.remove('hide');$('r-err','');document.getElementById('r-btn').disabled=false;document.getElementById('r-btn').textContent='Send Password →';}
-function showLogin(){document.getElementById('reset-form').classList.add('hide');document.getElementById('login-form').classList.remove('hide');}
-function doReset(){
-  const email=document.getElementById('r-email').value.trim();if(!email){$('r-err','Enter your email');return;}
-  const btn=document.getElementById('r-btn');btn.disabled=true;btn.textContent='Sending...';$('r-err','');
-  fetch(API+'?action=resetPassword&email='+encodeURIComponent(email)).then(r=>r.json()).then(res=>{
-    if(res.success){document.getElementById('r-err').style.color='var(--green)';$('r-err','✓ Password sent.');document.getElementById('l-email').value=email;setTimeout(()=>showLogin(),2500);}
-    else{document.getElementById('r-err').style.color='var(--red)';$('r-err',res.error||'Failed');btn.disabled=false;btn.textContent='Send Password →';}
-  }).catch(()=>{document.getElementById('r-err').style.color='var(--red)';$('r-err','Network error');btn.disabled=false;btn.textContent='Send Password →';});
+/* ── AUTH ─────────────────────────────────────────────────────── */
+async function doLogin(){
+  const email=($('l-email').value||'').trim().toLowerCase();
+  const pwd=($('l-pwd').value||'').trim();
+  $('l-err','');
+  if(!email||!pwd){$('l-err','Both fields are required.');return;}
+  $('l-btn').disabled=true;$('l-btn').textContent='Signing in…';
+  try{
+    const res=await fetch(API+'?action=login&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd)).then(r=>r.json());
+    if(res.success){
+      USER=res;
+      localStorage.removeItem(LC_KEY); // FIX6: always start fresh on login
+      $('login-screen').classList.add('hide');
+      $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
+      initDash();
+    } else {
+      $('l-err',res.error||'Invalid credentials.');
+      $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
+    }
+  } catch(e){
+    $('l-err','Network error. Please retry.');
+    $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
+  }
 }
-function doLogin(){
-  const email=document.getElementById('l-email').value.trim(),pwd=document.getElementById('l-pwd').value.trim();
-  if(!email||!pwd){$('l-err','Enter email and password');return;}
-  const btn=document.getElementById('l-btn');btn.disabled=true;btn.textContent='Signing in...';$('l-err','');
-  fetch(API+'?action=login&email='+encodeURIComponent(email)+'&password='+encodeURIComponent(pwd))
-    .then(r=>r.json()).then(res=>{
-      if(res.success){
-        USER=res;
-        document.getElementById('login-screen').classList.add('hide');
-        $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
-        if(res.isAdmin){document.getElementById('adl-bar').classList.remove('hide');_buildAdminMS();}
-        loadSummary();
-        _startAutoRefresh();
-      }else{$('l-err',res.error||'Invalid credentials');btn.disabled=false;btn.textContent='Sign In →';}
-    }).catch(()=>{$('l-err','Network error');btn.disabled=false;btn.textContent='Sign In →';});
+async function doReset(){
+  const email=($('r-email').value||'').trim().toLowerCase();
+  $('r-err','');
+  if(!email){$('r-err','Enter your email.');return;}
+  $('r-btn').disabled=true;$('r-btn').textContent='Sending…';
+  try{
+    const res=await fetch(API+'?action=resetPassword&email='+encodeURIComponent(email)).then(r=>r.json());
+    if(res.success){toast('Password sent to '+email);showLogin();}
+    else{$('r-err',res.error||'Email not found.');}
+  } catch{$('r-err','Network error.');}
+  $('r-btn').disabled=false;$('r-btn').textContent='Send Password →';
 }
 function logout(){
   if(!confirm('Sign out?'))return;
-  USER=null;CHANGES={};SUM=null;ORDERS=[];WARM_DONE=false;
-  Object.keys(SC_ORDERS).forEach(k=>delete SC_ORDERS[k]);
-  clearInterval(_arTimer);_arTimer=null;
-  localStorage.removeItem(LC_KEY);
-  document.getElementById('dash').style.display='none';
-  document.getElementById('login-screen').classList.remove('hide');
-  document.getElementById('adl-bar').classList.add('hide');
-  document.getElementById('l-email').value='';document.getElementById('l-pwd').value='';
-  $('l-err','');document.getElementById('l-btn').disabled=false;document.getElementById('l-btn').textContent='Sign In →';
-  document.title='RTO Operations Dashboard';
+  USER=null;SUM=null;ORDERS=[];CHANGES={};SCITY='';
+  $('dash').style.display='none';
+  $('login-screen').classList.remove('hide');
+  $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
+  $('l-email').value='';$('l-pwd').value='';$('l-err','');
 }
 
-// ── AUTO-REFRESH (silent, every 8 min, skips if tab hidden) ──────────────────
-function _startAutoRefresh(){
-  clearInterval(_arTimer);
-  _arTimer=setInterval(()=>{
-    if(!USER||document.hidden) return;
-    fetch(API+'?action=getSummary&email='+encodeURIComponent(USER.email||''))
-      .then(r=>r.json()).then(p=>{
-        if(!p||!p.success) return;
-        SUM=p;
-        rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-        rdCityCards(p.homepageCards||[],null);
-        rdChartsKPI(p.kpi||{});
-        // Update localStorage so next load is instant even after tab close/reopen
-        try{localStorage.setItem(LC_KEY,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
-      }).catch(()=>{});
-  }, 8*60*1000); // every 8 min — aligns with backend keepCacheWarm cycle
+/* ── INIT ─────────────────────────────────────────────────────── */
+function initDash(){
+  $('dash').style.display='block';
+  const ia=USER?.isAdmin;
+  $('adl-bar').classList.toggle('hide',!ia);
+  $('fgact').style.display=ia?'none':'flex';
+  $('qc-tabs').style.display=ia?'':'none';
+  $('city-perf-sec').style.display=ia?'':'none';
+  $('trend-sec').style.display=ia?'':'none';
+  if(!ia&&USER?.city){
+    SCITY=USER.city.toUpperCase();
+    $('f-city').value=SCITY;
+    $('kpi-ttl',(SCITY||'City')+' Overview');
+    popFilters();
+  }
+  loadSummary();
+  _autoTimer=setInterval(()=>{if(document.visibilityState!=='hidden')fref();},AUTO_REF);
 }
 
-// ── WARM CACHE: pre-fetch QC/Non-QC tabs after homepage loads ─────────────────
-function warmCache(){
-  if(WARM_DONE||!USER) return;
-  WARM_DONE=true;
-  ['QC','Non-QC'].forEach(tab=>{
-    const ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')
-      +'&page=1&pageSize='+PSZ+'&fQC='+encodeURIComponent(tab);
-    fetch(ep).then(r=>r.json()).then(d=>{
-      if(d.success) SC_ORDERS[tab]={orders:d.orders||[],total:d.total||0,pages:d.pages||1};
-    }).catch(()=>{});
-  });
-}
-
-// ── ADMIN MULTISELECT ──────────────────────────────────────────────────────────
-function _buildAdminMS(){
-  const wrap=document.getElementById('fgact');
-  wrap.innerHTML=`<label>Action</label><div class="ms-wrap" id="mswrap"><div class="ms-trig" id="mstrig" onclick="toggleMS()"><span id="mslbl">All Actions</span><span class="ms-arrow">&#9660;</span></div><div class="ms-drop" id="msdrop"><div class="ms-srch"><input type="text" id="mssi" placeholder="Search actions…" oninput="filterMSOpts()"/></div><div id="mslist"></div><div class="ms-acts"><button class="ms-act" onclick="msSelAll()">Select All</button><button class="ms-act" onclick="msClear()">Clear</button></div></div></div>`;
-  document.addEventListener('click',e=>{const w=document.getElementById('mswrap');if(w&&!w.contains(e.target))closeMSDrop();});
-}
-function _populateMSOpts(actions){const list=document.getElementById('mslist');if(!list)return;list.innerHTML=actions.map(a=>`<div class="ms-opt"><input type="checkbox" data-orig="${a.replace(/"/g,'&quot;')}" id="mso_${_esc(a)}" ${MS_SEL.has(a)?'checked':''} onchange="onMSChange(this)"/><label for="mso_${_esc(a)}">${a}</label></div>`).join('');}
-const _esc=s=>s.replace(/[^a-z0-9]/gi,'_');
-function toggleMS(){const d=document.getElementById('msdrop'),t=document.getElementById('mstrig');d.classList.toggle('open');t.classList.toggle('open');}
-function closeMSDrop(){const d=document.getElementById('msdrop'),t=document.getElementById('mstrig');if(d)d.classList.remove('open');if(t)t.classList.remove('open');}
-function filterMSOpts(){const q=(document.getElementById('mssi')?.value||'').toLowerCase();document.querySelectorAll('#mslist .ms-opt').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(q)?'':'none';});}
-function onMSChange(cb){const orig=cb.dataset.orig;if(cb.checked)MS_SEL.add(orig);else MS_SEL.delete(orig);updateMSLbl();apF();}
-function msSelAll(){document.querySelectorAll('#mslist input[type=checkbox]').forEach(cb=>{cb.checked=true;MS_SEL.add(cb.dataset.orig);});updateMSLbl();apF();}
-function msClear(){document.querySelectorAll('#mslist input[type=checkbox]').forEach(cb=>{cb.checked=false;});MS_SEL.clear();updateMSLbl();apF();}
-function updateMSLbl(){const l=document.getElementById('mslbl'),t=document.getElementById('mstrig');if(!l||!t)return;if(!MS_SEL.size){l.textContent='All Actions';t.classList.remove('act');}else{l.innerHTML=MS_SEL.size+' selected <span class="ms-badge">'+MS_SEL.size+'</span>';t.classList.add('act');}}
-
+/* ── FILTER PARAMS ────────────────────────────────────────────── */
 function _fp(){
-  const p=new URLSearchParams();
-  if(QF!=='Overall') p.set('fQC',QF);
-  const v=id=>(document.getElementById(id)?.value||'');
-  if(v('f-partner'))p.set('fPartner',v('f-partner'));
-  if(v('f-bu'))     p.set('fBU',v('f-bu'));
-  if(v('f-store'))  p.set('fStore',v('f-store'));
-  if(v('f-stage'))  p.set('fStage',v('f-stage'));
-  if(v('f-age'))    p.set('fAge',v('f-age'));
-  if(v('f-from'))   p.set('fFrom',v('f-from'));
-  if(v('f-to'))     p.set('fTo',v('f-to'));
-  if(USER?.isAdmin){if(MS_SEL.size)p.set('fActions',[...MS_SEL].join(','));}
-  else{if(v('f-act'))p.set('fAction',v('f-act'));}
-  return p.toString();
+  const ps=[];
+  const city=$('f-city')?.value;
+  const partner=$('f-partner')?.value;
+  const bu=$('f-bu')?.value;
+  const store=$('f-store')?.value;
+  const stage=$('f-stage')?.value;
+  const age=$('f-age')?.value;
+  const act=$('f-act')?.value;
+  const fr=$('f-from')?.value;
+  const to=$('f-to')?.value;
+  const sch=($('tsch')?.value||'').trim();
+  if(city)ps.push('fCity='+encodeURIComponent(city));
+  if(partner)ps.push('fPartner='+encodeURIComponent(partner));
+  if(bu)ps.push('fBU='+encodeURIComponent(bu));
+  if(store)ps.push('fStore='+encodeURIComponent(store));
+  if(stage)ps.push('fStage='+encodeURIComponent(stage));
+  if(age)ps.push('fAge='+encodeURIComponent(age));
+  if(act)ps.push('fAct='+encodeURIComponent(act));
+  if(fr)ps.push('fFrom='+encodeURIComponent(fr));
+  if(to)ps.push('fTo='+encodeURIComponent(to));
+  if(sch)ps.push('fSearch='+encodeURIComponent(sch));
+  if(QF!=='Overall')ps.push('fQC='+encodeURIComponent(QF));
+  if(GAP)ps.push('fAP=1');
+  return ps.join('&');
 }
 function _hasFilters(){
-  if(QF!=='Overall') return true;
-  if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>document.getElementById(id)?.value))return true;
+  if(QF!=='Overall')return true;
+  if(SCITY)return true; // FIX4: city is a filter
+  if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>$(id)?.value))return true;
   if(USER?.isAdmin&&MS_SEL.size)return true;
-  if(!USER?.isAdmin&&document.getElementById('f-act')?.value)return true;
+  if(!USER?.isAdmin&&$('f-act')?.value)return true;
   return false;
 }
-function _updFltDlBtn(){const btn=document.getElementById('dlbflt');if(!btn)return;const h=_hasFilters();btn.disabled=!h;}
-
-// ── UNIFIED RENDER ─────────────────────────────────────────────────────────────
-function _renderSummary(sumData){
-  SUM=sumData;TRD=sumData.trend||[];AM=sumData.actionMap||{};
-  ACTIVE_CITIES=sumData.activeCities||[];ALL_ACTIONS=sumData.allActions||[];
-  $('asof','As of '+(sumData.asOf||'—'));
-  $('kpi-ttl',sumData.isAdmin?'PAN India Overview':(sumData.userCity||'City')+' Overview');
-  popFilters();
-  rdKPI(sumData.kpi||{});rdAgeing(sumData.kpi||{});
-  // City Performance section and Other Cities strip: admin only
-  const isAdmin=sumData.isAdmin||USER?.isAdmin;
-  const cityPerfSec=document.getElementById('city-perf-sec');
-  if(cityPerfSec) cityPerfSec.style.display=isAdmin?'':'none';
-  if(isAdmin) rdCityCards(sumData.homepageCards||[],null);
-  rdChartsKPI(sumData.kpi||{});
-  if(isAdmin) drawTrend();
-  document.getElementById('dash').style.display='block';
-  _updFltDlBtn();
-  if(!isAdmin&&USER?.city) _openCityPanel(USER.city);
+function _updFltDlBtn(){
+  const dlb=$('dlbflt');
+  if(dlb)dlb.disabled=!_hasFilters();
 }
-function _openCityPanel(city){
-  SCITY=city;
-  document.getElementById('f-city').value=city;
-  document.getElementById('cdet').classList.add('vis');
-  document.getElementById('cdet').style.display='block';
-  $('cd-ttl',city);
-  const dlDiv=document.getElementById('cd-dl-btns');
-  if(dlDiv) dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-  document.getElementById('upload-btn').style.display='';
-  document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-  document.getElementById('pivot-wrap').style.display='none';
-  document.getElementById('rec-sec').style.display='none';
-  $('ap-cnt','— pending');
-}
-
-// ── LOAD SUMMARY ───────────────────────────────────────────────────────────────
-function loadSummary(force=false){
-  showOv('Loading dashboard…','Fetching summary + orders in parallel');
-  WARM_DONE=false;
-  // Cache hit
-  if(!force){
-    try{
-      const c=localStorage.getItem(LC_KEY);
-      if(c){const{data,ts}=JSON.parse(c);if(Date.now()-ts<LC_TTL){_renderSummary(data);showOv('Loading orders…','Please wait');loadOrders();return;}}
-    }catch(e){}
+function popFilters(){
+  if(!USER?.isAdmin&&ALL_ACTIONS.length){
+    const sel=$('f-act');if(!sel)return;
+    sel.innerHTML='<option value="">All</option>';
+    ALL_ACTIONS.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
   }
-  // Parallel fetch: summary + orders together
-  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER.email||'');
-  const ordEp=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page=1&pageSize='+PSZ;
-  Promise.all([fetch(sumEp).then(r=>r.json()),fetch(ordEp).then(r=>r.json())])
-    .then(([sumData,ordData])=>{
-      if(!sumData||!sumData.success){hideOv();toast((sumData&&sumData.error)||'Load failed','red');return;}
-      try{localStorage.setItem(LC_KEY,JSON.stringify({data:sumData,ts:Date.now()}));}catch(e){}
-      _renderSummary(sumData);
-      hideOv();hideFSpin();
-      document.getElementById('tload').style.display='none';
-      if(ordData&&ordData.success){
-        if(ordData.actionMap) AM=ordData.actionMap;
-        ORDERS=ordData.orders||[];TOTAL=ordData.total||0;PAGES=ordData.pages||1;PG=1;
-        _updTitle();
-        rdTbl();rdChartsOrders();
-        if(SCITY) afterOrdersCity();
-      }else{ORDERS=[];rdTbl();}
-      setTimeout(warmCache,1500);
-    }).catch(e=>{
-      try{const c=localStorage.getItem(LC_KEY);if(c){const{data}=JSON.parse(c);_renderSummary(data);showOv('Loading orders…','Please wait');loadOrders();toast('Cached data','amber');return;}}catch(e2){}
-      hideOv();toast('Load failed: '+(e.message||'Network error'),'red');
-    });
+  const citySel=$('f-city');
+  if(citySel&&USER?.isAdmin&&SUM?.allCities){
+    citySel.innerHTML='<option value="">All Cities</option>';
+    (SUM.allCities||[]).sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;citySel.appendChild(o);});
+  }
 }
-function onSummaryLoad(p){
-  if(!p||!p.success){hideOv();toast((p&&p.error)||'Load failed','red');return;}
-  try{_renderSummary(p);showOv('Loading orders…','Please wait');loadOrders();}catch(err){hideOv();toast('Render error: '+err.message,'red');}
-}
-function fref(){localStorage.removeItem(LC_KEY);WARM_DONE=false;Object.keys(SC_ORDERS).forEach(k=>delete SC_ORDERS[k]);loadSummary(true);}
 
+/* ── LOAD SUMMARY ─────────────────────────────────────────────── */
+function loadSummary(){
+  showOv('Loading RTO data…','Warming up cache');
+  // Try localStorage cache
+  try{
+    const raw=localStorage.getItem(LC_KEY);
+    if(raw){
+      const{data,ts}=JSON.parse(raw);
+      if(Date.now()-ts<LC_TTL&&data&&data.success){
+        SUM=data;TRD=data.trend||[];
+        _renderSummary(data);
+        hideOv();
+        loadOrders();
+        return;
+      }
+    }
+  } catch(e){/* cache corrupt, ignore */}
+  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+(SCITY?'&fCity='+encodeURIComponent(SCITY):'');
+  Promise.all([fetch(ep).then(r=>r.json()),fetch(API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page=1&ps='+PAGE_SZ+(SCITY?'&fCity='+encodeURIComponent(SCITY):'')).then(r=>r.json())])
+    .then(([sd,od])=>{
+      hideOv();
+      if(!sd||!sd.success){toast('Failed to load summary. Retrying…','amber');return;}
+      SUM=sd;TRD=sd.trend||[];
+      localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
+      _renderSummary(sd);
+      if(od&&od.success)_renderOrders(od);
+      else loadOrders();
+    }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
+}
+
+function _renderSummary(sd){
+  $('asof','As of '+fmtD(sd.asOf||new Date().toISOString()));
+  rdKPI(sd.kpi||{});
+  rdAgeing(sd.kpi||{});
+  if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
+  if(sd.allCities&&sd.allCities.length){popFilters();}
+  rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
+  rdChartsKPI(sd.kpi||{});
+  drawTrend();
+  _updFltDlBtn();
+}
+
+/* ── RENDER KPI ─────────────────────────────────────────────────
+   FIX7: if totalRTO=0 from server, reconstruct from sum of parts  */
+function rdKPI(k){
+  const _kTotal=k.totalRTO>0?k.totalRTO:((k.actionPending||0)+(k.closureRemarks||0)+(k.srnCompleted||0))||0;
+  const _base=_kTotal||1;
+  const _apN=k.actionPending||0,_crN=k.closureRemarks||0,_srnN=k.srnCompleted||0;
+  const _apPct=Math.round(_apN/_base*100);
+  const _crPct=Math.round(_crN/_base*100);
+  const _srnPct=Math.round(_srnN/_base*100);
+  $('k-tot',_kTotal);
+  $('k-tots',fmtN(k.totalAmount||0)+' total');
+  $('k-gr',_srnPct+'%');
+  const _grs=document.getElementById('k-grs');if(_grs)_grs.textContent='('+_srnN+') · Visible 24h then removed';
+  $('k-cr',_crPct+'%');
+  $('k-crs','('+_crN+') · Awaiting SRN closure');
+  $('k-ap',_apPct+'%');
+  $('k-aps','('+_apN+') · Total − SRN − Closure');
+  const lossStr=k.lossTotal?fmtN(k.lossTotal):'₹0';
+  $('k-ls',lossStr);
+  $('k-lss','In-house: '+(k.inhouseLoss?fmtN(k.inhouseLoss):'0'));
+  $('gapc',_apN);
+}
+
+/* ── RENDER AGEING ──────────────────────────────────────────────
+   FIX3: guard totalRTO=0 denominator; cap % at 100              */
+function rdAgeing(k){
+  const _apSum=(k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0);
+  const t=k.totalRTO>0?k.totalRTO:(_apSum||1);
+  const pp=Math.min(100,pct(k.pending||0,t));
+  const rp=Math.min(100,pct(k.moreThan2||0,t));
+  const hp=Math.min(100,pct(k.highAgeing||0,t));
+  $('ag-pp',fmtPct(pp));$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
+  $('ag-rp',fmtPct(rp));$('ag-rc',k.moreThan2||0);$('ag-ra',fmtN(k.moreThan2Amt||0));
+  $('ag-hp',fmtPct(hp));$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
+  const bar=id=>$(id);
+  if(bar('ag-pb'))bar('ag-pb').style.width=pp+'%';
+  if(bar('ag-rb'))bar('ag-rb').style.width=rp+'%';
+  if(bar('ag-hb'))bar('ag-hb').style.width=hp+'%';
+}
+
+/* ── CITY CARDS ──────────────────────────────────────────────── */
+function rdCityCards(cards,fullMap){
+  const grid=$('cgrid');if(!grid)return;
+  if(!cards||!cards.length){grid.innerHTML='<div class="emp"><div class="emp-i">🏙</div>No city data.</div>';return;}
+  const isOwn=c=>!USER?.isAdmin&&(USER?.city||'').toUpperCase()===c.toUpperCase();
+  grid.innerHTML=cards.map(c=>{
+    const isRed=c.isRed;
+    const tot=c.total||c.active||0;
+    const activePct=tot?Math.round((c.actionPending||0)/tot*100):0;
+    const p02Pct=tot?Math.round((c.pending02||c.pending||0)/tot*100):0;
+    const p35Pct=tot?Math.round((c.midAgeing35||c.moreThan2||0)/tot*100):0;
+    const ha6Pct=tot?Math.round((c.highAgeing6||c.highAgeing||0)/tot*100):0;
+    return `<div class="ccard${isRed?' red':''}" onclick="openDet('${c.city}')">
+      <div class="ctop"><div class="cname">${c.city}${isOwn(c.city)?'<br><small style="font-size:9px;color:var(--blue);font-weight:600;">YOUR CITY</small>':''}</div>
+      <div class="c-red-badge">▲ ${c.active||c.total||0} ACTIVE</div></div>
+      <div class="cstats">
+        <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
+        <div class="cs p02"><div class="csl">0–2 Days</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
+        <div class="cs p35"><div class="csl">3–5 Days</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
+        <div class="cs ha6"><div class="csl">High Age ≥6d</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
+      </div>
+      <div class="cbtns">
+        <button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">↓ DL</button>
+        <button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">⚠ AP</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── CITY DRILL DOWN ─────────────────────────────────────────── */
+function openDet(city){
+  SCITY=city;APF=false;GAP=false;
+  $('f-city').value=city;
+  $('gapbtn').classList.remove('on');
+  $('ap-tog')?.classList.remove('on');
+  $('cdet').classList.add('vis');
+  $('cdet').style.display='block';
+  $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
+  const dlDiv=$('cd-dl-btns');
+  if(USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase()){
+    dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;
+  } else {dlDiv.innerHTML='';}
+  $('upload-btn').style.display=canEdit(city)?'':'none';
+  $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">⏳</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
+  $('pivot-wrap').style.display='none';
+  $('rec-sec').style.display='none';
+  $('ap-cnt','— pending');
+  document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
+  $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
+  $('home-btn').classList.add('vis');
+  PG=1;loadOrders();
+}
+function closeDet(){
+  SCITY='';APF=false;GAP=false;
+  if(USER?.isAdmin)$('f-city').value='';
+  $('gapbtn').classList.remove('on');
+  $('ap-tog')?.classList.remove('on');
+  $('cdet').classList.remove('vis');
+  $('cdet').style.display='none';
+  document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
+  $('home-btn').classList.remove('vis');
+  PG=1;
+  // Reload without city filter
+  SUM=null;
+  const raw=localStorage.getItem(LC_KEY);
+  if(raw){try{const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}catch(e){}}
+  loadSummary();
+}
+function goHome(){window.scrollTo({top:0,behavior:'smooth'});closeDet();}
+
+/* FIX5: openCityAP - race condition fixed: GAP set BEFORE loadOrders fires */
+function openCityAP(city){
+  if(SCITY!==city){
+    SCITY=city;APF=false;
+    $('f-city').value=city;
+    const _isOwn=!USER?.isAdmin&&city===(USER?.city||'');
+    $('cdet').classList.add('vis');
+    $('cdet').style.display='block';
+    $('cd-ttl',city+(canEdit(city)?'':' \u2014 View Only'));
+    const _dlDiv=$('cd-dl-btns');
+    if(USER?.isAdmin||_isOwn){_dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
+    else{_dlDiv.innerHTML='';}
+    $('upload-btn').style.display=canEdit(city)?'':'none';
+    $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading\u2026</div><div class="kv">\u2014</div></div>';
+    $('pivot-wrap').style.display='none';
+    $('rec-sec').style.display='none';
+    $('ap-cnt','\u2014 pending');
+    document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
+    $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  GAP=true;
+  $('gapbtn')?.classList.add('on');
+  $('ap-tog')?.classList.add('on');
+  PG=1;showFSpin();showOv('Filtering AP orders\u2026','Please wait');loadOrders();
+  setTimeout(()=>document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'}),400);
+}
+
+/* ── LOAD ORDERS ─────────────────────────────────────────────────
+   FIX1: always send fCity when SCITY is set (no f-city.value check) */
 function loadOrders(){
-  if(ORDERS_LOADING) return;
+  if(ORDERS_LOADING)return;
   ORDERS_LOADING=true;
-  document.getElementById('temp').style.display='none';
-  document.getElementById('tload').style.display='block';
-  showFSpin();
-  const srch=(document.getElementById('tsch')?.value||'').trim();
-  let ep=API+'?action=getOrders&email='+encodeURIComponent(USER.email||'')+'&page='+PG+'&pageSize='+PSZ+'&'+_fp();
-  // Always include SCITY so admin city-drill orders are correctly filtered
-  if(SCITY&&!document.getElementById('f-city')?.value) ep+='&fCity='+encodeURIComponent(SCITY);
-  if(APF||GAP) ep+='&fAP=1';
-  if(srch) ep+='&fSearch='+encodeURIComponent(srch);
+  $('tload').style.display='flex';
+  $('tbody').innerHTML='';
+  $('temp').style.display='none';
+  let ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page='+PG+'&ps='+PAGE_SZ;
+  if(SCITY) ep+='&fCity='+encodeURIComponent(SCITY); // FIX1
+  ep+='&'+_fp();
   fetch(ep).then(r=>r.json()).then(d=>{
-    ORDERS_LOADING=false;hideFSpin();hideOv();
-    document.getElementById('tload').style.display='none';
-    if(!d.success){toast(d.error||'Order load failed','red');ORDERS=[];rdTbl();return;}
-    if(d.actionMap) AM=d.actionMap;
-    ORDERS=d.orders||[];TOTAL=d.total||0;PAGES=d.pages||1;
-    _updTitle();
-    rdTbl();rdChartsOrders();
-    if(SCITY) afterOrdersCity();
-  }).catch(e=>{
-    ORDERS_LOADING=false;hideFSpin();hideOv();
-    document.getElementById('tload').style.display='none';
-    toast('Order load failed: '+e.message,'red');
-  });
+    ORDERS_LOADING=false;
+    $('tload').style.display='none';
+    if(!d||!d.success){toast(d?.error||'Failed to load orders','red');return;}
+    _renderOrders(d);
+  }).catch(e=>{ORDERS_LOADING=false;$('tload').style.display='none';toast('Network error: '+e.message,'red');});
+}
+function _renderOrders(d){
+  ORDERS=d.orders||[];
+  TOTAL_PGS=d.totalPages||1;
+  $('tcnt',(d.total||ORDERS.length)+' orders');
+  $('pgi','Page '+PG+' of '+TOTAL_PGS);
+  $('btn-pv').disabled=PG<=1;
+  $('btn-nx').disabled=PG>=TOTAL_PGS;
+  rdRows();
+  if(SCITY)afterOrdersCity();
 }
 
-function _updTitle(){
-  // AP count from server-side KPI (covers all orders, not just current page)
-  const ap=(SUM&&SUM.kpi&&SUM.kpi.actionPending)||ORDERS.filter(o=>o.actionPending).length;
-  $('gapc',ap);
-  document.title=ap>0?'('+ap+') RTO Operations':'RTO Operations Dashboard';
-  // Table count: show server total, not just current page length
-  $('tcnt',TOTAL+' orders total');
-}
-
+/* ── APPLY FILTERS (frontend button) ───────────────────────────
+   FIX2: include city in both requests                           */
 function apF(){
   PG=1;_updFltDlBtn();
   showFSpin();showOv('Applying filters…','Recalculating KPIs');
-  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp())
-    .then(r=>r.json()).then(p=>{
-      hideFSpin();
-      if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
-      SUM=p;TRD=p.trend||[];
-      if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
-      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-      rdCityCards(p.homepageCards||[],null);
-      rdChartsKPI(p.kpi||{});drawTrend();
-      showOv('Loading orders…','Please wait');loadOrders();
-    }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
+  const _cityQ=SCITY?'&fCity='+encodeURIComponent(SCITY):''; // FIX2
+  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp()+_cityQ;
+  fetch(sumEp).then(r=>r.json()).then(p=>{
+    hideFSpin();
+    if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
+    SUM=p;TRD=p.trend||[];
+    if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
+    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
+    rdCityCards(p.homepageCards||[],null);
+    rdChartsKPI(p.kpi||{});drawTrend();
+    showOv('Loading orders…','Please wait');loadOrders();
+  }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
 function rstF(){
-  ['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  const tsch=document.getElementById('tsch');if(tsch)tsch.value='';
-  MS_SEL.clear();updateMSLbl();
-  const fs=document.getElementById('f-act');if(fs)fs.value='';
-  const fc=document.getElementById('f-city');if(fc)fc.value='';
-  SCITY=null;APF=false;GAP=false;
-  document.getElementById('gapbtn')?.classList.remove('on');
-  document.getElementById('ap-tog')?.classList.remove('on');
-  QF='Overall';
-  document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
-  _updFltDlBtn();loadSummary(true);
+  ['f-partner','f-bu','f-store','f-stage','f-age','f-act','f-from','f-to'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  if(USER?.isAdmin){$('f-city').value='';SCITY='';}
+  GAP=false;APF=false;QF='Overall';
+  MS_SEL.clear();
+  document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
+  $('gapbtn').classList.remove('on');
+  $('ap-tog')?.classList.remove('on');
+  PG=1;
+  _updFltDlBtn();
+  $('cdet').classList.remove('vis');
+  $('cdet').style.display='none';
+  document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
+  loadSummary();
 }
-function setQC(v){
-  QF=v;
-  document.querySelectorAll('#qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
-  if(!USER) return;
-  const cached=SC_ORDERS[v];
-  if(cached&&!_hasFilters()){
-    ORDERS=cached.orders;TOTAL=cached.total;PAGES=cached.pages;PG=1;
-    _updTitle();rdTbl();rdChartsOrders();
-    if(SCITY) afterOrdersCity();
-    // Refresh summary quietly in background
-    fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&fQC='+encodeURIComponent(v))
-      .then(r=>r.json()).then(p=>{
-        if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],null);rdChartsKPI(p.kpi||{});}
-      }).catch(()=>{});
-    return;
-  }
-  showFSpin();showOv('Switching view…','Loading tab data');setTimeout(()=>apF(),50);
+function fref(){
+  localStorage.removeItem(LC_KEY);
+  PG=1;
+  loadSummary();
 }
+function onSearch(){PG=1;loadOrders();}
+function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));apF();}
 function onCityFilter(){
-  const city=document.getElementById('f-city').value;
-  if(!city){if(SCITY){SCITY=null;closeDet();}else apF();return;}
-  SCITY=city;
-  // Fetch city-specific summary so KPIs update immediately for the chosen city
-  showOv('Loading '+city+'…','Fetching city summary');
-  const fp=_fp();
-  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')
-    +(fp?'&'+fp:'')+'&fCity='+encodeURIComponent(city);
-  fetch(ep).then(r=>r.json()).then(p=>{
-    if(p&&p.success){
-      SUM=p;
-      rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-      rdCityCards(p.homepageCards||[],null);
-      rdChartsKPI(p.kpi||{});drawTrend();
-      $('kpi-ttl',city+' Overview');
-    }
-    openDet(city);
-  }).catch(()=>openDet(city));
-}
-function togAP(){APF=!APF;document.getElementById('ap-tog').classList.toggle('on',APF);showFSpin();showOv('Filtering orders…','Applying AP filter');loadOrders();}
-function togGAP(){GAP=!GAP;document.getElementById('gapbtn').classList.toggle('on',GAP);showFSpin();showOv('Filtering orders…','Applying AP filter');loadOrders();}
-function onSearch(){clearTimeout(STIMER);STIMER=setTimeout(()=>{PG=1;loadOrders();},400);}
-
-function popFilters(){
-  const cs=document.getElementById('f-city');
-  while(cs.options.length>1)cs.remove(1);
-  ACTIVE_CITIES.forEach(c=>{const op=document.createElement('option');op.value=c;op.textContent=c;cs.appendChild(op);});
-  if(USER?.isAdmin){_populateMSOpts(ALL_ACTIONS);}
-  else{const fs=document.getElementById('f-act');if(fs){while(fs.options.length>1)fs.remove(1);ALL_ACTIONS.forEach(a=>{const op=document.createElement('option');op.value=a;op.textContent=a;fs.appendChild(op);});}}
-}
-
-function rdKPI(k){
-  $('k-tot',k.totalRTO||0);
-  $('k-tots',fmtN(k.totalAmount||0)+' total');
-  $('k-gr',k.srnCompleted||0);
-  $('k-cr',k.closureRemarks||0);
-  $('k-ap',k.actionPending||0);
-  $('k-aps','Total − SRN − Closure = AP');
-  $('k-ls',fmtK(k.lossTotal||0));
-  $('k-lss','In-house: '+(k.inhouseLoss||0));
-  $('gapc',k.actionPending||0);
-}
-function rdAgeing(k){
-  const t=k.totalRTO||1;
-  const pp=pct(k.pending||0,t),       // 0–2 days AP orders
-        rp=pct(k.moreThan2||0,t),      // 3–5 days AP orders
-        hp=pct(k.highAgeing||0,t);     // ≥6 days AP orders
-  $('ag-pp',pp+'%');$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
-  $('ag-rp',rp+'%');$('ag-rc',k.moreThan2||0);$('ag-ra',fmtN(k.moreThan2Amt||0));
-  $('ag-hp',hp+'%');$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
-  [['ag-pb',pp],['ag-rb',rp],['ag-hb',hp]].forEach(([id,w])=>{const e=document.getElementById(id);if(e)e.style.width=w+'%';});
-}
-
-function rdCityCards(cards,otherCityCards){
-  const grid=document.getElementById('cgrid');grid.innerHTML='';
-  let displayCards=cards||[];
-  if(!USER?.isAdmin&&USER?.city){
-    const uc=(USER.city||'').toUpperCase();
-    const hasOwn=displayCards.some(c=>c.city.toUpperCase()===uc);
-    if(!hasOwn&&SUM&&SUM.allCityCards){const own=SUM.allCityCards.find(c=>c.city.toUpperCase()===uc);if(own)displayCards=[own,...displayCards];}
+  SCITY=$('f-city').value;
+  CHANGES={};
+  $('sbar').classList.add('hide');
+  if(SCITY){
+    $('cdet').classList.add('vis');$('cdet').style.display='block';
+    $('cd-ttl',SCITY+(canEdit(SCITY)?'':' — View Only'));
+    const dlDiv=$('cd-dl-btns');
+    if(USER?.isAdmin){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;}
+    $('upload-btn').style.display=canEdit(SCITY)?'':'none';
+    $('home-btn').classList.add('vis');
+  } else {
+    SCITY='';
+    $('cdet').classList.remove('vis');$('cdet').style.display='none';
+    $('home-btn').classList.remove('vis');
   }
-  if(!displayCards.length){
-    grid.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>'+(USER?.isAdmin?'No cities in RED. Use City dropdown to view any city.':'No data for your city yet.')+'</div>';
-  }else{
-    displayCards.forEach(c=>{
-      const isOwn=!USER?.isAdmin&&c.city.toUpperCase()===(USER?.city||'').toUpperCase();
-      const canDl=USER?.isAdmin||isOwn;
-      const tot=Math.max(c.total||c.active||1,1);
-      const apPct =pct(c.actionPending||0,tot);
-      const p02Pct=pct(c.pending02||0,tot);
-      const p35Pct=pct(c.midAgeing35||0,tot);
-      const haPct =pct(c.highAgeing6||0,tot);
-      const el=document.createElement('div');
-      el.className='ccard'+(c.isRed?' red':'')+(SCITY===c.city?' sel':'');
-      el.innerHTML=`
-        <div class="ctop">
-          <div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>
-          ${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}
-        </div>
-        <div class="cstats">
-          <div class="cs aa">
-            <div class="csl">Action Pending</div>
-            <div class="csv">${apPct}% <span class="csv-sm">(${c.actionPending||0})</span></div>
-          </div>
-          <div class="cs p02">
-            <div class="csl">0–2 Days</div>
-            <div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||0})</span></div>
-          </div>
-          <div class="cs p35">
-            <div class="csl">3–5 Days</div>
-            <div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||0})</span></div>
-          </div>
-          <div class="cs ha6">
-            <div class="csl">High Ageing ≥6d</div>
-            <div class="csv" style="color:var(--red);">${haPct}% <span class="csv-sm">(${c.highAgeing6||0})</span></div>
-          </div>
-        </div>
-        <div class="cbtns">
-          ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
-          ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
-        </div>`;
-      el.onclick=()=>openDet(c.city);
-      grid.appendChild(el);
-    });
-  }
-  // Other cities strip (city users only): compact red cards with ONLY city name + SRN count
-  const existing=document.getElementById('other-city-strip');if(existing)existing.remove();
-  if(otherCityCards&&otherCityCards.length>0){
-    // Only show cities that have SRN pending (already filtered server-side)
-    // Red = srnPending > 10, others go in dropdown
-    const redCities=otherCityCards.filter(c=>c.srnPending>10);
-    const otherCities=otherCityCards.filter(c=>c.srnPending<=10);
-    const strip=document.createElement('div');
-    strip.id='other-city-strip';
-    strip.style.cssText='margin-top:16px;';
-    let html=`<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:10px;">
-      <span>Other Cities · SRN Pending</span>`;
-    // Dropdown for cities with ≤10 SRN pending
-    if(otherCities.length){
-      html+=`<div style="position:relative;display:inline-block;" id="ocd-wrap">
-        <button onclick="const d=document.getElementById('ocd-drop');d.style.display=d.style.display==='none'?'block':'none';"
-          style="padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:11px;font-weight:700;color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px;">
-          +${otherCities.length} more &#9660;
-        </button>
-        <div id="ocd-drop" style="display:none;position:absolute;top:calc(100% + 4px);left:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--md);z-index:400;min-width:200px;max-height:240px;overflow-y:auto;padding:4px 0;">
-          ${otherCities.map(c=>`
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 14px;font-size:12px;font-weight:600;color:var(--t1);border-bottom:1px solid var(--border);">
-              <span>${c.city}</span>
-              <span style="font-size:11px;font-weight:700;color:var(--purple);background:var(--purplel);padding:2px 8px;border-radius:20px;white-space:nowrap;">${c.srnPending} SRN</span>
-            </div>`).join('')}
-        </div>
-      </div>`;
-    }
-    html+=`</div>`;
-    // Red city cards — ONLY city name + SRN count, nothing else
-    if(redCities.length){
-      html+=`<div style="display:flex;flex-wrap:wrap;gap:8px;">
-        ${redCities.map(c=>`
-          <div style="background:var(--redl);border:1.5px solid #FECACA;border-radius:8px;padding:10px 16px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:90px;text-align:center;">
-            <div style="font-size:12px;font-weight:800;color:var(--t1);">${c.city}</div>
-            <div style="font-size:16px;font-weight:900;color:var(--red);line-height:1;">${c.srnPending}</div>
-            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--red);opacity:.7;">SRN Pending</div>
-          </div>`).join('')}
-      </div>`;
-    }else if(!otherCities.length){
-      html+=`<div style="font-size:12px;color:var(--t3);padding:6px 0;">No other cities with active SRN pending.</div>`;
-    }
-    strip.innerHTML=html;
-    grid.parentNode.appendChild(strip);
-    // Close dropdown on outside click
-    setTimeout(()=>{
-      document.addEventListener('click',function _ocd(e){
-        const w=document.getElementById('ocd-wrap');
-        if(w&&!w.contains(e.target)){
-          const d=document.getElementById('ocd-drop');if(d)d.style.display='none';
-          document.removeEventListener('click',_ocd);
-        }
-      });
-    },0);
-  }
+  PG=1;apF();
 }
-
-function canEdit(city){return USER?.isAdmin||(USER?.city||'').toUpperCase()===(city||'').toUpperCase();}
-
-function openDet(city){
-  SCITY=city;APF=false;
-  document.getElementById('f-city').value=city;
-  document.getElementById('cdet').classList.add('vis');
-  document.getElementById('cdet').style.display='block';
-  const isOwn=!USER?.isAdmin&&city===(USER?.city||'');
-  $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
-  const dlDiv=document.getElementById('cd-dl-btns');
-  if(USER?.isAdmin||isOwn){dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}else{dlDiv.innerHTML='';}
-  document.getElementById('upload-btn').style.display=canEdit(city)?'':'none';
-  document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
-  document.getElementById('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-  document.getElementById('pivot-wrap').style.display='none';
-  document.getElementById('rec-sec').style.display='none';
-  $('ap-cnt','— pending');
+function togAP(){
+  APF=!APF;
+  const t=$('ap-tog');if(t)t.classList.toggle('on',APF);
   PG=1;loadOrders();
-  document.getElementById('cdet').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function togGAP(){
+  GAP=!GAP;
+  $('gapbtn').classList.toggle('on',GAP);
+  $('ap-tog')?.classList.toggle('on',GAP);
+  PG=1;loadOrders();
+}
+function chPg(d){
+  PG=Math.max(1,Math.min(TOTAL_PGS,PG+d));
+  loadOrders();
 }
 
+/* ── AFTER CITY ORDERS LOAD ──────────────────────────────────────
+   FIX8: use server-side KPI for AP/total counts (page-safe)       */
 function afterOrdersCity(){
-  const ap=ORDERS.filter(o=>o.actionPending).length;
+  // FIX8 v2: admin SUM.kpi is PAN India; use cityCard for city-scoped counts
+  const _cityCard=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);
+  const _sk=USER&&!USER.isAdmin?(SUM&&SUM.kpi):null;
+  const _src=_cityCard||_sk;
+  const ap=_src?(_src.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
   const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen).length;
-  const rv=ORDERS.filter(o=>o.isRecoverable&&!o.isGreen).length;
-  const tot=ORDERS.filter(o=>!o.isGreen).length;
+  const rv=ORDERS.filter(o=>o.isRecoverable&&!o.isGreen&&!o.isHighAgeing).length;
+  const _rawTot=ORDERS.filter(o=>!o.isGreen).length;
+  const tot=_src?(_src.active||_src.totalRTO||_rawTot):(_rawTot>0?_rawTot:(ap||(ORDERS.length||0)));
   const sp=ORDERS.filter(o=>o.srnPending).length;
   const cs=ORDERS.filter(o=>o.hasCODShortfall).length;
   $('ap-cnt',ap+' action pending');
-  document.getElementById('cd-kpis').innerHTML=`
-    <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Active</div><div class="kv">${tot}</div></div>
-    <div class="kpi aa click" onclick="togGAP()"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="kh">Click to filter</div></div>
-    <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">3–5 Days</div><div class="kv">${rv}</div></div>
-    <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${ha}</div><div class="kh">Click to view</div></div>
-    <div class="kpi ap"><div class="ki">&#128257;</div><div class="kl">SRN Pending</div><div class="kv">${sp}</div></div>
-    ${cs>0?`<div class="kpi ar"><div class="ki">&#128176;</div><div class="kl">COD Shortfall</div><div class="kv">${cs}</div></div>`:''}`;
-  rdPivot(SCITY);
-  document.getElementById('cd-charts').innerHTML=`<div class="chcard"><div class="chhd"><h3>Partner</h3></div><canvas id="cd-pt"></canvas></div><div class="chcard"><div class="chhd"><h3>BU</h3></div><canvas id="cd-bu"></canvas></div><div class="chcard"><div class="chhd"><h3>Actions</h3></div><canvas id="cd-ac"></canvas></div>`;
-  const byPt={INHOUSE:0,'3PL':0},byBU={'E-Pharma':0,PSP:0},byAct={};
+  const snr=(_sk&&_sk.srnCompleted)||0;
+  const cr=(_sk&&_sk.closureRemarks)||0;
+  const lossT=(_sk&&_sk.lossTotal)||0;
+  const lossS=(_sk&&_sk.inhouseLoss)||0;
+  $('cd-kpis',`
+    <div class="kpi aa"><div class="ki">⚠</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="ks">Needs immediate update</div></div>
+    <div class="kpi ab"><div class="ki">📦</div><div class="kl">Total Active RTO</div><div class="kv">${tot}</div><div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} total</div></div>
+    <div class="kpi ab"><div class="ki">⏳</div><div class="kl">Pending (0–2D)</div><div class="kv">${(_sk&&_sk.pending)||ORDERS.filter(o=>o.isPending&&!o.isGreen).length}</div><div class="ks">₹${fmtN((_sk&&_sk.pendingAmt)||0)} at risk</div></div>
+    <div class="kpi aa"><div class="ki">📈</div><div class="kl">Recoverable (>2D)</div><div class="kv">${rv}</div><div class="ks">₹${fmtN(0)}</div></div>
+    <div class="kpi ar"><div class="ki">🔴</div><div class="kl">High Ageing (>5D)</div><div class="kv">${ha}</div><div class="ks" onclick="openHA()" style="cursor:pointer;color:var(--red);">₹${fmtN((_sk&&_sk.highAgeingAmt)||0)} exposure · Click to view</div></div>
+    <div class="kpi ag"><div class="ki">✅</div><div class="kl">SRN Completed</div><div class="kv">${snr}</div><div class="ks">Visible 24h then removed</div></div>
+    <div class="kpi ar click" onclick="triggerCityDl('${SCITY}','loss')"><div class="ki">💰</div><div class="kl">Total Loss Amount</div><div class="kv">${lossT?fmtN(lossT):'₹0'}</div><div class="ks">In-house: ${lossS?fmtN(lossS):'0'} · Click for Loss Report</div></div>
+  `);
+  if(sp){const srn=$('cd-kpis');if(srn)srn.innerHTML+='<div class="kpi ap"><div class="ki">📄</div><div class="kl">SRN Pending</div><div class="kv">'+sp+'</div><div class="ks">Action+update done · SRN not yet closed</div></div>';}
+  if(cs){const srn=$('cd-kpis');if(srn)srn.innerHTML+='<div class="kpi ar"><div class="ki">💸</div><div class="kl">COD Shortfall</div><div class="kv">'+cs+'</div><div class="ks">COD amount not collected in full</div></div>';}
+  rdChartsKPI(_sk||{ap,tot,pending:0,moreThan2:0,highAgeing:ha});
+}
+
+/* ── ROW RENDERING ───────────────────────────────────────────── */
+function rdRows(){
+  const tb=$('tbody');tb.innerHTML='';
+  const canE=USER?.isAdmin?true:canEdit(SCITY||USER?.city||'');
+  if(!ORDERS.length){$('temp').style.display='block';return;}
+  $('temp').style.display='none';
   ORDERS.forEach(o=>{
-    const pt=o.partner||'INHOUSE';byPt[pt]=(byPt[pt]||0)+1;
-    const bu=o.businessUnit||'E-Pharma';if(byBU[bu]!==undefined)byBU[bu]++;
-    const a=o.currentAction||'No action';byAct[a]=(byAct[a]||0)+1;
+    const ch=CHANGES[o.orderId]||{};
+    const curAct=ch.action!==undefined?ch.action:o.currentAction||'';
+    const curUpd=ch.update!==undefined?ch.update:o.currentUpdate||'';
+    const cnNum=ch.cnNumber!==undefined?ch.cnNumber:(o.cnNumber||'');
+    const refNum=ch.refNumber!==undefined?ch.refNumber:(o.referenceNumber||'');
+    const codAmt=ch.codAmount!==undefined?ch.codAmount:(o.codAmount||'');
+    const isChg=ch.action!==undefined||ch.update!==undefined;
+    const cl=o.isGreen?'tg':o.hasCODShortfall?'tl':o.actionPending&&!isChg?'tr':'';
+    const aeLk=o.actionEditCount>=2;
+    const ueLk=o.updateEditCount>=2;
+    let actHtml='',updHtml='';
+    if(!canE||aeLk){
+      actHtml=`<span class="ro">${curAct||'—'}</span>${aeLk&&canE?'<span class="lkchip ml-1" title="Max 2 edits">✎✎</span>':''}`;
+    } else {
+      const aOpts=(o.availableActions||[]);
+      const aSelHtml=aOpts.length?`<select class="isel${ch.action!==undefined?' ch':''}" onchange="onActChg('${o.orderId}',this.value,this)">${aOpts.map(a=>`<option value="${a}"${a===curAct?' selected':''}>${a}</option>`).join('')}</select>`:`<span class="ro">${curAct||'—'}</span>`;
+      actHtml=`<div class="ec">${aSelHtml}${curAct&&!aeLk?`<button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button>`:''}${curAct?`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button>`:''}${o.orderHistory?`<span class="b bs" style="font-size:9px;">${o.orderHistory}</span>`:''}</div>`;
+    }
+    const needUpd=curAct&&(o.availableUpdates||[]).length>0;
+    if(!canE||ueLk){
+      updHtml=`<span class="ro">${curUpd||'—'}</span>`;
+    } else if(!curAct||!needUpd){
+      updHtml=`<span class="lknote">${!curAct?'Set action first':'No update needed'}</span>`;
+    } else {
+      const uOpts=(o.availableUpdates||[]);
+      const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
+      updHtml=`<div class="ec">${uSelHtml}`;
+      if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
+      if(curUpd==='COD Collected'){updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}`;}
+      if(curUpd==='Loss'){updHtml+=`<span class="loss-disp">GMV: ${fmtN(o.gmv||0)}</span>`;}
+      updHtml+='</div>';
+    }
+    const srnBadge=o.srnStatus?`<span class="b ${o.srnCompleted?'bg':'bs'}">${o.srnStatus}</span>`:'—';
+    const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
+    const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
+    tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
+      <td class="td-id">${o.orderId}${o.actionPending&&!isChg?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓</span>':''}</td>
+      <td>${o.city||'—'}</td>
+      <td>${fmtN(o.gmv||0)}</td>
+      <td><span class="b bs">${o.storeType||'—'}</span></td>
+      <td><span class="b ${o.partner==='INHOUSE'?'bb':'ba'}">${o.partner||'—'}</span></td>
+      <td><span class="b bt">${o.bu||'—'}</span></td>
+      <td>${o.cancellationStage||'—'}</td>
+      <td>${srnBadge}</td>
+      <td>${svcBadge} ${ageBadge}</td>
+      <td>${actHtml}</td>
+      <td>${updHtml}</td>
+    </tr>`);
   });
-  drawDn('cd-pt',Object.keys(byPt),Object.values(byPt),['#059669','#D97706']);
-  drawDn('cd-bu',['E-Pharma','PSP'],[byBU['E-Pharma'],byBU['PSP']],['#2563EB','#7C3AED']);
-  const top=Object.entries(byAct).sort((x,y)=>y[1]-x[1]).slice(0,6);
-  drawHB('cd-ac',top.map(c=>c[0].substring(0,22)),top.map(c=>c[1]));
-  loadRecSec(SCITY);
 }
 
-function rdPivot(city){
-  const pw=document.getElementById('pivot-wrap');if(!pw)return;
-  // Compute from live ORDERS so it works for city users (allCityCards may not have city user's data)
-  const cityOrders=ORDERS.filter(o=>!o.isGreen);
-  const fc=cityOrders.filter(o=>o.pivotCategory==='FC').length;
-  const rt=cityOrders.filter(o=>o.pivotCategory==='Retail').length;
-  const tpl=cityOrders.filter(o=>o.pivotCategory==='Pre MDQ 3PL').length;
-  const tot=cityOrders.length;
-  const other=Math.max(0,tot-fc-rt-tpl);
-  if(!tot){pw.style.display='none';return;}
-  pw.innerHTML=`<div class="pivot-section">
-    <div class="pivot-hdr"><h3>&#128202; Order Split — ${city}</h3><span>${tot} active orders</span></div>
-    <div class="pivot-body"><table class="pivot-table">
-      <thead><tr><th>Warehouse (FC)</th><th>Retail</th><th>3PL Pre-MDQ</th>${other?'<th>Other</th>':''}<th>Total</th></tr></thead>
-      <tbody><tr>
-        <td class="pv-fc">${fc}</td>
-        <td class="pv-rt">${rt}</td>
-        <td class="pv-3pl">${tpl}</td>
-        ${other?`<td class="pv-oth">${other}</td>`:''}
-        <td class="pv-tot">${tot}</td>
-      </tr></tbody>
-    </table></div>
-  </div>`;
-  pw.style.display='block';
+/* ── EDIT HANDLERS ───────────────────────────────────────────── */
+function canEdit(city){if(!city)return USER?.isAdmin||false;return USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase();}
+function onActChg(id,val,sel){
+  const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
+  const orig=o.currentAction||'';
+  if(val===orig){delete(CHANGES[id]||{}).action;if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];}
+  else{CHANGES[id]=CHANGES[id]||{};CHANGES[id].action=val;}
+  sel?.classList.toggle('ch',val!==orig);
+  updSbar();rdRows();
 }
-
-function closeDet(){
-  SCITY=null;APF=false;GAP=false;
-  document.getElementById('f-city').value='';
-  document.getElementById('cdet').classList.remove('vis');
-  document.getElementById('cdet').style.display='none';
-  document.getElementById('pivot-wrap').style.display='none';
-  document.getElementById('rec-sec').style.display='none';
-  document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
-  PG=1;loadOrders();
+function onUpdChg(id,val,sel){
+  const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
+  const orig=o.currentUpdate||'';
+  if(val===orig){delete(CHANGES[id]||{}).update;if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];}
+  else{CHANGES[id]=CHANGES[id]||{};CHANGES[id].update=val;}
+  sel?.classList.toggle('ch',val!==orig);
+  updSbar();rdRows();
 }
-function openCityAP(city){if(SCITY!==city)openDet(city);GAP=true;document.getElementById('gapbtn').classList.add('on');loadOrders();setTimeout(()=>document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'}),300);}
-function goHome(){if(SCITY){closeDet();}else{window.scrollTo({top:0,behavior:'smooth'});}}
-window.addEventListener('scroll',()=>{document.getElementById('home-btn').classList.toggle('vis',SCITY&&window.scrollY>200);});
-
-function loadRecSec(city){
-  const rs=document.getElementById('rec-sec');
-  if(!rs)return;
-  rs.style.display='none';rs.innerHTML='';
-  if(!canEdit(city)) return;
-  const cityParam=USER.isAdmin?'&fCity='+encodeURIComponent(city):'';
-  fetch(API+'?action=getRecovery&email='+encodeURIComponent(USER.email||'')+cityParam)
-    .then(r=>r.json()).then(d=>{
-      if(!d.success||!d.rows||!d.rows.length) return;
-      rs.style.display='block';
-      rs.className='rec-sec';
-      rs.innerHTML=`
-        <div class="rec-hdr">
-          <h3>&#128257; Recovery Tracker — ${city} (${d.rows.length} loss order${d.rows.length>1?'s':''})</h3>
-          <span style="font-size:11px;color:rgba(255,255,255,.7)">Amount + Reference required to record recovery</span>
-        </div>
-        <div class="rec-body">
-          ${d.rows.map(r=>`
-            <div class="rec-row" id="rr-${r.orderId}">
-              <span class="rec-id">${r.orderId}</span>
-              <span style="color:var(--t3);font-size:11px;min-width:90px;">${r.lossType||''}</span>
-              <span class="rec-gmv">GMV: ${fmtN(r.gmv)}</span>
-              ${r.recoveredAmount>0
-                ?`<span class="${r.recoveryStatus==='Fully Recovered'?'rec-ok':'rec-partial'}">${r.recoveryStatus==='Fully Recovered'?'✅':'⚡'} ₹${(r.recoveredAmount||0).toLocaleString('en-IN')} (${r.recoveryStatus})</span>`
-                :'<span style="color:var(--t3);font-size:11px;">No recovery yet</span>'}
-              ${r.recoveryStatus!=='Fully Recovered'?`
-                <input class="rinp" type="number" id="ra-${r.orderId}" placeholder="Amount recovered" min="0"/>
-                <input class="rrinp" type="text" id="rr2-${r.orderId}" placeholder="Reference Number *"/>
-                <button class="rsave" onclick="saveRec('${r.orderId}',${r.gmv})">Save Recovery</button>
-              `:'<span class="rec-ok" style="font-size:11px;margin-left:4px;">Fully Recovered ✓</span>'}
-            </div>`).join('')}
-        </div>`;
-    }).catch(()=>{});
-}
-function saveRec(orderId,gmv){
-  const amount=parseFloat(document.getElementById('ra-'+orderId)?.value)||0;
-  const refNumber=(document.getElementById('rr2-'+orderId)?.value||'').trim();
-  if(amount<=0){toast('Enter a valid recovery amount','red');return;}
-  if(!refNumber){toast('Reference Number is required','red');return;}
-  if(amount>gmv){toast('Amount cannot exceed GMV ₹'+gmv.toLocaleString('en-IN'),'red');return;}
-  fetch(API+'?action=addRecovery&orderId='+encodeURIComponent(orderId)+'&amount='+amount+'&refNumber='+encodeURIComponent(refNumber)+'&email='+encodeURIComponent(USER?.email||''))
-    .then(r=>r.json()).then(res=>{
-      if(res.success){toast(res.fullyRecovered?'✅ Fully recovered':'⚡ Partial recovery saved for '+orderId,'green');loadRecSec(SCITY);if(res.fullyRecovered)localStorage.removeItem(LC_KEY);}
-      else toast(res.error||'Failed','red');
-    }).catch(()=>toast('Network error','red'));
-}
-
-// ── ORDER HISTORY ──────────────────────────────────────────────────────────────
-function openHist(orderId){
-  $('hist-id','— '+orderId);
-  document.getElementById('hist-body').innerHTML='<div class="emp"><div class="emp-i">&#8987;</div>Loading history…</div>';
-  document.getElementById('hist-modal').classList.remove('hide');
-  fetch(API+'?action=getHistory&email='+encodeURIComponent(USER.email||'')+'&orderId='+encodeURIComponent(orderId))
-    .then(r=>r.json()).then(d=>{
-      const body=document.getElementById('hist-body');
-      if(!d.success||!d.history||!d.history.length){body.innerHTML='<div class="emp"><div class="emp-i">&#128203;</div>No history found for this order.</div>';return;}
-      body.innerHTML=d.history.map(h=>`<div class="htx">
-        <div><div class="htx-ts">${h.timestamp||'—'}</div><div class="htx-user">${h.user||'—'}</div></div>
-        <div class="htx-body">
-          ${h.newAction&&h.newAction!==h.oldAction?`<div>Action: <span style="color:var(--t3);text-decoration:line-through">${h.oldAction||'—'}</span> → <strong>${h.newAction}</strong></div>`:''}
-          ${h.newUpdate&&h.newUpdate!==h.oldUpdate?`<div>Update: <span style="color:var(--t3);text-decoration:line-through">${h.oldUpdate||'—'}</span> → <strong>${h.newUpdate}</strong></div>`:''}
-          ${(!h.newAction||h.newAction===h.oldAction)&&(!h.newUpdate||h.newUpdate===h.oldUpdate)?`<div style="color:var(--t3);">No changes recorded</div>`:''}
-          <div style="font-size:10px;color:var(--t3);margin-top:2px;">via ${h.source||'Dashboard'} · Case ${h.caseId||'—'}</div>
-        </div>
-      </div>`).join('');
-    }).catch(()=>{document.getElementById('hist-body').innerHTML='<div class="emp"><div class="emp-i">&#128203;</div>Failed to load history.</div>';});
-}
-function closeHist(){document.getElementById('hist-modal').classList.add('hide');}
-
-// ── AP DOWNLOAD ────────────────────────────────────────────────────────────────
-function downloadAP(){
-  showOv('Preparing download…','Action Pending queue');
-  let ep=API+'?action=downloadAP&email='+encodeURIComponent(USER.email||'');
-  if(SCITY&&USER.isAdmin) ep+='&fCity='+encodeURIComponent(SCITY);
-  fetch(ep).then(r=>r.json()).then(p=>{
-    hideOv();
-    if(!p.success){toast(p.error||'Download failed','red');return;}
-    if(!p.orders||!p.orders.length){toast('No AP orders to download','amber');return;}
-    const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.orders),'Action Pending Orders');
-    XLSX.writeFile(wb,'RTO_AP_Queue_'+new Date().toISOString().slice(0,10)+'.xlsx');
-    toast('&#9989; Downloaded '+p.count+' AP orders','green');
-  }).catch(e=>{hideOv();toast(e.message,'red');});
-}
-
-// ── CHARTS ─────────────────────────────────────────────────────────────────────
-function dC(id){if(CHS[id]){CHS[id].destroy();delete CHS[id];}}
-const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}}};
-function drawDn(id,labels,data,colors){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
-function drawHB(id,labels,data){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2'][i%6]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
-function drawSB(id,labels,d1,d2,l1,l2,c1,c2){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:l1,data:d1,backgroundColor:c1,borderRadius:3},{label:l2,data:d2,backgroundColor:c2,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
-function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:'Today',total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'3–5 Days',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
-function rdChartsKPI(k){
-  drawDn('ch-ag',['0–2 Days','3–5 Days','High Ageing ≥6d'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
-  drawDn('ch-st',['Action Pending','Closed','Other'],[k.actionPending||0,k.green||0,Math.max(0,(k.total||0)-(k.actionPending||0)-(k.green||0))],['#D97706','#059669','#9CA3AF']);
-}
-function rdChartsOrders(){
-  if(!ORDERS.length) return;
-  const byBU={'E-Pharma':0,PSP:0},byAct={};
-  // Service Type Split: QC vs Non-QC, stacked by INHOUSE vs 3PL
-  const qcIn  =ORDERS.filter(o=>o.serviceFlag==='QC'   &&o.partner==='INHOUSE').length;
-  const qcTpl =ORDERS.filter(o=>o.serviceFlag==='QC'   &&o.partner==='3PL').length;
-  const nqcIn =ORDERS.filter(o=>o.serviceFlag!=='QC'   &&o.partner==='INHOUSE').length;
-  const nqcTpl=ORDERS.filter(o=>o.serviceFlag!=='QC'   &&o.partner==='3PL').length;
-  ORDERS.forEach(o=>{const bu=o.businessUnit||'E-Pharma';if(byBU[bu]!==undefined)byBU[bu]++;const a=o.currentAction||'No action';byAct[a]=(byAct[a]||0)+1;});
-  drawDn('ch-bu',['E-Pharma','PSP'],[byBU['E-Pharma'],byBU['PSP']],['#2563EB','#7C3AED']);
-  const top=Object.entries(byAct).sort((x,y)=>y[1]-x[1]).slice(0,8);drawHB('ch-ac',top.map(c=>c[0].substring(0,24)),top.map(c=>c[1]));
-  // x-axis: QC | Non-QC; stacked: Inhouse (blue) + 3PL (amber)
-  drawSB('ch-qc',['QC','Non-QC'],[qcIn,nqcIn],[qcTpl,nqcTpl],'Inhouse','3PL','#2563EB','#D97706');
-}
-
-// ── TABLE ──────────────────────────────────────────────────────────────────────
-function rdTbl(){
-  const tbody=document.getElementById('tbody'),emp=document.getElementById('temp');
-  $('tcnt',TOTAL+' orders');$('pgi','Page '+PG+' of '+PAGES);
-  document.getElementById('btn-pv').disabled=PG<=1;
-  document.getElementById('btn-nx').disabled=PG>=PAGES;
-  if(!ORDERS.length){tbody.innerHTML='';emp.style.display='block';return;}
-  emp.style.display='none';
-  tbody.innerHTML=ORDERS.map((o,i)=>{
-    const edit=canEdit(o.city);
-    const isLossRow=o.requiresLoss&&!o.isGreen;
-    const trCls=o.isGreen?'tg':isLossRow?'tl':o.actionPending?'tr':'';
-    const srnBdg=o.srnDone?`<span class="b bg">&#9989; SRN Closed</span>`:isLossRow?`<span class="b bp">&#128176; Loss</span>`:o.actionPending?`<span class="b br flash">&#9888; AP</span>`:`<span class="b bs">SRN Open</span>`;
-    const gmvFmt='₹'+(o.gmv||0).toLocaleString('en-IN',{maximumFractionDigits:0});
-    const stBdg=o.storeType==='RETAIL'?'bt':'bb';
-    const ptBdg=o.partner==='3PL'?'ba':o.partner==='PSP'?'bp':'bg';
-    const buBdg=o.businessUnit==='PSP'?'bp':'bb';
-    const sgBdg=(o.stage||'').includes('Pre')?'ba':'bs';
-    const sfBdg=(o.serviceFlag||'').toUpperCase().includes('NON')?'bp':'bb';
-
-    let actCell,updCell;
-    if(o.isGreen){
-      actCell=`<span class="ro" style="color:var(--green);">${o.currentAction||'—'}</span>`;
-      updCell=`<span class="ro" style="color:var(--green);">${o.currentUpdate||'—'}${o.cnNumber?' (CN: '+o.cnNumber+')':''}</span>`;
-    }else if(!edit){
-      actCell=`<span class="ro">${o.currentAction||'—'}</span>`;
-      updCell=`<span class="ro">${o.currentUpdate||'—'}</span>`;
-    }else{
-      const oa=AM[o.caseId]||{actions:[],updates:{}};
-      const pc=CHANGES[o.orderId]||{};
-      const selAct=pc.action!==undefined?pc.action:(o.currentAction||'');
-      const selUpd=pc.update!==undefined?pc.update:(o.currentUpdate||'');
-      const selCN =pc.cnNumber!==undefined?pc.cnNumber:(o.cnNumber||'');
-      const selRef=pc.refNumber!==undefined?pc.refNumber:(o.refNumber||'');
-      const selCOD=pc.codAmount!==undefined?pc.codAmount:'';
-      const hasChg=pc.action!==undefined;
-
-      if(o.actionLocked&&!pc.action){
-        actCell=`<div><span class="ro">${o.currentAction||'—'}</span><span class="lkchip" style="margin-left:6px;">Max edits (${EDIT_LIMIT})</span></div>`;
-      }else{
-        // Use o.availableActions (includes sheet-filled value if not in AM) not just AM actions
-        const actions=o.availableActions&&o.availableActions.length?o.availableActions:(oa.actions||[]);
-        const aOpts=actions.map(a=>`<option value="${a}"${selAct===a?' selected':''}>${a}</option>`).join('');
-        const delBtn=hasChg?`<button class="del-btn" onclick="clearRow('${o.orderId}')" title="Clear">&#10005;</button>`:'';
-        actCell=`<div class="ec"><select class="isel${selAct?' ch':''}" id="act-${i}" onchange="onAct(${i},'${o.orderId}','${o.caseId}')"><option value="">Select Action</option>${aOpts}</select>${delBtn}</div>`;
-        if(o.actionEditCount===EDIT_LIMIT-1) actCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
-      }
-
-      // Use o.availableUpdates (includes sheet-filled update if not in AM)
-      const updates=o.availableUpdates&&o.availableUpdates.length?o.availableUpdates:(oa.updates[selAct]||[]);
-      const curU=selAct?(selAct===o.currentAction?updates:(oa.updates[selAct]||[])):[];
-      const uOpts=curU.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('');
-      const isLoss=LOSS_UPDS.has(selUpd)||selAct==='Order Lost/Rider Absconded';
-      const lossHtml=isLoss?`<div class="loss-disp">&#128176; Loss: ${gmvFmt}</div>`:'';
-      const showCN=CN_UPDS.has(selUpd);
-      const cnHtml=showCN?`<span class="cn-lbl">&#128373; CN Number (required):</span><input class="cn-inp" id="cn-${i}" placeholder="CN123456" value="${selCN}" oninput="onCN(${i},'${o.orderId}')"/>`:''
-      const showRef=REF_UPDS.has(selUpd);
-      const codHtml=showRef?`<span class="ref-lbl">&#128218; Amount Collected (required):</span><input class="cod-inp" id="cod-${i}" type="number" placeholder="Amount" value="${selCOD}" oninput="onCOD(${i},'${o.orderId}',${o.gmv})"/><span class="ref-lbl">Reference No. (required):</span><input class="ref-inp" id="ref-${i}" placeholder="REF123456" value="${selRef}" oninput="onRef(${i},'${o.orderId}')"/><span class="cod-warn" id="codw-${i}" style="display:none"></span>`:'';
-
-      if(o.shipmentFollowupPending&&o.shipmentFollowup&&o.shipmentFollowup.length){
-        updCell=`<div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:4px;">&#128230; Shipment received — select next step</div><select class="isel ch" id="upd-${i}" onchange="onUpd(${i},'${o.orderId}')"><option value="">Select follow-up</option>${o.shipmentFollowup.map(u=>`<option value="${u}"${selUpd===u?' selected':''}>${u}</option>`).join('')}</select>`;
-      }else if(curU.length===0){
-        updCell=selAct?`<span class="lknote">Awaiting SRN completion</span>${lossHtml}`:`<span class="lknote">Select action first</span>`;
-      }else if(o.updateLocked&&!pc.update){
-        updCell=`<span class="ro">${o.currentUpdate||'—'}</span><span class="lkchip" style="margin-left:6px;">Max edits</span>`;
-      }else{
-        updCell=`<select class="isel${pc.update!==undefined?' ch':''}" id="upd-${i}" onchange="onUpd(${i},'${o.orderId}')"><option value="">Select Update</option>${uOpts}</select>${lossHtml}${cnHtml}${codHtml}`;
-        if(o.updateEditCount===EDIT_LIMIT-1) updCell+=`<span class="hint">⚠ 1 edit remaining</span>`;
-      }
-    }
-
-    return `<tr class="${trCls}" id="row-${o.orderId}">
-      <td class="td-id">
-        <div style="display:flex;flex-direction:column;gap:4px;">
-          <span>${o.orderId}</span>
-          <button class="hist-btn" onclick="openHist('${o.orderId}')" title="View change history" style="align-self:flex-start;font-size:10px;padding:2px 7px;width:auto;height:auto;">&#128203; History</button>
-        </div>
-      </td>
-      <td style="font-weight:600;">${o.city}</td>
-      <td style="font-weight:700;">${gmvFmt}</td>
-      <td><span class="b ${stBdg}" style="font-size:10px;">${o.storeType==='RETAIL'?'Retail':'Warehouse'}</span></td>
-      <td><span class="b ${ptBdg}">${o.partner||'—'}</span></td>
-      <td><span class="b ${buBdg}" style="font-size:10px;">${o.businessUnit||'E-Pharma'}</span></td>
-      <td><span class="b ${sgBdg}" style="font-size:10px;">${o.stage||'—'}</span></td>
-      <td>${srnBdg}</td>
-      <td><span class="b ${sfBdg}" style="font-size:10px;">${o.serviceFlag||'—'}</span></td>
-      <td style="vertical-align:top;padding-top:10px;">${actCell}</td>
-      <td style="vertical-align:top;padding-top:10px;">${updCell}</td>
-    </tr>`;
-  }).join('');
-  updSbar();
-}
-
-function onAct(idx,sid,caseId){
-  const as=document.getElementById('act-'+idx);if(!as)return;
-  if(!CHANGES[sid])CHANGES[sid]={};
-  CHANGES[sid].action=as.value;CHANGES[sid].update='';CHANGES[sid].cnNumber='';CHANGES[sid].refNumber='';CHANGES[sid].codAmount='';
-  const o=ORDERS.find(x=>x.orderId===sid);
-  if(o&&o.actionEditCount===EDIT_LIMIT-1) showEditWarn('⚠ Last action edit allowed for this order');
-  updSbar();rdTbl();
-}
-function onUpd(idx,sid){
-  const us=document.getElementById('upd-'+idx);if(!us)return;
-  if(!CHANGES[sid])CHANGES[sid]={};CHANGES[sid].update=us.value;
-  if(!CN_UPDS.has(us.value))CHANGES[sid].cnNumber='';
-  if(!REF_UPDS.has(us.value)){CHANGES[sid].refNumber='';CHANGES[sid].codAmount='';}
-  const o=ORDERS.find(x=>x.orderId===sid);
-  if(o&&o.updateEditCount===EDIT_LIMIT-1) showEditWarn('⚠ Last update edit allowed for this order');
-  updSbar();rdTbl();
-}
-function onCN(idx,sid){const inp=document.getElementById('cn-'+idx);if(!inp)return;if(!CHANGES[sid])CHANGES[sid]={};CHANGES[sid].cnNumber=inp.value.trim();}
-function onRef(idx,sid){const inp=document.getElementById('ref-'+idx);if(!inp)return;if(!CHANGES[sid])CHANGES[sid]={};CHANGES[sid].refNumber=inp.value.trim();}
-function onCOD(idx,sid,gmv){
-  const inp=document.getElementById('cod-'+idx);if(!inp)return;
-  if(!CHANGES[sid])CHANGES[sid]={};
-  const amt=parseFloat(inp.value)||0;CHANGES[sid].codAmount=amt;
-  const warn=document.getElementById('codw-'+idx);
-  if(warn){if(amt>0&&amt<gmv){warn.textContent='⚠ Amount < GMV (₹'+gmv.toLocaleString('en-IN')+'). Shortfall ₹'+(gmv-amt).toLocaleString('en-IN')+' will be recorded as loss.';warn.style.display='block';}else warn.style.display='none';}
-}
-function clearRow(sid){delete CHANGES[sid];rdTbl();updSbar();}
-function clearAll(){if(!Object.keys(CHANGES).length)return;if(!confirm('Clear all pending changes?'))return;CHANGES={};rdTbl();updSbar();}
+function onCN(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].cnNumber=val;updSbar();}
+function onRef(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].refNumber=val;updSbar();}
+function onCOD(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].codAmount=parseFloat(val)||0;updSbar();}
+function delAct(id){const o=ORDERS.find(x=>x.orderId===id);if(!o)return;CHANGES[id]=CHANGES[id]||{};CHANGES[id].action='';CHANGES[id].update='';updSbar();rdRows();}
 function updSbar(){
-  const n=Object.keys(CHANGES).filter(k=>CHANGES[k].action).length;
-  document.getElementById('sbar').classList.toggle('hide',n===0);
-  $('scnt',n+' change'+(n===1?'':'s')+' ready');
+  const n=Object.keys(CHANGES).length;
+  $('sbar').classList.toggle('hide',n===0);
+  $('scnt',n+' change'+(n===1?'':'s')+' pending');
+  $('sst','');
 }
+function clearAll(){CHANGES={};updSbar();rdRows();}
 
-// ── SAVE (delta update — optimistic table, only re-fetch KPIs) ─────────────────
 async function saveAll(){
-  const btn=document.getElementById('sbtn');
-  const sids=Object.keys(CHANGES).filter(k=>CHANGES[k].action);
-  if(!sids.length) return;
-  for(const sid of sids){
-    const ch=CHANGES[sid];
-    if(CN_UPDS.has(ch.update)&&!ch.cnNumber){toast('CN Number required for "'+ch.update+'" — order '+sid,'red');return;}
-    if(REF_UPDS.has(ch.update)&&!ch.refNumber){toast('Reference Number required for "'+ch.update+'" — order '+sid,'red');return;}
-    if(REF_UPDS.has(ch.update)&&!(ch.codAmount>0)){toast('Amount required for "'+ch.update+'" — order '+sid,'red');return;}
-  }
-  btn.disabled=true;btn.textContent='Saving...';showOv('Saving changes…','Writing to sheet');
-  const updates=sids.map(sid=>({orderId:sid,action:CHANGES[sid].action||'',update:CHANGES[sid].update||'',cnNumber:CHANGES[sid].cnNumber||'',refNumber:CHANGES[sid].refNumber||'',codAmount:CHANGES[sid].codAmount||0}));
+  const entries=Object.entries(CHANGES).map(([id,c])=>({orderId:id,...c}));
+  if(!entries.length)return;
+  $('sbtn').disabled=true;$('sst','Saving…');
   try{
-    const res=await fetch(API+'?action=batchSave&updates='+encodeURIComponent(JSON.stringify(updates))+'&email='+encodeURIComponent(USER?.email||'')).then(r=>r.json());
-    hideOv();
-    const ok=res.results?res.results.filter(r=>r.success).length:sids.length;
-    // Optimistic update: apply changes to ORDERS in memory
-    if(res.results){
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
+    if(res.success){
       res.results.forEach(r=>{
-        if(!r.success) return;
-        const o=ORDERS.find(x=>x.orderId===r.orderId);
-        if(!o) return;
+        if(!r.success)return;
+        const o=ORDERS.find(x=>x.orderId===r.orderId);if(!o)return;
         const ch=CHANGES[r.orderId]||{};
-        if(ch.action) o.currentAction=ch.action;
-        if(ch.update) o.currentUpdate=ch.update;
-        if(ch.cnNumber) o.cnNumber=ch.cnNumber;
-        if(ch.refNumber) o.refNumber=ch.refNumber;
-        if(ch.codAmount) o.codAmount=ch.codAmount;
+        if(ch.action!==undefined)o.currentAction=ch.action;
+        if(ch.update!==undefined)o.currentUpdate=ch.update;
+        if(ch.cnNumber!==undefined)o.cnNumber=ch.cnNumber;
+        if(ch.refNumber!==undefined)o.referenceNumber=ch.refNumber;
+        if(ch.codAmount!==undefined)o.codAmount=ch.codAmount;
         if(r.closureStatus==='CLOSED'){o.isGreen=true;o.actionPending=false;}
-        if(r.codShortfall>0) toast('⚠ COD shortfall ₹'+r.codShortfall.toLocaleString('en-IN')+' recorded as loss for '+r.orderId,'amber');
+        delete CHANGES[r.orderId];
       });
-    }
-    toast('&#9989; '+ok+'/'+sids.length+' orders updated','green');
-    CHANGES={};btn.textContent='&#10003; Save All';btn.disabled=false;
-    rdTbl(); // re-render with optimistic changes
-    // Re-fetch only KPIs in background (not full orders)
-    localStorage.removeItem(LC_KEY);
-    setTimeout(()=>{
-      fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||''))
-        .then(r=>r.json()).then(p=>{
-          if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],null);}
-        }).catch(()=>{});
-    },1500);
-  }catch(e){hideOv();btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
+      const ok=res.results.filter(r=>r.success).length;
+      const fail=res.results.filter(r=>!r.success).length;
+      localStorage.removeItem(LC_KEY);
+      toast(ok+' saved'+(fail?' · '+fail+' failed':''),'green');
+      $('sst','');updSbar();rdRows();
+      if(SCITY)afterOrdersCity();
+    } else {toast(res.error||'Save failed','red');}
+  } catch(e){toast('Network error: '+e.message,'red');}
+  $('sbtn').disabled=false;
 }
-function chPg(d){PG+=d;showFSpin();showOv('Loading page…','Fetching next batch');loadOrders();document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});}
 
-// ── MODALS ─────────────────────────────────────────────────────────────────────
+/* ── UPLOAD ──────────────────────────────────────────────────── */
+function triggerUpload(){$('upload-file').click();}
+function closeUpload(){$('upload-modal').classList.add('hide');_uplBatch=null;}
+async function handleUpload(inp){
+  const file=inp.files[0];if(!file)return;
+  showOv('Parsing upload…','Reading Excel');
+  const ab=await file.arrayBuffer();
+  const wb=XLSX.read(ab,{type:'array'});
+  const sh=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true});
+  if(rows.length<2){hideOv();toast('Sheet empty or unreadable','red');inp.value='';return;}
+  const hdr=rows[0].map(h=>(h||'').toString().toLowerCase().trim());
+  const ci=hdr.findIndex(h=>h.includes('order')||h.includes('shipment'));
+  const ai=hdr.findIndex(h=>h.includes('action'));
+  const ui=hdr.findIndex(h=>h.includes('update'));
+  if(ci<0||ai<0){hideOv();toast('Missing Order ID or Action column','red');inp.value='';return;}
+  const data=rows.slice(1).filter(r=>r[ci]).map(r=>({orderId:(r[ci]||'').toString().trim(),action:(r[ai]||'').toString().trim(),update:ui>=0?(r[ui]||'').toString().trim():'',cnNumber:'',refNumber:'',codAmount:0}));
+  hideOv();
+  showOv('Validating on server…','Checking against full dataset');
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
+    hideOv();
+    if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
+    _uplBatch=res;
+    const ok=res.results.filter(r=>r.valid).length;
+    const fail=res.results.filter(r=>!r.valid).length;
+    $('upload-title','Upload Results — '+ok+' valid, '+fail+' invalid');
+    $('usum',`<div class="ustat ok">✓ ${ok} Valid</div><div class="ustat fail">✗ ${fail} Invalid</div><div class="ustat tot">${data.length} total rows</div>`);
+    $('ubody',res.results.map(r=>{
+      if(r.valid)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old}→${c.new}`).join(' · '):'No changes'}</div></div>`;
+      return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
+    }).join(''));
+    $('usave-btn').style.display=ok>0?'':'none';
+    $('upload-modal').classList.remove('hide');
+  } catch(e){hideOv();toast('Upload error: '+e.message,'red');}
+  inp.value='';
+}
+async function saveUploadChanges(){
+  if(!_uplBatch)return;
+  const valid=_uplBatch.results.filter(r=>r.valid);
+  if(!valid.length)return;
+  showOv('Saving upload…','Please wait');
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
+    hideOv();
+    if(res.success){
+      const ok=res.results.filter(r=>r.success).length;
+      toast(ok+' orders saved from upload','green');
+      localStorage.removeItem(LC_KEY);
+      closeUpload();loadSummary();
+    } else {toast(res.error||'Save failed','red');}
+  } catch(e){hideOv();toast('Network error: '+e.message,'red');}
+}
+
+/* ── HISTORY MODAL ───────────────────────────────────────────── */
+async function openHist(id){
+  $('hist-id',id);$('hist-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  $('hist-modal').classList.remove('hide');
+  try{
+    const r=await fetch(API+'?action=getHistory&email='+encodeURIComponent(USER?.email||'')+'&orderId='+encodeURIComponent(id)).then(r=>r.json());
+    if(!r||!r.success||!r.history.length){$('hist-body','<div class="emp"><div class="emp-i">📭</div>No history found.</div>');return;}
+    $('hist-body',r.history.map(h=>`<div class="htx"><div class="htx-ts">${fmtD(h.ts||h.date)}</div><div class="htx-user">${h.user||'—'}</div><div class="htx-body"><b>${h.field||'action'}:</b> ${h.oldVal||'(none)'} → <b>${h.newVal||'(none)'}</b>${h.note?'<br><span style="color:var(--t3)">'+h.note+'</span>':''}</div></div>`).join(''));
+  } catch(e){$('hist-body','<div class="emp"><div class="emp-i">⚠</div>'+e.message+'</div>');}
+}
+function closeHist(){$('hist-modal').classList.add('hide');}
+
+/* ── HA / AP / CR MODALS ─────────────────────────────────────── */
 function openHA(){
-  const body=document.getElementById('ha-body');
-  const hm={};ORDERS.forEach(o=>{if(!o.isHighAgeing)return;if(!hm[o.city])hm[o.city]=[];hm[o.city].push(o);});
-  const cities=Object.keys(hm).sort();
-  if(!cities.length){body.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>No high ageing orders.</div>';}
-  else body.innerHTML=cities.map(city=>{const ords=hm[city].sort((a,b)=>b.ageingDays-a.ageingDays);return`<div style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px;">${city}<span class="b br">${ords.length} orders</span></div>${ords.map(o=>`<div class="mor" onclick="jumpTo('${o.orderId}')"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.businessUnit||''} · ${o.partner||''} · ${fmtN(o.gmv)}<div style="font-size:10px;color:var(--t3);">${o.currentAction||'No action'}${o.currentUpdate?' → '+o.currentUpdate:''}</div></div><div class="mor-age">${o.ageingDays}d</div></div>`).join('')}</div>`;}).join('');
-  document.getElementById('ha-modal').classList.remove('hide');
+  const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen);
+  if(!ha.length){toast('No high ageing orders on this page','amber');return;}
+  $('ha-body',ha.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action'}</div><div class="mor-age">${o.ageingDays}d</div></div>`).join(''));
+  $('ha-modal').classList.remove('hide');
 }
-function closeHA(){document.getElementById('ha-modal').classList.add('hide');}
-
-function openAPModal(){
-  const body=document.getElementById('ap-body');
-  const ap=ORDERS.filter(o=>o.actionPending).sort((a,b)=>b.ageingDays-a.ageingDays);
-  if(!ap.length){body.innerHTML='<div class="emp"><div class="emp-i">&#9989;</div>No action pending.</div>';}
-  else body.innerHTML=`<table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#E2E8F0;"><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155;text-align:left;">Order ID</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155;">City</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155;">Action</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:var(--red);">Reason</th><th style="padding:10px 14px;border-bottom:2px solid #CBD5E1;font-size:11px;text-transform:uppercase;color:#334155;">Age</th></tr></thead><tbody>${ap.map(o=>`<tr style="border-bottom:1px solid #E2E8F0;cursor:pointer;" onclick="jumpTo('${o.orderId}')"><td style="padding:10px 14px;font-weight:700;font-size:12px;color:var(--blue);font-family:monospace;">${o.orderId}</td><td style="padding:10px 14px;font-weight:600;">${o.city}</td><td style="padding:10px 14px;color:var(--t2);">${o.currentAction||'—'}</td><td style="padding:10px 14px;font-weight:600;color:var(--amber);">${o.pendingReason||'—'}</td><td style="padding:10px 14px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':'var(--amber)'};">${o.ageingDays}d</td></tr>`).join('')}</tbody></table>`;
-  document.getElementById('ap-modal').classList.remove('hide');
+function closeHA(){$('ha-modal').classList.add('hide');}
+async function openAPModal(){
+  $('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
+  $('ap-modal').classList.remove('hide');
+  const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=200&page=1'+(SCITY?'&fCity='+encodeURIComponent(SCITY):'');
+  try{const d=await fetch(ep).then(r=>r.json());if(!d||!d.success){$('ap-body','Failed to load.');return;}
+    const ords=d.orders||[];
+    $('ap-body',ords.length?ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
+  } catch(e){$('ap-body','Error: '+e.message);}
 }
-function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
-
-// ── CLOSURE REMARKS MODAL ─────────────────────────────────────────────────────
-const CLOSURE_REMARK_ACTS = new Set([
-  'Connected to Warehouse/LM \u2013 SRN Pending',
-  'Connected to Retail \u2013 SRN Pending',
-  'Pending with 3PL',
-  'Order Lost/Rider Absconded',
-]);
-const CLOSURE_REMARK_UPDS = new Set(['Loss','Order Lost(rider absconded)']);
-const COD_CN_UPDS          = new Set(['COD Collected','CN Received']);
-
+function closeAP(){$('ap-modal').classList.add('hide');}
 function openCRModal(){
-  // Tab 1: Closure remark actions + Loss/Lost
-  const tab1Orders=ORDERS.filter(o=>
-    CLOSURE_REMARK_ACTS.has(o.currentAction)||CLOSURE_REMARK_UPDS.has(o.currentUpdate)
-  ).sort((a,b)=>b.ageingDays-a.ageingDays);
-  // Tab 2: COD Collected + CN Received
-  const tab2Orders=ORDERS.filter(o=>
-    COD_CN_UPDS.has(o.currentUpdate)
-  ).sort((a,b)=>b.ageingDays-a.ageingDays);
-
-  const tblHtml=(ords,emptyMsg)=>{
-    if(!ords.length) return `<div class="emp"><div class="emp-i">&#9989;</div>${emptyMsg}</div>`;
-    return `<table style="width:100%;border-collapse:collapse;font-size:12px;">
-      <thead><tr style="background:#E2E8F0;">
-        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Order ID</th>
-        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">City</th>
-        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">GMV</th>
-        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Action</th>
-        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Update</th>
-        <th style="padding:9px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:#334155;">SRN</th>
-        <th style="padding:9px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:#334155;">Age</th>
-      </tr></thead>
-      <tbody>${ords.map(o=>`
-        <tr style="border-bottom:1px solid #EEF2F7;cursor:pointer;" onclick="jumpTo('${o.orderId}')">
-          <td style="padding:9px 12px;font-weight:700;font-size:11px;color:var(--blue);font-family:monospace;">${o.orderId}</td>
-          <td style="padding:9px 12px;font-weight:600;">${o.city}</td>
-          <td style="padding:9px 12px;color:var(--t2);">${fmtN(o.gmv)}</td>
-          <td style="padding:9px 12px;color:var(--t2);max-width:180px;">${o.currentAction||'—'}</td>
-          <td style="padding:9px 12px;color:var(--t2);">${o.currentUpdate||'—'}</td>
-          <td style="padding:9px 12px;text-align:center;"><span class="b ${o.srnDone?'bg':'br'}">${o.srnStatus||'—'}</span></td>
-          <td style="padding:9px 12px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':o.isMidAgeing?'var(--amber)':'var(--blue)'};">${o.ageingDays}d</td>
-        </tr>`).join('')}
-      </tbody>
-    </table>`;
-  };
-
-  document.getElementById('cr-pane-1').innerHTML=
-    `<div style="font-size:12px;color:var(--t3);margin-bottom:10px;">${tab1Orders.length} orders — closure remarks + loss/lost (awaiting SRN)</div>`+
-    tblHtml(tab1Orders,'No closure remark or loss/lost orders.');
-  document.getElementById('cr-pane-2').innerHTML=
-    `<div style="font-size:12px;color:var(--t3);margin-bottom:10px;">${tab2Orders.length} orders — COD Collected &amp; CN Received (SRN closure pending)</div>`+
-    tblHtml(tab2Orders,'No COD Collected or CN Received orders.');
-
-  setCRTab(1);
-  document.getElementById('cr-modal').classList.remove('hide');
+  const crs=ORDERS.filter(o=>o.isClosureRemark&&!o.srnCompleted);
+  const cod=ORDERS.filter(o=>o.currentUpdate==='COD Collected'||o.currentUpdate==='CN Received');
+  const render=rows=>rows.length?rows.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'—'} / ${o.currentUpdate||'—'} · SRN:${o.srnStatus||'—'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">✅</div>None</div>';
+  $('cr-pane-1',render(crs));$('cr-pane-2',render(cod));
+  $('cr-modal').classList.remove('hide');
 }
-function closeCR(){document.getElementById('cr-modal').classList.add('hide');}
-function setCRTab(n){
-  document.getElementById('cr-pane-1').style.display=n===1?'':'none';
-  document.getElementById('cr-pane-2').style.display=n===2?'':'none';
-  document.getElementById('cr-tab-1').style.cssText=n===1
-    ?'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;'
-    :'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);';
-  document.getElementById('cr-tab-2').style.cssText=n===2
-    ?'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;'
-    :'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);';
+function closeCR(){$('cr-modal').classList.add('hide');}
+function setCRTab(t){
+  $('cr-tab-1').style.borderBottomColor=t===1?'var(--blue)':'transparent';
+  $('cr-tab-1').style.color=t===1?'var(--blue)':'var(--t3)';
+  $('cr-tab-2').style.borderBottomColor=t===2?'var(--blue)':'transparent';
+  $('cr-tab-2').style.color=t===2?'var(--blue)':'var(--t3)';
+  $('cr-pane-1').style.display=t===1?'':'none';
+  $('cr-pane-2').style.display=t===2?'':'none';
 }
 
-function jumpTo(sid){closeHA();closeAP();const idx=ORDERS.findIndex(o=>o.orderId===sid);if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{const rows=document.querySelectorAll('#tbody tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';setTimeout(()=>{rows[li].style.outline='';},2500);}},300);}
-
-// ── DOWNLOADS ──────────────────────────────────────────────────────────────────
-function triggerDl(type){
-  if(!USER)return;
-  if(!USER.isAdmin&&type==='panIndia'){toast('Admin access required','red');return;}
-  DL_PENDING={type,city:SCITY||''};
-  if(type==='loss'){_execDl('loss','','complete');return;}
-  if(type==='panIndia'&&!_hasFilters()){_execDl('panIndia','','complete');return;}
-  if(type==='filtered'||type==='panIndia'){$('dlct',(SCITY||'PAN India')+' — Download');$('dlcm','Active filters are applied. Download filtered subset or full dataset?');document.getElementById('dl-modal').classList.remove('hide');return;}
-  _execDl(type,DL_PENDING.city,'complete');
+/* ── DOWNLOAD ────────────────────────────────────────────────── */
+async function triggerDl(type){
+  if(type==='panIndia'){await _doDownload('panIndia',null);}
+  else if(type==='filtered'){$('dlct','Filtered Download');$('dlcm','Download only the currently filtered orders, or the full dataset for all cities.');$('dl-modal').classList.remove('hide');}
+  else if(type==='loss'){await _doDownload('loss',null);}
 }
-function triggerCityDl(city){
-  if(!USER)return;
-  if(!USER.isAdmin&&city!==USER.city){toast('Can only download your own city','red');return;}
-  DL_PENDING={type:'city',city};
-  if(_hasFilters()){$('dlct',city+' — Download');$('dlcm','Filters active. Download filtered or full city data?');document.getElementById('dl-modal').classList.remove('hide');}
-  else{_execDl('city',city,'complete');}
+function triggerCityDl(city,t){$('dlct',city+' Download');$('dlcm','Download '+city+' orders. Choose filtered (current filters) or complete.');$('dl-modal').classList.remove('hide');$('dl-modal').dataset.city=city;$('dl-modal').dataset.t=t||'';}
+function closeDlConf(){$('dl-modal').classList.add('hide');}
+async function dlGo(mode){
+  const city=$('dl-modal').dataset.city||null;
+  const t=$('dl-modal').dataset.t||null;
+  closeDlConf();
+  await _doDownload(t==='loss'?'loss':mode,city);
 }
-function dlGo(mode){closeDlConf();if(!DL_PENDING)return;_execDl(DL_PENDING.type,DL_PENDING.city,mode);DL_PENDING=null;}
-function closeDlConf(){document.getElementById('dl-modal').classList.add('hide');}
-function _execDl(type,city,mode){
-  showOv('Preparing download…','Building Excel file');
-  let ep=API+'?email='+encodeURIComponent(USER.email||'')+'&mode='+mode;
-  const fstr=mode==='filtered'?('&'+_fp()):'';
-  if(type==='loss')       ep+='&action=downloadLoss';
-  else if(type==='panIndia') ep+='&action=downloadAdmin'+fstr;
-  else ep+='&action=downloadCity&city='+encodeURIComponent(city)+fstr;
-  fetch(ep).then(r=>r.json()).then(p=>{hideOv();if(!p.success){toast(p.error||'Download failed','red');return;}_buildXLSX(p,p.city||city||'Download');}).catch(e=>{hideOv();toast(e.message,'red');});
+async function _doDownload(type,city){
+  showOv('Preparing download…','Building dataset');
+  try{
+    let ep=API+'?action=downloadCity&email='+encodeURIComponent(USER?.email||'')+'&type='+(type||'complete');
+    if(city)ep+='&fCity='+encodeURIComponent(city);
+    if(type==='filtered')ep+='&'+_fp();
+    const d=await fetch(ep).then(r=>r.json());
+    hideOv();
+    if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
+    const rows=d.rows||[];if(!rows.length){toast('No data to download','amber');return;}
+    const wb=XLSX.utils.book_new();
+    const ws=XLSX.utils.aoa_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb,ws,'RTO Data');
+    XLSX.writeFile(wb,(city||'PanIndia')+'_RTO_'+new Date().toISOString().slice(0,10)+'.xlsx');
+    toast('Downloaded '+((rows.length-1))+' orders','green');
+  } catch(e){hideOv();toast('Download error: '+e.message,'red');}
 }
-function _buildXLSX(p,label){
+async function downloadAP(){
+  const ap=ORDERS.filter(o=>o.actionPending);
+  if(!ap.length){toast('No AP orders on this page','amber');return;}
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet1||[]),'Standardised Remarks');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet2||[]),'Instructions');
-  const dn=label.includes('Loss')?'Loss-Lost Data':'Order Data';
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(p.sheet3||[]),dn);
-  XLSX.writeFile(wb,'RTO_'+label.replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  const rows=[['Order ID','City','GMV','Partner','BU','Action','Ageing Days'],...ap.map(o=>[o.orderId,o.city,o.gmv,o.partner,o.bu,o.currentAction,o.ageingDays])];
+  const ws=XLSX.utils.aoa_to_sheet(rows);XLSX.utils.book_append_sheet(wb,ws,'AP Orders');
+  XLSX.writeFile(wb,'AP_Orders_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('Downloaded '+ap.length+' AP orders');
 }
 
-// ── UPLOAD ─────────────────────────────────────────────────────────────────────
-function triggerUpload(){if(!SCITY){toast('Open a city first','red');return;}if(!canEdit(SCITY)){toast('No edit permission for '+SCITY,'red');return;}const fi=document.getElementById('upload-file');fi.value='';fi.click();}
-function closeUpload(){document.getElementById('upload-modal').classList.add('hide');UPLOAD_CHANGES={};}
-const _nm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
-function _fuzzy(input,candidates){if(!input||!candidates.length)return null;const ni=_nm(input);const exact=candidates.find(c=>_nm(c)===ni);if(exact)return{match:exact,corrected:false};const ti=new Set(ni.split(' ').filter(Boolean));let best=null,bestScore=0;candidates.forEach(c=>{const tc=new Set(_nm(c).split(' ').filter(Boolean));const inter=[...ti].filter(t=>tc.has(t)).length;const score=inter/Math.max(ti.size,tc.size);if(score>bestScore&&score>=0.45){bestScore=score;best=c;}});if(best)return{match:best,corrected:_nm(best)!==ni};return null;}
-
-function handleUpload(input){
-  const file=input.files[0];if(!file)return;
-  showOv('Reading file…','Parsing Excel');
-  const reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      const wb=XLSX.read(e.target.result,{type:'array'});
-      const ws=wb.Sheets[wb.SheetNames.find(n=>n==='Order Data')||wb.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(ws,{defval:''});
-      if(!rows.length){hideOv();toast('Empty file or wrong tab','red');return;}
-      // Map to a minimal payload with known column names
-      const payload=rows.map(row=>({
-        orderId  : String(row['shipment_order_id']||row['Order ID']||'').trim(),
-        action   : String(row['Action']||'').trim(),
-        update   : String(row['Update']||'').trim(),
-        cnNumber : String(row['CN_Number']||row['CN Number']||'').trim(),
-        refNumber: String(row['Reference_Number']||row['Reference Number']||'').trim(),
-        codAmount: parseFloat(row['COD Amount'])||0,
-      })).filter(r=>r.orderId);
-      if(!payload.length){hideOv();toast('No order IDs found in file','red');return;}
-      showOv('Validating '+payload.length+' orders…','Checking against full dataset on server');
-      // Send to backend for validation against the FULL dataset (not just current page)
-      const ep=API+'?action=validateUpload&email='+encodeURIComponent(USER.email||'')
-        +'&rows='+encodeURIComponent(JSON.stringify(payload));
-      fetch(ep).then(r=>r.json()).then(res=>{
-        hideOv();
-        if(!res.success){toast(res.error||'Validation failed','red');return;}
-        // Apply validated changes to CHANGES map so Save All can commit them
-        UPLOAD_CHANGES={};
-        res.results.forEach(r=>{
-          if(r.status==='ok'){
-            UPLOAD_CHANGES[r.orderId]={action:r.action,update:r.update,cnNumber:r.cnNumber,refNumber:r.refNumber,codAmount:r.codAmount};
-            CHANGES[r.orderId]={action:r.action,update:r.update,cnNumber:r.cnNumber,refNumber:r.refNumber,codAmount:r.codAmount};
-          }
-        });
-        _showUploadResults(res.results);
-        updSbar();
-        // Re-render table to show pending changes for orders on current page
-        rdTbl();
-      }).catch(err=>{hideOv();toast('Upload validation failed: '+err.message,'red');});
-    }catch(err){hideOv();toast('File read failed: '+err.message,'red');}
-  };
-  reader.readAsArrayBuffer(file);
+/* ── CHARTS ──────────────────────────────────────────────────── */
+const CC={pending:'#2563EB',moreThan2:'#D97706',highAgeing:'#DC2626',inhouse:'#7C3AED',tpl:'#0891B2',retail:'#059669',warehouse:'#D97706'};
+function rdChartsKPI(k){
+  _mkChart('ch-ag','bar',['0–2 Days','3–5 Days','High ≥6d'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
+  _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
+  if(k.actionBreakdown)_mkChart('ch-ac','bar',Object.keys(k.actionBreakdown),Object.values(k.actionBreakdown),['#2563EB']);
+  if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
+}
+function _mkChart(id,type,labels,data,colors){
+  try{
+    const el=$(id);if(!el)return;
+    if(_charts[id])_charts[id].destroy();
+    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+(type==='doughnut'?'':'')}},datalabels:{display:false}}}});
+  } catch(e){/* chart error, ignore */}
+}
+function drawTrend(){
+  if(!TRD.length)return;
+  const el=$('ch-tr');if(!el)return;
+  if(_charts['ch-tr'])_charts['ch-tr'].destroy();
+  _charts['ch-tr']=new Chart(el,{type:'line',data:{labels:TRD.map(t=>t.date),datasets:[{label:'Active RTO',data:TRD.map(t=>t.count),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.08)',tension:.4,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false},datalabels:{display:false}},scales:{y:{beginAtZero:false,ticks:{font:{size:10}}},x:{ticks:{font:{size:10},maxTicksLimit:10}}}}});
+  const last=TRD[TRD.length-1],prev=TRD[TRD.length-2];
+  if(last&&prev){const d=last.count-prev.count;$('trend-badge',(d>0?'▲':'▼')+Math.abs(d)+' vs yesterday');}
 }
 
-function _showUploadResults(results){
-  const ok=results.filter(r=>r.status==='ok');
-  const fail=results.filter(r=>r.status==='fail');
-  const offPage=ok.filter(r=>!ORDERS.find(o=>o.orderId===r.orderId)); // valid but not on current page
-
-  document.getElementById('usum').innerHTML=
-    `<div class="ustat ok"><span>&#9989;</span>${ok.length} valid</div>`+
-    (fail.length?`<div class="ustat fail"><span>&#10060;</span>${fail.length} failed</div>`:'')+
-    `<div class="ustat tot">${results.length} rows processed</div>`;
-
-  // Info note when some orders are on other pages — they will still be saved correctly
-  const offPageNote=offPage.length
-    ?`<div style="background:var(--bluel);border:1px solid var(--bluem);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#1E3A5F;">
-        <b>&#128221; ${offPage.length} order${offPage.length>1?'s are':' is'} on other pages</b> — validated against the full dataset. 
-        They will be saved correctly when you click Save. The table will update for orders visible on the current page only.
-      </div>`
-    :'';
-
-  const diffHtml=ok.length?`<div class="diff-preview">
-    <div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:8px;">&#128203; Changes Preview — ${ok.length} order${ok.length>1?'s':''} will be updated</div>
-    ${ok.map(r=>`<div class="diff-row">
-      <span class="diff-id">${r.orderId}</span>
-      ${r.city?`<span style="font-size:10px;color:var(--t3);margin-right:2px;">${r.city}</span>`:''}
-      <span class="diff-badge" style="background:var(--bluel);color:var(--blue);border:1px solid #BFDBFE;">${r.action}${r.actionCorrected?' ✏':''}</span>
-      ${r.update?`<span class="diff-badge" style="background:var(--amberl);color:var(--amber);border:1px solid #FDE68A;">→ ${r.update}${r.updateCorrected?' ✏':''}</span>`:''}
-    </div>`).join('')}
-  </div>`:'';
-
-  document.getElementById('ubody').innerHTML=
-    offPageNote+
-    diffHtml+
-    fail.map(r=>`<div class="ures fail"><span class="ui-icon">&#10060;</span><span class="ui-id">${r.orderId}</span><span class="ui-msg">${r.reason}</span></div>`).join('');
-
-  const sb=document.getElementById('usave-btn');
-  sb.style.display=ok.length?'block':'none';
-  if(ok.length) sb.textContent='✓ Save '+ok.length+' Update'+(ok.length>1?'s':'');
-  document.getElementById('upload-modal').classList.remove('hide');
-}
-function saveUploadChanges(){closeUpload();saveAll();}
-
-// ── TOAST ──────────────────────────────────────────────────────────────────────
-function toast(msg,type='green'){
-  const t=document.createElement('div');t.className='toast';
-  t.style.background=type==='green'?'var(--green)':type==='amber'?'var(--amber)':'var(--red)';
-  t.innerHTML=msg;document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),350);},3500);
-}
 </script>
 </body>
 </html>
