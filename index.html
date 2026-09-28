@@ -551,7 +551,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="age-strip">
         <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0&ndash;2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
         <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">3&ndash;5 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
-        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">High Ageing &ge;6 Days</div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
+        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">>5 Days <small style="font-size:9px;opacity:.65;">(subset of &gt;2)</small></div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
       </div>
     </div>
     <div class="sec" id="city-perf-sec">
@@ -858,18 +858,21 @@ function rdKPI(k){
 /* ── RENDER AGEING ──────────────────────────────────────────────
    FIX3: guard totalRTO=0 denominator; cap % at 100              */
 function rdAgeing(k){
+  // Card2 = >2 days combined (moreThan2+highAgeing); Card3 = >5 only (subset)
+  // Chart uses 3 DISTINCT buckets: pending|moreThan2|highAgeing (unchanged)
   const _apSum=(k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0);
   const t=k.totalRTO>0?k.totalRTO:(_apSum||1);
+  const _more2=(k.moreThan2||0)+(k.highAgeing||0);
+  const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
   const pp=Math.min(100,pct(k.pending||0,t));
-  const rp=Math.min(100,pct(k.moreThan2||0,t));
+  const rp=Math.min(100,pct(_more2,t));
   const hp=Math.min(100,pct(k.highAgeing||0,t));
   $('ag-pp',fmtPct(pp));$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
-  $('ag-rp',fmtPct(rp));$('ag-rc',k.moreThan2||0);$('ag-ra',fmtN(k.moreThan2Amt||0));
+  $('ag-rp',fmtPct(rp));$('ag-rc',_more2);$('ag-ra',fmtN(_more2Amt));
   $('ag-hp',fmtPct(hp));$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
-  const bar=id=>$(id);
-  if(bar('ag-pb'))bar('ag-pb').style.width=pp+'%';
-  if(bar('ag-rb'))bar('ag-rb').style.width=rp+'%';
-  if(bar('ag-hb'))bar('ag-hb').style.width=hp+'%';
+  if($('ag-pb'))$('ag-pb').style.width=pp+'%';
+  if($('ag-rb'))$('ag-rb').style.width=rp+'%';
+  if($('ag-hb'))$('ag-hb').style.width=hp+'%';
 }
 
 /* ── CITY CARDS ──────────────────────────────────────────────── */
@@ -890,7 +893,7 @@ function rdCityCards(cards,fullMap){
       <div class="cstats">
         <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
         <div class="cs p02"><div class="csl">0–2 Days</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
-        <div class="cs p35"><div class="csl">3–5 Days</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
+        <div class="cs p35"><div class="csl">>2 Days</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
         <div class="cs ha6"><div class="csl">High Age ≥6d</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
       </div>
       <div class="cbtns">
@@ -1307,12 +1310,35 @@ async function openAPModal(){
   } catch(e){$('ap-body','Error: '+e.message);}
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
-function openCRModal(){
-  const crs=ORDERS.filter(o=>o.isClosureRemark&&!o.srnCompleted);
-  const cod=ORDERS.filter(o=>o.currentUpdate==='COD Collected'||o.currentUpdate==='CN Received');
-  const render=rows=>rows.length?rows.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'—'} / ${o.currentUpdate||'—'} · SRN:${o.srnStatus||'—'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">✅</div>None</div>';
-  $('cr-pane-1',render(crs));$('cr-pane-2',render(cod));
+async function openCRModal(){
+  // Live fetch from backend — not from page-local ORDERS (page-limited)
+  $('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  $('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('cr-modal').classList.remove('hide');
+  const eml=encodeURIComponent(USER?.email||'');
+  const cq=SCITY?'&fCity='+encodeURIComponent(SCITY):'';
+  const render=(rows,emptyMsg)=>{
+    if(!rows||!rows.length) return '<div class="emp"><div class="emp-i">✅</div>'+emptyMsg+'</div>';
+    const total=rows.length;
+    const totalGmv=rows.reduce((s,o)=>s+(o.gmv||0),0);
+    return '<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--t2);">'
+      +'<span>'+total+' orders</span>'
+      +'<span style="color:var(--red);">Total GMV: '+fmtN(totalGmv)+'</span></div>'
+      +rows.map(o=>'<div class="mor"><div class="mor-id">'+o.orderId+'</div>'
+        +'<div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+' / '+(o.currentUpdate||'—')+' · SRN:'+(o.srnStatus||'—')+'</div>'
+        +'<div class="mor-age">'+(o.ageingDays||0)+'d</div></div>').join('');
+  };
+  try{
+    const [d1,d2]=await Promise.all([
+      fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=500&page=1'+cq).then(r=>r.json()),
+      fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=500&page=1'+cq).then(r=>r.json()),
+    ]);
+    $('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
+    $('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
+  } catch(e){
+    $('cr-pane-1','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
+    $('cr-pane-2','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
+  }
 }
 function closeCR(){$('cr-modal').classList.add('hide');}
 function setCRTab(t){
@@ -1368,7 +1394,7 @@ async function downloadAP(){
 /* ── CHARTS ──────────────────────────────────────────────────── */
 const CC={pending:'#2563EB',moreThan2:'#D97706',highAgeing:'#DC2626',inhouse:'#7C3AED',tpl:'#0891B2',retail:'#059669',warehouse:'#D97706'};
 function rdChartsKPI(k){
-  _mkChart('ch-ag','bar',['0–2 Days','3–5 Days','High ≥6d'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
+  _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
   _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown)_mkChart('ch-ac','bar',Object.keys(k.actionBreakdown),Object.values(k.actionBreakdown),['#2563EB']);
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
