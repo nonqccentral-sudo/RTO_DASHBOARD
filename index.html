@@ -145,7 +145,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;position:relative;overflow:hidden;box-shadow:var(--xs);transition:box-shadow .2s,transform .15s;}
 .kpi:hover{box-shadow:var(--sm);transform:translateY(-1px);}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--acc,var(--blue));border-radius:var(--r) var(--r) 0 0;}
-.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber);background:#FFFBEB;}.kpi.ap{--acc:var(--purple);background:var(--purplel);}
+.kpi.ab{--acc:var(--blue)}.kpi.ar{--acc:var(--red)}.kpi.ag{--acc:var(--green)}.kpi.aa{--acc:var(--amber);background:#FFFBEB;}.kpi.ap{--acc:var(--purple);background:var(--purplel);}.kpi.pu{--acc:var(--purple);}
 .ki{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
 .ab .ki{background:var(--bluel)}.ar .ki{background:var(--redl)}.ag .ki{background:var(--greenl)}.aa .ki{background:var(--amberl)}.ap .ki{background:var(--purplel)}
 .kl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
@@ -1107,26 +1107,26 @@ function afterOrdersCity(){
   const _crP=Math.round(cr/_b2*100);
   const _snP=Math.round(snr/_b2*100);
   setHTML('cd-kpis',
-    '<div class="kpi ab"><div class="ki">📦</div>'
-      +'<div class="kl">Total Active RTO</div>'
-      +'<div class="kv">'+_kTot2+'</div>'
-      +'<div class="ks">'+fmtN((_sk&&_sk.totalAmount)||0)+' total</div></div>'
-    +'<div class="kpi ag"><div class="ki">✅</div>'
-      +'<div class="kl">SRN Completed</div>'
-      +'<div class="kv">'+_snP+'%</div>'
-      +'<div class="ks">('+snr+') · Visible 24h</div></div>'
-    +'<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>'
-      +'<div class="kl">Closure Remarks</div>'
-      +'<div class="kv">'+_crP+'%</div>'
-      +'<div class="ks">('+cr+') · Click to view</div></div>'
-    +'<div class="kpi aa"><div class="ki">⚠</div>'
-      +'<div class="kl">Action Pending</div>'
-      +'<div class="kv">'+_apP+'%</div>'
-      +'<div class="ks">('+ap+') · Needs update</div></div>'
-    +'<div class="kpi ap click" onclick="triggerCityDl(''+SCITY+'','loss')">'
-      +'<div class="ki">💰</div><div class="kl">Total Loss Amount</div>'
-      +'<div class="kv">'+(lossT?fmtN(lossT):'₹0')+'</div>'
-      +'<div class="ks">In-house: '+(lossS?fmtN(lossS):'0')+'</div></div>'
+    `<div class="kpi ab"><div class="ki">📦</div>`
+      +`<div class="kl">Total Active RTO</div>`
+      +`<div class="kv">${_kTot2}</div>`
+      +`<div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} total</div></div>`
+    +`<div class="kpi ag"><div class="ki">✅</div>`
+      +`<div class="kl">SRN Completed</div>`
+      +`<div class="kv">${_snP}%</div>`
+      +`<div class="ks">(${snr}) · Visible 24h</div></div>`
+    +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
+      +`<div class="kl">Closure Remarks</div>`
+      +`<div class="kv">${_crP}%</div>`
+      +`<div class="ks">(${cr}) · Click to view</div></div>`
+    +`<div class="kpi aa"><div class="ki">⚠</div>`
+      +`<div class="kl">Action Pending</div>`
+      +`<div class="kv">${_apP}%</div>`
+      +`<div class="ks">(${ap}) · Needs update</div></div>`
+    +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')">`
+      +`<div class="ki">💰</div><div class="kl">Total Loss Amount</div>`
+      +`<div class="kv">${lossT ? fmtN(lossT) : '₹0'}</div>`
+      +`<div class="ks">In-house: ${lossS ? fmtN(lossS) : '0'}</div></div>`
   );
 
   // ── AGEING BREAKDOWN STRIP ────────────────────────────
@@ -1138,21 +1138,21 @@ function afterOrdersCity(){
   if(ageEl){
     ageEl.style.display='grid';
     ageEl.innerHTML=
-      '<div class="age-card p">'
-        +'<div class="age-ring" style="background:var(--bluel);color:var(--blue)">'+pp+'%</div>'
-        +'<div class="age-info"><div class="age-lbl">0\u20132 Days</div>'
-        +'<div class="age-cnt" style="color:var(--blue)">'+pend02+'</div>'
-        +'<div class="age-bar"><div class="age-fill" style="width:'+pp+'%;background:var(--blue)"></div></div></div></div>'
-      +'<div class="age-card rv">'
-        +'<div class="age-ring" style="background:var(--amberl);color:var(--amber)">'+rp+'%</div>'
-        +'<div class="age-info"><div class="age-lbl">&gt;2 Days</div>'
-        +'<div class="age-cnt" style="color:var(--amber)">'+pendMore2+'</div>'
-        +'<div class="age-bar"><div class="age-fill" style="width:'+rp+'%;background:var(--amber)"></div></div></div></div>'
-      +'<div class="age-card ha" style="background:#FFF1F1">'
-        +'<div class="age-ring" style="background:var(--redl);color:var(--red)">'+hp+'%</div>'
-        +'<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>'
-        +'<div class="age-cnt" style="color:var(--red)">'+ha+'</div>'
-        +'<div class="age-bar"><div class="age-fill" style="width:'+hp+'%;background:var(--red)"></div></div></div></div>';
+      `<div class="age-card p">`
+        +`<div class="age-ring" style="background:var(--bluel);color:var(--blue)">${pp}%</div>`
+        +`<div class="age-info"><div class="age-lbl">0–2 Days</div>`
+        +`<div class="age-cnt" style="color:var(--blue)">${pend02}</div>`
+        +`<div class="age-bar"><div class="age-fill" style="width:${pp}%;background:var(--blue)"></div></div></div></div>`
+      +`<div class="age-card rv">`
+        +`<div class="age-ring" style="background:var(--amberl);color:var(--amber)">${rp}%</div>`
+        +`<div class="age-info"><div class="age-lbl">&gt;2 Days</div>`
+        +`<div class="age-cnt" style="color:var(--amber)">${pendMore2}</div>`
+        +`<div class="age-bar"><div class="age-fill" style="width:${rp}%;background:var(--amber)"></div></div></div></div>`
+      +`<div class="age-card ha" style="background:#FFF1F1">`
+        +`<div class="age-ring" style="background:var(--redl);color:var(--red)">${hp}%</div>`
+        +`<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>`
+        +`<div class="age-cnt" style="color:var(--red)">${ha}</div>`
+        +`<div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
   }
 
   // ── PIVOT: AP orders breakdown ────────────────────────
@@ -1170,16 +1170,17 @@ function _renderCityPivot(){
   const pre=ap.filter(o=>(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
   const pct=n=>total?Math.round(n/total*100)+'%':'0%';
   pvt.style.display='block';
-  pvt.innerHTML=
-    '<div class="pivot-section">'
-    +'<div class="pivot-hdr"><h3>Action Pending \u2014 Breakdown</h3><span>'+total+' AP orders on this page</span></div>'
-    +'<table class="pivot-table"><thead><tr><th>Category</th><th>Count</th><th>%</th></tr></thead><tbody>'
-    +'<tr><td>Retail</td><td class="pv-rt">'+retail+'</td><td>'+pct(retail)+'</td></tr>'
-    +'<tr><td>Warehouse</td><td class="pv-fc">'+wh+'</td><td>'+pct(wh)+'</td></tr>'
-    +'<tr><td>3PL</td><td class="pv-3pl">'+tpl+'</td><td>'+pct(tpl)+'</td></tr>'
-    +'<tr><td>Pre\u2011MDQ</td><td class="pv-oth">'+pre+'</td><td>'+pct(pre)+'</td></tr>'
-    +'<tr style="font-weight:700;border-top:2px solid var(--border2)"><td>Total AP</td><td class="pv-tot">'+total+'</td><td>100%</td></tr>'
-    +'</tbody></table></div>';
+  pvt.innerHTML=`
+    <div class="pivot-section">
+      <div class="pivot-hdr"><h3>Action Pending — Breakdown</h3><span>${total} AP orders on this page</span></div>
+      <table class="pivot-table"><thead><tr><th>Category</th><th>Count</th><th>%</th></tr></thead><tbody>
+        <tr><td>Retail</td><td class="pv-rt">${retail}</td><td>${pct(retail)}</td></tr>
+        <tr><td>Warehouse</td><td class="pv-fc">${wh}</td><td>${pct(wh)}</td></tr>
+        <tr><td>3PL</td><td class="pv-3pl">${tpl}</td><td>${pct(tpl)}</td></tr>
+        <tr><td>Pre-MDQ</td><td class="pv-oth">${pre}</td><td>${pct(pre)}</td></tr>
+        <tr style="font-weight:700;border-top:2px solid var(--border2)"><td>Total AP</td><td class="pv-tot">${total}</td><td>100%</td></tr>
+      </tbody></table>
+    </div>`;
 }
 
 /* ── ROW RENDERING ───────────────────────────────────────────── */
@@ -1327,8 +1328,8 @@ async function handleUpload(inp){
     const ok=res.results.filter(r=>r.valid).length;
     const fail=res.results.filter(r=>!r.valid).length;
     $('upload-title','Upload Results — '+ok+' valid, '+fail+' invalid');
-    $('usum',`<div class="ustat ok">✓ ${ok} Valid</div><div class="ustat fail">✗ ${fail} Invalid</div><div class="ustat tot">${data.length} total rows</div>`);
-    $('ubody',res.results.map(r=>{
+    setHTML('usum',`<div class="ustat ok">✓ ${ok} Valid</div><div class="ustat fail">✗ ${fail} Invalid</div><div class="ustat tot">${data.length} total rows</div>`);
+    setHTML('ubody',res.results.map(r=>{
       if(r.valid)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old}→${c.new}`).join(' · '):'No changes'}</div></div>`;
       return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
     }).join(''));
@@ -1356,13 +1357,13 @@ async function saveUploadChanges(){
 
 /* ── HISTORY MODAL ───────────────────────────────────────────── */
 async function openHist(id){
-  $('hist-id',id);$('hist-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  $('hist-id',id);setHTML('hist-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('hist-modal').classList.remove('hide');
   try{
     const r=await fetch(API+'?action=getHistory&email='+encodeURIComponent(USER?.email||'')+'&orderId='+encodeURIComponent(id)).then(r=>r.json());
-    if(!r||!r.success||!r.history.length){$('hist-body','<div class="emp"><div class="emp-i">📭</div>No history found.</div>');return;}
-    $('hist-body',r.history.map(h=>`<div class="htx"><div class="htx-ts">${fmtD(h.ts||h.date)}</div><div class="htx-user">${h.user||'—'}</div><div class="htx-body"><b>${h.field||'action'}:</b> ${h.oldVal||'(none)'} → <b>${h.newVal||'(none)'}</b>${h.note?'<br><span style="color:var(--t3)">'+h.note+'</span>':''}</div></div>`).join(''));
-  } catch(e){$('hist-body','<div class="emp"><div class="emp-i">⚠</div>'+e.message+'</div>');}
+    if(!r||!r.success||!r.history.length){setHTML('hist-body','<div class="emp"><div class="emp-i">📭</div>No history found.</div>');return;}
+    setHTML('hist-body',r.history.map(h=>`<div class="htx"><div class="htx-ts">${fmtD(h.ts||h.date)}</div><div class="htx-user">${h.user||'—'}</div><div class="htx-body"><b>${h.field||'action'}:</b> ${h.oldVal||'(none)'} → <b>${h.newVal||'(none)'}</b>${h.note?'<br><span style="color:var(--t3)">'+h.note+'</span>':''}</div></div>`).join(''));
+  } catch(e){setHTML('hist-body','<div class="emp"><div class="emp-i">⚠</div>'+e.message+'</div>');}
 }
 function closeHist(){$('hist-modal').classList.add('hide');}
 
@@ -1375,13 +1376,13 @@ function openHA(){
 }
 function closeHA(){$('ha-modal').classList.add('hide');}
 async function openAPModal(){
-  $('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
+  setHTML('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
   $('ap-modal').classList.remove('hide');
   const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=200&page=1'+(SCITY?'&fCity='+encodeURIComponent(SCITY):'');
-  try{const d=await fetch(ep).then(r=>r.json());if(!d||!d.success){$('ap-body','Failed to load.');return;}
+  try{const d=await fetch(ep).then(r=>r.json());if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
     const ords=d.orders||[];
-    $('ap-body',ords.length?ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
-  } catch(e){$('ap-body','Error: '+e.message);}
+    setHTML('ap-body',ords.length?ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
+  } catch(e){setHTML('ap-body','<div class="emp">Error: '+e.message+'</div>');}
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
 async function openCRModal(){
