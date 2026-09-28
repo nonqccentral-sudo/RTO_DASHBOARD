@@ -550,7 +550,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Total RTO &middot; From cancellation date</span></div>
       <div class="age-strip">
         <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0&ndash;2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
-        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">3&ndash;5 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
+        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">&gt;2 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
         <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">>5 Days <small style="font-size:9px;opacity:.65;">(subset of &gt;2)</small></div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
       </div>
     </div>
@@ -885,9 +885,11 @@ function rdCityCards(cards,fullMap){
   const grid=$('cgrid');if(!grid)return;
   // City users: hide city performance section entirely (other cities not relevant)
   if(!USER?.isAdmin){grid.innerHTML='';return;}
-  if(!cards||!cards.length){grid.innerHTML='<div class="emp"><div class="emp-i">🏙</div>No city data.</div>';return;}
-  const isOwn=c=>false; // admin view - no "YOUR CITY" badge
-  grid.innerHTML=cards.map(c=>{
+  // Only show RED cities (above threshold) — others accessible via dropdown
+  const redCards = cards.filter(c => c.isRed);
+  if(!redCards.length){grid.innerHTML='<div class="emp"><div class="emp-i">✅</div>No cities above threshold right now.</div>';return;}
+  const isOwn=c=>false;
+  grid.innerHTML=redCards.map(c=>{
     const isRed=c.isRed;
     const tot=c.total||c.active||0;
     const activePct=tot?Math.round((c.actionPending||0)/tot*100):0;
@@ -1169,26 +1171,25 @@ function afterOrdersCity(){
 
 function _renderCityPivot(){
   const pvt=$('pivot-wrap'); if(!pvt)return;
-  const ap=ORDERS.filter(o=>o.actionPending);
-  if(!ap.length){pvt.style.display='none';return;}
-  const total=ap.length;
-  // Mutually exclusive split: every order is FC OR Retail OR 3PL
-  const fc   = ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
-  const retail = ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
-  const tpl  = ap.filter(o=>o.partner!=='INHOUSE').length;  // all non-INHOUSE = 3PL
-  const pre  = ap.filter(o=>(o.cancellationStage||'').toUpperCase().includes('PRE')).length; // cross-cutting
-  const pct=n=>total?Math.round(n/total*100)+'%':'0%';
+  const allOrds=ORDERS.filter(o=>!o.isGreen);
+  if(!allOrds.length){pvt.style.display='none';return;}
+  const fc      = allOrds.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
+  const retail  = allOrds.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
+  const tplPre  = allOrds.filter(o=>o.partner!=='INHOUSE'&&(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
+  const total   = allOrds.length;
   pvt.style.display='block';
   pvt.innerHTML=`
     <div class="pivot-section">
-      <div class="pivot-hdr"><h3>Action Pending — Breakdown</h3><span>${total} AP orders</span></div>
-      <table class="pivot-table"><thead><tr><th>Category</th><th>Orders</th><th>%</th></tr></thead><tbody>
-        <tr><td>FC / Warehouse</td><td class="pv-fc">${fc}</td><td>${pct(fc)}</td></tr>
-        <tr><td>Retail</td><td class="pv-rt">${retail}</td><td>${pct(retail)}</td></tr>
-        <tr><td>3PL</td><td class="pv-3pl">${tpl}</td><td>${pct(tpl)}</td></tr>
-        <tr><td style="color:var(--t3);font-style:italic">Pre-MDQ (cross-cut)</td><td class="pv-oth">${pre}</td><td>${pct(pre)}</td></tr>
-        <tr style="font-weight:700;border-top:2px solid var(--border2)"><td>Total AP</td><td class="pv-tot">${total}</td><td>100%</td></tr>
-      </tbody></table>
+      <div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>${total} active orders</span></div>
+      <table class="pivot-table">
+        <thead><tr><th>FC / Warehouse</th><th>Retail</th><th>3PL Pre-MDQ</th><th>Total</th></tr></thead>
+        <tbody><tr>
+          <td class="pv-fc" style="font-size:20px;font-weight:800;text-align:center">${fc}</td>
+          <td class="pv-rt" style="font-size:20px;font-weight:800;text-align:center">${retail}</td>
+          <td class="pv-3pl" style="font-size:20px;font-weight:800;text-align:center">${tplPre}</td>
+          <td class="pv-tot" style="font-size:20px;font-weight:800;text-align:center">${total}</td>
+        </tr></tbody>
+      </table>
     </div>`;
 }
 
@@ -1481,7 +1482,10 @@ function rdChartsKPI(k){
   // Ageing chart (distinct buckets: 0-2 | 2-5 | >5)
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
   _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
-  if(k.actionBreakdown)_mkChart('ch-ac','bar',Object.keys(k.actionBreakdown),Object.values(k.actionBreakdown),['#2563EB']);
+  if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){
+    const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    _mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);
+  }
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
   // BU chart removed; backlog trend removed
 }
