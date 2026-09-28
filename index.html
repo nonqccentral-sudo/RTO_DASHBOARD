@@ -539,7 +539,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl" id="kpi-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
       <div class="kgrid">
-        <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">&mdash;</div><div class="ks" id="k-tots">&mdash;</div></div>
+        <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total RTO</div><div class="kv" id="k-tot">&mdash;</div><div class="ks" id="k-tots">&mdash;</div></div>
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">&mdash;</div><div class="ks" id="k-grs">Visible 24h then removed</div></div>
         <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
@@ -840,7 +840,8 @@ function _renderSummary(sd){
 /* ── RENDER KPI ─────────────────────────────────────────────────
    FIX7: if totalRTO=0 from server, reconstruct from sum of parts  */
 function rdKPI(k){
-  const _kTotal=k.totalRTO>0?k.totalRTO:((k.actionPending||0)+(k.closureRemarks||0)+(k.srnCompleted||0))||0;
+  // Total RTO = sum of its parts: SRN + Closure Remarks + Action Pending
+  const _kTotal=(k.srnCompleted||0)+(k.closureRemarks||0)+(k.actionPending||0);
   const _base=_kTotal||1;
   const _apN=k.actionPending||0,_crN=k.closureRemarks||0,_srnN=k.srnCompleted||0;
   const _apPct=Math.round(_apN/_base*100);
@@ -901,9 +902,9 @@ function rdCityCards(cards,fullMap){
       <div class="c-red-badge">▲ ${c.active||c.total||0} ACTIVE</div></div>
       <div class="cstats">
         <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
-        <div class="cs p02"><div class="csl">0–2 Days</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
-        <div class="cs p35"><div class="csl">>2 Days</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
-        <div class="cs ha6"><div class="csl">High Age ≥6d</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
+        <div class="cs p02"><div class="csl">Pending 0–2</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
+        <div class="cs p35"><div class="csl">Pending 2–5</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
+        <div class="cs ha6"><div class="csl">Pending >5</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
       </div>
       <div class="cbtns">
         <button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">↓ DL</button>
@@ -1117,7 +1118,7 @@ function afterOrdersCity(){
   const _snP=Math.round(snr/_b2*100);
   setHTML('cd-kpis',
     `<div class="kpi ab"><div class="ki">📦</div>`
-      +`<div class="kl">Total Active RTO</div>`
+      +`<div class="kl">Total RTO</div>`
       +`<div class="kv">${_kTot2}</div>`
       +`<div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} total</div></div>`
     +`<div class="kpi ag"><div class="ki">✅</div>`
