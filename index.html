@@ -198,6 +198,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .csl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--t3);margin-bottom:1px;}
 .csv{font-size:15px;font-weight:800;color:var(--t1);}
 .cs.rd .csv{color:var(--red)}.cs.bl .csv{color:var(--blue)}.cs.am .csv{color:var(--amber)}.cs.pu .csv{color:var(--purple)}
+.cs.aa .csv{color:var(--amber);font-weight:800;}
+.cs.p02 .csv{color:var(--blue);}
+.cs.p35 .csv{color:var(--amber);}
+.cs.ha6 .csv{color:var(--red);}
+.csv-sm{font-size:10px;font-weight:500;color:var(--t3);}
 .cprog{margin-top:10px;}
 .cpbar{height:4px;background:var(--surf3);border-radius:2px;overflow:hidden;}
 .cpfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px;}
@@ -460,12 +465,28 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <!-- HA MODAL -->
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
-  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
+  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(≥6 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
 </div>
 
 <!-- AP MODAL -->
 <div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
   <div class="modal" style="max-width:960px"><div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div><div class="mbody" id="ap-body"></div></div>
+</div>
+
+<!-- CLOSURE REMARKS MODAL -->
+<div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
+  <div class="modal" style="max-width:860px">
+    <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
+    <div class="mbody" id="cr-body">
+      <!-- Two tabs: Closure Remarks + Loss/Lost | COD Collected + CN Received -->
+      <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
+        <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">Closure Remarks &amp; Loss/Lost</button>
+        <button id="cr-tab-2" onclick="setCRTab(2)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);">COD Collected &amp; CN Received</button>
+      </div>
+      <div id="cr-pane-1"></div>
+      <div id="cr-pane-2" style="display:none;"></div>
+    </div>
+  </div>
 </div>
 
 <!-- DL CONFIRM -->
@@ -513,7 +534,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="fg"><label>BU</label><select id="f-bu" onchange="apF()"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
     <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage" onchange="apF()"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
-    <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">Pending (0-2d)</option><option value="Recoverable">Recoverable</option><option value="High Ageing">High Ageing</option></select></div>
+    <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">0–2 Days</option><option value="Recoverable">3–5 Days</option><option value="High Ageing">High Ageing ≥6d</option></select></div>
     <div class="fg" id="fgact"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
     <div class="fdiv"></div>
     <div class="fg"><label>From</label><input type="date" id="f-from" onchange="apF()"/></div>
@@ -530,34 +551,24 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl" id="kpi-ttl">PAN India Overview</span><div class="sec-ln"></div></div>
       <div class="kgrid">
-        <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">—</div><div class="ks">Needs immediate update</div></div>
         <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total Active RTO</div><div class="kv" id="k-tot">—</div><div class="ks" id="k-tots">—</div></div>
-        <div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Pending (0-2d)</div><div class="kv" id="k-pd">—</div><div class="ks" id="k-pds">—</div></div>
-        <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">Recoverable (&gt;2d)</div><div class="kv" id="k-rv">—</div><div class="ks" id="k-rvs">—</div></div>
-        <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing (&gt;5d)</div><div class="kv" id="k-ha">—</div><div class="ks" id="k-has">—</div><div class="kh">Click to view</div></div>
-        <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">Green / Closed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
+        <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">—</div><div class="ks">Visible 24h then removed</div></div>
+        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">—</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
+        <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">—</div><div class="ks" id="k-aps">Needs immediate update</div></div>
         <div class="kpi ar click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">—</div><div class="ks" id="k-lss">In-house: —</div><div class="kh">Click for Loss Report</div></div>
       </div>
-      <div class="srn-pill">
-        <span style="font-size:15px;">🔄</span>
-        <div>
-          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--purple);">SRN Pending</div>
-          <div style="font-size:20px;font-weight:800;color:var(--purple);line-height:1;" id="sub-srn">—</div>
-          <div style="font-size:10px;color:#4C1D95;margin-top:1px;">Action+update done · SRN not yet closed</div>
-        </div>
-      </div>
     </div>
 
     <div class="sec">
-      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">From cancellation date</span></div>
+      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Total RTO · From cancellation date</span></div>
       <div class="age-strip">
-        <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">Pending (0-2d)</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">₹0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
-        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">Recoverable (&gt;2d)</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">₹0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
-        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">High Ageing (&gt;5d)</div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">₹0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
+        <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0–2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">₹0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
+        <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">3–5 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">₹0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
+        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">High Ageing ≥6 Days</div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">₹0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
       </div>
     </div>
 
-    <div class="sec">
+    <div class="sec" id="city-perf-sec">
       <div class="sec-hd"><span class="sec-ttl">City Performance</span><div class="sec-ln"></div><span class="sec-nt" id="city-sec-note">Red = &gt;threshold active · Click to drill down</span></div>
       <div class="cgrid" id="cgrid"></div>
     </div>
@@ -591,7 +602,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="chcard"><div class="chhd"><h3>Business Unit</h3></div><canvas id="ch-bu"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Action Distribution</h3></div><canvas id="ch-ac"></canvas></div>
         <div class="chcard"><div class="chhd"><h3>Service Type Split</h3></div><canvas id="ch-qc"></canvas></div>
-        <div class="chcard sp3"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">—</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
+        <div class="chcard sp3" id="trend-sec"><div class="chhd"><h3>30-Day Backlog Trend</h3><span id="trend-badge" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--surf2);color:var(--t3);border:1px solid var(--border);">—</span></div><canvas id="ch-tr" style="max-height:180px;"></canvas></div>
       </div>
     </div>
 
@@ -729,7 +740,7 @@ function _startAutoRefresh(){
         if(!p||!p.success) return;
         SUM=p;
         rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-        rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+        rdCityCards(p.homepageCards||[],null);
         rdChartsKPI(p.kpi||{});
         // Update localStorage so next load is instant even after tab close/reopen
         try{localStorage.setItem(LC_KEY,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
@@ -795,15 +806,19 @@ function _renderSummary(sumData){
   SUM=sumData;TRD=sumData.trend||[];AM=sumData.actionMap||{};
   ACTIVE_CITIES=sumData.activeCities||[];ALL_ACTIONS=sumData.allActions||[];
   $('asof','As of '+(sumData.asOf||'—'));
-  // Update KPI section title
   $('kpi-ttl',sumData.isAdmin?'PAN India Overview':(sumData.userCity||'City')+' Overview');
   popFilters();
   rdKPI(sumData.kpi||{});rdAgeing(sumData.kpi||{});
-  rdCityCards(sumData.homepageCards||[],sumData.otherCityCards||null);
-  rdChartsKPI(sumData.kpi||{});drawTrend();
+  // City Performance section and Other Cities strip: admin only
+  const isAdmin=sumData.isAdmin||USER?.isAdmin;
+  const cityPerfSec=document.getElementById('city-perf-sec');
+  if(cityPerfSec) cityPerfSec.style.display=isAdmin?'':'none';
+  if(isAdmin) rdCityCards(sumData.homepageCards||[],null);
+  rdChartsKPI(sumData.kpi||{});
+  if(isAdmin) drawTrend();
   document.getElementById('dash').style.display='block';
   _updFltDlBtn();
-  if(!USER?.isAdmin&&USER?.city) _openCityPanel(USER.city);
+  if(!isAdmin&&USER?.city) _openCityPanel(USER.city);
 }
 function _openCityPanel(city){
   SCITY=city;
@@ -907,7 +922,7 @@ function apF(){
       SUM=p;TRD=p.trend||[];
       if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
       rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-      rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+      rdCityCards(p.homepageCards||[],null);
       rdChartsKPI(p.kpi||{});drawTrend();
       showOv('Loading orders…','Please wait');loadOrders();
     }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
@@ -937,7 +952,7 @@ function setQC(v){
     // Refresh summary quietly in background
     fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&fQC='+encodeURIComponent(v))
       .then(r=>r.json()).then(p=>{
-        if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],p.otherCityCards||null);rdChartsKPI(p.kpi||{});}
+        if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],null);rdChartsKPI(p.kpi||{});}
       }).catch(()=>{});
     return;
   }
@@ -956,7 +971,7 @@ function onCityFilter(){
     if(p&&p.success){
       SUM=p;
       rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-      rdCityCards(p.homepageCards||[],p.otherCityCards||null);
+      rdCityCards(p.homepageCards||[],null);
       rdChartsKPI(p.kpi||{});drawTrend();
       $('kpi-ttl',city+' Overview');
     }
@@ -976,21 +991,23 @@ function popFilters(){
 }
 
 function rdKPI(k){
+  $('k-tot',k.totalRTO||0);
+  $('k-tots',fmtN(k.totalAmount||0)+' total');
+  $('k-gr',k.srnCompleted||0);
+  $('k-cr',k.closureRemarks||0);
   $('k-ap',k.actionPending||0);
-  $('k-tot',k.total||0);$('k-tots',fmtN(k.totalAmount||0)+' total');
-  $('k-pd',k.pending||0);$('k-pds',fmtN(k.pendingAmt||0)+' at risk');
-  $('k-rv',k.recoverable||0);$('k-rvs',fmtN(k.recoverableAmt||0));
-  $('k-ha',k.highAgeing||0);$('k-has',fmtN(k.highAgeingAmt||0)+' exposure');
-  $('k-gr',k.green||0);
-  $('k-ls',fmtK(k.lossTotal||0));$('k-lss','In-house: '+(k.inhouseLoss||0));
-  $('sub-srn',k.srnPending||0);
+  $('k-aps','Total − SRN − Closure = AP');
+  $('k-ls',fmtK(k.lossTotal||0));
+  $('k-lss','In-house: '+(k.inhouseLoss||0));
   $('gapc',k.actionPending||0);
 }
 function rdAgeing(k){
-  const t=k.total||1;
-  const pp=pct(k.pending||0,t),rp=pct(k.recoverable||0,t),hp=pct(k.highAgeing||0,t);
+  const t=k.totalRTO||1;
+  const pp=pct(k.pending||0,t),       // 0–2 days AP orders
+        rp=pct(k.moreThan2||0,t),      // 3–5 days AP orders
+        hp=pct(k.highAgeing||0,t);     // ≥6 days AP orders
   $('ag-pp',pp+'%');$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
-  $('ag-rp',rp+'%');$('ag-rc',k.recoverable||0);$('ag-ra',fmtN(k.recoverableAmt||0));
+  $('ag-rp',rp+'%');$('ag-rc',k.moreThan2||0);$('ag-ra',fmtN(k.moreThan2Amt||0));
   $('ag-hp',hp+'%');$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
   [['ag-pb',pp],['ag-rb',rp],['ag-hb',hp]].forEach(([id,w])=>{const e=document.getElementById(id);if(e)e.style.width=w+'%';});
 }
@@ -1008,23 +1025,41 @@ function rdCityCards(cards,otherCityCards){
   }else{
     displayCards.forEach(c=>{
       const isOwn=!USER?.isAdmin&&c.city.toUpperCase()===(USER?.city||'').toUpperCase();
-      const rp=pct(c.recoverable||0,Math.max(c.active||1,1));
       const canDl=USER?.isAdmin||isOwn;
+      const tot=Math.max(c.total||c.active||1,1);
+      const apPct =pct(c.actionPending||0,tot);
+      const p02Pct=pct(c.pending02||0,tot);
+      const p35Pct=pct(c.midAgeing35||0,tot);
+      const haPct =pct(c.highAgeing6||0,tot);
       const el=document.createElement('div');
       el.className='ccard'+(c.isRed?' red':'')+(SCITY===c.city?' sel':'');
-      el.innerHTML=`<div class="ctop"><div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}</div>
-      <div class="cstats">
-        <div class="cs bl"><div class="csl">Active</div><div class="csv">${c.active||0}</div></div>
-        <div class="cs rd"><div class="csl">Recoverable</div><div class="csv">${c.recoverable||0}</div></div>
-        <div class="cs am"><div class="csl">High Ageing</div><div class="csv">${c.highAgeing||0}</div></div>
-        <div class="cs pu"><div class="csl">SRN Pending</div><div class="csv">${c.srnPending||0}</div></div>
-        ${(c.codShortfall||0)>0?'<div class="cs rd"><div class="csl">COD Shortfall</div><div class="csv">'+c.codShortfall+'</div></div>':''}
-      </div>
-      <div class="cprog"><div class="cpbar"><div class="cpfill" style="width:${rp}%"></div></div><div class="cplbl"><span>${rp}% recoverable</span><span>${c.actionPending||0} AP</span></div></div>
-      <div class="cbtns">
-        ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
-        ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
-      </div>`;
+      el.innerHTML=`
+        <div class="ctop">
+          <div class="cname">${c.city}${isOwn?'<span style="font-size:9px;font-weight:700;color:var(--green);margin-left:6px;background:var(--greenl);padding:1px 6px;border-radius:10px;">YOUR CITY</span>':''}</div>
+          ${c.isRed?'<span class="c-red-badge">&#9888; '+c.active+' ACTIVE</span>':''}
+        </div>
+        <div class="cstats">
+          <div class="cs aa">
+            <div class="csl">Action Pending</div>
+            <div class="csv">${apPct}% <span class="csv-sm">(${c.actionPending||0})</span></div>
+          </div>
+          <div class="cs p02">
+            <div class="csl">0–2 Days</div>
+            <div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||0})</span></div>
+          </div>
+          <div class="cs p35">
+            <div class="csl">3–5 Days</div>
+            <div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||0})</span></div>
+          </div>
+          <div class="cs ha6">
+            <div class="csl">High Ageing ≥6d</div>
+            <div class="csv" style="color:var(--red);">${haPct}% <span class="csv-sm">(${c.highAgeing6||0})</span></div>
+          </div>
+        </div>
+        <div class="cbtns">
+          ${canDl?`<button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>`:''}
+          ${(c.actionPending||0)>0&&(USER?.isAdmin||isOwn)?`<button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">AP (${c.actionPending})</button>`:''}
+        </div>`;
       el.onclick=()=>openDet(c.city);
       grid.appendChild(el);
     });
@@ -1118,7 +1153,7 @@ function afterOrdersCity(){
   document.getElementById('cd-kpis').innerHTML=`
     <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Active</div><div class="kv">${tot}</div></div>
     <div class="kpi aa click" onclick="togGAP()"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv">${ap}</div><div class="kh">Click to filter</div></div>
-    <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">Recoverable</div><div class="kv">${rv}</div></div>
+    <div class="kpi aa"><div class="ki">&#128200;</div><div class="kl">3–5 Days</div><div class="kv">${rv}</div></div>
     <div class="kpi ar click" onclick="openHA()"><div class="ki">&#128308;</div><div class="kl">High Ageing &gt;5d</div><div class="kv">${ha}</div><div class="kh">Click to view</div></div>
     <div class="kpi ap"><div class="ki">&#128257;</div><div class="kl">SRN Pending</div><div class="kv">${sp}</div></div>
     ${cs>0?`<div class="kpi ar"><div class="ki">&#128176;</div><div class="kl">COD Shortfall</div><div class="kv">${cs}</div></div>`:''}`;
@@ -1268,9 +1303,9 @@ const SC={x:{ticks:{color:'#6B7280',font:{size:10}},grid:{color:'#F3F4F6'}},y:{t
 function drawDn(id,labels,data,colors){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const tot=data.reduce((s,v)=>s+v,0)||1;CHS[id]=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors,borderColor:'#fff',borderWidth:3}]},options:{responsive:true,maintainAspectRatio:true,cutout:'60%',plugins:{legend:{position:'right',labels:{color:'#4B5563',font:{size:11},boxWidth:11,padding:8}},datalabels:{color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?Math.round(v/tot*100)+'%':'',display:c=>c.dataset.data[c.dataIndex]>0},tooltip:{callbacks:{label:c=>' '+c.label+': '+c.parsed+' ('+Math.round(c.parsed/tot*100)+'%)'}}}}});}
 function drawHB(id,labels,data){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;const cols=data.map((_,i)=>['#2563EB','#DC2626','#D97706','#059669','#7C3AED','#0891B2'][i%6]);CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{data,backgroundColor:cols,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},datalabels:{anchor:'end',align:'right',color:'#111827',font:{size:10,weight:'700'},formatter:v=>v}},scales:{x:{...SC.x,max:Math.ceil(Math.max(...data,1)*1.28)},y:{...SC.y}}}});}
 function drawSB(id,labels,d1,d2,l1,l2,c1,c2){if(!_initCharts())return;dC(id);const ctx=document.getElementById(id);if(!ctx)return;CHS[id]=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:l1,data:d1,backgroundColor:c1,borderRadius:3},{label:l2,data:d2,backgroundColor:c2,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11}}},datalabels:{anchor:'center',align:'center',color:'#fff',font:{size:10,weight:'700'},formatter:v=>v>0?v:''}},scales:{x:{...SC.x,stacked:true},y:{...SC.y,stacked:true}}}});}
-function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:'Today',total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'Recoverable',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
+function drawTrend(){if(!_initCharts())return;dC('ch-tr');const ctx=document.getElementById('ch-tr');if(!ctx)return;let trd=TRD;const badge=document.getElementById('trend-badge');if(!trd.length){trd=[{date:'Today',total:0,pending:0,recoverable:0,highAgeing:0,actionPending:0}];if(badge)badge.textContent='Today only';}else if(badge)badge.textContent='Last '+trd.length+' days';CHS['ch-tr']=new Chart(ctx,{type:'line',data:{labels:trd.map(r=>r.date),datasets:[{label:'Total',data:trd.map(r=>r.total),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.07)',tension:.35,fill:true,pointRadius:3,borderWidth:2},{label:'3–5 Days',data:trd.map(r=>r.recoverable),borderColor:'#D97706',tension:.35,pointRadius:2,borderWidth:1.5},{label:'High Ageing',data:trd.map(r=>r.highAgeing),borderColor:'#DC2626',tension:.35,pointRadius:2,borderWidth:1.5},{label:'Action Pending',data:trd.map(r=>r.actionPending),borderColor:'#7C3AED',tension:.35,pointRadius:2,borderWidth:1.5,borderDash:[3,2]}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'#4B5563',font:{size:11},usePointStyle:true,pointStyleWidth:8}},datalabels:{display:false}},scales:{x:{...SC.x},y:{...SC.y}}}});}
 function rdChartsKPI(k){
-  drawDn('ch-ag',['Pending','Recoverable','High Ageing'],[k.pending||0,(k.recoverable||0)-(k.highAgeing||0),k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
+  drawDn('ch-ag',['0–2 Days','3–5 Days','High Ageing ≥6d'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   drawDn('ch-st',['Action Pending','Closed','Other'],[k.actionPending||0,k.green||0,Math.max(0,(k.total||0)-(k.actionPending||0)-(k.green||0))],['#D97706','#059669','#9CA3AF']);
 }
 function rdChartsOrders(){
@@ -1456,7 +1491,7 @@ async function saveAll(){
     setTimeout(()=>{
       fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||''))
         .then(r=>r.json()).then(p=>{
-          if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],p.otherCityCards||null);}
+          if(p&&p.success){SUM=p;rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[],null);}
         }).catch(()=>{});
     },1500);
   }catch(e){hideOv();btn.disabled=false;btn.textContent='&#10003; Save All';toast('Save failed: '+e.message,'red');}
@@ -1482,6 +1517,74 @@ function openAPModal(){
   document.getElementById('ap-modal').classList.remove('hide');
 }
 function closeAP(){document.getElementById('ap-modal').classList.add('hide');}
+
+// ── CLOSURE REMARKS MODAL ─────────────────────────────────────────────────────
+const CLOSURE_REMARK_ACTS = new Set([
+  'Connected to Warehouse/LM \u2013 SRN Pending',
+  'Connected to Retail \u2013 SRN Pending',
+  'Pending with 3PL',
+  'Order Lost/Rider Absconded',
+]);
+const CLOSURE_REMARK_UPDS = new Set(['Loss','Order Lost(rider absconded)']);
+const COD_CN_UPDS          = new Set(['COD Collected','CN Received']);
+
+function openCRModal(){
+  // Tab 1: Closure remark actions + Loss/Lost
+  const tab1Orders=ORDERS.filter(o=>
+    CLOSURE_REMARK_ACTS.has(o.currentAction)||CLOSURE_REMARK_UPDS.has(o.currentUpdate)
+  ).sort((a,b)=>b.ageingDays-a.ageingDays);
+  // Tab 2: COD Collected + CN Received
+  const tab2Orders=ORDERS.filter(o=>
+    COD_CN_UPDS.has(o.currentUpdate)
+  ).sort((a,b)=>b.ageingDays-a.ageingDays);
+
+  const tblHtml=(ords,emptyMsg)=>{
+    if(!ords.length) return `<div class="emp"><div class="emp-i">&#9989;</div>${emptyMsg}</div>`;
+    return `<table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="background:#E2E8F0;">
+        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Order ID</th>
+        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">City</th>
+        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">GMV</th>
+        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Action</th>
+        <th style="padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:#334155;">Update</th>
+        <th style="padding:9px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:#334155;">SRN</th>
+        <th style="padding:9px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:#334155;">Age</th>
+      </tr></thead>
+      <tbody>${ords.map(o=>`
+        <tr style="border-bottom:1px solid #EEF2F7;cursor:pointer;" onclick="jumpTo('${o.orderId}')">
+          <td style="padding:9px 12px;font-weight:700;font-size:11px;color:var(--blue);font-family:monospace;">${o.orderId}</td>
+          <td style="padding:9px 12px;font-weight:600;">${o.city}</td>
+          <td style="padding:9px 12px;color:var(--t2);">${fmtN(o.gmv)}</td>
+          <td style="padding:9px 12px;color:var(--t2);max-width:180px;">${o.currentAction||'—'}</td>
+          <td style="padding:9px 12px;color:var(--t2);">${o.currentUpdate||'—'}</td>
+          <td style="padding:9px 12px;text-align:center;"><span class="b ${o.srnDone?'bg':'br'}">${o.srnStatus||'—'}</span></td>
+          <td style="padding:9px 12px;text-align:center;font-weight:800;color:${o.isHighAgeing?'var(--red)':o.isMidAgeing?'var(--amber)':'var(--blue)'};">${o.ageingDays}d</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>`;
+  };
+
+  document.getElementById('cr-pane-1').innerHTML=
+    `<div style="font-size:12px;color:var(--t3);margin-bottom:10px;">${tab1Orders.length} orders — closure remarks + loss/lost (awaiting SRN)</div>`+
+    tblHtml(tab1Orders,'No closure remark or loss/lost orders.');
+  document.getElementById('cr-pane-2').innerHTML=
+    `<div style="font-size:12px;color:var(--t3);margin-bottom:10px;">${tab2Orders.length} orders — COD Collected &amp; CN Received (SRN closure pending)</div>`+
+    tblHtml(tab2Orders,'No COD Collected or CN Received orders.');
+
+  setCRTab(1);
+  document.getElementById('cr-modal').classList.remove('hide');
+}
+function closeCR(){document.getElementById('cr-modal').classList.add('hide');}
+function setCRTab(n){
+  document.getElementById('cr-pane-1').style.display=n===1?'':'none';
+  document.getElementById('cr-pane-2').style.display=n===2?'':'none';
+  document.getElementById('cr-tab-1').style.cssText=n===1
+    ?'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;'
+    :'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);';
+  document.getElementById('cr-tab-2').style.cssText=n===2
+    ?'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;'
+    :'padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);';
+}
 
 function jumpTo(sid){closeHA();closeAP();const idx=ORDERS.findIndex(o=>o.orderId===sid);if(idx>=0){PG=Math.floor(idx/PSZ)+1;rdTbl();}document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>{const rows=document.querySelectorAll('#tbody tr');const li=idx%PSZ;if(rows[li]){rows[li].style.outline='2px solid var(--red)';setTimeout(()=>{rows[li].style.outline='';},2500);}},300);}
 
