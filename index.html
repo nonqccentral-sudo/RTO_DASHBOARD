@@ -388,9 +388,20 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="mhdr"><h2 id="upload-title">Upload Results</h2><button class="mclose" onclick="closeUpload()">&#10005;</button></div>
     <div class="usum" id="usum"></div>
     <div class="mbody" id="ubody"></div>
-    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;background:var(--surf2);">
-      <button onclick="closeUpload()" style="padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);font-size:13px;font-weight:600;cursor:pointer;color:var(--t2);">Close</button>
-      <button id="usave-btn" onclick="saveUploadChanges()" style="display:none;padding:8px 22px;border-radius:7px;background:var(--green);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;">&#10003; Save Valid Updates</button>
+    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;justify-content:space-between;background:var(--surf2);">
+      <div id="usave-badge" style="display:none;align-items:center;justify-content:center;gap:10px;">
+        <div style="width:52px;height:52px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(5,150,105,.35);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <div id="usave-badge-count" style="font-size:22px;font-weight:800;color:var(--green);line-height:1;"></div>
+          <div style="font-size:11px;color:var(--t3);font-weight:600;">orders saved &amp; live</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-left:auto;">
+        <button onclick="closeUpload()" style="padding:8px 20px;border-radius:7px;border:1.5px solid var(--border);background:var(--surface);font-size:13px;font-weight:600;cursor:pointer;color:var(--t2);">Close</button>
+        <button id="usave-btn" onclick="saveUploadChanges()" style="display:none;padding:8px 22px;border-radius:7px;background:var(--green);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;">&#10003; Save Valid Updates</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1334,7 +1345,12 @@ async function saveAll(){
 
 /* ── UPLOAD ──────────────────────────────────────────────────── */
 function triggerUpload(){$('upload-file').click();}
-function closeUpload(){$('upload-modal').classList.add('hide');_uplBatch=null;}
+function closeUpload(){
+  $('upload-modal').classList.add('hide');
+  _uplBatch=null;
+  const badge=$('usave-badge');
+  if(badge) badge.style.display='none';
+}
 
 async function handleUpload(inp){
   const file=inp.files[0];if(!file)return;
@@ -1452,6 +1468,9 @@ async function saveUploadChanges(){
         `<div class="ustat tot">${valid.length} processed</div>`
       );
       $('usave-btn').style.display='none'; // already saved
+      // Show centred count badge
+      const badge=$('usave-badge'); const badgeCount=$('usave-badge-count');
+      if(badge&&badgeCount){ badgeCount.textContent=ok; badge.style.display='flex'; }
       // Fire background cache bust
       fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
     } else {
@@ -1566,18 +1585,104 @@ async function _doDownload(type,city){
     if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
     const rows=d.rows||[];
     if(!rows.length){toast('No data to download','amber');return;}
+
     const wb=XLSX.utils.book_new();
-    const ws=XLSX.utils.aoa_to_sheet(rows);
-    // Style header row bold
-    const range=XLSX.utils.decode_range(ws['!ref']||'A1');
+
+    /* ── Tab 1: fill-in sheet ─────────────────────────────────── */
+    const ws1=XLSX.utils.aoa_to_sheet(rows);
+
+    // Column widths
+    const wscols=rows[0].map((_,i)=>({wch: i===0?22: i<=2?12: i<=9?14:20}));
+    ws1['!cols']=wscols;
+
+    // Freeze header row
+    ws1['!freeze']={xSplit:0,ySplit:1};
+
+    // Style header row (bold + fill)
+    const range=XLSX.utils.decode_range(ws1['!ref']||'A1');
     for(let c=range.s.c;c<=range.e.c;c++){
       const addr=XLSX.utils.encode_cell({r:0,c});
-      if(ws[addr]){ws[addr].s={font:{bold:true}};}
+      if(!ws1[addr]) ws1[addr]={v:rows[0][c]||''};
+      ws1[addr].s={font:{bold:true},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};
     }
-    XLSX.utils.book_append_sheet(wb,ws,'RTO Data');
-    const fname=(city||'PanIndia')+'_RTO_'+(type==='ap'?'AP_':'')+(type==='corrective'?'Corrective_':'')+new Date().toISOString().slice(0,10)+'.xlsx';
-    XLSX.writeFile(wb,fname);
-    toast('Downloaded '+(rows.length-1)+' orders','green');
+
+    // Highlight mismatch rows in orange and normal rows with alternating light fill
+    // mismatchFlags is index-aligned with rows (index 0 = header = false)
+    const flags=d.mismatchFlags||[];
+    const actionColIdx=rows[0].indexOf('Action');       // column index of Action
+    const validActColIdx=rows[0].indexOf('Valid Actions (pipe-separated)');
+    for(let ri=1;ri<rows.length;ri++){
+      const isMismatch=flags[ri]===true;
+      for(let ci=range.s.c;ci<=range.e.c;ci++){
+        const addr=XLSX.utils.encode_cell({r:ri,c:ci});
+        if(!ws1[addr]) ws1[addr]={v:rows[ri][ci]!==undefined?rows[ri][ci]:''};
+        if(isMismatch){
+          // Orange background for entire mismatch row; darker on Action cell
+          const isActCell=(ci===actionColIdx);
+          ws1[addr].s={
+            fill:{fgColor:{rgb: isActCell?'C0392B':'F39C12'}},
+            font:{color:{rgb: isActCell?'FFFFFF':'000000'},bold:isActCell},
+            alignment:{wrapText:false}
+          };
+        } else {
+          // Alternating zebra stripe for readability
+          const bg=ri%2===0?'F5F7FA':'FFFFFF';
+          ws1[addr].s={fill:{fgColor:{rgb:bg}}};
+        }
+      }
+    }
+
+    // Count mismatch rows and add a note at top if any exist
+    const mismatchCount=flags.filter(Boolean).length;
+    if(mismatchCount>0){
+      // Add a note row before data (insert after header)
+      // We can't easily insert rows in XLSX.js, so add a comment cell on A1
+      const noteAddr=XLSX.utils.encode_cell({r:0,c:0});
+      if(!ws1[noteAddr]) ws1[noteAddr]={v:rows[0][0]||''};
+      ws1[noteAddr].c=[{a:'System',t:mismatchCount+' rows highlighted in orange have an incorrect/mismatched action. These are still Action Pending and must be corrected. The correct valid actions are in the "Valid Actions" column.'}];
+    }
+
+    XLSX.utils.book_append_sheet(wb,ws1,'RTO Data (Fill In)');
+
+    /* ── Tab 2: standardised action reference ─────────────────── */
+    if(d.refRows&&d.refRows.length>1){
+      const ws2=XLSX.utils.aoa_to_sheet(d.refRows);
+      const refRange=XLSX.utils.decode_range(ws2['!ref']||'A1');
+      // Header styling
+      for(let c=refRange.s.c;c<=refRange.e.c;c++){
+        const addr=XLSX.utils.encode_cell({r:0,c});
+        if(!ws2[addr]) ws2[addr]={v:d.refRows[0][c]||''};
+        ws2[addr].s={font:{bold:true},fill:{fgColor:{rgb:'4C1D95'}},alignment:{horizontal:'center'}};
+      }
+      // Colour-band by Case ID
+      const caseColors={'C001':'EFF6FF','C002':'DBEAFE','C003':'FEF3C7','C004':'FDE68A',
+                        'C005':'D1FAE5','C006':'A7F3D0','C007':'FCE7F3','C008':'FBCFE8',
+                        'C009':'F3E8FF','C010':'E9D5FF'};
+      let lastCaseId='';
+      let altToggle=false;
+      for(let ri=1;ri<d.refRows.length;ri++){
+        const cid=String(d.refRows[ri][0]||'').trim();
+        if(cid!==lastCaseId){altToggle=!altToggle;lastCaseId=cid;}
+        const bg=caseColors[cid]||(altToggle?'F9FAFB':'FFFFFF');
+        for(let ci=refRange.s.c;ci<=refRange.e.c;ci++){
+          const addr=XLSX.utils.encode_cell({r:ri,c:ci});
+          if(!ws2[addr]) ws2[addr]={v:d.refRows[ri][ci]!==undefined?d.refRows[ri][ci]:''};
+          ws2[addr].s={fill:{fgColor:{rgb:bg}},alignment:{wrapText:false}};
+        }
+        // Bold the Action column (col index 7)
+        const actAddr=XLSX.utils.encode_cell({r:ri,c:7});
+        if(ws2[actAddr]) ws2[actAddr].s={...ws2[actAddr].s,font:{bold:true}};
+      }
+      // Column widths for reference tab
+      ws2['!cols']=[{wch:8},{wch:38},{wch:12},{wch:10},{wch:12},{wch:18},{wch:10},{wch:38},{wch:28},{wch:20},{wch:12},{wch:42}];
+      ws2['!freeze']={xSplit:0,ySplit:1};
+      XLSX.utils.book_append_sheet(wb,ws2,'Action Reference');
+    }
+
+    const typeLabel=type==='ap'?'_AP':type==='corrective'?'_Corrective':type==='loss'?'_Loss':'';
+    const fname=(city||'PanIndia')+'_RTO'+typeLabel+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+    XLSX.writeFile(wb,fname,{cellStyles:true});
+    toast('Downloaded '+(rows.length-1)+' orders'+(mismatchCount?' · '+mismatchCount+' mismatch rows highlighted':''),'green');
   } catch(e){ hideOv(); toast('Download error: '+e.message,'red'); }
 }
 
