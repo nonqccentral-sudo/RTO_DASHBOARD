@@ -437,8 +437,9 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="mhdr"><h2>Confirm Download</h2><button class="mclose" onclick="closeDlConf()">&#10005;</button></div>
     <div class="dlcb"><div class="dlct" id="dlct"></div><div class="dlcm" id="dlcm"></div>
       <div class="dlcbtns">
-        <button class="dlc-y" onclick="dlGo('filtered')">&#9660; Filtered Only</button>
-        <button class="dlc-y" style="background:var(--green)" onclick="dlGo('complete')">&#11015; Full Dataset</button>
+        <button class="dlc-y" onclick="dlGo('ap')" style="background:#D97706">&#9888; Action Pending Only</button>
+        <button class="dlc-y" onclick="dlGo('complete')">&#11015; Full Dataset</button>
+        <button class="dlc-y" onclick="dlGo('corrective')" style="background:var(--purple)">&#8635; Corrective (AP remaining)</button>
         <button class="dlc-n" onclick="closeDlConf()">&#10005; Cancel</button>
       </div>
     </div>
@@ -1094,28 +1095,36 @@ function afterOrdersCity(){
   _renderCityPivot();
 }
 
-/* JS-04: use server pivot=1 mode — single fast request */
+/* Pivot: FC + Retail + 3PL/PMD = total AP (all three buckets reconcile) */
 async function _renderCityPivot(){
   const pvt=$('pivot-wrap');if(!pvt)return;
   pvt.style.display='block';
-  pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>Loading…</span></div></div>`;
+  pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>Loading\u2026</span></div></div>`;
   try{
     const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')
       +'&fAP=1&ps=1&page=1&pivot=1&fCity='+encodeURIComponent(SCITY);
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success||!d.pivot){pvt.style.display='none';return;}
-    const {fc,retail,tplPre,total}=d.pivot;
+    const {fc,retail,tpl,total}=d.pivot;
     if(!total){pvt.style.display='none';return;}
+    // Verify reconciliation
+    const sum=(fc||0)+(retail||0)+(tpl||0);
     pvt.innerHTML=`
       <div class="pivot-section">
-        <div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>${total} AP orders</span></div>
+        <div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>${total} AP orders${sum!==total?' \u26a0 check':''}  </span></div>
         <table class="pivot-table">
-          <thead><tr><th>FC / Warehouse</th><th>Retail</th><th>3PL Pre-MDQ</th><th>Total</th></tr></thead>
+          <thead><tr><th>FC (Inhouse+WH)</th><th>Retail (Inhouse+Retail)</th><th>3PL / PMD</th><th>Total AP</th></tr></thead>
           <tbody><tr>
-            <td class="pv-fc">${fc}</td>
-            <td class="pv-rt">${retail}</td>
-            <td class="pv-3pl">${tplPre}</td>
+            <td class="pv-fc">${fc||0}</td>
+            <td class="pv-rt">${retail||0}</td>
+            <td class="pv-3pl">${tpl||0}</td>
             <td class="pv-tot">${total}</td>
+          </tr>
+          <tr style="font-size:10px;color:var(--t3);">
+            <td>${fc?Math.round((fc||0)/total*100):0}%</td>
+            <td>${retail?Math.round((retail||0)/total*100):0}%</td>
+            <td>${tpl?Math.round((tpl||0)/total*100):0}%</td>
+            <td>FC+Retail+3PL = ${sum}</td>
           </tr></tbody>
         </table>
       </div>`;
@@ -1211,34 +1220,114 @@ function updSbar(){
 }
 function clearAll(){CHANGES={};updSbar();rdRows();}
 
+/* ── INSTANT IN-PLACE UPDATE ─────────────────────────────────────
+   Patches the live ORDERS array from batchSave results and
+   re-renders the table + KPI cards without a server round-trip.
+   A background cache-bust fires afterwards so the next natural
+   refresh picks up the persisted state.                         */
+function _patchOrdersAndRefreshUI(saveResults, changeMap){
+  const rules = _getClientActionRules();
+  saveResults.forEach(r=>{
+    if(!r.success) return;
+    const o = ORDERS.find(x => x.orderId === r.orderId);
+    if(!o) return;
+    const ch = changeMap[r.orderId] || {};
+    if(ch.action !== undefined){ o.currentAction = ch.action; o.actionEditCount = (o.actionEditCount||0)+1; }
+    if(ch.update !== undefined){ o.currentUpdate = ch.update; o.updateEditCount = (o.updateEditCount||0)+1; }
+    if(ch.cnNumber  !== undefined) o.cnNumber       = ch.cnNumber;
+    if(ch.refNumber !== undefined) o.referenceNumber= ch.refNumber;
+    if(ch.codAmount !== undefined) o.codAmount      = ch.codAmount;
+    // Recompute derived flags from the new action/update
+    const act = o.currentAction || '';
+    const upd = o.currentUpdate || '';
+    const srnOnly = new Set([
+      'Connected to Warehouse/LM \u2013 SRN Pending',
+      'Connected to Retail \u2013 SRN Pending',
+      'Pending with 3PL',
+      'Order Lost/Rider Absconded',
+    ]);
+    const closing = new Set(['CN Received','COD Collected','Loss','Order Lost/Rider Absconded']);
+    o.isClosureRemark = srnOnly.has(act) || closing.has(upd);
+    const closingApplied = closing.has(upd) || act === 'Order Lost/Rider Absconded';
+    if(closingApplied || o.srnDone) o.isGreen = true;
+    if(r.closureStatus === 'CLOSED') { o.isGreen = true; o.actionPending = false; }
+    // Recompute actionPending
+    if(!o.isGreen && !o.srnCompleted && !o.isClosureRemark){
+      const caseMap = rules && o.caseId ? rules[o.caseId] : null;
+      if(!act){ o.actionPending = true; }
+      else if(caseMap){
+        const ae = caseMap[act];
+        o.actionPending = !ae || (ae.updates && ae.updates.length > 0 && !upd);
+        o.actionMismatch = !ae;
+      }
+    } else {
+      o.actionPending = false;
+      o.actionMismatch = false;
+    }
+    // Recompute available updates for the new action
+    const caseMap = rules && o.caseId ? rules[o.caseId] : null;
+    if(caseMap && act && caseMap[act]){
+      const freshUpds = caseMap[act].updates || [];
+      o.availableUpdates = freshUpds;
+    }
+  });
+  // Re-render table immediately (no server call)
+  rdRows();
+  // Recompute KPIs from patched in-memory data and refresh header cards
+  _refreshKPIFromMemory();
+  if(SCITY) afterOrdersCity();
+}
+
+/* Lightweight client-side KPI recompute from the ORDERS array   */
+function _refreshKPIFromMemory(){
+  if(!SUM || !SUM.kpi) return;
+  // Recompute from patched ORDERS (which may be page-limited, so only
+  // update per-page-visible metrics. Summary KPIs refresh on next apF/fref.)
+  const ap  = ORDERS.filter(o => o.actionPending && !o.isGreen).length;
+  const srn = ORDERS.filter(o => o.srnCompleted).length;
+  const cr  = ORDERS.filter(o => o.isClosureRemark && !o.srnCompleted).length;
+  // Update the AP badge in the header (always accurate for current page)
+  $('gapc', ap);
+  if(SCITY) $('ap-cnt', ap + ' action pending');
+}
+
+/* Client-side action rules for instant recompute (mirrors server) */
+function _getClientActionRules(){
+  // Use the actionMap returned by the last getSummary call if available
+  if(SUM && SUM.actionMap) return SUM.actionMap;
+  return null;
+}
+
 async function saveAll(){
   const entries=Object.entries(CHANGES).map(([id,c])=>({orderId:id,...c}));
   if(!entries.length)return;
   $('sbtn').disabled=true;$('sst','Saving…');
+  const changeSnapshot = Object.assign({}, CHANGES); // snapshot before clearing
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
     if(res.success){
-      res.results.forEach(r=>{
-        if(!r.success)return;
-        const o=ORDERS.find(x=>x.orderId===r.orderId);if(!o)return;
-        const ch=CHANGES[r.orderId]||{};
-        if(ch.action!==undefined)o.currentAction=ch.action;
-        if(ch.update!==undefined)o.currentUpdate=ch.update;
-        if(ch.cnNumber!==undefined)o.cnNumber=ch.cnNumber;
-        if(ch.refNumber!==undefined)o.referenceNumber=ch.refNumber;
-        if(ch.codAmount!==undefined)o.codAmount=ch.codAmount;
-        if(r.closureStatus==='CLOSED'){o.isGreen=true;o.actionPending=false;}
-        delete CHANGES[r.orderId];
-      });
       const ok=res.results.filter(r=>r.success).length;
       const fail=res.results.filter(r=>!r.success).length;
+      // Clear saved entries from CHANGES
+      res.results.forEach(r=>{ if(r.success) delete CHANGES[r.orderId]; });
       localStorage.removeItem(LC_KEY);
-      // JS-10: guard ok count
       toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
-      $('sst','');updSbar();rdRows();
-      // JS-08: call afterOrdersCity for any user when in city view
-      if(SCITY)afterOrdersCity();
-    } else {toast(res.error||'Save failed','red');}
+      if(fail){
+        // Show which ones failed
+        const failIds=res.results.filter(r=>!r.success).map(r=>r.orderId+': '+(r.error||'failed')).join('\n');
+        console.warn('Save failures:\n'+failIds);
+      }
+      $('sst','');
+      updSbar();
+      // Instant patch — no server round-trip needed
+      _patchOrdersAndRefreshUI(res.results, changeSnapshot);
+      // Background: bust server cache so next full refresh is fresh
+      // (no await — fire and forget)
+      fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
+    } else {
+      toast(res.error||'Save failed','red');
+    }
   } catch(e){toast('Network error: '+e.message,'red');}
   $('sbtn').disabled=false;
 }
@@ -1246,33 +1335,62 @@ async function saveAll(){
 /* ── UPLOAD ──────────────────────────────────────────────────── */
 function triggerUpload(){$('upload-file').click();}
 function closeUpload(){$('upload-modal').classList.add('hide');_uplBatch=null;}
+
 async function handleUpload(inp){
   const file=inp.files[0];if(!file)return;
   showOv('Parsing upload…','Reading Excel');
   const ab=await file.arrayBuffer();
   const wb=XLSX.read(ab,{type:'array'});
   const sh=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true});
+  const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true,defval:''});
   if(rows.length<2){hideOv();toast('Sheet empty or unreadable','red');inp.value='';return;}
-  const hdr=rows[0].map(h=>(h||'').toString().toLowerCase().trim());
-  const ci=hdr.findIndex(h=>h.includes('order')||h.includes('shipment'));
-  const ai=hdr.findIndex(h=>h.includes('action'));
-  const ui=hdr.findIndex(h=>h.includes('update'));
-  if(ci<0||ai<0){hideOv();toast('Missing Order ID or Action column','red');inp.value='';return;}
-  const data=rows.slice(1).filter(r=>r[ci]).map(r=>({orderId:(r[ci]||'').toString().trim(),action:(r[ai]||'').toString().trim(),update:ui>=0?(r[ui]||'').toString().trim():'',cnNumber:'',refNumber:'',codAmount:0}));
+
+  // Detect columns by header name (works for both old and new download format)
+  const hdr=rows[0].map(h=>String(h||'').toLowerCase().trim());
+  const ci=hdr.findIndex(h=>h==='order id'||h.includes('shipment_order'));
+  const ai=hdr.findIndex(h=>h==='action'&&!h.includes('edit')&&!h.includes('valid'));
+  const ui=hdr.findIndex(h=>h==='update'&&!h.includes('edit'));
+  const cni=hdr.findIndex(h=>h.includes('cn number')||h==='cn');
+  const rni=hdr.findIndex(h=>h.includes('ref')||h.includes('reference'));
+  const codi=hdr.findIndex(h=>h.includes('cod'));
+
+  if(ci<0){hideOv();toast('Cannot find Order ID column in the file','red');inp.value='';return;}
+  if(ai<0){hideOv();toast('Cannot find Action column in the file','red');inp.value='';return;}
+
+  const data=rows.slice(1).filter(r=>r[ci]).map(r=>({
+    orderId:String(r[ci]||'').trim(),
+    action: String(r[ai]||'').trim(),
+    update: ui>=0?String(r[ui]||'').trim():'',
+    cnNumber:  cni>=0?String(r[cni]||'').trim():'',
+    refNumber: rni>=0?String(r[rni]||'').trim():'',
+    codAmount: codi>=0?(parseFloat(r[codi])||0):0,
+  }));
+
+  if(!data.length){hideOv();toast('No data rows found in file','amber');inp.value='';return;}
   hideOv();
-  showOv('Validating on server…','Checking against full dataset');
+  showOv('Validating on server…','Checking '+data.length+' rows against backend');
+
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
     hideOv();
     if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
     _uplBatch=res;
-    const ok=res.results.filter(r=>r.valid).length;
+    const ok=res.results.filter(r=>r.valid&&!r.noChange).length;
+    const noChg=res.results.filter(r=>r.valid&&r.noChange).length;
     const fail=res.results.filter(r=>!r.valid).length;
-    $('upload-title','Upload Results — '+ok+' valid, '+fail+' invalid');
-    setHTML('usum',`<div class="ustat ok">✓ ${ok} Valid</div><div class="ustat fail">✗ ${fail} Invalid</div><div class="ustat tot">${data.length} total rows</div>`);
+    $('upload-title','Upload Validation — '+data.length+' rows');
+    setHTML('usum',
+      `<div class="ustat ok">✓ ${ok} Ready to save</div>`+
+      (noChg?`<div class="ustat tot">${noChg} No change</div>`:'')+
+      `<div class="ustat fail">✗ ${fail} Invalid</div>`+
+      `<div class="ustat tot">${data.length} total</div>`
+    );
     setHTML('ubody',res.results.map(r=>{
-      if(r.valid)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old}→${c.new}`).join(' · '):'No changes'}</div></div>`;
+      if(r.valid&&!r.noChange)
+        return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' &nbsp;·&nbsp; '):'Ready'}</div></div>`;
+      if(r.valid&&r.noChange)
+        return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
       return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
     }).join(''));
     $('usave-btn').style.display=ok>0?'':'none';
@@ -1280,20 +1398,65 @@ async function handleUpload(inp){
   } catch(e){hideOv();toast('Upload error: '+e.message,'red');}
   inp.value='';
 }
+
 async function saveUploadChanges(){
   if(!_uplBatch)return;
-  const valid=_uplBatch.results.filter(r=>r.valid);
-  if(!valid.length)return;
-  showOv('Saving upload…','Please wait');
+  const valid=_uplBatch.results.filter(r=>r.valid&&!r.noChange);
+  if(!valid.length){toast('No changes to save','amber');return;}
+  // Build a changeMap so _patchOrdersAndRefreshUI knows what changed
+  const changeMap = {};
+  valid.forEach(r=>{
+    if(r.resolved) changeMap[r.orderId] = r.resolved;
+  });
+  showOv('Saving '+valid.length+' updates…','Writing to sheet');
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',batchId:_uplBatch?.batchId||'',changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',batchId:_uplBatch?.batchId||'',
+        changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
     hideOv();
     if(res.success){
-      const ok=res.results.filter(r=>r.success).length;
-      toast(ok+' orders saved from upload','green');
+      const ok    = res.results.filter(r=>r.success).length;
+      const fail  = res.results.filter(r=>!r.success).length;
+      toast(ok+' orders updated'+(fail?' · '+fail+' failed':''),'green');
       localStorage.removeItem(LC_KEY);
-      closeUpload();loadSummary();
-    } else {toast(res.error||'Save failed','red');}
+      // Instant in-place update — table and KPIs refresh without closing/reloading
+      _patchOrdersAndRefreshUI(res.results, changeMap);
+      // Update the upload modal result list: mark saved rows as done
+      const savedIds = new Set(res.results.filter(r=>r.success).map(r=>r.orderId));
+      const failedSaves = res.results.filter(r=>!r.success);
+      // Update each row badge in the modal
+      _uplBatch.results.forEach(r=>{
+        if(savedIds.has(r.orderId)){
+          r._saved = true;
+        } else if(failedSaves.find(f=>f.orderId===r.orderId)){
+          r._saveFail = true;
+          r._saveError = (failedSaves.find(f=>f.orderId===r.orderId)||{}).error||'Save failed';
+        }
+      });
+      // Re-render modal body with saved/failed status
+      setHTML('ubody', _uplBatch.results.map(r=>{
+        if(r._saved)
+          return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="font-weight:700;color:var(--green)">Saved ✓ — now live on dashboard</div></div>`;
+        if(r._saveFail)
+          return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r._saveError}</div></div>`;
+        if(r.valid&&!r.noChange)
+          return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'}</div></div>`;
+        if(r.valid&&r.noChange)
+          return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change</div></div>`;
+        return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Invalid'}</div></div>`;
+      }).join(''));
+      // Update summary line
+      setHTML('usum',
+        `<div class="ustat ok">✓ ${ok} Saved &amp; live</div>`+
+        (fail?`<div class="ustat fail">✗ ${fail} Save failed</div>`:'')+
+        `<div class="ustat tot">${valid.length} processed</div>`
+      );
+      $('usave-btn').style.display='none'; // already saved
+      // Fire background cache bust
+      fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
+    } else {
+      toast(res.error||'Save failed','red');
+    }
   } catch(e){hideOv();toast('Network error: '+e.message,'red');}
 }
 
@@ -1373,17 +1536,24 @@ function setCRTab(t){
 
 /* ── DOWNLOAD ────────────────────────────────────────────────── */
 async function triggerDl(type){
-  if(type==='panIndia'){await _doDownload('panIndia',null);}
-  else if(type==='filtered'){$('dlct','Filtered Download');$('dlcm','Download only the currently filtered orders, or the full dataset for all cities.');$('dl-modal').classList.remove('hide');}
-  else if(type==='loss'){await _doDownload('loss',null);}
+  if(type==='panIndia'){ await _doDownload('complete',null); }
+  else if(type==='filtered'){ $('dlct','Filtered Download'); $('dlcm','Filtered view or full dataset.'); $('dl-modal').classList.remove('hide'); }
+  else if(type==='loss'){ await _doDownload('loss',null); }
+  else if(type==='ap'){ await _doDownload('ap', SCITY||null); }
 }
-function triggerCityDl(city,t){$('dlct',city+' Download');$('dlcm','Download '+city+' orders. Choose filtered (current filters) or complete.');$('dl-modal').classList.remove('hide');$('dl-modal').dataset.city=city;$('dl-modal').dataset.t=t||'';}
+function triggerCityDl(city,t){
+  $('dlct',city+' Download');
+  $('dlcm','Choose what to download for '+city+'.');
+  $('dl-modal').classList.remove('hide');
+  $('dl-modal').dataset.city=city;
+  $('dl-modal').dataset.t=t||'';
+}
 function closeDlConf(){$('dl-modal').classList.add('hide');}
 async function dlGo(mode){
   const city=$('dl-modal').dataset.city||null;
   const t=$('dl-modal').dataset.t||null;
   closeDlConf();
-  await _doDownload(t==='loss'?'loss':mode,city);
+  await _doDownload(t==='loss'?'loss':mode, city);
 }
 async function _doDownload(type,city){
   showOv('Preparing download…','Building dataset');
@@ -1394,22 +1564,27 @@ async function _doDownload(type,city){
     const d=await fetch(ep).then(r=>r.json());
     hideOv();
     if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
-    const rows=d.rows||[];if(!rows.length){toast('No data to download','amber');return;}
+    const rows=d.rows||[];
+    if(!rows.length){toast('No data to download','amber');return;}
     const wb=XLSX.utils.book_new();
     const ws=XLSX.utils.aoa_to_sheet(rows);
+    // Style header row bold
+    const range=XLSX.utils.decode_range(ws['!ref']||'A1');
+    for(let c=range.s.c;c<=range.e.c;c++){
+      const addr=XLSX.utils.encode_cell({r:0,c});
+      if(ws[addr]){ws[addr].s={font:{bold:true}};}
+    }
     XLSX.utils.book_append_sheet(wb,ws,'RTO Data');
-    XLSX.writeFile(wb,(city||'PanIndia')+'_RTO_'+new Date().toISOString().slice(0,10)+'.xlsx');
-    toast('Downloaded '+((rows.length-1))+' orders','green');
-  } catch(e){hideOv();toast('Download error: '+e.message,'red');}
+    const fname=(city||'PanIndia')+'_RTO_'+(type==='ap'?'AP_':'')+(type==='corrective'?'Corrective_':'')+new Date().toISOString().slice(0,10)+'.xlsx';
+    XLSX.writeFile(wb,fname);
+    toast('Downloaded '+(rows.length-1)+' orders','green');
+  } catch(e){ hideOv(); toast('Download error: '+e.message,'red'); }
 }
+
+/* AP queue download — full city-scoped AP list from server (not page-limited) */
 async function downloadAP(){
-  const ap=ORDERS.filter(o=>o.actionPending);
-  if(!ap.length){toast('No AP orders on this page','amber');return;}
-  const wb=XLSX.utils.book_new();
-  const rows=[['Order ID','City','GMV','Partner','BU','Action','Ageing Days'],...ap.map(o=>[o.orderId,o.city,o.gmv,o.partner,o.bu,o.currentAction,o.ageingDays])];
-  const ws=XLSX.utils.aoa_to_sheet(rows);XLSX.utils.book_append_sheet(wb,ws,'AP Orders');
-  XLSX.writeFile(wb,'AP_Orders_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  toast('Downloaded '+ap.length+' AP orders');
+  const city=SCITY||(USER?.isAdmin?'':USER?.city||'');
+  await _doDownload('ap', city||null);
 }
 
 /* ── CHARTS ──────────────────────────────────────────────────── */
