@@ -648,7 +648,7 @@ const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZ
 const LC_KEY='rto_sum_v2341';
 const LC_TTL=8*60*1000;
 const PAGE_SZ=100;
-const AUTO_REF=8*60*1000;
+const AUTO_REF=5*60*1000; // FIX5: refresh every 5 min (was 8)
 
 let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],MS_SEL=new Set(),_charts={},_autoTimer=null,_uplBatch=null;
 
@@ -824,7 +824,10 @@ function loadSummary(){
 }
 
 function _renderSummary(sd){
-  $('asof','As of '+fmtD(sd.asOf||new Date().toISOString()));
+  const _asofDate = sd.asOf ? new Date(sd.asOf) : new Date();
+  const _minsAgo = Math.round((Date.now() - _asofDate.getTime()) / 60000);
+  const _ageStr = _minsAgo <= 1 ? 'just now' : _minsAgo + ' min ago';
+  $('asof','As of '+fmtD(sd.asOf||new Date().toISOString())+' · synced '+_ageStr);
   rdKPI(sd.kpi||{});
   rdAgeing(sd.kpi||{});
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
@@ -840,21 +843,26 @@ function _renderSummary(sd){
 /* ── RENDER KPI ─────────────────────────────────────────────────
    FIX7: if totalRTO=0 from server, reconstruct from sum of parts  */
 function rdKPI(k){
-  // Total RTO = sum of its parts: SRN + Closure Remarks + Action Pending
-  const _kTotal=(k.srnCompleted||0)+(k.closureRemarks||0)+(k.actionPending||0);
+  // Total RTO = ALL orders from live sheet (irrespective of status)
+  const _kTotal=k.totalRTO||0;
   const _base=_kTotal||1;
-  const _apN=k.actionPending||0,_crN=k.closureRemarks||0,_srnN=k.srnCompleted||0;
-  const _apPct=Math.round(_apN/_base*100);
-  const _crPct=Math.round(_crN/_base*100);
-  const _srnPct=Math.round(_srnN/_base*100);
+  const _srnN=k.srnCompleted||0;
+  const _crN=k.closureRemarks||0;
+  // AP derived: Total − SRN Completed − Closure Remarks
+  const _apN=Math.max(0,_kTotal-_srnN-_crN);
+  const _apPct=(_apN/_base*100).toFixed(1);
+  const _crPct=(_crN/_base*100).toFixed(1);
+  const _srnPct=(_srnN/_base*100).toFixed(1);
   $('k-tot',_kTotal);
-  $('k-tots',fmtN(k.totalAmount||0)+' total');
+  $('k-tots','('+_kTotal+' orders) · '+fmtN(k.totalAmount||0));
   $('k-gr',_srnPct+'%');
-  const _grs=document.getElementById('k-grs');if(_grs)_grs.textContent='('+_srnN+') · Visible 24h then removed';
+  const _grs=document.getElementById('k-grs');
+  if(_grs)_grs.textContent='('+_srnN+' orders) · '+fmtN(k.srnAmt||0);
   $('k-cr',_crPct+'%');
-  $('k-crs','('+_crN+') · Awaiting SRN closure');
+  const _srnPendN=k.srnPending||0;
+  $('k-crs','('+_crN+' orders) · '+fmtN(k.crAmt||0)+(_srnPendN?' · '+_srnPendN+' SRN pending':''));
   $('k-ap',_apPct+'%');
-  $('k-aps','('+_apN+') · Total − SRN − Closure');
+  $('k-aps','('+_apN+' orders) · '+fmtN(k.apAmt||0));
   const lossStr=k.lossTotal?fmtN(k.lossTotal):'₹0';
   $('k-ls',lossStr);
   $('k-lss','In-house: '+(k.inhouseLoss?fmtN(k.inhouseLoss):'0'));
@@ -870,9 +878,9 @@ function rdAgeing(k){
   const t=k.totalRTO>0?k.totalRTO:(_apSum||1);
   const _more2=(k.moreThan2||0)+(k.highAgeing||0);
   const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
-  const pp=Math.min(100,pct(k.pending||0,t));
-  const rp=Math.min(100,pct(_more2,t));
-  const hp=Math.min(100,pct(k.highAgeing||0,t));
+  const pp=Math.min(100,(k.pending||0)/t*100).toFixed(1);
+  const rp=Math.min(100,_more2/t*100).toFixed(1);
+  const hp=Math.min(100,(k.highAgeing||0)/t*100).toFixed(1);
   $('ag-pp',fmtPct(pp));$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
   $('ag-rp',fmtPct(rp));$('ag-rc',_more2);$('ag-ra',fmtN(_more2Amt));
   $('ag-hp',fmtPct(hp));$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
@@ -892,11 +900,11 @@ function rdCityCards(cards,fullMap){
   const isOwn=c=>false;
   grid.innerHTML=redCards.map(c=>{
     const isRed=c.isRed;
-    const tot=c.total||c.active||0;
-    const activePct=tot?Math.round((c.actionPending||0)/tot*100):0;
-    const p02Pct=tot?Math.round((c.pending02||c.pending||0)/tot*100):0;
-    const p35Pct=tot?Math.round((c.midAgeing35||c.moreThan2||0)/tot*100):0;
-    const ha6Pct=tot?Math.round((c.highAgeing6||c.highAgeing||0)/tot*100):0;
+    const tot=c.active||c.total||1; // base = active orders (matches badge)
+    const activePct=tot?((c.actionPending||0)/tot*100).toFixed(1):0;
+    const p02Pct=tot?((c.pending02||c.pending||0)/tot*100).toFixed(1):0;
+    const p35Pct=tot?((c.midAgeing35||c.moreThan2||0)/tot*100).toFixed(1):0;
+    const ha6Pct=tot?((c.highAgeing6||c.highAgeing||0)/tot*100).toFixed(1):0;
     return `<div class="ccard${isRed?' red':''}" onclick="openDet('${c.city}')">
       <div class="ctop"><div class="cname">${c.city}${isOwn(c.city)?'<br><small style="font-size:9px;color:var(--blue);font-weight:600;">YOUR CITY</small>':''}</div>
       <div class="c-red-badge">▲ ${c.active||c.total||0} ACTIVE</div></div>
@@ -1111,9 +1119,11 @@ function afterOrdersCity(){
   const totAct2=(_src&&(_src.active||_src.totalRTO))||0;
   const snr=(_sk&&_sk.srnCompleted)||0;
   const cr=(_sk&&_sk.closureRemarks)||0;
-  const _kTot2=totAct2>0?totAct2:((ap||0)+(cr||0)+(snr||0))||0;
+  const _kTot2=totAct2||0;
   const _b2=_kTot2||1;
-  const _apP=Math.round(ap/_b2*100);
+  // AP derived in city detail too
+  const _apDer=Math.max(0,_kTot2-snr-cr);
+  const _apP=Math.round(_apDer/_b2*100);
   const _crP=Math.round(cr/_b2*100);
   const _snP=Math.round(snr/_b2*100);
   setHTML('cd-kpis',
@@ -1213,7 +1223,8 @@ function rdRows(){
     const ueLk=o.updateEditCount>=2;
     let actHtml='',updHtml='';
     if(!canE||aeLk){
-      actHtml=`<span class="ro">${curAct||'—'}</span>${aeLk&&canE?'<span class="lkchip ml-1" title="Max 2 edits">✎✎</span>':''}`;
+      actHtml=`<span class="ro">${curAct||'—'}</span>`
+          +(aeLk&&canE&&USER?.isAdmin?`<button onclick="adminResetEdit('${o.orderId}')" style="margin-left:6px;padding:2px 8px;border-radius:4px;border:1px solid #FECACA;background:var(--redl);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;">Reset</button>`:'<span class="lkchip" title="Max edits reached">✎✎</span>');
     } else {
       const aOpts=(o.availableActions||[]);
       const aSelHtml=aOpts.length?`<select class="isel${ch.action!==undefined?' ch':''}" onchange="onActChg('${o.orderId}',this.value,this)">${aOpts.map(a=>`<option value="${a}"${a===curAct?' selected':''}>${a}</option>`).join('')}</select>`:`<span class="ro">${curAct||'—'}</span>`;
@@ -1223,7 +1234,8 @@ function rdRows(){
     if(!canE||ueLk){
       updHtml=`<span class="ro">${curUpd||'—'}</span>`;
     } else if(!curAct||!needUpd){
-      updHtml=`<span class="lknote">${!curAct?'Set action first':'No update needed'}</span>`;
+      // SRN-only action: updates[] is empty — show 'Awaiting SRN' per workbook
+      updHtml=`<span class="lknote">${!curAct?'Set action first':'Awaiting SRN'}</span>`;
     } else {
       const uOpts=(o.availableUpdates||[]);
       const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
@@ -1504,6 +1516,17 @@ function drawTrend(){
   _charts['ch-tr']=new Chart(el,{type:'line',data:{labels:TRD.map(t=>t.date),datasets:[{label:'Active RTO',data:TRD.map(t=>t.count),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.08)',tension:.4,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false},datalabels:{display:false}},scales:{y:{beginAtZero:false,ticks:{font:{size:10}}},x:{ticks:{font:{size:10},maxTicksLimit:10}}}}});
   const last=TRD[TRD.length-1],prev=TRD[TRD.length-2];
   if(last&&prev){const d=last.count-prev.count;$('trend-badge',(d>0?'▲':'▼')+Math.abs(d)+' vs yesterday');}
+}
+
+
+async function adminResetEdit(orderId){
+  if(!USER?.isAdmin){toast('Admin only','red');return;}
+  if(!confirm('Reset edit count for '+orderId+'?'))return;
+  try{
+    const r=await fetch(API+'?action=resetEditCount&email='+encodeURIComponent(USER.email||'')+'&orderId='+encodeURIComponent(orderId)).then(r=>r.json());
+    if(r.success){toast('Edit count reset for '+orderId);localStorage.removeItem(LC_KEY);loadOrders();}
+    else toast(r.error||'Reset failed','red');
+  } catch(e){toast('Network error','red');}
 }
 
 </script>
