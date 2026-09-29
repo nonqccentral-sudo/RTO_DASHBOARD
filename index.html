@@ -112,23 +112,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .fg label{font-size:11px;font-weight:700;color:var(--t3);white-space:nowrap;text-transform:uppercase;letter-spacing:.4px;}
 .fg select,.fg input[type=date]{padding:6px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surf2);font-size:12px;color:var(--t1);cursor:pointer;min-width:110px;font-weight:500;}
 .fg select:focus,.fg input:focus{outline:none;border-color:var(--blue);background:#fff;}
-.ms-wrap{position:relative;}
-.ms-trig{padding:6px 10px;border-radius:var(--rs);border:1.5px solid var(--border);background:var(--surf2);font-size:12px;color:var(--t1);cursor:pointer;min-width:130px;display:flex;align-items:center;justify-content:space-between;gap:6px;user-select:none;}
-.ms-trig.act{border-color:var(--amber);background:var(--amberl);color:var(--amber);}
-.ms-arrow{font-size:9px;color:var(--t3);transition:transform .15s;}
-.ms-trig.open .ms-arrow{transform:rotate(180deg);}
-.ms-drop{display:none;position:absolute;top:calc(100% + 4px);left:0;min-width:250px;max-height:280px;overflow-y:auto;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);box-shadow:var(--md);z-index:400;}
-.ms-drop.open{display:block;}
-.ms-srch{padding:8px 10px;border-bottom:1px solid var(--border);}
-.ms-srch input{width:100%;padding:5px 8px;border-radius:5px;border:1px solid var(--border);font-size:12px;background:var(--surf2);outline:none;}
-.ms-opt{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;font-size:12px;color:var(--t1);}
-.ms-opt:hover{background:var(--bluel);}
-.ms-opt input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:var(--blue);}
-.ms-opt label{cursor:pointer;flex:1;}
-.ms-acts{padding:6px 10px;border-top:1px solid var(--border);display:flex;gap:6px;}
-.ms-act{flex:1;padding:5px;border-radius:5px;border:1px solid var(--border);background:var(--surf2);font-size:11px;font-weight:600;cursor:pointer;color:var(--t2);}
-.ms-act:hover{background:var(--blue);color:#fff;border-color:var(--blue);}
-.ms-badge{font-size:10px;font-weight:700;background:var(--amber);color:#fff;padding:1px 6px;border-radius:20px;}
 .fdiv{width:1px;height:22px;background:var(--border);margin:0 2px;}
 .fbtn{padding:6px 13px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .12s;}
 .btn-rst{background:var(--redl);border-color:#FECACA;color:var(--red);}
@@ -154,7 +137,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .ks{font-size:11px;color:var(--t3);margin-top:4px;}
 .kpi.click{cursor:pointer;}
 .kh{font-size:10px;color:var(--t3);margin-top:6px;}
-.srn-pill{display:inline-flex;background:var(--purplel);border:1px solid #D8B4FE;border-radius:8px;padding:8px 16px;align-items:center;gap:10px;margin-top:10px;}
 .age-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .age-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:var(--xs);}
 .age-ring{width:52px;height:52px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
@@ -187,10 +169,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .cs.p35 .csv{color:var(--amber);}
 .cs.ha6 .csv{color:var(--red);}
 .csv-sm{font-size:10px;font-weight:500;color:var(--t3);}
-.cprog{margin-top:10px;}
-.cpbar{height:4px;background:var(--surf3);border-radius:2px;overflow:hidden;}
-.cpfill{height:100%;background:linear-gradient(90deg,var(--blue),var(--red));border-radius:2px;}
-.cplbl{display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:3px;}
 .cbtns{display:flex;gap:5px;margin-top:10px;}
 .cbtn{flex:1;padding:5px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid;text-align:center;transition:all .12s;}
 .cb-dl{background:var(--bluel);border-color:#BFDBFE;color:var(--blue);}
@@ -216,21 +194,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .pv-fc{color:var(--blue);font-weight:800;font-size:20px;}
 .pv-rt{color:var(--green);font-weight:800;font-size:20px;}
 .pv-3pl{color:var(--amber);font-weight:800;font-size:20px;}
-.pv-oth{color:var(--t3);font-weight:800;font-size:20px;}
 .pv-tot{color:var(--t1);font-weight:800;font-size:20px;}
-.rec-sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--xs);margin-bottom:16px;overflow:hidden;}
-.rec-hdr{padding:12px 18px;background:linear-gradient(135deg,#4C1D95,var(--purple));display:flex;align-items:center;justify-content:space-between;}
-.rec-hdr h3{color:#fff;font-size:13px;font-weight:700;}
-.rec-body{padding:14px 18px;}
-.rec-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;border:1px solid var(--border);margin-bottom:6px;background:var(--surf2);font-size:12px;flex-wrap:wrap;}
-.rec-id{font-weight:700;color:var(--blue);font-family:monospace;min-width:140px;}
-.rec-gmv{color:var(--red);font-weight:700;}
-.rec-ok{color:var(--green);font-weight:700;}
-.rec-partial{color:var(--amber);font-weight:700;}
-.rinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:120px;}
-.rrinp{padding:5px 9px;border-radius:6px;border:1.5px solid var(--border);background:#fff;font-size:12px;width:170px;}
-.rsave{padding:5px 12px;border-radius:6px;border:none;background:var(--purple);color:#fff;font-size:11px;font-weight:700;cursor:pointer;}
-.rsave:hover{background:#6D28D9;}
 .chgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .chgrid .sp3{grid-column:1/-1;}
 .chcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--xs);}
@@ -260,7 +224,8 @@ tbody tr{border-bottom:1px solid #E2E8F0;transition:background .08s;}
 tbody tr:hover{background:#F0F7FF;}
 tbody tr.tg{background:#F0FDF4;}
 tbody tr.tr{background:var(--redl);}
-tbody tr.tl{background:var(--purplel);}tbody tr.tm{background:#FFFBEB;border-left:3px solid #D97706;}
+tbody tr.tl{background:var(--purplel);}
+tbody tr.tm{background:#FFFBEB;border-left:3px solid #D97706;}
 td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .td-id{font-weight:700;font-size:13px;font-family:'SFMono-Regular',Consolas,monospace;letter-spacing:.4px;color:var(--blue);}
 .ec{display:flex;align-items:flex-start;gap:6px;min-width:220px;}
@@ -287,11 +252,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .ro{font-size:12px;color:var(--t2);}
 .edit-warn-popup{position:fixed;top:70px;right:24px;z-index:9998;background:#1E3A5F;color:#fff;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:var(--md);display:flex;align-items:center;gap:10px;border-left:4px solid var(--amber);}
 .edit-warn-popup.hide{display:none;}
-.diff-preview{background:var(--surf2);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;}
-.diff-row{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--border);}
-.diff-row:last-child{border-bottom:none;}
-.diff-id{font-family:monospace;color:var(--blue);font-weight:700;min-width:140px;}
-.diff-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;}
 .sbar{position:sticky;bottom:0;z-index:50;background:linear-gradient(135deg,#1E3A5F,var(--blue));padding:12px 20px;display:flex;align-items:center;gap:10px;box-shadow:0 -4px 20px rgba(37,99,235,.25);}
 .sbar.hide{display:none;}
 .scnt{font-size:13px;font-weight:600;color:rgba(255,255,255,.9);}
@@ -356,7 +316,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .htx-ts{font-size:10px;color:var(--t3);min-width:110px;}
 .htx-user{font-size:11px;font-weight:700;color:var(--blue);min-width:80px;}
 .htx-body{flex:1;line-height:1.6;}
-/* ── RESPONSIVE (fixed) ── */
 @media(max-width:1100px){.kgrid{grid-template-columns:repeat(3,1fr);}.chgrid{grid-template-columns:repeat(2,1fr);}.chgrid .sp3{grid-column:1/-1;}}
 @media(max-width:900px){
   .kgrid{grid-template-columns:repeat(2,1fr);}.age-strip{grid-template-columns:1fr 1fr;}.cgrid{grid-template-columns:repeat(2,1fr);}
@@ -374,7 +333,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   .fbar{flex-direction:column;align-items:flex-start;gap:6px;}
   .fdiv{display:none;}
   .fg{width:100%;}
-  .fg select,.fg input[type=date],.ms-trig{width:100%;min-width:unset;max-width:100%;}
+  .fg select,.fg input[type=date]{width:100%;min-width:unset;max-width:100%;}
   .dl-bar{flex-wrap:wrap;gap:6px;padding:8px 12px;}.dlb{font-size:11px;padding:4px 10px;}
   .thdr{flex-direction:column;align-items:flex-start;gap:6px;padding:10px 14px;}
   .thdr-r{flex-wrap:wrap;gap:4px;width:100%;}
@@ -410,16 +369,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <button class="lbtn" id="l-btn" onclick="doLogin()">Sign In &rarr;</button>
       <div class="lerr" id="l-err"></div>
       <div class="lhint"><a href="#" onclick="showReset();return false">Forgot password?</a></div>
-      <div class="l-cities">
-        <button class="l-city-pill" onclick="prefillCity('DEL')">DEL</button>
-        <button class="l-city-pill" onclick="prefillCity('MUM')">MUM</button>
-        <button class="l-city-pill" onclick="prefillCity('BLR')">BLR</button>
-        <button class="l-city-pill" onclick="prefillCity('HYD')">HYD</button>
-        <button class="l-city-pill" onclick="prefillCity('CHD')">CHD</button>
-        <button class="l-city-pill" onclick="prefillCity('JAI')">JAI</button>
-        <button class="l-city-pill" onclick="prefillCity('PUN')">PUN</button>
-        <button class="l-city-pill" onclick="prefillCity('KOL')">KOL</button>
-      </div>
     </div>
     <div id="reset-form" class="hide">
       <div class="l-head"><div class="l-icon">&#128274;</div><div><div class="l-title">Reset Password</div><div class="l-sub">We'll send your password to your email</div></div></div>
@@ -551,7 +500,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="age-strip">
         <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0&ndash;2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
         <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">&gt;2 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
-        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">>5 Days <small style="font-size:9px;opacity:.65;">(subset of &gt;2)</small></div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
+        <div class="age-card ha"><div class="age-ring" id="ag-hp">0%</div><div class="age-info"><div class="age-lbl">&gt;5 Days <small style="font-size:9px;opacity:.65;">(subset of &gt;2)</small></div><div class="age-cnt" id="ag-hc">0</div><div class="age-amt" id="ag-ha">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-hb" style="width:0"></div></div></div></div>
       </div>
     </div>
     <div class="sec" id="city-perf-sec">
@@ -576,7 +525,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="kgrid" id="cd-kpis" style="margin-bottom:16px;"></div>
       <div class="age-strip" id="cd-age-strip" style="display:none;margin-bottom:16px;"></div>
       <div id="pivot-wrap" style="display:none;margin-bottom:16px;"></div>
-      <div id="rec-sec" style="display:none;"></div>
     </div>
     <div class="sec">
       <div class="sec-hd"><span class="sec-ttl">Analytics</span><div class="sec-ln"></div></div>
@@ -631,31 +579,35 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 </div>
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   RTO OPERATIONS DASHBOARD – COMPLETE FIXED JS  (index_fixed_v1)
-   Fixes applied:
-     FIX1 – loadOrders always sends fCity when SCITY is set
-     FIX2 – apF() includes city in summary+orders requests
-     FIX3 – rdAgeing denominator guarded (no ∞%)
-     FIX4 – _hasFilters() counts SCITY as a filter
-     FIX5 – openCityAP race condition (GAP set before loadOrders)
-     FIX6 – doLogin clears stale localStorage on every sign-in
-     FIX7 – rdKPI sanity guard (totalRTO=0 reconstructed from parts)
-     FIX8 – afterOrdersCity uses server-side KPI counts (page-safe)
-     FIX9 – responsive CSS (breakpoints at 1100/900/680/420)
+   RTO OPERATIONS DASHBOARD – JS  (index_fixed_v2)
+
+   Frontend fixes applied (matching Code.gs v2):
+     JS-01  rdKPI: no longer overrides totalRTO from sheetRawTotal;
+            server now sends the correct value inside kpi.totalRTO.
+     JS-02  rdKPI subtitle text de-duplication.
+     JS-03  afterOrdersCity: uses .total (not .totalRTO) from cityCard.
+     JS-04  _renderCityPivot: uses server pivot=1 parameter; single
+            fetch with ps=1 instead of a second 2000-row request.
+     JS-05  openAPModal / CR modal: ps bumped to 2000.
+     JS-06  _fp(): does NOT add fCity; callers that need it add it
+            explicitly. This removes the double fCity send in apF().
+     JS-07  apF(): single sumEp already handles both city and filters.
+     JS-08  saveAll(): calls afterOrdersCity for all users when SCITY.
+     JS-09  _hasFilters(): correctly counts SCITY as a filter.
+     JS-10  Toast OK count guard (never shows "undefined saved").
 ═══════════════════════════════════════════════════════════════ */
 
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v2341';
+const LC_KEY='rto_sum_v2342';
 const LC_TTL=8*60*1000;
 const PAGE_SZ=100;
-const AUTO_REF=5*60*1000; // FIX5: refresh every 5 min (was 8)
+const AUTO_REF=5*60*1000;
 
-let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],MS_SEL=new Set(),_charts={},_autoTimer=null,_uplBatch=null;
+let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],_charts={},_autoTimer=null,_uplBatch=null;
 
 /* ── helpers ─────────────────────────────────────────────────── */
-
 function $(id,v){if(v!=null){const el=document.getElementById(id);if(el)el.textContent=v;}else return document.getElementById(id);}
-function setHTML(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}  // always use innerHTML
+function setHTML(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
 function fmtN(n){if(!n&&n!==0)return '—';if(n>=1e7)return '₹'+(n/1e7).toFixed(2)+'Cr';if(n>=1e5)return '₹'+(n/1e5).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'K';return '₹'+n.toFixed(0);}
 function fmtPct(p){return p%1===0?p+'%':p.toFixed(1)+'%';}
 function pct(n,d){return d?Math.round(n/d*100):0;}
@@ -666,11 +618,6 @@ function hideOv(){$('ov').classList.add('hide');}
 function showFSpin(){$('filter-spinner').classList.add('vis');}
 function hideFSpin(){$('filter-spinner').classList.remove('vis');}
 function togglePwd(id,btn){const el=$(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'👁':'🙈';}
-function prefillCity(c){
-  const m={'DEL':'DELHI/FARIDABAD','MUM':'MUMBAI','BLR':'BANGALORE','HYD':'HYDERABAD','CHD':'CHANDIGARH','JAI':'JAIPUR','PUN':'PUNE','KOL':'KOLKATA'};
-  const email=m[c]?(m[c].toLowerCase().replace(/\//g,'.').replace(/\s/g,'')+'@iwork.vanyakapoor.com'):'';
-  if(email)$('l-email').value=email;$('l-pwd').focus();
-}
 function showReset(){$('login-form').classList.add('hide');$('reset-form').classList.remove('hide');}
 function showLogin(){$('reset-form').classList.add('hide');$('login-form').classList.remove('hide');}
 
@@ -685,7 +632,7 @@ async function doLogin(){
     const res=await fetch(API+'?action=login&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd)).then(r=>r.json());
     if(res.success){
       USER=res;
-      localStorage.removeItem(LC_KEY); // FIX6: always start fresh on login
+      localStorage.removeItem(LC_KEY);
       $('login-screen').classList.add('hide');
       $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
       initDash();
@@ -713,6 +660,7 @@ async function doReset(){
 function logout(){
   if(!confirm('Sign out?'))return;
   USER=null;SUM=null;ORDERS=[];CHANGES={};SCITY='';
+  if(_autoTimer)clearInterval(_autoTimer);
   $('dash').style.display='none';
   $('login-screen').classList.remove('hide');
   $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
@@ -729,25 +677,20 @@ function initDash(){
   $('city-perf-sec').style.display=ia?'':'none';
   if(!ia&&USER?.city){
     SCITY=USER.city.toUpperCase();
-    $('f-city').value=SCITY;
     $('kpi-ttl',(SCITY||'City')+' Overview');
-    // Auto-show #cdet so pivot is visible (no openDet call = no extra loadOrders)
     const _cd=$('cdet');
     if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
     $('cd-ttl',USER.city+' Orders');
-    // Download button for city users
     const _dlD=$('cd-dl-btns');
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-    popFilters();
   }
   loadSummary();
   _autoTimer=setInterval(()=>{if(document.visibilityState!=='hidden')fref();},AUTO_REF);
 }
 
-/* ── FILTER PARAMS ────────────────────────────────────────────── */
+/* ── FILTER PARAMS (JS-06: no fCity here; callers add it) ─────── */
 function _fp(){
   const ps=[];
-  const city=$('f-city')?.value;
   const partner=$('f-partner')?.value;
   const bu=$('f-bu')?.value;
   const store=$('f-store')?.value;
@@ -757,7 +700,6 @@ function _fp(){
   const fr=$('f-from')?.value;
   const to=$('f-to')?.value;
   const sch=($('tsch')?.value||'').trim();
-  if(city)ps.push('fCity='+encodeURIComponent(city));
   if(partner)ps.push('fPartner='+encodeURIComponent(partner));
   if(bu)ps.push('fBU='+encodeURIComponent(bu));
   if(store)ps.push('fStore='+encodeURIComponent(store));
@@ -771,11 +713,14 @@ function _fp(){
   if(GAP)ps.push('fAP=1');
   return ps.join('&');
 }
+
+/* Build city query string for requests that need the current city scope */
+function _cq(){return SCITY?'&fCity='+encodeURIComponent(SCITY):'';}
+
 function _hasFilters(){
   if(QF!=='Overall')return true;
-  if(SCITY)return true; // FIX4: city is a filter
+  if(SCITY)return true; // JS-09
   if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>$(id)?.value))return true;
-  if(USER?.isAdmin&&MS_SEL.size)return true;
   if(!USER?.isAdmin&&$('f-act')?.value)return true;
   return false;
 }
@@ -799,7 +744,6 @@ function popFilters(){
 /* ── LOAD SUMMARY ─────────────────────────────────────────────── */
 function loadSummary(){
   showOv('Loading RTO data…','Warming up cache');
-  // Try localStorage cache
   try{
     const raw=localStorage.getItem(LC_KEY);
     if(raw){
@@ -812,53 +756,53 @@ function loadSummary(){
         return;
       }
     }
-  } catch(e){/* cache corrupt, ignore */}
-  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+(SCITY?'&fCity='+encodeURIComponent(SCITY):'');
-  Promise.all([fetch(ep).then(r=>r.json()),fetch(API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page=1&ps='+PAGE_SZ+(SCITY?'&fCity='+encodeURIComponent(SCITY):'')).then(r=>r.json())])
-    .then(([sd,od])=>{
-      hideOv();
-      if(!sd||!sd.success){toast('Failed to load summary. Retrying…','amber');return;}
-      SUM=sd;TRD=sd.trend||[];
-      localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
-      _renderSummary(sd);
-      if(od&&od.success)_renderOrders(od);
-      else loadOrders();
-    }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
+  } catch(e){}
+  // JS-07: single summary fetch; getOrders fetched separately with correct city
+  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq();
+  Promise.all([
+    fetch(ep).then(r=>r.json()),
+    fetch(API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page=1&ps='+PAGE_SZ+_cq()).then(r=>r.json())
+  ]).then(([sd,od])=>{
+    hideOv();
+    if(!sd||!sd.success){toast('Failed to load summary. Retrying…','amber');return;}
+    SUM=sd;TRD=sd.trend||[];
+    localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
+    _renderSummary(sd);
+    if(od&&od.success)_renderOrders(od);
+    else loadOrders();
+  }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
 }
 
 function _renderSummary(sd){
-  const _asofDate = sd.asOf ? new Date(sd.asOf) : new Date();
-  const _minsAgo = Math.round((Date.now() - _asofDate.getTime()) / 60000);
-  const _ageStr = _minsAgo <= 1 ? 'just now' : _minsAgo + ' min ago';
+  const _asofDate=sd.asOf?new Date(sd.asOf):new Date();
+  const _minsAgo=Math.round((Date.now()-_asofDate.getTime())/60000);
+  const _ageStr=_minsAgo<=1?'just now':_minsAgo+' min ago';
   $('asof','As of '+fmtD(sd.asOf||new Date().toISOString())+' · synced '+_ageStr);
-  // Wrap each render step — one failure won't block others
   try{rdKPI(sd.kpi||{});}catch(e){console.error('rdKPI',e);}
   try{rdAgeing(sd.kpi||{});}catch(e){console.error('rdAgeing',e);}
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
   if(sd.allCities&&sd.allCities.length){popFilters();}
   try{
-    if(USER?.isAdmin) rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
+    if(USER?.isAdmin)rdCityCards(sd.homepageCards||[]);
     if(!USER?.isAdmin){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
   }catch(e){console.error('rdCityCards',e);}
   try{rdChartsKPI(sd.kpi||{});}catch(e){console.error('rdChartsKPI',e);}
   _updFltDlBtn();
 }
 
-/* ── RENDER KPI ─────────────────────────────────────────────────
-   FIX7: if totalRTO=0 from server, reconstruct from sum of parts  */
+/* ── RENDER KPI (JS-01: totalRTO comes directly from server) ──── */
 function rdKPI(k){
-  // Total RTO = ALL orders from live sheet (irrespective of status)
   const _kTotal=k.totalRTO||0;
   const _base=_kTotal||1;
   const _srnN=k.srnCompleted||0;
   const _crN=k.closureRemarks||0;
-  // AP derived: Total − SRN Completed − Closure Remarks
+  // AP derived: Total − SRN − CR  (same formula as backend)
   const _apN=Math.max(0,_kTotal-_srnN-_crN);
   const _apPct=parseFloat((_apN/_base*100).toFixed(1));
   const _crPct=parseFloat((_crN/_base*100).toFixed(1));
   const _srnPct=parseFloat((_srnN/_base*100).toFixed(1));
-  $('k-tot',_kTotal);
-  $('k-tots','('+_kTotal+' orders) · '+fmtN(k.totalAmount||0));
+  $('k-tot',_kTotal.toLocaleString('en-IN')); // JS-02: just the count
+  $('k-tots',fmtN(k.totalAmount||0)+' total GMV');
   $('k-gr',_srnPct+'%');
   const _grs=document.getElementById('k-grs');
   if(_grs)_grs.textContent='('+_srnN+' orders) · '+fmtN(k.srnAmt||0);
@@ -873,17 +817,12 @@ function rdKPI(k){
   $('gapc',_apN);
 }
 
-/* ── RENDER AGEING ──────────────────────────────────────────────
-   FIX3: guard totalRTO=0 denominator; cap % at 100              */
+/* ── RENDER AGEING ─────────────────────────────────────────────── */
 function rdAgeing(k){
-  // Card2 = >2 days combined (moreThan2+highAgeing); Card3 = >5 only (subset)
-  // Chart uses 3 DISTINCT buckets: pending|moreThan2|highAgeing (unchanged)
   const _apSum=(k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0);
-  // Denominator = AP orders so ageing %s add up to 100% of AP
   const t=(k.actionPending>0?k.actionPending:_apSum)||1;
   const _more2=(k.moreThan2||0)+(k.highAgeing||0);
   const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
-  // Keep as numbers — avoid string/toFixed clash in fmtPct
   const pp=parseFloat(Math.min(100,(k.pending||0)/t*100).toFixed(1));
   const rp=parseFloat(Math.min(100,_more2/t*100).toFixed(1));
   const hp=parseFloat(Math.min(100,(k.highAgeing||0)/t*100).toFixed(1));
@@ -896,24 +835,20 @@ function rdAgeing(k){
 }
 
 /* ── CITY CARDS ──────────────────────────────────────────────── */
-function rdCityCards(cards,fullMap){
+function rdCityCards(cards){
   const grid=$('cgrid');if(!grid)return;
-  // City users: hide city performance section entirely (other cities not relevant)
   if(!USER?.isAdmin){grid.innerHTML='';return;}
-  // Only show RED cities (above threshold) — others accessible via dropdown
-  const redCards = cards.filter(c => c.isRed);
+  const redCards=cards.filter(c=>c.isRed);
   if(!redCards.length){grid.innerHTML='<div class="emp"><div class="emp-i">✅</div>No cities above threshold right now.</div>';return;}
-  const isOwn=c=>false;
   grid.innerHTML=redCards.map(c=>{
-    const isRed=c.isRed;
-    const tot=c.active||c.total||1; // base = active orders (matches badge)
+    const tot=c.active||1;
     const activePct=tot?((c.actionPending||0)/tot*100).toFixed(1):0;
     const p02Pct=tot?((c.pending02||c.pending||0)/tot*100).toFixed(1):0;
     const p35Pct=tot?((c.midAgeing35||c.moreThan2||0)/tot*100).toFixed(1):0;
     const ha6Pct=tot?((c.highAgeing6||c.highAgeing||0)/tot*100).toFixed(1):0;
-    return `<div class="ccard${isRed?' red':''}" onclick="openDet('${c.city}')">
-      <div class="ctop"><div class="cname">${c.city}${isOwn(c.city)?'<br><small style="font-size:9px;color:var(--blue);font-weight:600;">YOUR CITY</small>':''}</div>
-      <div class="c-red-badge">▲ ${c.active||c.total||0} ACTIVE</div></div>
+    return `<div class="ccard red" onclick="openDet('${c.city}')">
+      <div class="ctop"><div class="cname">${c.city}</div>
+      <div class="c-red-badge">▲ ${c.active||0} ACTIVE</div></div>
       <div class="cstats">
         <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
         <div class="cs p02"><div class="csl">Pending 0–2</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
@@ -944,9 +879,8 @@ function openDet(city){
   $('upload-btn').style.display=canEdit(city)?'':'none';
   $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">⏳</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
   $('pivot-wrap').style.display='none';
-  $('rec-sec').style.display='none';
   $('ap-cnt','— pending');
-  document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
+  document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim()===city);});
   $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
   $('home-btn').classList.add('vis');
   PG=1;loadOrders();
@@ -961,7 +895,6 @@ function closeDet(){
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   $('home-btn').classList.remove('vis');
   PG=1;
-  // Reload without city filter
   SUM=null;
   const raw=localStorage.getItem(LC_KEY);
   if(raw){try{const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}catch(e){}}
@@ -969,35 +902,32 @@ function closeDet(){
 }
 function goHome(){window.scrollTo({top:0,behavior:'smooth'});closeDet();}
 
-/* FIX5: openCityAP - race condition fixed: GAP set BEFORE loadOrders fires */
 function openCityAP(city){
   if(SCITY!==city){
     SCITY=city;APF=false;
     $('f-city').value=city;
-    const _isOwn=!USER?.isAdmin&&city===(USER?.city||'');
     $('cdet').classList.add('vis');
     $('cdet').style.display='block';
-    $('cd-ttl',city+(canEdit(city)?'':' \u2014 View Only'));
+    $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
     const _dlDiv=$('cd-dl-btns');
-    if(USER?.isAdmin||_isOwn){_dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
-    else{_dlDiv.innerHTML='';}
+    if(USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase()){
+      _dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+    }else{_dlDiv.innerHTML='';}
     $('upload-btn').style.display=canEdit(city)?'':'none';
-    $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading\u2026</div><div class="kv">\u2014</div></div>';
+    $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
     $('pivot-wrap').style.display='none';
-    $('rec-sec').style.display='none';
-    $('ap-cnt','\u2014 pending');
-    document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim().startsWith(city));});
+    $('ap-cnt','— pending');
+    document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim()===city);});
     $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
   }
   GAP=true;
   $('gapbtn')?.classList.add('on');
   $('ap-tog')?.classList.add('on');
-  PG=1;showFSpin();showOv('Filtering AP orders\u2026','Please wait');loadOrders();
+  PG=1;showFSpin();showOv('Filtering AP orders…','Please wait');loadOrders();
   setTimeout(()=>document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'}),400);
 }
 
-/* ── LOAD ORDERS ─────────────────────────────────────────────────
-   FIX1: always send fCity when SCITY is set (no f-city.value check) */
+/* ── LOAD ORDERS ─────────────────────────────────────────────── */
 function loadOrders(){
   if(ORDERS_LOADING)return;
   ORDERS_LOADING=true;
@@ -1005,14 +935,15 @@ function loadOrders(){
   $('tbody').innerHTML='';
   $('temp').style.display='none';
   let ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page='+PG+'&ps='+PAGE_SZ;
-  if(SCITY) ep+='&fCity='+encodeURIComponent(SCITY); // FIX1
+  ep+=_cq(); // always send current city scope
   ep+='&'+_fp();
   fetch(ep).then(r=>r.json()).then(d=>{
     ORDERS_LOADING=false;
+    hideFSpin();hideOv();
     $('tload').style.display='none';
     if(!d||!d.success){toast(d?.error||'Failed to load orders','red');return;}
     _renderOrders(d);
-  }).catch(e=>{ORDERS_LOADING=false;$('tload').style.display='none';toast('Network error: '+e.message,'red');});
+  }).catch(e=>{ORDERS_LOADING=false;hideFSpin();hideOv();$('tload').style.display='none';toast('Network error: '+e.message,'red');});
 }
 function _renderOrders(d){
   ORDERS_LOADING=false;
@@ -1026,29 +957,27 @@ function _renderOrders(d){
   if(SCITY)afterOrdersCity();
 }
 
-/* ── APPLY FILTERS (frontend button) ───────────────────────────
-   FIX2: include city in both requests                           */
+/* ── APPLY FILTERS ──────────────────────────────────────────── */
 function apF(){
   PG=1;_updFltDlBtn();
   showFSpin();showOv('Applying filters…','Recalculating KPIs');
-  const _cityQ=SCITY?'&fCity='+encodeURIComponent(SCITY):''; // FIX2
-  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+'&'+_fp()+_cityQ;
+  // JS-07: single summary request; _cq() provides city, _fp() provides the rest
+  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq()+'&'+_fp();
   fetch(sumEp).then(r=>r.json()).then(p=>{
     hideFSpin();
     if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
     SUM=p;TRD=p.trend||[];
     if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
     rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-    rdCityCards(p.homepageCards||[],null);
+    rdCityCards(p.homepageCards||[]);
     rdChartsKPI(p.kpi||{});
-    showOv('Loading orders…','Please wait');loadOrders();
+    loadOrders();
   }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
 function rstF(){
   ['f-partner','f-bu','f-store','f-stage','f-age','f-act','f-from','f-to'].forEach(id=>{const el=$(id);if(el)el.value='';});
   if(USER?.isAdmin){$('f-city').value='';SCITY='';}
   GAP=false;APF=false;QF='Overall';
-  MS_SEL.clear();
   document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
   $('gapbtn').classList.remove('on');
   $('ap-tog')?.classList.remove('on');
@@ -1059,11 +988,7 @@ function rstF(){
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   loadSummary();
 }
-function fref(){
-  localStorage.removeItem(LC_KEY);
-  PG=1;
-  loadSummary();
-}
+function fref(){localStorage.removeItem(LC_KEY);PG=1;loadSummary();}
 function onSearch(){PG=1;loadOrders();}
 function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));apF();}
 function onCityFilter(){
@@ -1095,130 +1020,106 @@ function togGAP(){
   $('ap-tog')?.classList.toggle('on',GAP);
   PG=1;loadOrders();
 }
-function chPg(d){
-  PG=Math.max(1,Math.min(TOTAL_PGS,PG+d));
-  loadOrders();
-}
+function chPg(d){PG=Math.max(1,Math.min(TOTAL_PGS,PG+d));loadOrders();}
 
-/* ── AFTER CITY ORDERS LOAD ──────────────────────────────────────
-   FIX8: use server-side KPI for AP/total counts (page-safe)       */
+/* ── AFTER CITY ORDERS LOAD (JS-03: uses .total not .totalRTO) ── */
 function afterOrdersCity(){
-  // City-scoped KPIs: prefer server cityCard > SUM.kpi (city user) > page ORDERS
   const _cc=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);
-  const _sk=USER&&!USER.isAdmin?(SUM&&SUM.kpi):null;
-  const _src=_cc||_sk;
-  const ap  =_src?(_src.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
+  const _sk=SUM&&SUM.kpi;
+  const ap  =_sk?(_sk.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
   const lossT=(_sk&&_sk.lossTotal)||0;
   const lossS=(_sk&&_sk.inhouseLoss)||0;
-  // FIX: prefer _sk (fresh city-scoped kpi) for consistent ageing data
-  const pend02  =(_sk&&_sk.pending)||(_src&&(_src.pending02||_src.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
-  const pendMore2=(_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||(_src&&((_src.midAgeing35||0)+(_src.highAgeing6||0)))||ORDERS.filter(o=>!o.isPending&&o.actionPending).length;
-  const ha  =(_sk&&_sk.highAgeing)||(_src&&(_src.highAgeing6||_src.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
-  // Denominator = ap (actionPending) → %s sum to 100% of AP
-  const totAct=ap;
+  const pend02  =(_sk&&_sk.pending)||(_cc&&(_cc.pending02||_cc.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
+  const pendMore2=(_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||(_cc&&((_cc.midAgeing35||0)+(_cc.highAgeing6||0)))||ORDERS.filter(o=>!o.isPending&&o.actionPending).length;
+  const ha  =(_sk&&_sk.highAgeing)||(_cc&&(_cc.highAgeing6||_cc.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
+  const totAct=ap||1;
 
   $('ap-cnt',ap+' action pending');
 
-  // ── FOR ADMIN ONLY: city detail KPI cards + ageing strip ──
-  // City users already see these in the main section (getSummary city-scoped)
   if(USER?.isAdmin){
-  // ── TOP: 5 KPI cards — same as admin, but city-scoped ──
-  const totAct2=(_src&&(_src.active||_src.totalRTO))||0;
-  const snr=(_sk&&_sk.srnCompleted)||0;
-  const cr=(_sk&&_sk.closureRemarks)||0;
-  const _kTot2=totAct2||0;
-  const _b2=_kTot2||1;
-  // AP derived in city detail too
-  const _apDer=Math.max(0,_kTot2-snr-cr);
-  const _apP=Math.round(_apDer/_b2*100);
-  const _crP=Math.round(cr/_b2*100);
-  const _snP=Math.round(snr/_b2*100);
-  setHTML('cd-kpis',
-    `<div class="kpi ab"><div class="ki">📦</div>`
-      +`<div class="kl">Total RTO</div>`
-      +`<div class="kv">${_kTot2}</div>`
-      +`<div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} total</div></div>`
-    +`<div class="kpi ag"><div class="ki">✅</div>`
-      +`<div class="kl">SRN Completed</div>`
-      +`<div class="kv">${_snP}%</div>`
-      +`<div class="ks">(${snr}) · Visible 24h</div></div>`
-    +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
-      +`<div class="kl">Closure Remarks</div>`
-      +`<div class="kv">${_crP}%</div>`
-      +`<div class="ks">(${cr}) · Click to view</div></div>`
-    +`<div class="kpi aa"><div class="ki">⚠</div>`
-      +`<div class="kl">Action Pending</div>`
-      +`<div class="kv">${_apP}%</div>`
-      +`<div class="ks">(${_apDer}) · Needs update</div></div>`
-    +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')">`
-      +`<div class="ki">💰</div><div class="kl">Total Loss Amount</div>`
-      +`<div class="kv">${lossT ? fmtN(lossT) : '₹0'}</div>`
-      +`<div class="ks">In-house: ${lossS ? fmtN(lossS) : '0'}</div></div>`
-  );
+    // JS-03: use _cc.total (not _cc.totalRTO which doesn't exist on cityCard)
+    const _kTot2=(_cc&&_cc.total)||(_sk&&_sk.totalRTO)||0;
+    const _b2=_kTot2||1;
+    const snr=(_sk&&_sk.srnCompleted)||0;
+    const cr=(_sk&&_sk.closureRemarks)||0;
+    const _apDer=Math.max(0,_kTot2-snr-cr);
+    const _apP=Math.round(_apDer/_b2*100);
+    const _crP=Math.round(cr/_b2*100);
+    const _snP=Math.round(snr/_b2*100);
+    setHTML('cd-kpis',
+      `<div class="kpi ab"><div class="ki">📦</div>`
+        +`<div class="kl">Total RTO</div>`
+        +`<div class="kv">${_kTot2.toLocaleString('en-IN')}</div>`
+        +`<div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} GMV</div></div>`
+      +`<div class="kpi ag"><div class="ki">✅</div>`
+        +`<div class="kl">SRN Completed</div>`
+        +`<div class="kv">${_snP}%</div>`
+        +`<div class="ks">(${snr}) · Visible 24h</div></div>`
+      +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
+        +`<div class="kl">Closure Remarks</div>`
+        +`<div class="kv">${_crP}%</div>`
+        +`<div class="ks">(${cr}) · Click to view</div></div>`
+      +`<div class="kpi aa"><div class="ki">⚠</div>`
+        +`<div class="kl">Action Pending</div>`
+        +`<div class="kv">${_apP}%</div>`
+        +`<div class="ks">(${_apDer}) · Needs update</div></div>`
+      +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')">`
+        +`<div class="ki">💰</div><div class="kl">Total Loss Amount</div>`
+        +`<div class="kv">${lossT?fmtN(lossT):'₹0'}</div>`
+        +`<div class="ks">In-house: ${lossS?fmtN(lossS):'0'}</div></div>`
+    );
 
-  // ── AGEING BREAKDOWN STRIP ────────────────────────────
-  const t=totAct||1;
-  const pp=Math.min(100,Math.round(pend02/t*100));
-  const rp=Math.min(100,Math.round(pendMore2/t*100));
-  const hp=Math.min(100,Math.round(ha/t*100));
-  const ageEl=$('cd-age-strip');
-  if(ageEl){
-    ageEl.style.display='grid';
-    ageEl.innerHTML=
-      `<div class="age-card p">`
-        +`<div class="age-ring" style="background:var(--bluel);color:var(--blue)">${pp}%</div>`
-        +`<div class="age-info"><div class="age-lbl">0–2 Days</div>`
-        +`<div class="age-cnt" style="color:var(--blue)">${pend02}</div>`
-        +`<div class="age-bar"><div class="age-fill" style="width:${pp}%;background:var(--blue)"></div></div></div></div>`
-      +`<div class="age-card rv">`
-        +`<div class="age-ring" style="background:var(--amberl);color:var(--amber)">${rp}%</div>`
-        +`<div class="age-info"><div class="age-lbl">&gt;2 Days</div>`
-        +`<div class="age-cnt" style="color:var(--amber)">${pendMore2}</div>`
-        +`<div class="age-bar"><div class="age-fill" style="width:${rp}%;background:var(--amber)"></div></div></div></div>`
-      +`<div class="age-card ha" style="background:#FFF1F1">`
-        +`<div class="age-ring" style="background:var(--redl);color:var(--red)">${hp}%</div>`
-        +`<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>`
-        +`<div class="age-cnt" style="color:var(--red)">${ha}</div>`
-        +`<div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
+    const t=totAct;
+    const pp=Math.min(100,Math.round(pend02/t*100));
+    const rp=Math.min(100,Math.round(pendMore2/t*100));
+    const hp=Math.min(100,Math.round(ha/t*100));
+    const ageEl=$('cd-age-strip');
+    if(ageEl){
+      ageEl.style.display='grid';
+      ageEl.innerHTML=
+        `<div class="age-card p"><div class="age-ring" style="background:var(--bluel);color:var(--blue)">${pp}%</div>`
+          +`<div class="age-info"><div class="age-lbl">0–2 Days</div>`
+          +`<div class="age-cnt" style="color:var(--blue)">${pend02}</div>`
+          +`<div class="age-bar"><div class="age-fill" style="width:${pp}%;background:var(--blue)"></div></div></div></div>`
+        +`<div class="age-card rv"><div class="age-ring" style="background:var(--amberl);color:var(--amber)">${rp}%</div>`
+          +`<div class="age-info"><div class="age-lbl">&gt;2 Days</div>`
+          +`<div class="age-cnt" style="color:var(--amber)">${pendMore2}</div>`
+          +`<div class="age-bar"><div class="age-fill" style="width:${rp}%;background:var(--amber)"></div></div></div></div>`
+        +`<div class="age-card ha" style="background:#FFF1F1"><div class="age-ring" style="background:var(--redl);color:var(--red)">${hp}%</div>`
+          +`<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>`
+          +`<div class="age-cnt" style="color:var(--red)">${ha}</div>`
+          +`<div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
+    }
   }
-
-  }
-  // ── PIVOT: AP orders breakdown ────────────────────────
   _renderCityPivot();
 }
 
+/* JS-04: use server pivot=1 mode — single fast request */
 async function _renderCityPivot(){
-  const pvt=$('pivot-wrap'); if(!pvt)return;
+  const pvt=$('pivot-wrap');if(!pvt)return;
   pvt.style.display='block';
   pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>Loading…</span></div></div>`;
   try{
-    // Fetch ALL AP orders for this city (not page-limited ORDERS)
     const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')
-      +'&fAP=1&ps=2000&page=1&fCity='+encodeURIComponent(SCITY);
+      +'&fAP=1&ps=1&page=1&pivot=1&fCity='+encodeURIComponent(SCITY);
     const d=await fetch(ep).then(r=>r.json());
-    const ap=(d&&d.success)?d.orders||[]:ORDERS.filter(o=>o.actionPending);
-    const total=ap.length;
+    if(!d||!d.success||!d.pivot){pvt.style.display='none';return;}
+    const {fc,retail,tplPre,total}=d.pivot;
     if(!total){pvt.style.display='none';return;}
-    const fc    =ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
-    const retail=ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
-    const tplPre=ap.filter(o=>o.partner!=='INHOUSE'&&(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
-    const pct=n=>total?Math.round(n/total*100)+'%':'0%';
     pvt.innerHTML=`
       <div class="pivot-section">
         <div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>${total} AP orders</span></div>
         <table class="pivot-table">
           <thead><tr><th>FC / Warehouse</th><th>Retail</th><th>3PL Pre-MDQ</th><th>Total</th></tr></thead>
           <tbody><tr>
-            <td class="pv-fc" style="font-size:20px;font-weight:800;text-align:center">${fc}</td>
-            <td class="pv-rt" style="font-size:20px;font-weight:800;text-align:center">${retail}</td>
-            <td class="pv-3pl" style="font-size:20px;font-weight:800;text-align:center">${tplPre}</td>
-            <td class="pv-tot" style="font-size:20px;font-weight:800;text-align:center">${total}</td>
+            <td class="pv-fc">${fc}</td>
+            <td class="pv-rt">${retail}</td>
+            <td class="pv-3pl">${tplPre}</td>
+            <td class="pv-tot">${total}</td>
           </tr></tbody>
         </table>
       </div>`;
-  } catch(e){
-    pvt.innerHTML=`<div class="emp">Could not load pivot: ${e.message}</div>`;
-  }
+  }catch(e){pvt.innerHTML=`<div class="emp">Could not load pivot: ${e.message}</div>`;}
 }
 
 /* ── ROW RENDERING ───────────────────────────────────────────── */
@@ -1251,7 +1152,6 @@ function rdRows(){
     if(!canE||ueLk){
       updHtml=`<span class="ro">${curUpd||'—'}</span>`;
     } else if(!curAct||!needUpd){
-      // SRN-only action: updates[] is empty — show 'Awaiting SRN' per workbook
       updHtml=`<span class="lknote">${!curAct?'Set action first':'Awaiting SRN'}</span>`;
     } else {
       const uOpts=(o.availableUpdates||[]);
@@ -1266,7 +1166,7 @@ function rdRows(){
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
     const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
     tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
-      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓</span>':''}</td>
+      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
       <td>${o.city||'—'}</td>
       <td>${fmtN(o.gmv||0)}</td>
       <td><span class="b bs">${o.storeType||'—'}</span></td>
@@ -1333,8 +1233,10 @@ async function saveAll(){
       const ok=res.results.filter(r=>r.success).length;
       const fail=res.results.filter(r=>!r.success).length;
       localStorage.removeItem(LC_KEY);
-      toast(ok+' saved'+(fail?' · '+fail+' failed':''),'green');
+      // JS-10: guard ok count
+      toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
       $('sst','');updSbar();rdRows();
+      // JS-08: call afterOrdersCity for any user when in city view
       if(SCITY)afterOrdersCity();
     } else {toast(res.error||'Save failed','red');}
   } catch(e){toast('Network error: '+e.message,'red');}
@@ -1411,33 +1313,37 @@ function closeHist(){$('hist-modal').classList.add('hide');}
 function openHA(){
   const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen);
   if(!ha.length){toast('No high ageing orders on this page','amber');return;}
-  $('ha-body',ha.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action'}</div><div class="mor-age">${o.ageingDays}d</div></div>`).join(''));
+  setHTML('ha-body',ha.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action'}</div><div class="mor-age">${o.ageingDays}d</div></div>`).join(''));
   $('ha-modal').classList.remove('hide');
 }
 function closeHA(){$('ha-modal').classList.add('hide');}
+
+/* JS-05: ps bumped to 2000 */
 async function openAPModal(){
   setHTML('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
   $('ap-modal').classList.remove('hide');
-  const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=200&page=1'+(SCITY?'&fCity='+encodeURIComponent(SCITY):'');
-  try{const d=await fetch(ep).then(r=>r.json());if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
+  const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=2000&page=1'+_cq();
+  try{
+    const d=await fetch(ep).then(r=>r.json());
+    if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
     const ords=d.orders||[];
-    setHTML('ap-body',ords.length?ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
+    setHTML('ap-body',ords.length?'<div style="padding:10px 14px 6px;font-size:12px;font-weight:600;color:var(--t2);">'+ords.length+' orders action pending</div>'+ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
   } catch(e){setHTML('ap-body','<div class="emp">Error: '+e.message+'</div>');}
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
+
+/* JS-05: ps bumped to 2000 */
 async function openCRModal(){
-  // Use setHTML (innerHTML) not $() which sets textContent
   setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('cr-modal').classList.remove('hide');
   const eml=encodeURIComponent(USER?.email||'');
-  const cq=SCITY?'&fCity='+encodeURIComponent(SCITY):'';
+  const cq=_cq();
   const render=(rows,emptyMsg)=>{
-    if(!rows||!rows.length) return '<div class="emp"><div class="emp-i">✅</div>'+emptyMsg+'</div>';
-    const total=rows.length;
+    if(!rows||!rows.length)return '<div class="emp"><div class="emp-i">✅</div>'+emptyMsg+'</div>';
     const totalGmv=rows.reduce((acc,o)=>acc+(o.gmv||0),0);
     return '<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--t2);">'
-      +'<span>'+total+' orders</span>'
+      +'<span>'+rows.length+' orders</span>'
       +'<span style="color:var(--red);">GMV: '+fmtN(totalGmv)+'</span></div>'
       +rows.map(o=>'<div class="mor"><div class="mor-id">'+o.orderId+'</div>'
         +'<div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+(o.currentUpdate?' / '+o.currentUpdate:'')+' · SRN:'+(o.srnStatus||'—')+'</div>'
@@ -1445,8 +1351,8 @@ async function openCRModal(){
   };
   try{
     const [d1,d2]=await Promise.all([
-      fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=500&page=1'+cq).then(r=>r.json()),
-      fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=500&page=1'+cq).then(r=>r.json()),
+      fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=2000&page=1'+cq).then(r=>r.json()),
+      fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=2000&page=1'+cq).then(r=>r.json()),
     ]);
     setHTML('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
     setHTML('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
@@ -1484,7 +1390,7 @@ async function _doDownload(type,city){
   try{
     let ep=API+'?action=downloadCity&email='+encodeURIComponent(USER?.email||'')+'&type='+(type||'complete');
     if(city)ep+='&fCity='+encodeURIComponent(city);
-    if(type==='filtered')ep+='&'+_fp();
+    if(type==='filtered')ep+=_cq()+'&'+_fp();
     const d=await fetch(ep).then(r=>r.json());
     hideOv();
     if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
@@ -1507,34 +1413,22 @@ async function downloadAP(){
 }
 
 /* ── CHARTS ──────────────────────────────────────────────────── */
-const CC={pending:'#2563EB',moreThan2:'#D97706',highAgeing:'#DC2626',inhouse:'#7C3AED',tpl:'#0891B2',retail:'#059669',warehouse:'#D97706'};
 function rdChartsKPI(k){
-  // Ageing chart (distinct buckets: 0-2 | 2-5 | >5)
-  _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],[CC.pending,CC.moreThan2,CC.highAgeing]);
+  _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){
     const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);
     _mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);
   }
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
-  // BU chart removed; backlog trend removed
 }
 function _mkChart(id,type,labels,data,colors){
   try{
     const el=$(id);if(!el)return;
     if(_charts[id])_charts[id].destroy();
-    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed+(type==='doughnut'?'':'')}},datalabels:{display:false}}}});
-  } catch(e){/* chart error, ignore */}
+    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed}},datalabels:{display:false}}}});
+  } catch(e){}
 }
-function drawTrend(){
-  if(!TRD.length)return;
-  const el=$('ch-tr');if(!el)return;
-  if(_charts['ch-tr'])_charts['ch-tr'].destroy();
-  _charts['ch-tr']=new Chart(el,{type:'line',data:{labels:TRD.map(t=>t.date),datasets:[{label:'Active RTO',data:TRD.map(t=>t.count),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.08)',tension:.4,fill:true,pointRadius:3,pointHoverRadius:5,borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false},datalabels:{display:false}},scales:{y:{beginAtZero:false,ticks:{font:{size:10}}},x:{ticks:{font:{size:10},maxTicksLimit:10}}}}});
-  const last=TRD[TRD.length-1],prev=TRD[TRD.length-2];
-  if(last&&prev){const d=last.count-prev.count;$('trend-badge',(d>0?'▲':'▼')+Math.abs(d)+' vs yesterday');}
-}
-
 
 async function adminResetEdit(orderId){
   if(!USER?.isAdmin){toast('Admin only','red');return;}
@@ -1545,7 +1439,6 @@ async function adminResetEdit(orderId){
     else toast(r.error||'Reset failed','red');
   } catch(e){toast('Network error','red');}
 }
-
 </script>
 </body>
 </html>
