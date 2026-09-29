@@ -828,15 +828,16 @@ function _renderSummary(sd){
   const _minsAgo = Math.round((Date.now() - _asofDate.getTime()) / 60000);
   const _ageStr = _minsAgo <= 1 ? 'just now' : _minsAgo + ' min ago';
   $('asof','As of '+fmtD(sd.asOf||new Date().toISOString())+' · synced '+_ageStr);
-  rdKPI(sd.kpi||{});
-  rdAgeing(sd.kpi||{});
+  // Wrap each render step — one failure won't block others
+  try{rdKPI(sd.kpi||{});}catch(e){console.error('rdKPI',e);}
+  try{rdAgeing(sd.kpi||{});}catch(e){console.error('rdAgeing',e);}
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
   if(sd.allCities&&sd.allCities.length){popFilters();}
-  // Only render city cards for admins
-  if(USER?.isAdmin) rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
-  // Ensure city-perf-sec stays hidden for city users
-  if(!USER?.isAdmin){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
-  rdChartsKPI(sd.kpi||{});
+  try{
+    if(USER?.isAdmin) rdCityCards(sd.homepageCards||[],sd.allCityCards||null);
+    if(!USER?.isAdmin){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
+  }catch(e){console.error('rdCityCards',e);}
+  try{rdChartsKPI(sd.kpi||{});}catch(e){console.error('rdChartsKPI',e);}
   _updFltDlBtn();
 }
 
@@ -850,9 +851,9 @@ function rdKPI(k){
   const _crN=k.closureRemarks||0;
   // AP derived: Total − SRN Completed − Closure Remarks
   const _apN=Math.max(0,_kTotal-_srnN-_crN);
-  const _apPct=(_apN/_base*100).toFixed(1);
-  const _crPct=(_crN/_base*100).toFixed(1);
-  const _srnPct=(_srnN/_base*100).toFixed(1);
+  const _apPct=parseFloat((_apN/_base*100).toFixed(1));
+  const _crPct=parseFloat((_crN/_base*100).toFixed(1));
+  const _srnPct=parseFloat((_srnN/_base*100).toFixed(1));
   $('k-tot',_kTotal);
   $('k-tots','('+_kTotal+' orders) · '+fmtN(k.totalAmount||0));
   $('k-gr',_srnPct+'%');
@@ -878,9 +879,10 @@ function rdAgeing(k){
   const t=k.totalRTO>0?k.totalRTO:(_apSum||1);
   const _more2=(k.moreThan2||0)+(k.highAgeing||0);
   const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
-  const pp=Math.min(100,(k.pending||0)/t*100).toFixed(1);
-  const rp=Math.min(100,_more2/t*100).toFixed(1);
-  const hp=Math.min(100,(k.highAgeing||0)/t*100).toFixed(1);
+  // Keep as numbers — avoid string/toFixed clash in fmtPct
+  const pp=parseFloat(Math.min(100,(k.pending||0)/t*100).toFixed(1));
+  const rp=parseFloat(Math.min(100,_more2/t*100).toFixed(1));
+  const hp=parseFloat(Math.min(100,(k.highAgeing||0)/t*100).toFixed(1));
   $('ag-pp',fmtPct(pp));$('ag-pc',k.pending||0);$('ag-pa',fmtN(k.pendingAmt||0));
   $('ag-rp',fmtPct(rp));$('ag-rc',_more2);$('ag-ra',fmtN(_more2Amt));
   $('ag-hp',fmtPct(hp));$('ag-hc',k.highAgeing||0);$('ag-ha',fmtN(k.highAgeingAmt||0));
