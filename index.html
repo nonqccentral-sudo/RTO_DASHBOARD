@@ -260,7 +260,7 @@ tbody tr{border-bottom:1px solid #E2E8F0;transition:background .08s;}
 tbody tr:hover{background:#F0F7FF;}
 tbody tr.tg{background:#F0FDF4;}
 tbody tr.tr{background:var(--redl);}
-tbody tr.tl{background:var(--purplel);}
+tbody tr.tl{background:var(--purplel);}tbody tr.tm{background:#FFFBEB;border-left:3px solid #D97706;}
 td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .td-id{font-weight:700;font-size:13px;font-family:'SFMono-Regular',Consolas,monospace;letter-spacing:.4px;color:var(--blue);}
 .ec{display:flex;align-items:flex-start;gap:6px;min-width:220px;}
@@ -1110,12 +1110,12 @@ function afterOrdersCity(){
   const ap  =_src?(_src.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
   const lossT=(_sk&&_sk.lossTotal)||0;
   const lossS=(_sk&&_sk.inhouseLoss)||0;
-  const pend02  =(_src&&(_src.pending02||_src.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
-  const pendMore2=((_src&&((_src.midAgeing35||0)+(_src.highAgeing6||0)))||
-                   (_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||
-                   ORDERS.filter(o=>!o.isPending&&o.actionPending).length);
-  const ha  =(_src&&(_src.highAgeing6||_src.highAgeing))||(_sk&&_sk.highAgeing)||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
-  const totAct=(_src&&(_src.active||_src.totalRTO))||ap;
+  // FIX: prefer _sk (fresh city-scoped kpi) for consistent ageing data
+  const pend02  =(_sk&&_sk.pending)||(_src&&(_src.pending02||_src.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
+  const pendMore2=(_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||(_src&&((_src.midAgeing35||0)+(_src.highAgeing6||0)))||ORDERS.filter(o=>!o.isPending&&o.actionPending).length;
+  const ha  =(_sk&&_sk.highAgeing)||(_src&&(_src.highAgeing6||_src.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
+  // Denominator = ap (actionPending) → %s sum to 100% of AP
+  const totAct=ap;
 
   $('ap-cnt',ap+' action pending');
 
@@ -1235,7 +1235,7 @@ function rdRows(){
     const refNum=ch.refNumber!==undefined?ch.refNumber:(o.referenceNumber||'');
     const codAmt=ch.codAmount!==undefined?ch.codAmount:(o.codAmount||'');
     const isChg=ch.action!==undefined||ch.update!==undefined;
-    const cl=o.isGreen?'tg':o.hasCODShortfall?'tl':o.actionPending&&!isChg?'tr':'';
+    const cl=o.isGreen?'tg':o.hasCODShortfall?'tl':o.actionMismatch?'tm':o.actionPending&&!isChg?'tr':'';
     const aeLk=o.actionEditCount>=2;
     const ueLk=o.updateEditCount>=2;
     let actHtml='',updHtml='';
@@ -1266,7 +1266,7 @@ function rdRows(){
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
     const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
     tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
-      <td class="td-id">${o.orderId}${o.actionPending&&!isChg?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓</span>':''}</td>
+      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓</span>':''}</td>
       <td>${o.city||'—'}</td>
       <td>${fmtN(o.gmv||0)}</td>
       <td><span class="b bs">${o.storeType||'—'}</span></td>
@@ -1384,7 +1384,7 @@ async function saveUploadChanges(){
   if(!valid.length)return;
   showOv('Saving upload…','Please wait');
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',batchId:_uplBatch?.batchId||'',changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
     hideOv();
     if(res.success){
       const ok=res.results.filter(r=>r.success).length;
