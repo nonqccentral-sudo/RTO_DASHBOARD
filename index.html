@@ -547,7 +547,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       </div>
     </div>
     <div class="sec">
-      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Total RTO &middot; From cancellation date</span></div>
+      <div class="sec-hd"><span class="sec-ttl">Ageing Breakdown</span><div class="sec-ln"></div><span class="sec-nt">% of Action Pending &middot; From cancellation date</span></div>
       <div class="age-strip">
         <div class="age-card p"><div class="age-ring" id="ag-pp">0%</div><div class="age-info"><div class="age-lbl">0&ndash;2 Days</div><div class="age-cnt" id="ag-pc">0</div><div class="age-amt" id="ag-pa">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-pb" style="width:0"></div></div></div></div>
         <div class="age-card rv"><div class="age-ring" id="ag-rp">0%</div><div class="age-info"><div class="age-lbl">&gt;2 Days</div><div class="age-cnt" id="ag-rc">0</div><div class="age-amt" id="ag-ra">&#8377;0</div><div class="age-bar"><div class="age-fill" id="ag-rb" style="width:0"></div></div></div></div>
@@ -735,6 +735,9 @@ function initDash(){
     const _cd=$('cdet');
     if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
     $('cd-ttl',USER.city+' Orders');
+    // Download button for city users
+    const _dlD=$('cd-dl-btns');
+    if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
     popFilters();
   }
   loadSummary();
@@ -876,7 +879,8 @@ function rdAgeing(k){
   // Card2 = >2 days combined (moreThan2+highAgeing); Card3 = >5 only (subset)
   // Chart uses 3 DISTINCT buckets: pending|moreThan2|highAgeing (unchanged)
   const _apSum=(k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0);
-  const t=k.totalRTO>0?k.totalRTO:(_apSum||1);
+  // Denominator = AP orders so ageing %s add up to 100% of AP
+  const t=(k.actionPending>0?k.actionPending:_apSum)||1;
   const _more2=(k.moreThan2||0)+(k.highAgeing||0);
   const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
   // Keep as numbers — avoid string/toFixed clash in fmtPct
@@ -1183,28 +1187,38 @@ function afterOrdersCity(){
   _renderCityPivot();
 }
 
-function _renderCityPivot(){
+async function _renderCityPivot(){
   const pvt=$('pivot-wrap'); if(!pvt)return;
-  const allOrds=ORDERS.filter(o=>!o.isGreen);
-  if(!allOrds.length){pvt.style.display='none';return;}
-  const fc      = allOrds.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
-  const retail  = allOrds.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
-  const tplPre  = allOrds.filter(o=>o.partner!=='INHOUSE'&&(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
-  const total   = allOrds.length;
   pvt.style.display='block';
-  pvt.innerHTML=`
-    <div class="pivot-section">
-      <div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>${total} active orders</span></div>
-      <table class="pivot-table">
-        <thead><tr><th>FC / Warehouse</th><th>Retail</th><th>3PL Pre-MDQ</th><th>Total</th></tr></thead>
-        <tbody><tr>
-          <td class="pv-fc" style="font-size:20px;font-weight:800;text-align:center">${fc}</td>
-          <td class="pv-rt" style="font-size:20px;font-weight:800;text-align:center">${retail}</td>
-          <td class="pv-3pl" style="font-size:20px;font-weight:800;text-align:center">${tplPre}</td>
-          <td class="pv-tot" style="font-size:20px;font-weight:800;text-align:center">${total}</td>
-        </tr></tbody>
-      </table>
-    </div>`;
+  pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>Loading…</span></div></div>`;
+  try{
+    // Fetch ALL AP orders for this city (not page-limited ORDERS)
+    const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')
+      +'&fAP=1&ps=2000&page=1&fCity='+encodeURIComponent(SCITY);
+    const d=await fetch(ep).then(r=>r.json());
+    const ap=(d&&d.success)?d.orders||[]:ORDERS.filter(o=>o.actionPending);
+    const total=ap.length;
+    if(!total){pvt.style.display='none';return;}
+    const fc    =ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='WAREHOUSE').length;
+    const retail=ap.filter(o=>o.partner==='INHOUSE'&&o.storeType==='RETAIL').length;
+    const tplPre=ap.filter(o=>o.partner!=='INHOUSE'&&(o.cancellationStage||'').toUpperCase().includes('PRE')).length;
+    const pct=n=>total?Math.round(n/total*100)+'%':'0%';
+    pvt.innerHTML=`
+      <div class="pivot-section">
+        <div class="pivot-hdr"><h3>Order Split — ${SCITY}</h3><span>${total} AP orders</span></div>
+        <table class="pivot-table">
+          <thead><tr><th>FC / Warehouse</th><th>Retail</th><th>3PL Pre-MDQ</th><th>Total</th></tr></thead>
+          <tbody><tr>
+            <td class="pv-fc" style="font-size:20px;font-weight:800;text-align:center">${fc}</td>
+            <td class="pv-rt" style="font-size:20px;font-weight:800;text-align:center">${retail}</td>
+            <td class="pv-3pl" style="font-size:20px;font-weight:800;text-align:center">${tplPre}</td>
+            <td class="pv-tot" style="font-size:20px;font-weight:800;text-align:center">${total}</td>
+          </tr></tbody>
+        </table>
+      </div>`;
+  } catch(e){
+    pvt.innerHTML=`<div class="emp">Could not load pivot: ${e.message}</div>`;
+  }
 }
 
 /* ── ROW RENDERING ───────────────────────────────────────────── */
