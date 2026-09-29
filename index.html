@@ -134,7 +134,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--t1);font-size:14px
 .kl{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;}
 .kv{font-size:30px;font-weight:800;line-height:1;color:var(--t1);letter-spacing:-1px;}
 .ar .kv{color:var(--red)}.ag .kv{color:var(--green)}.aa .kv{color:var(--amber)}.ap .kv{color:var(--purple)}
-.ks{font-size:11px;color:var(--t3);margin-top:4px;}
+.ks{font-size:13px;font-weight:700;color:var(--t3);margin-top:4px;}
 .kpi.click{cursor:pointer;}
 .kh{font-size:10px;color:var(--t3);margin-top:6px;}
 .age-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
@@ -233,6 +233,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .isel:focus{outline:none;border-color:var(--blue);background:#fff;}
 .isel:disabled{opacity:.5;cursor:default;}
 .isel.ch{border-color:var(--amber)!important;background:#FFFBEB;color:var(--amber);}
+.isel.isel-mismatch{border-color:var(--red)!important;background:var(--redl);color:var(--red);}
 .del-btn{width:24px;height:24px;border-radius:5px;border:1.5px solid #FECACA;background:var(--redl);color:var(--red);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;margin-top:2px;}
 .del-btn:hover{background:var(--red);color:#fff;}
 .hist-btn{width:22px;height:22px;border-radius:5px;border:1.5px solid #D8B4FE;background:var(--purplel);color:var(--purple);font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s;margin-top:2px;font-weight:700;}
@@ -480,18 +481,19 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
   <div class="fbar">
     <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
-    <div class="fg"><label>Partner</label><select id="f-partner" onchange="apF()"><option value="">All</option><option>INHOUSE</option><option>3PL</option></select></div>
-    <div class="fg"><label>BU</label><select id="f-bu" onchange="apF()"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
-    <div class="fg"><label>Store</label><select id="f-store" onchange="apF()"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
-    <div class="fg"><label>Stage</label><select id="f-stage" onchange="apF()"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
-    <div class="fg"><label>Ageing</label><select id="f-age" onchange="apF()"><option value="">All</option><option value="Pending">0&ndash;2 Days</option><option value="Recoverable">3&ndash;5 Days</option><option value="High Ageing">High Ageing &ge;6d</option></select></div>
-    <div class="fg" id="fgact"><label>Action</label><select id="f-act" onchange="apF()"><option value="">All</option></select></div>
+    <div class="fg"><label>Partner</label><select id="f-partner"><option value="">All</option><option>INHOUSE</option><option>3PL</option></select></div>
+    <div class="fg"><label>BU</label><select id="f-bu"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
+    <div class="fg"><label>Store</label><select id="f-store"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
+    <div class="fg"><label>Stage</label><select id="f-stage"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
+    <div class="fg"><label>Ageing</label><select id="f-age"><option value="">All</option><option value="Pending">0&ndash;2 Days</option><option value="Recoverable">3&ndash;5 Days</option><option value="High Ageing">High Ageing &ge;6d</option></select></div>
+    <div class="fg" id="fgact"><label>Action</label><select id="f-act"><option value="">All</option></select></div>
     <div class="fdiv"></div>
-    <div class="fg"><label>From</label><input type="date" id="f-from" onchange="apF()"/></div>
-    <div class="fg"><label>To</label><input type="date" id="f-to" onchange="apF()"/></div>
+    <div class="fg"><label>From</label><input type="date" id="f-from"/></div>
+    <div class="fg"><label>To</label><input type="date" id="f-to"/></div>
     <div class="fdiv"></div>
     <div id="filter-spinner"><div class="fspin"></div>Loading&hellip;</div>
     <button class="fbtn btn-rst" onclick="rstF()">&#10005; Reset</button>
+    <button class="fbtn" style="background:var(--blue);border-color:var(--blue);color:#fff;" onclick="apF()">&#10003; Submit</button>
     <button class="fbtn btn-ref" id="btn-ref" onclick="fref()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>Refresh
     </button>
@@ -505,6 +507,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
         <div class="kpi ap click" id="k-ls-card" onclick="triggerDl('loss')"><div class="ki">&#128176;</div><div class="kl">Total Loss Amount</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">In-house: &mdash;</div><div class="kh">Click for Loss Report</div></div>
+        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">Closure Remarks &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
       </div>
     </div>
     <div class="sec">
@@ -613,9 +616,9 @@ const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZ
 const LC_KEY='rto_sum_v2342';
 const LC_TTL=8*60*1000;
 const PAGE_SZ=100;
-const AUTO_REF=5*60*1000;
+// AUTO_REF removed — no automatic dashboard refreshes
 
-let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],_charts={},_autoTimer=null,_uplBatch=null;
+let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],_charts={},_uplBatch=null;
 
 /* ── helpers ─────────────────────────────────────────────────── */
 function $(id,v){if(v!=null){const el=document.getElementById(id);if(el)el.textContent=v;}else return document.getElementById(id);}
@@ -672,7 +675,6 @@ async function doReset(){
 function logout(){
   if(!confirm('Sign out?'))return;
   USER=null;SUM=null;ORDERS=[];CHANGES={};SCITY='';
-  if(_autoTimer)clearInterval(_autoTimer);
   $('dash').style.display='none';
   $('login-screen').classList.remove('hide');
   $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
@@ -697,7 +699,7 @@ function initDash(){
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
   }
   loadSummary();
-  _autoTimer=setInterval(()=>{if(document.visibilityState!=='hidden')fref();},AUTO_REF);
+  // No auto-refresh timer — dashboard only refreshes on explicit user action
 }
 
 /* ── FILTER PARAMS (JS-06: no fCity here; callers add it) ─────── */
@@ -827,6 +829,11 @@ function rdKPI(k){
   $('k-ls',lossStr);
   $('k-lss','In-house: '+(k.inhouseLoss?fmtN(k.inhouseLoss):'0'));
   $('gapc',_apN);
+  // CR >10 days card
+  const crHACount = k.crHighAgeing || 0;
+  const crHACard=$('k-cr-ha-card');
+  if(crHACard){ crHACard.style.display=crHACount>0?'':'none'; }
+  $('k-cr-ha', crHACount);
 }
 
 /* ── RENDER AGEING ─────────────────────────────────────────────── */
@@ -868,8 +875,8 @@ function rdCityCards(cards){
         <div class="cs ha6"><div class="csl">Pending >5</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
       </div>
       <div class="cbtns">
-        <button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">↓ DL</button>
-        <button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">⚠ AP</button>
+        <button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>
+        <button class="cbtn cb-ap" onclick="event.stopPropagation();openCityAP('${c.city}')">&#9888; Action Pending</button>
       </div>
     </div>`;
   }).join('');
@@ -1002,7 +1009,7 @@ function rstF(){
 }
 function fref(){localStorage.removeItem(LC_KEY);PG=1;loadSummary();}
 function onSearch(){PG=1;loadOrders();}
-function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));apF();}
+function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 function onCityFilter(){
   SCITY=$('f-city').value;
   CHANGES={};
@@ -1011,7 +1018,7 @@ function onCityFilter(){
     $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('cd-ttl',SCITY+(canEdit(SCITY)?'':' — View Only'));
     const dlDiv=$('cd-dl-btns');
-    if(USER?.isAdmin){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;}
+    if(USER?.isAdmin){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
     $('upload-btn').style.display=canEdit(SCITY)?'':'none';
     $('home-btn').classList.add('vis');
   } else {
@@ -1019,7 +1026,8 @@ function onCityFilter(){
     $('cdet').classList.remove('vis');$('cdet').style.display='none';
     $('home-btn').classList.remove('vis');
   }
-  PG=1;apF();
+  // Do NOT auto-apply — user clicks Submit to apply city + other filters together
+  _updFltDlBtn();
 }
 function togAP(){
   APF=!APF;
@@ -1124,7 +1132,7 @@ async function _renderCityPivot(){
       <div class="pivot-section">
         <div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>${total} AP orders${sum!==total?' \u26a0 check':''}  </span></div>
         <table class="pivot-table">
-          <thead><tr><th>FC (Inhouse+WH)</th><th>Retail (Inhouse+Retail)</th><th>3PL / PMD</th><th>Total AP</th></tr></thead>
+          <thead><tr><th>FC</th><th>RETAIL</th><th>3PL-PRE MDQ</th><th>Total AP</th></tr></thead>
           <tbody><tr>
             <td class="pv-fc">${fc||0}</td>
             <td class="pv-rt">${retail||0}</td>
@@ -1135,7 +1143,7 @@ async function _renderCityPivot(){
             <td>${fc?Math.round((fc||0)/total*100):0}%</td>
             <td>${retail?Math.round((retail||0)/total*100):0}%</td>
             <td>${tpl?Math.round((tpl||0)/total*100):0}%</td>
-            <td>FC+Retail+3PL = ${sum}</td>
+            <td>FC+RETAIL+3PL = ${sum}</td>
           </tr></tbody>
         </table>
       </div>`;
@@ -1165,22 +1173,49 @@ function rdRows(){
           +(aeLk&&canE&&USER?.isAdmin?`<button onclick="adminResetEdit('${o.orderId}')" style="margin-left:6px;padding:2px 8px;border-radius:4px;border:1px solid #FECACA;background:var(--redl);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;">Reset</button>`:'<span class="lkchip" title="Max edits reached">✎✎</span>');
     } else {
       const aOpts=(o.availableActions||[]);
-      const aSelHtml=aOpts.length?`<select class="isel${ch.action!==undefined?' ch':''}" onchange="onActChg('${o.orderId}',this.value,this)">${aOpts.map(a=>`<option value="${a}"${a===curAct?' selected':''}>${a}</option>`).join('')}</select>`:`<span class="ro">${curAct||'—'}</span>`;
-      actHtml=`<div class="ec">${aSelHtml}${curAct&&!aeLk?`<button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button>`:''}${curAct?`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button>`:''}${o.orderHistory?`<span class="b bs" style="font-size:9px;">${o.orderHistory}</span>`:''}</div>`;
+      // If the order has an existing VALID action (not mismatch, not from CHANGES), show it as "Filled Action" read-only text
+      // If mismatch: show dropdown with "Select" as first option (force user to pick correct action)
+      // If no existing action: show dropdown with "Select"
+      const hasExistingValidAction = curAct && !o.actionMismatch && ch.action === undefined;
+      if(hasExistingValidAction){
+        // Action already set and valid — show as filled (read-only label + edit button)
+        actHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">&#10003; ${curAct}</span><button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button><button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button></div>`;
+      } else if(aOpts.length){
+        // Mismatch or no action yet — dropdown starting with "Select"
+        const isMismatchRow = o.actionMismatch;
+        const selectDefault=`<option value="" disabled${!curAct||isMismatchRow?' selected':''}>Select</option>`;
+        const optsHtml=aOpts.map(a=>`<option value="${a}"${a===curAct&&!isMismatchRow?' selected':''}>${a}</option>`).join('');
+        const selCls='isel'+(ch.action!==undefined?' ch':'')+(isMismatchRow?' isel-mismatch':'');
+        const aSelHtml=`<select class="${selCls}" onchange="onActChg('${o.orderId}',this.value,this)">${selectDefault}${optsHtml}</select>`;
+        actHtml=`<div class="ec">${aSelHtml}${curAct&&!aeLk&&!isMismatchRow?`<button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button>`:''}${curAct&&!isMismatchRow?`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button>`:''}</div>`;
+      } else {
+        actHtml=`<span class="ro">${curAct||'—'}</span>`;
+      }
     }
-    const needUpd=curAct&&(o.availableUpdates||[]).length>0;
+    const needUpd=curAct&&!o.actionMismatch&&(o.availableUpdates||[]).length>0;
     if(!canE||ueLk){
       updHtml=`<span class="ro">${curUpd||'—'}</span>`;
-    } else if(!curAct||!needUpd){
-      updHtml=`<span class="lknote">${!curAct?'Set action first':'Awaiting SRN'}</span>`;
+    } else if(!curAct||o.actionMismatch){
+      // No action set or mismatch — cannot determine valid updates
+      updHtml=`<span class="lknote" style="color:var(--t3);">${!curAct?'Set action first':'Set correct action first'}</span>`;
+    } else if(!needUpd){
+      // SRN-only action (empty availableUpdates)
+      updHtml=`<span class="lknote">Awaiting SRN</span>`;
     } else {
+      // Has valid updates for this action
       const uOpts=(o.availableUpdates||[]);
-      const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
-      updHtml=`<div class="ec">${uSelHtml}`;
-      if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
-      if(curUpd==='COD Collected'){updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}`;}
-      if(curUpd==='Loss'){updHtml+=`<span class="loss-disp">GMV: ${fmtN(o.gmv||0)}</span>`;}
-      updHtml+='</div>';
+      const hasValidExistingUpd = curUpd && uOpts.includes(curUpd) && ch.update===undefined;
+      if(hasValidExistingUpd){
+        updHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">&#10003; ${curUpd}</span></div>`;
+      } else {
+        const selectDefaultU=`<option value="" disabled${!curUpd||!uOpts.includes(curUpd)?' selected':''}>Select</option>`;
+        const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
+        updHtml=`<div class="ec">${uSelHtml}`;
+        if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
+        if(curUpd==='COD Collected'){updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}`;}
+        if(curUpd==='Loss'){updHtml+=`<span class="loss-disp">GMV: ${fmtN(o.gmv||0)}</span>`;}
+        updHtml+='</div>';
+      }
     }
     const srnBadge=o.srnStatus?`<span class="b ${o.srnCompleted?'bg':'bs'}">${o.srnStatus}</span>`:'—';
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
@@ -1392,24 +1427,43 @@ async function handleUpload(inp){
     hideOv();
     if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
     _uplBatch=res;
-    const ok=res.results.filter(r=>r.valid&&!r.noChange).length;
-    const noChg=res.results.filter(r=>r.valid&&r.noChange).length;
-    const fail=res.results.filter(r=>!r.valid).length;
-    $('upload-title','Upload Validation — '+data.length+' rows');
+
+    // Compute exact counts matching requirement
+    const totalUploaded   = data.length;
+    const correctMatch    = res.results.filter(r=>r.valid&&!r.noChange).length;
+    const noChange        = res.results.filter(r=>r.valid&&r.noChange).length;
+    const mismatchAction  = res.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
+    const mismatchUpdate  = res.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+    const actionNotMade   = res.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
+    const editLimitHit    = res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
+    const orderNotFound   = res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
+    const otherFail       = res.results.filter(r=>!r.valid&&!r.errorType).length;
+
+    $('upload-title','Upload Validation — '+totalUploaded+' rows');
+
+    // Summary section: clear breakdown
     setHTML('usum',
-      `<div class="ustat ok">✓ ${ok} Ready to save</div>`+
-      (noChg?`<div class="ustat tot">${noChg} No change</div>`:'')+
-      `<div class="ustat fail">✗ ${fail} Invalid</div>`+
-      `<div class="ustat tot">${data.length} total</div>`
+      `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
+        <div class="ustat tot"><b>${totalUploaded}</b>&nbsp;Uploaded</div>
+        <div class="ustat ok">&#10003;&nbsp;<b>${correctMatch}</b>&nbsp;Correct Match</div>
+        ${mismatchAction?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
+        ${mismatchUpdate?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
+        ${actionNotMade?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
+        ${editLimitHit?`<div class="ustat fail">&#128274;&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
+        ${noChange?`<div class="ustat tot">&#8594;&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
+        ${orderNotFound?`<div class="ustat fail">&#10005;&nbsp;<b>${orderNotFound}</b>&nbsp;Order Not Found</div>`:''}
+        ${otherFail?`<div class="ustat fail">&#10005;&nbsp;<b>${otherFail}</b>&nbsp;Other Error</div>`:''}
+      </div>`
     );
+
     setHTML('ubody',res.results.map(r=>{
       if(r.valid&&!r.noChange)
-        return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' &nbsp;·&nbsp; '):'Ready'}</div></div>`;
+        return`<div class="ures ok"><span class="ui-icon">&#10003;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} &rarr; ${c.new}`).join(' &nbsp;&middot;&nbsp; '):'Ready'}</div></div>`;
       if(r.valid&&r.noChange)
-        return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
-      return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
+        return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">&rarr;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
+      return`<div class="ures fail"><span class="ui-icon">&#10005;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
     }).join(''));
-    $('usave-btn').style.display=ok>0?'':'none';
+    $('usave-btn').style.display=correctMatch>0?'':'none';
     $('upload-modal').classList.remove('hide');
   } catch(e){hideOv();toast('Upload error: '+e.message,'red');}
   inp.value='';
@@ -1461,11 +1515,20 @@ async function saveUploadChanges(){
           return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change</div></div>`;
         return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Invalid'}</div></div>`;
       }).join(''));
-      // Update summary line
+      // Update summary line with full breakdown
+      const totalProcessed = valid.length;
+      const mAct  = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
+      const mUpd  = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+      const noAct = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
       setHTML('usum',
-        `<div class="ustat ok">✓ ${ok} Saved &amp; live</div>`+
-        (fail?`<div class="ustat fail">✗ ${fail} Save failed</div>`:'')+
-        `<div class="ustat tot">${valid.length} processed</div>`
+        `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
+          <div class="ustat ok">&#10003;&nbsp;<b>${ok}</b>&nbsp;Saved &amp; Live</div>
+          ${fail?`<div class="ustat fail">&#10005;&nbsp;<b>${fail}</b>&nbsp;Save Failed</div>`:''}
+          ${mAct?`<div class="ustat fail">&#10005;&nbsp;<b>${mAct}</b>&nbsp;Mismatch Actions</div>`:''}
+          ${mUpd?`<div class="ustat fail">&#10005;&nbsp;<b>${mUpd}</b>&nbsp;Mismatch Updates</div>`:''}
+          ${noAct?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${noAct}</b>&nbsp;Action Not Made</div>`:''}
+          <div class="ustat tot"><b>${_uplBatch.results.length}</b>&nbsp;Total Uploaded</div>
+        </div>`
       );
       $('usave-btn').style.display='none'; // already saved
       // Show centred count badge
@@ -1589,59 +1652,57 @@ async function _doDownload(type,city){
     const wb=XLSX.utils.book_new();
 
     /* ── Tab 1: fill-in sheet ─────────────────────────────────── */
-    const ws1=XLSX.utils.aoa_to_sheet(rows);
+    // Prepend instruction rows before the data (if provided by server)
+    const instrRows=d.instrRows||[];
+    const allRows=[...instrRows,...rows];  // instructions + header + data rows
+    const instrCount=instrRows.length;     // how many rows to skip for data styling
+    const ws1=XLSX.utils.aoa_to_sheet(allRows);
 
-    // Column widths
+    // Column widths (based on header row column count)
     const wscols=rows[0].map((_,i)=>({wch: i===0?22: i<=2?12: i<=9?14:20}));
     ws1['!cols']=wscols;
 
-    // Freeze header row
-    ws1['!freeze']={xSplit:0,ySplit:1};
+    // Freeze at the row AFTER instructions + header
+    ws1['!freeze']={xSplit:0,ySplit:instrCount+1};
 
-    // Style header row (bold + fill)
+    // Style instruction rows (orange warning background)
+    for(let ir=0;ir<instrCount;ir++){
+      const addr=XLSX.utils.encode_cell({r:ir,c:0});
+      if(ws1[addr]){
+        const txt=String(ws1[addr].v||'');
+        const isTitle=txt.startsWith('⚠');
+        ws1[addr].s={font:{bold:isTitle,color:{rgb:isTitle?'FFFFFF':'7B341E'},sz:isTitle?12:10},fill:{fgColor:{rgb:isTitle?'C05621':'FEF3C7'}}};
+      }
+    }
+
+    // Style header row (at instrCount offset)
     const range=XLSX.utils.decode_range(ws1['!ref']||'A1');
     for(let c=range.s.c;c<=range.e.c;c++){
-      const addr=XLSX.utils.encode_cell({r:0,c});
+      const addr=XLSX.utils.encode_cell({r:instrCount,c});
       if(!ws1[addr]) ws1[addr]={v:rows[0][c]||''};
       ws1[addr].s={font:{bold:true},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};
     }
 
-    // Highlight mismatch rows in orange and normal rows with alternating light fill
-    // mismatchFlags is index-aligned with rows (index 0 = header = false)
+    // Highlight mismatch rows (data rows start at instrCount+1)
     const flags=d.mismatchFlags||[];
-    const actionColIdx=rows[0].indexOf('Action');       // column index of Action
-    const validActColIdx=rows[0].indexOf('Valid Actions (pipe-separated)');
+    const actionColIdx=rows[0].indexOf('Action');
     for(let ri=1;ri<rows.length;ri++){
       const isMismatch=flags[ri]===true;
+      const sheetRow=instrCount+ri; // offset by instruction rows
       for(let ci=range.s.c;ci<=range.e.c;ci++){
-        const addr=XLSX.utils.encode_cell({r:ri,c:ci});
+        const addr=XLSX.utils.encode_cell({r:sheetRow,c:ci});
         if(!ws1[addr]) ws1[addr]={v:rows[ri][ci]!==undefined?rows[ri][ci]:''};
         if(isMismatch){
-          // Orange background for entire mismatch row; darker on Action cell
           const isActCell=(ci===actionColIdx);
-          ws1[addr].s={
-            fill:{fgColor:{rgb: isActCell?'C0392B':'F39C12'}},
-            font:{color:{rgb: isActCell?'FFFFFF':'000000'},bold:isActCell},
-            alignment:{wrapText:false}
-          };
+          ws1[addr].s={fill:{fgColor:{rgb:isActCell?'C0392B':'F39C12'}},font:{color:{rgb:isActCell?'FFFFFF':'000000'},bold:isActCell}};
         } else {
-          // Alternating zebra stripe for readability
           const bg=ri%2===0?'F5F7FA':'FFFFFF';
           ws1[addr].s={fill:{fgColor:{rgb:bg}}};
         }
       }
     }
 
-    // Count mismatch rows and add a note at top if any exist
     const mismatchCount=flags.filter(Boolean).length;
-    if(mismatchCount>0){
-      // Add a note row before data (insert after header)
-      // We can't easily insert rows in XLSX.js, so add a comment cell on A1
-      const noteAddr=XLSX.utils.encode_cell({r:0,c:0});
-      if(!ws1[noteAddr]) ws1[noteAddr]={v:rows[0][0]||''};
-      ws1[noteAddr].c=[{a:'System',t:mismatchCount+' rows highlighted in orange have an incorrect/mismatched action. These are still Action Pending and must be corrected. The correct valid actions are in the "Valid Actions" column.'}];
-    }
-
     XLSX.utils.book_append_sheet(wb,ws1,'RTO Data (Fill In)');
 
     /* ── Tab 2: standardised action reference ─────────────────── */
@@ -1692,6 +1753,11 @@ async function downloadAP(){
   await _doDownload('ap', city||null);
 }
 
+/* CR >10 days download */
+async function dlCRHighAgeing(){
+  await _doDownload('crHighAgeing', SCITY||null);
+}
+
 /* ── CHARTS ──────────────────────────────────────────────────── */
 function rdChartsKPI(k){
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
@@ -1706,7 +1772,7 @@ function _mkChart(id,type,labels,data,colors){
   try{
     const el=$(id);if(!el)return;
     if(_charts[id])_charts[id].destroy();
-    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:ctx=>ctx.label+': '+ctx.parsed}},datalabels:{display:false}}}});
+    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:function(ctx){const val=type==='bar'?(typeof ctx.parsed==='object'&&ctx.parsed!==null?ctx.parsed.y:ctx.parsed):ctx.parsed;return (ctx.label||'')+': '+val;}}},datalabels:{display:false}}}});
   } catch(e){}
 }
 
