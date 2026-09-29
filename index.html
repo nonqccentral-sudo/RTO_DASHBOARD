@@ -1009,6 +1009,7 @@ function loadOrders(){
   }).catch(e=>{ORDERS_LOADING=false;$('tload').style.display='none';toast('Network error: '+e.message,'red');});
 }
 function _renderOrders(d){
+  ORDERS_LOADING=false;
   ORDERS=d.orders||[];
   TOTAL_PGS=d.totalPages||1;
   $('tcnt',(d.total||ORDERS.length)+' orders');
@@ -1142,7 +1143,7 @@ function afterOrdersCity(){
     +`<div class="kpi aa"><div class="ki">⚠</div>`
       +`<div class="kl">Action Pending</div>`
       +`<div class="kv">${_apP}%</div>`
-      +`<div class="ks">(${ap}) · Needs update</div></div>`
+      +`<div class="ks">(${_apDer}) · Needs update</div></div>`
     +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')">`
       +`<div class="ki">💰</div><div class="kl">Total Loss Amount</div>`
       +`<div class="kv">${lossT ? fmtN(lossT) : '₹0'}</div>`
