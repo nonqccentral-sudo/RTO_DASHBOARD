@@ -631,7 +631,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 ═══════════════════════════════════════════════════════════════ */
 
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
-const LC_KEY='rto_sum_v2342';
+const LC_KEY='rto_sum_v2343';
 const LC_TTL=8*60*1000;
 const PAGE_SZ=100;
 // AUTO_REF removed — no automatic dashboard refreshes
@@ -851,11 +851,11 @@ function rdKPI(k){
   $('k-ls', _lossNet ? fmtN(_lossNet) : '₹0');
   $('k-lss','Gross: '+fmtN(_lossGross)+(_lossRec?' · Rec: '+fmtN(_lossRec):''));
   $('gapc',_apN);
-  // CR >10 days card
+  // CR >10 days card — show when there are WH/Retail CR orders (crHighAgeing or srnPendingCR > 0)
   const crHACount = k.crHighAgeing || 0;
   const crLACount = k.crLowAgeing  || 0;
   const crHACard=$('k-cr-ha-card');
-  if(crHACard){ crHACard.style.display=crHACount>0?'':'none'; }
+  if(crHACard){ crHACard.style.display=(crHACount>0||(k.srnPendingCR||0)>0)?'':'none'; }
   $('k-cr-ha', crHACount);
   const crHASub=$('k-cr-ha-sub');
   if(crHASub) crHASub.textContent=(crLACount>0?crLACount+' orders \u226410 days':'All SRN-pending CRs exceed 10 days');
