@@ -432,10 +432,10 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 <!-- CLOSURE REMARKS MODAL -->
 <div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
   <div class="modal" style="max-width:860px">
-    <div class="mhdr"><h2>CR Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
+    <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
     <div class="mbody" id="cr-body">
       <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
-        <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">CR &amp; Loss/Lost</button>
+        <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">Closure Remarks &amp; Loss/Lost</button>
         <button id="cr-tab-2" onclick="setCRTab(2)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);">COD Collected &amp; CN Received</button>
       </div>
       <div id="cr-pane-1"></div>
@@ -522,10 +522,10 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="kgrid">
         <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total RTO</div><div class="kv" id="k-tot">&mdash;</div><div class="ks" id="k-tots">&mdash;</div></div>
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">&mdash;</div><div class="ks" id="k-grs">Visible 24h then removed</div></div>
-        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">CR</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
+        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
         <div class="kpi ap click" id="k-ls-card" onclick="openLossModal()"><div class="ki">&#128176;</div><div class="kl">Total Loss / Lost</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">Gross: &mdash;</div><div class="kh">Click to view options</div></div>
-        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">CR &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
+        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">Closure Remarks &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
       </div>
     </div>
     <div class="sec">
@@ -1101,7 +1101,7 @@ function afterOrdersCity(){
         +`<div class="kv">${_snP}%</div>`
         +`<div class="ks">(${snr}) · Visible 24h</div></div>`
       +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
-        +`<div class="kl">CR</div>`
+        +`<div class="kl">Closure Remarks</div>`
         +`<div class="kv">${_crP}%</div>`
         +`<div class="ks">(${cr}) · Click to view</div></div>`
       +`<div class="kpi aa"><div class="ki">⚠</div>`
@@ -1958,6 +1958,12 @@ async function handleLossRecovery(inp){
   }));
   hideOv();
   if(!recoveryRows.length){toast('No data rows found','amber');inp.value='';return;}
+
+  // Validate: both Amount Recovered and Ref Number must be present in every row
+  const missingAmt = recoveryRows.filter(r=>!r.recoveredAmount||r.recoveredAmount<=0);
+  const missingRef = recoveryRows.filter(r=>!r.recoveryRef);
+  if(missingAmt.length){toast('Amount Recovered is missing or zero in '+missingAmt.length+' row(s). All rows must have a valid amount.','red');inp.value='';return;}
+  if(missingRef.length){toast('Ref Number is missing in '+missingRef.length+' row(s). All rows must have a Ref Number.','red');inp.value='';return;}
   showOv('Uploading recovery data\u2026','Saving to backend');
   try{
     const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
