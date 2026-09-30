@@ -432,10 +432,10 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 <!-- CLOSURE REMARKS MODAL -->
 <div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
   <div class="modal" style="max-width:860px">
-    <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
+    <div class="mhdr"><h2>CR Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
     <div class="mbody" id="cr-body">
       <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
-        <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">Closure Remarks &amp; Loss/Lost</button>
+        <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">CR &amp; Loss/Lost</button>
         <button id="cr-tab-2" onclick="setCRTab(2)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;color:var(--t3);">COD Collected &amp; CN Received</button>
       </div>
       <div id="cr-pane-1"></div>
@@ -522,10 +522,10 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       <div class="kgrid">
         <div class="kpi ab"><div class="ki">&#128230;</div><div class="kl">Total RTO</div><div class="kv" id="k-tot">&mdash;</div><div class="ks" id="k-tots">&mdash;</div></div>
         <div class="kpi ag"><div class="ki">&#9989;</div><div class="kl">SRN Completed</div><div class="kv" id="k-gr">&mdash;</div><div class="ks" id="k-grs">Visible 24h then removed</div></div>
-        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
+        <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">CR</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
         <div class="kpi ap click" id="k-ls-card" onclick="openLossModal()"><div class="ki">&#128176;</div><div class="kl">Total Loss / Lost</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">Gross: &mdash;</div><div class="kh">Click to view options</div></div>
-        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">Closure Remarks &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
+        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">CR &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
       </div>
     </div>
     <div class="sec">
@@ -552,7 +552,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
       </div>
       <div class="ap-fbar">
         <label style="font-size:12px;font-weight:600;color:var(--amber);">&#9888; Action Pending</label>
-        <button class="apfb" id="ap-tog" onclick="togAP()">Show Only AP</button>
+        <button class="apfb" id="ap-tog" onclick="togAP()">Show Only Action Pending</button>
         <span class="ap-cnt" id="ap-cnt">0 pending</span>
       </div>
       <div class="kgrid" id="cd-kpis" style="margin-bottom:16px;"></div>
@@ -575,7 +575,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
           <h3>Active Orders</h3>
           <div class="tsch-w"><span class="tsch-icon">&#128269;</span><input id="tsch" placeholder="Search Order ID / City&hellip;" oninput="onSearch()"/></div>
           <div class="thdr-r">
-            <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; AP <span class="apn" id="gapc">0</span></button>
+            <button class="apbtn" id="gapbtn" onclick="togGAP()">&#9888; Action Pending <span class="apn" id="gapc">0</span></button>
             <button class="qbtn" onclick="openAPModal()">Queue</button>
             <button class="qbtn" onclick="downloadAP()" title="Download AP queue">&#11015;</button>
             <span class="tmeta" id="tcnt">&mdash; orders</span>
@@ -967,7 +967,7 @@ function openCityAP(city){
   GAP=true;
   $('gapbtn')?.classList.add('on');
   $('ap-tog')?.classList.add('on');
-  PG=1;showFSpin();showOv('Filtering AP orders…','Please wait');loadOrders();
+  PG=1;showFSpin();showOv('Filtering Action Pending orders…','Please wait');loadOrders();
   setTimeout(()=>document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'}),400);
 }
 
@@ -1101,7 +1101,7 @@ function afterOrdersCity(){
         +`<div class="kv">${_snP}%</div>`
         +`<div class="ks">(${snr}) · Visible 24h</div></div>`
       +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
-        +`<div class="kl">Closure Remarks</div>`
+        <div class="kl">CR</div>
         +`<div class="kv">${_crP}%</div>`
         +`<div class="ks">(${cr}) · Click to view</div></div>`
       +`<div class="kpi aa"><div class="ki">⚠</div>`
@@ -1155,9 +1155,9 @@ async function _renderCityPivot(){
     const sum=(fc||0)+(retail||0)+(tpl||0);
     pvt.innerHTML=`
       <div class="pivot-section">
-        <div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>${total} AP orders${sum!==total?' \u26a0 check':''}  </span></div>
+        <div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>${total} Action Pending orders${sum!==total?' \u26a0 check':''}  </span></div>
         <table class="pivot-table">
-          <thead><tr><th>FC</th><th>RETAIL</th><th>3PL-PRE MDQ</th><th>Total AP</th></tr></thead>
+          <thead><tr><th>FC</th><th>RETAIL</th><th>3PL-PRE MDQ</th><th>Total Action Pending</th></tr></thead>
           <tbody><tr>
             <td class="pv-fc">${fc||0}</td>
             <td class="pv-rt">${retail||0}</td>
@@ -1245,8 +1245,13 @@ function rdRows(){
     const srnBadge=o.srnStatus?`<span class="b ${o.srnCompleted?'bg':'bs'}">${o.srnStatus}</span>`:'—';
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
     const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
+    const needsEmailSubject = (curAct === 'Connected to Warehouse \u2013 SRN Pending' || curAct === 'Connected to Retail \u2013 SRN Pending') && canE;
+    const existingSubj = ch.emailSubjectLine !== undefined ? ch.emailSubjectLine : (o.emailSubjectLine || '');
+    const emailSubjHtml = needsEmailSubject
+      ? `<div class="ec" style="margin-top:4px;"><span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required for this action…" value="${existingSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/></div>`
+      : '';
     tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
-      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">AP</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
+      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">Action Pending</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
       <td>${o.city||'—'}</td>
       <td>${fmtN(o.gmv||0)}</td>
       <td><span class="b bs">${o.storeType||'—'}</span></td>
@@ -1256,7 +1261,7 @@ function rdRows(){
       <td>${srnBadge}</td>
       <td>${svcBadge} ${ageBadge}</td>
       <td>${actHtml}</td>
-      <td>${updHtml}</td>
+      <td>${updHtml}${emailSubjHtml}</td>
     </tr>`);
   });
 }
@@ -1282,6 +1287,7 @@ function onUpdChg(id,val,sel){
 function onCN(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].cnNumber=val;updSbar();}
 function onRef(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].refNumber=val;updSbar();}
 function onCOD(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].codAmount=parseFloat(val)||0;updSbar();}
+function onEmailSubj(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].emailSubjectLine=val.trim();updSbar();}
 function delAct(id){const o=ORDERS.find(x=>x.orderId===id);if(!o)return;CHANGES[id]=CHANGES[id]||{};CHANGES[id].action='';CHANGES[id].update='';updSbar();rdRows();}
 function updSbar(){
   const n=Object.keys(CHANGES).length;
@@ -1312,7 +1318,7 @@ function _patchOrdersAndRefreshUI(saveResults, changeMap){
     const act = o.currentAction || '';
     const upd = o.currentUpdate || '';
     const srnOnly = new Set([
-      'Connected to Warehouse/LM \u2013 SRN Pending',
+      'Connected to Warehouse \u2013 SRN Pending',
       'Connected to Retail \u2013 SRN Pending',
       'Pending with 3PL',
       'Order Lost/Rider Absconded',
@@ -1441,6 +1447,7 @@ async function handleUpload(inp){
   const ci=hdr.findIndex(h=>h==='order id'||h.includes('shipment_order'));
   const ai=hdr.findIndex(h=>h==='action'&&!h.includes('edit')&&!h.includes('valid')&&!h.includes('valid actions'));
   const ui=hdr.findIndex(h=>h==='update'&&!h.includes('edit')&&!h.includes('valid'));
+  const esi=hdr.findIndex(h=>h.includes('email subject'));
   const cni=hdr.findIndex(h=>h.includes('cn number')||h==='cn');
   const rni=hdr.findIndex(h=>h.includes('ref')&&!h.includes('reference number')&&!h.includes('valid')||h==='reference number');
   const codi=hdr.findIndex(h=>h.includes('cod')&&!h.includes('cod amount')===false||h==='cod amount');
@@ -1455,6 +1462,7 @@ async function handleUpload(inp){
     orderId:String(r[ci]||'').trim(),
     action: ai>=0?String(r[ai]||'').trim():'',
     update: ui>=0?String(r[ui]||'').trim():'',
+    emailSubjectLine: esi>=0?String(r[esi]||'').trim():'',
     cnNumber:  cni>=0?String(r[cni]||'').trim():'',
     refNumber: rni>=0?String(r[rni]||'').trim():'',
     codAmount: codi>=0?(parseFloat(r[codi])||0):0,
@@ -1480,6 +1488,7 @@ async function handleUpload(inp){
     const actionNotMade   = res.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
     const editLimitHit    = res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
     const orderNotFound   = res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
+    const missingSubject  = res.results.filter(r=>!r.valid&&r.errorType==='missing_email_subject').length;
     const otherFail       = res.results.filter(r=>!r.valid&&!r.errorType).length;
     const totalMismatch   = mismatchAction + mismatchUpdate;
     const totalInvalid    = res.results.filter(r=>!r.valid).length;
@@ -1511,6 +1520,7 @@ async function handleUpload(inp){
           ${correctMatch?`<div class="ustat ok">&#10003;&nbsp;<b>${correctMatch}</b>&nbsp;Ready to Save</div>`:''}
           ${mismatchAction?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
           ${mismatchUpdate?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
+          ${missingSubject?`<div class="ustat fail">&#9993;&nbsp;<b>${missingSubject}</b>&nbsp;Email Subject Missing</div>`:''}
           ${actionNotMade?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
           ${editLimitHit?`<div class="ustat fail">&#128274;&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
           ${noChange?`<div class="ustat tot">&#8594;&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
@@ -1681,7 +1691,7 @@ async function openAPModal(){
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
     const ords=d.orders||[];
-    setHTML('ap-body',ords.length?'<div style="padding:10px 14px 6px;font-size:12px;font-weight:600;color:var(--t2);">'+ords.length+' orders action pending</div>'+ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No AP orders!</div>');
+    setHTML('ap-body',ords.length?'<div style="padding:10px 14px 6px;font-size:12px;font-weight:600;color:var(--t2);">'+ords.length+' orders action pending</div>'+ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No Action Pending orders!</div>');
   } catch(e){setHTML('ap-body','<div class="emp">Error: '+e.message+'</div>');}
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
@@ -1976,7 +1986,7 @@ async function dlCRHighAgeing(){
 /* ── CHARTS ──────────────────────────────────────────────────── */
 function rdChartsKPI(k){
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
-  _mkChart('ch-st','doughnut',['AP','Closure Remarks','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
+  _mkChart('ch-st','doughnut',['Action Pending','CR','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){
     const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);
     _mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);
