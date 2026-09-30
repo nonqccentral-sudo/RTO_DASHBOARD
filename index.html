@@ -443,6 +443,23 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
+<!-- CLOSURE REMARKS >10 DAYS MODAL -->
+<div class="mbg hide" id="cr-ha-modal" onclick="if(event.target===this)closeCRHAModal()">
+  <div class="dlconf">
+    <div class="mhdr"><h2>Closure Remarks &gt;10 Days</h2><button class="mclose" onclick="closeCRHAModal()">&#10005;</button></div>
+    <div class="dlcb">
+      <div class="dlct">Select an action</div>
+      <div class="dlcm">Download the report of Closure Remark orders with ageing &gt;10 days, or upload a recovery document after recovery has been made.</div>
+      <div class="dlcbtns">
+        <button class="dlc-y" onclick="closeCRHAModal();dlCRHighAgeing();">&#11015; Download Report</button>
+        <button class="dlc-y" style="background:var(--green)" onclick="closeCRHAModal();openCRHARecoveryUpload();">&#11014; Upload Recovery</button>
+        <button class="dlc-n" onclick="closeCRHAModal()">&#10005; Cancel</button>
+      </div>
+    </div>
+    <input type="file" id="cr-ha-recovery-file" accept=".xlsx,.xls" style="display:none" onchange="handleCRHARecovery(this)"/>
+  </div>
+</div>
+
 <!-- LOSS/LOST MODAL -->
 <div class="mbg hide" id="loss-modal" onclick="if(event.target===this)closeLossModal()">
   <div class="modal" style="max-width:680px">
@@ -525,7 +542,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
         <div class="kpi pu click" onclick="openCRModal()"><div class="ki">&#128203;</div><div class="kl">Closure Remarks</div><div class="kv" id="k-cr">&mdash;</div><div class="ks" id="k-crs">Awaiting SRN closure</div><div class="kh">Click to view breakdown</div></div>
         <div class="kpi aa"><div class="ki">&#9888;</div><div class="kl">Action Pending</div><div class="kv" id="k-ap">&mdash;</div><div class="ks" id="k-aps">Needs immediate update</div></div>
         <div class="kpi ap click" id="k-ls-card" onclick="openLossModal()"><div class="ki">&#128176;</div><div class="kl">Total Loss / Lost</div><div class="kv" id="k-ls">&mdash;</div><div class="ks" id="k-lss">Gross: &mdash;</div><div class="kh">Click to view options</div></div>
-        <div class="kpi click" id="k-cr-ha-card" onclick="dlCRHighAgeing()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">Closure Remarks &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click to download report</div></div>
+        <div class="kpi click" id="k-cr-ha-card" onclick="openCRHAModal()" style="display:none;--acc:#7B1034;background:#FDF2F5;border-color:#F0C4D0;"><div class="ki" style="background:#F7D6E0;">&#9201;</div><div class="kl" style="color:#7B1034;">Closure Remarks &gt;10 Days</div><div class="kv" id="k-cr-ha" style="color:#7B1034;font-weight:900;">&mdash;</div><div class="ks" id="k-cr-ha-sub" style="color:#9B3050;font-weight:700;">Ageing &gt;10 days</div><div class="kh" style="color:#9B3050;">Click for options</div></div>
       </div>
     </div>
     <div class="sec">
@@ -1471,7 +1488,7 @@ async function handleUpload(inp){
     if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
     _uplBatch=res;
 
-    // Compute exact counts matching requirement
+    // Compute counts — same as before
     const totalUploaded   = data.length;
     const correctMatch    = res.results.filter(r=>r.valid&&!r.noChange).length;
     const noChange        = res.results.filter(r=>r.valid&&r.noChange).length;
@@ -1481,32 +1498,78 @@ async function handleUpload(inp){
     const editLimitHit    = res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
     const orderNotFound   = res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
     const otherFail       = res.results.filter(r=>!r.valid&&!r.errorType).length;
+    const totalMismatch   = mismatchAction + mismatchUpdate;
+    const totalInvalid    = res.results.filter(r=>!r.valid).length;
 
-    $('upload-title','Upload Validation — '+totalUploaded+' rows');
+    // ── Determine which scenario we are in ──────────────────────
+    // Scenario 1: valid file from dashboard, zero changes (all noChange, zero valid-with-change, zero invalid that are mismatch)
+    const isNoChangesScenario = (totalUploaded > 0) && (noChange === totalUploaded) && correctMatch === 0 && totalInvalid === 0;
+    // Scenario 3: some valid changes AND some mismatch errors
+    const hasMismatch = totalMismatch > 0;
 
-    // Summary section: clear breakdown
-    setHTML('usum',
-      `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
-        <div class="ustat tot"><b>${totalUploaded}</b>&nbsp;Uploaded</div>
-        <div class="ustat ok">&#10003;&nbsp;<b>${correctMatch}</b>&nbsp;Correct Match</div>
-        ${mismatchAction?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
-        ${mismatchUpdate?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
-        ${actionNotMade?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
-        ${editLimitHit?`<div class="ustat fail">&#128274;&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
-        ${noChange?`<div class="ustat tot">&#8594;&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
-        ${orderNotFound?`<div class="ustat fail">&#10005;&nbsp;<b>${orderNotFound}</b>&nbsp;Order Not Found</div>`:''}
-        ${otherFail?`<div class="ustat fail">&#10005;&nbsp;<b>${otherFail}</b>&nbsp;Other Error</div>`:''}
-      </div>`
-    );
+    $('upload-title', isNoChangesScenario
+      ? 'No Changes Found'
+      : 'Upload Validation — '+totalUploaded+' rows');
 
-    setHTML('ubody',res.results.map(r=>{
+    // ── Summary bar ─────────────────────────────────────────────
+    if(isNoChangesScenario){
+      setHTML('usum',
+        `<div style="display:flex;align-items:center;gap:14px;padding:6px 0;">
+          <span style="font-size:26px;">&#8594;</span>
+          <div>
+            <div style="font-size:15px;font-weight:800;color:var(--t2);">No changes found in the file.</div>
+            <div style="font-size:12px;color:var(--t3);margin-top:2px;">${totalUploaded} rows checked &mdash; all values already match the dashboard. No records were updated.</div>
+          </div>
+        </div>`);
+    } else {
+      setHTML('usum',
+        `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
+          <div class="ustat tot"><b>${totalUploaded}</b>&nbsp;Uploaded</div>
+          ${correctMatch?`<div class="ustat ok">&#10003;&nbsp;<b>${correctMatch}</b>&nbsp;Ready to Save</div>`:''}
+          ${mismatchAction?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
+          ${mismatchUpdate?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
+          ${actionNotMade?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
+          ${editLimitHit?`<div class="ustat fail">&#128274;&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
+          ${noChange?`<div class="ustat tot">&#8594;&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
+          ${orderNotFound?`<div class="ustat fail">&#10005;&nbsp;<b>${orderNotFound}</b>&nbsp;Order Not Found</div>`:''}
+          ${otherFail?`<div class="ustat fail">&#10005;&nbsp;<b>${otherFail}</b>&nbsp;Other Error</div>`:''}
+        </div>`);
+    }
+
+    // ── Central mismatch warning banner (Scenario 3) ─────────────
+    // Shown only when there are mismatch errors alongside valid rows.
+    const mismatchBanner = hasMismatch
+      ? `<div id="mismatch-banner" style="margin-bottom:14px;padding:16px 20px;border-radius:10px;background:#FFF3CD;border:2px solid #FFC107;display:flex;align-items:flex-start;gap:14px;">
+          <span style="font-size:24px;flex-shrink:0;">&#9888;</span>
+          <div style="flex:1;">
+            <div style="font-size:14px;font-weight:800;color:#856404;margin-bottom:6px;">Mismatched orders have been highlighted in your dashboard.</div>
+            <div style="font-size:12px;color:#856404;line-height:1.6;">
+              You can review them below and download the mismatched data to update it again using the standard remarks/actions.<br>
+              <b>Valid updates are shown in green and will be applied when you click Save. Mismatched rows are shown in red and will not be updated.</b>
+            </div>
+            <button onclick="downloadMismatchedOrders()" style="margin-top:10px;padding:6px 16px;border-radius:6px;background:#856404;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">&#11015; Download Mismatched Orders</button>
+          </div>
+        </div>`
+      : '';
+
+    // ── Row list ────────────────────────────────────────────────
+    const rowHtml = res.results.map(r=>{
       if(r.valid&&!r.noChange)
         return`<div class="ures ok"><span class="ui-icon">&#10003;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} &rarr; ${c.new}`).join(' &nbsp;&middot;&nbsp; '):'Ready'}</div></div>`;
       if(r.valid&&r.noChange)
         return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">&rarr;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
-      return`<div class="ures fail"><span class="ui-icon">&#10005;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Unknown error'}</div></div>`;
-    }).join(''));
-    $('usave-btn').style.display=correctMatch>0?'':'none';
+      // Mismatch row: red, but clearly labelled as mismatch (not a system/file failure)
+      const isMismatch = r.errorType==='mismatch_action'||r.errorType==='mismatch_update';
+      return`<div class="ures fail" style="${isMismatch?'border-color:#FFC107;background:#FFFDE7;':''}">`+
+        `<span class="ui-icon" style="${isMismatch?'color:#856404;':''}">&#10005;</span>`+
+        `<div class="ui-id">${r.orderId}</div>`+
+        `<div class="ui-msg" style="${isMismatch?'color:#856404;':''}">${r.error||'Unknown error'}</div></div>`;
+    }).join('');
+
+    setHTML('ubody', mismatchBanner + rowHtml);
+
+    // ── Save button: only for valid-with-changes rows ────────────
+    $('usave-btn').style.display = correctMatch > 0 ? '' : 'none';
     $('upload-modal').classList.remove('hide');
   } catch(e){hideOv();toast('Upload error: '+e.message,'red');}
   inp.value='';
@@ -1585,7 +1648,27 @@ async function saveUploadChanges(){
   } catch(e){hideOv();toast('Network error: '+e.message,'red');}
 }
 
-/* ── HISTORY MODAL ───────────────────────────────────────────── */
+/* Download mismatched orders from the current upload batch as an Excel file.
+   Uses only the existing _uplBatch results — no server call, no new logic.   */
+function downloadMismatchedOrders(){
+  if(!_uplBatch||!_uplBatch.results)return;
+  const mismatches=_uplBatch.results.filter(r=>
+    !r.valid&&(r.errorType==='mismatch_action'||r.errorType==='mismatch_update')
+  );
+  if(!mismatches.length){toast('No mismatched orders found','amber');return;}
+  const wb=XLSX.utils.book_new();
+  const hdr=['Order ID','Error Type','Error Detail'];
+  const dataRows=mismatches.map(r=>[
+    r.orderId,
+    r.errorType==='mismatch_action'?'Wrong Action':'Wrong Update',
+    r.error||''
+  ]);
+  const ws=XLSX.utils.aoa_to_sheet([hdr,...dataRows]);
+  ws['!cols']=[{wch:22},{wch:16},{wch:80}];
+  XLSX.utils.book_append_sheet(wb,ws,'Mismatched Orders');
+  XLSX.writeFile(wb,'Mismatched_Orders_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  toast('Downloaded '+mismatches.length+' mismatched orders');
+}
 async function openHist(id){
   $('hist-id',id);setHTML('hist-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('hist-modal').classList.remove('hide');
@@ -1905,6 +1988,47 @@ async function downloadAP(){
 /* CR >10 days download */
 async function dlCRHighAgeing(){
   await _doDownload('crHighAgeing', SCITY||null);
+}
+
+/* CR HA modal — Download + Upload Recovery */
+function openCRHAModal(){ $('cr-ha-modal').classList.remove('hide'); }
+function closeCRHAModal(){ $('cr-ha-modal').classList.add('hide'); }
+function openCRHARecoveryUpload(){ $('cr-ha-recovery-file').click(); }
+
+async function handleCRHARecovery(inp){
+  const file=inp.files[0]; if(!file)return;
+  showOv('Parsing recovery file\u2026','Reading Excel');
+  const ab=await file.arrayBuffer();
+  const wb=XLSX.read(ab,{type:'array'});
+  const sh=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true,defval:''});
+  if(rows.length<2){hideOv();toast('File empty','red');inp.value='';return;}
+  const hdr=rows[0].map(h=>String(h||'').toLowerCase().trim());
+  const oi=hdr.findIndex(h=>h.includes('order'));
+  const ai=hdr.findIndex(h=>h.includes('amount')||h.includes('recovered'));
+  const ri=hdr.findIndex(h=>h.includes('ref'));
+  const di=hdr.findIndex(h=>h.includes('date'));
+  if(oi<0||ai<0){hideOv();toast('Cannot find Order ID or Recovered Amount column','red');inp.value='';return;}
+  const recoveryRows=rows.slice(1).filter(r=>r[oi]).map(r=>({
+    orderId:         String(r[oi]||'').trim(),
+    recoveredAmount: parseFloat(r[ai])||0,
+    recoveryRef:     ri>=0?String(r[ri]||'').trim():'',
+    recoveryDate:    di>=0?String(r[di]||'').trim():'',
+  }));
+  hideOv();
+  if(!recoveryRows.length){toast('No data rows found','amber');inp.value='';return;}
+  showOv('Uploading recovery data\u2026','Saving to backend');
+  try{
+    // Uses the same existing lossRecoveryUpload endpoint and logic
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action:'lossRecoveryUpload',email:USER?.email||'',rows:recoveryRows})}).then(r=>r.json());
+    hideOv();
+    if(res.success){
+      toast(res.saved+' recovery records saved'+(res.failed?' \xb7 '+res.failed+' failed':''),'green');
+      localStorage.removeItem(LC_KEY);
+    } else { toast(res.error||'Upload failed','red'); }
+  }catch(e){hideOv();toast('Network error: '+e.message,'red');}
+  inp.value='';
 }
 
 /* ── CHARTS ──────────────────────────────────────────────────── */
