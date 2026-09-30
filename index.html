@@ -851,14 +851,26 @@ function rdKPI(k){
   $('k-ls', _lossNet ? fmtN(_lossNet) : '₹0');
   $('k-lss','Gross: '+fmtN(_lossGross)+(_lossRec?' · Rec: '+fmtN(_lossRec):''));
   $('gapc',_apN);
-  // CR >10 days card — show when there are WH/Retail CR orders (crHighAgeing or srnPendingCR > 0)
+  // CR >10 days card
+  // crHighAgeing = WH+Retail orders with crAgeingDays > 10 (from Code.gs)
+  // crLowAgeing  = WH+Retail orders with crAgeingDays <= 10
+  // Show the card whenever there are any WH+Retail CR orders (crHighAgeing OR crLowAgeing > 0)
   const crHACount = k.crHighAgeing || 0;
   const crLACount = k.crLowAgeing  || 0;
+  const crWHRTTotal = crHACount + crLACount; // total WH+Retail CR orders
   const crHACard=$('k-cr-ha-card');
-  if(crHACard){ crHACard.style.display=(crHACount>0||(k.srnPendingCR||0)>0)?'':'none'; }
-  $('k-cr-ha', crHACount);
+  if(crHACard){ crHACard.style.display=(crWHRTTotal>0||(k.srnPendingCR||0)>0)?'':'none'; }
+  // Show crHighAgeing as the main number; if cache is stale (=0) show total WH+Retail instead
+  $('k-cr-ha', crHACount > 0 ? crHACount : crWHRTTotal);
   const crHASub=$('k-cr-ha-sub');
-  if(crHASub) crHASub.textContent=(crLACount>0?crLACount+' orders \u226410 days':'All SRN-pending CRs exceed 10 days');
+  if(crHASub){
+    if(crHACount > 0 && crLACount > 0)
+      crHASub.textContent = crLACount+' orders \u226410 days';
+    else if(crHACount > 0)
+      crHASub.textContent = 'All WH/Retail CRs exceed 10 days';
+    else
+      crHASub.textContent = 'Bust cache to refresh ageing';
+  }
 }
 
 /* ── RENDER AGEING ─────────────────────────────────────────────── */
@@ -1686,7 +1698,7 @@ function closeHA(){$('ha-modal').classList.add('hide');}
 async function openAPModal(){
   setHTML('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
   $('ap-modal').classList.remove('hide');
-  const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=2000&page=1'+_cq();
+  const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=2000&page=1&slim=1'+_cq();
   try{
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
@@ -1715,8 +1727,8 @@ async function openCRModal(){
   };
   try{
     const [d1,d2]=await Promise.all([
-      fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=2000&page=1'+cq).then(r=>r.json()),
-      fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=2000&page=1'+cq).then(r=>r.json()),
+      fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=2000&page=1&slim=1'+cq).then(r=>r.json()),
+      fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=2000&page=1&slim=1'+cq).then(r=>r.json()),
     ]);
     setHTML('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
     setHTML('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
