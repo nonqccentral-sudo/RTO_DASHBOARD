@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <title>RTO Operations Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -944,6 +947,7 @@ function openDet(city){
   PG=1;loadOrders();
 }
 function closeDet(){
+  const _lastCity = SCITY; // save before clearing
   SCITY='';APF=false;GAP=false;
   if(USER?.isAdmin)$('f-city').value='';
   $('gapbtn').classList.remove('on');
@@ -953,7 +957,8 @@ function closeDet(){
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   $('home-btn').classList.remove('vis');
   // Show reopen button so user can get back to the orders section
-  const rb=$('reopen-btn');if(rb)rb.style.display='flex';
+  const rb=$('reopen-btn');
+  if(rb){ rb.style.display='flex'; rb.dataset.city=_lastCity||''; }
   PG=1;
   SUM=null;
   const raw=localStorage.getItem(LC_KEY);
@@ -962,11 +967,14 @@ function closeDet(){
 }
 
 function reopenDet(){
-  const rb=$('reopen-btn');if(rb)rb.style.display='none';
-  if(SCITY){
-    openDet(SCITY);
+  const rb=$('reopen-btn');
+  const lastCity = rb ? rb.dataset.city : '';
+  if(rb) rb.style.display='none';
+  if(lastCity){
+    openDet(lastCity);
   } else if(!USER?.isAdmin&&USER?.city){
     // City login — reopen their own city section
+    SCITY=USER.city.toUpperCase();
     $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('home-btn').classList.add('vis');
     loadOrders();
