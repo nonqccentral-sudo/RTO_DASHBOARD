@@ -474,6 +474,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 <button id="home-btn" onclick="goHome()">&#8593; Home</button>
+<button id="reopen-btn" onclick="reopenDet()" style="position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;">&#8595; Open Orders</button>
 <!-- DASHBOARD -->
 <div id="dash" style="display:none">
   <div class="hdr">
@@ -939,6 +940,7 @@ function openDet(city){
   document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim()===city);});
   $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
   $('home-btn').classList.add('vis');
+  const rb=$('reopen-btn');if(rb)rb.style.display='none';
   PG=1;loadOrders();
 }
 function closeDet(){
@@ -950,11 +952,25 @@ function closeDet(){
   $('cdet').style.display='none';
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   $('home-btn').classList.remove('vis');
+  // Show reopen button so user can get back to the orders section
+  const rb=$('reopen-btn');if(rb)rb.style.display='flex';
   PG=1;
   SUM=null;
   const raw=localStorage.getItem(LC_KEY);
   if(raw){try{const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}catch(e){}}
   loadSummary();
+}
+
+function reopenDet(){
+  const rb=$('reopen-btn');if(rb)rb.style.display='none';
+  if(SCITY){
+    openDet(SCITY);
+  } else if(!USER?.isAdmin&&USER?.city){
+    // City login — reopen their own city section
+    $('cdet').classList.add('vis');$('cdet').style.display='block';
+    $('home-btn').classList.add('vis');
+    loadOrders();
+  }
 }
 function goHome(){window.scrollTo({top:0,behavior:'smooth'});closeDet();}
 
@@ -2004,7 +2020,7 @@ async function dlCRHighAgeing(){
 /* ── CHARTS ──────────────────────────────────────────────────── */
 function rdChartsKPI(k){
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
-  _mkChart('ch-st','doughnut',['Action Pending','CR','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
+  _mkChart('ch-st','doughnut',['Action Pending','Closure Remark','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){
     const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);
     _mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);
