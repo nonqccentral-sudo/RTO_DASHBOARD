@@ -2039,7 +2039,11 @@ function _mkChart(id,type,labels,data,colors){
   try{
     const el=$(id);if(!el)return;
     if(_charts[id])_charts[id].destroy();
-    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:function(ctx){const val=type==='bar'?(typeof ctx.parsed==='object'&&ctx.parsed!==null?ctx.parsed.y:ctx.parsed):ctx.parsed;return (ctx.label||'')+': '+val;}}},datalabels:{display:false}}}});
+    const total=data.reduce((a,b)=>a+(b||0),0)||1;
+    const dlConfig=type==='doughnut'
+      ? {display:true,color:'#fff',font:{size:10,weight:'700'},formatter:function(v){return v>0?Math.round(v/total*100)+'%':null;}}
+      : {display:true,color:'#334155',font:{size:10,weight:'600'},anchor:'end',align:'top',offset:2,formatter:function(v){return v>0?v:null;}};
+    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:function(ctx){const val=type==='bar'?(typeof ctx.parsed==='object'&&ctx.parsed!==null?ctx.parsed.y:ctx.parsed):ctx.parsed;return (ctx.label||'')+': '+val;}}},datalabels:dlConfig}}});
   } catch(e){}
 }
 
