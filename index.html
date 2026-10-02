@@ -973,8 +973,12 @@ function reopenDet(){
   if(lastCity){
     openDet(lastCity);
   } else if(!USER?.isAdmin&&USER?.city){
-    // City login — reopen their own city section
+    // City login — reopen their own city section and restore buttons
     SCITY=USER.city.toUpperCase();
+    $('cd-ttl',USER.city+' Orders');
+    const _dlD=$('cd-dl-btns');
+    if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+    $('upload-btn').style.display='';
     $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('home-btn').classList.add('vis');
     loadOrders();
