@@ -636,7 +636,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
 const LC_KEY='rto_sum_v2343';
-const LC_TTL=8*60*1000;
+const LC_TTL=15*60*1000;
 const PAGE_SZ=100;
 // AUTO_REF removed — no automatic dashboard refreshes
 
@@ -709,7 +709,7 @@ function initDash(){
   const ia=USER?.isAdmin;
   $('adl-bar').classList.toggle('hide',!ia);
   $('fgact').style.display=ia?'none':'flex';
-  $('qc-tabs').style.display=ia?'':'none';
+  $('qc-tabs').style.display=''; // show for both admin and city login
   $('city-perf-sec').style.display=ia?'':'none';
   if(!ia&&USER?.city){
     SCITY=USER.city.toUpperCase();
@@ -779,7 +779,7 @@ function popFilters(){
 
 /* ── LOAD SUMMARY ─────────────────────────────────────────────── */
 function loadSummary(){
-  showOv('Loading RTO data…','Warming up cache');
+  // Step 1: show cached data immediately if available — no overlay, no wait
   try{
     const raw=localStorage.getItem(LC_KEY);
     if(raw){
@@ -787,25 +787,22 @@ function loadSummary(){
       if(Date.now()-ts<LC_TTL&&data&&data.success){
         SUM=data;TRD=data.trend||[];
         _renderSummary(data);
-        hideOv();
-        loadOrders();
+        loadOrders(); // fetch orders in background
         return;
       }
     }
   } catch(e){}
-  // JS-07: single summary fetch; getOrders fetched separately with correct city
+  // Step 2: cache miss — fetch summary first, render KPIs as soon as it returns,
+  // then fetch orders separately so the overlay disappears after summary (not both)
+  showOv('Loading RTO data…','Please wait');
   const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq();
-  Promise.all([
-    fetch(ep).then(r=>r.json()),
-    fetch(API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page=1&ps='+PAGE_SZ+_cq()).then(r=>r.json())
-  ]).then(([sd,od])=>{
+  fetch(ep).then(r=>r.json()).then(sd=>{
     hideOv();
-    if(!sd||!sd.success){toast('Failed to load summary. Retrying…','amber');return;}
+    if(!sd||!sd.success){toast('Failed to load summary','amber');return;}
     SUM=sd;TRD=sd.trend||[];
     localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
     _renderSummary(sd);
-    if(od&&od.success)_renderOrders(od);
-    else loadOrders();
+    loadOrders(); // fetch orders separately — table loads in background
   }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
 }
 
