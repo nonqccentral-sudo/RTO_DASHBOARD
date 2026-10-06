@@ -1280,11 +1280,14 @@ function rdRows(){
         actHtml=`<span class="ro">${curAct||'—'}</span>`;
       }
     }
-    const needUpd=curAct&&!o.actionMismatch&&(o.availableUpdates||[]).length>0;
+    // Use the effective mismatch state: if user has already picked a new action in CHANGES,
+    // actionMismatch is cleared by onActChg, so we use the live o.actionMismatch flag.
+    const effectiveMismatch = o.actionMismatch && ch.action === undefined;
+    const needUpd=curAct&&!effectiveMismatch&&(o.availableUpdates||[]).length>0;
     if(!canE||ueLk){
       updHtml=`<span class="ro">${curUpd||'—'}</span>`;
-    } else if(!curAct||o.actionMismatch){
-      // No action set or mismatch — cannot determine valid updates
+    } else if(!curAct||effectiveMismatch){
+      // No action set or still-unresolved mismatch
       updHtml=`<span class="lknote" style="color:var(--t3);">${!curAct?'Set action first':'Set correct action first'}</span>`;
     } else if(!needUpd){
       // SRN-only action (empty availableUpdates)
@@ -1300,7 +1303,10 @@ function rdRows(){
         const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
         updHtml=`<div class="ec">${uSelHtml}`;
         if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
-        if(curUpd==='COD Collected'){updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}`;}
+        if(curUpd==='COD Collected'){
+          const existingCodSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
+          updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}<span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required…" value="${existingCodSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/>`;
+        }
         if(curUpd==='Loss'){updHtml+=`<span class="loss-disp">GMV: ${fmtN(o.gmv||0)}</span>`;}
         updHtml+='</div>';
       }
@@ -1334,8 +1340,29 @@ function canEdit(city){if(!city)return USER?.isAdmin||false;return USER?.isAdmin
 function onActChg(id,val,sel){
   const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
   const orig=o.currentAction||'';
-  if(val===orig){delete(CHANGES[id]||{}).action;if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];}
-  else{CHANGES[id]=CHANGES[id]||{};CHANGES[id].action=val;}
+  if(val===orig){
+    delete(CHANGES[id]||{}).action;
+    delete(CHANGES[id]||{}).update; // clear pending update too when reverting
+    if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];
+    // Restore original available updates
+    const rules=_getClientActionRules();
+    const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+    if(caseMap&&caseMap[orig])o.availableUpdates=caseMap[orig].updates||[];
+  } else {
+    CHANGES[id]=CHANGES[id]||{};
+    CHANGES[id].action=val;
+    delete CHANGES[id].update; // clear stale update when action changes
+    // Immediately update available updates from actionMap for the new action
+    const rules=_getClientActionRules();
+    const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+    if(caseMap&&caseMap[val]){
+      o.availableUpdates=caseMap[val].updates||[];
+    } else {
+      o.availableUpdates=[];
+    }
+    // Clear mismatch flag if user picked a valid action
+    if(caseMap&&caseMap[val]) o.actionMismatch=false;
+  }
   sel?.classList.toggle('ch',val!==orig);
   updSbar();rdRows();
 }
@@ -1512,8 +1539,8 @@ async function handleUpload(inp){
   const ui=hdr.findIndex(h=>h==='update'&&!h.includes('edit')&&!h.includes('valid'));
   const esi=hdr.findIndex(h=>h.includes('email subject'));
   const cni=hdr.findIndex(h=>h.includes('cn number')||h==='cn');
-  const rni=hdr.findIndex(h=>h.includes('ref')&&!h.includes('reference number')&&!h.includes('valid')||h==='reference number');
-  const codi=hdr.findIndex(h=>h.includes('cod')&&!h.includes('cod amount')===false||h==='cod amount');
+  const rni=hdr.findIndex(h=>h==='reference number'||h==='ref number'||(h.includes('ref')&&!h.includes('valid')&&!h.includes('amount recovered')));
+  const codi=hdr.findIndex(h=>h==='cod amount'||(h.includes('cod')&&h.includes('amount')));
 
   if(ai<0){hideOv();toast('Cannot find Action column in the file.','red');inp.value='';return;}
 
