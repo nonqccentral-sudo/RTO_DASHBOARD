@@ -669,6 +669,8 @@ async function doLogin(){
     const res=await fetch(API+'?action=login&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd)).then(r=>r.json());
     if(res.success){
       USER=res;
+      // Normalise regionCities to uppercase Set for fast lookup
+      USER._regionSet = res.isRegionAdmin ? new Set((res.regionCities||[]).map(c=>c.toUpperCase())) : null;
       localStorage.removeItem(LC_KEY);
       $('login-screen').classList.add('hide');
       $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
@@ -707,11 +709,15 @@ function logout(){
 function initDash(){
   $('dash').style.display='block';
   const ia=USER?.isAdmin;
-  $('adl-bar').classList.toggle('hide',!ia);
-  $('fgact').style.display=ia?'none':'flex';
-  $('qc-tabs').style.display=''; // show for both admin and city login
-  $('city-perf-sec').style.display=ia?'':'none';
-  if(!ia&&USER?.city){
+  const ra=isRA();
+  // Admin bar (downloads/refresh row) visible to admin and region admin
+  $('adl-bar').classList.toggle('hide',!ia&&!ra);
+  $('fgact').style.display=(ia||ra)?'none':'flex';
+  $('qc-tabs').style.display=''; // show for all logins
+  // City performance grid visible to admin and region admin
+  $('city-perf-sec').style.display=(ia||ra)?'':'none';
+  if(!ia&&!ra&&USER?.city){
+    // City user: fixed to their own city
     SCITY=USER.city.toUpperCase();
     $('kpi-ttl',(SCITY||'City')+' Overview');
     const _cd=$('cdet');
@@ -720,8 +726,11 @@ function initDash(){
     const _dlD=$('cd-dl-btns');
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
   }
+  if(ra){
+    $('kpi-ttl',(USER.region||'Region')+' Overview');
+    $('upill',$('upill').textContent); // keep existing upill
+  }
   loadSummary();
-  // No auto-refresh timer — dashboard only refreshes on explicit user action
 }
 
 /* ── FILTER PARAMS (JS-06: no fCity here; callers add it) ─────── */
@@ -757,7 +766,7 @@ function _hasFilters(){
   if(QF!=='Overall')return true;
   if(SCITY)return true; // JS-09
   if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>$(id)?.value))return true;
-  if(!USER?.isAdmin&&$('f-act')?.value)return true;
+  if(!USER?.isAdmin&&!isRA()&&$('f-act')?.value)return true;
   return false;
 }
 function _updFltDlBtn(){
@@ -771,9 +780,11 @@ function popFilters(){
     ALL_ACTIONS.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
   }
   const citySel=$('f-city');
-  if(citySel&&USER?.isAdmin&&SUM?.allCities){
+  if(citySel&&(USER?.isAdmin||isRA())&&SUM?.allCities){
     citySel.innerHTML='<option value="">All Cities</option>';
-    (SUM.allCities||[]).sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;citySel.appendChild(o);});
+    let cityList=(SUM.allCities||[]).sort();
+    if(isRA()) cityList=cityList.filter(c=>inRegion(c));
+    cityList.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;citySel.appendChild(o);});
   }
 }
 
@@ -816,8 +827,8 @@ function _renderSummary(sd){
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
   if(sd.allCities&&sd.allCities.length){popFilters();}
   try{
-    if(USER?.isAdmin)rdCityCards(sd.homepageCards||[]);
-    if(!USER?.isAdmin){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
+    if(USER?.isAdmin||isRA())rdCityCards(sd.homepageCards||[]);
+    if(!USER?.isAdmin&&!isRA()){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
   }catch(e){console.error('rdCityCards',e);}
   try{rdChartsKPI(sd.kpi||{});}catch(e){console.error('rdChartsKPI',e);}
   _updFltDlBtn();
@@ -894,7 +905,9 @@ function rdAgeing(k){
 /* ── CITY CARDS ──────────────────────────────────────────────── */
 function rdCityCards(cards){
   const grid=$('cgrid');if(!grid)return;
-  if(!USER?.isAdmin){grid.innerHTML='';return;}
+  if(!USER?.isAdmin&&!isRA()){grid.innerHTML='';return;}
+  // Region admin: filter to their region cities (server already does this but double-check)
+  if(isRA()) cards=cards.filter(c=>inRegion(c.city));
   const redCards=cards.filter(c=>c.isRed);
   if(!redCards.length){grid.innerHTML='<div class="emp"><div class="emp-i">✅</div>No cities above threshold right now.</div>';return;}
   grid.innerHTML=redCards.map(c=>{
@@ -930,7 +943,7 @@ function openDet(city){
   $('cdet').style.display='block';
   $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
   const dlDiv=$('cd-dl-btns');
-  if(USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase()){
+  if(canEdit(city)){
     dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;
   } else {dlDiv.innerHTML='';}
   $('upload-btn').style.display=canEdit(city)?'':'none';
@@ -946,7 +959,7 @@ function openDet(city){
 function closeDet(){
   const _lastCity = SCITY; // save before clearing
   SCITY='';APF=false;GAP=false;
-  if(USER?.isAdmin)$('f-city').value='';
+  if(USER?.isAdmin||isRA())$('f-city').value='';
   $('gapbtn').classList.remove('on');
   $('ap-tog')?.classList.remove('on');
   $('cdet').classList.remove('vis');
@@ -969,7 +982,7 @@ function reopenDet(){
   if(rb) rb.style.display='none';
   if(lastCity){
     openDet(lastCity);
-  } else if(!USER?.isAdmin&&USER?.city){
+  } else if(!USER?.isAdmin&&!isRA()&&USER?.city){
     // City login — reopen their own city section and restore buttons
     SCITY=USER.city.toUpperCase();
     $('cd-ttl',USER.city+' Orders');
@@ -991,7 +1004,7 @@ function openCityAP(city){
     $('cdet').style.display='block';
     $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
     const _dlDiv=$('cd-dl-btns');
-    if(USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase()){
+    if(canEdit(city)){
       _dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
     }else{_dlDiv.innerHTML='';}
     $('upload-btn').style.display=canEdit(city)?'':'none';
@@ -1079,7 +1092,7 @@ function apF(){
 }
 function rstF(){
   ['f-partner','f-bu','f-store','f-stage','f-age','f-act','f-from','f-to'].forEach(id=>{const el=$(id);if(el)el.value='';});
-  if(USER?.isAdmin){$('f-city').value='';SCITY='';}
+  if(USER?.isAdmin||isRA()){$('f-city').value='';SCITY='';}
   GAP=false;APF=false;QF='Overall';
   document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
   $('gapbtn').classList.remove('on');
@@ -1106,7 +1119,7 @@ function onCityFilter(){
     $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('cd-ttl',SCITY+(canEdit(SCITY)?'':' — View Only'));
     const dlDiv=$('cd-dl-btns');
-    if(USER?.isAdmin){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
+    if(canEdit(SCITY)){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
     $('upload-btn').style.display=canEdit(SCITY)?'':'none';
     $('home-btn').classList.add('vis');
   } else {
@@ -1144,7 +1157,7 @@ function afterOrdersCity(){
 
   $('ap-cnt',ap+' action pending');
 
-  if(USER?.isAdmin){
+  if(USER?.isAdmin||isRA()){
     // JS-03: use _cc.total (not _cc.totalRTO which doesn't exist on cityCard)
     const _kTot2=(_cc&&_cc.total)||(_sk&&_sk.totalRTO)||0;
     const _b2=_kTot2||1;
@@ -1336,7 +1349,12 @@ function rdRows(){
 }
 
 /* ── EDIT HANDLERS ───────────────────────────────────────────── */
-function canEdit(city){if(!city)return USER?.isAdmin||false;return USER?.isAdmin||(USER?.city||'').toUpperCase()===city.toUpperCase();}
+function isRA(){return USER?.isRegionAdmin===true;}
+function inRegion(city){return USER?._regionSet?USER._regionSet.has((city||'').toUpperCase()):false;}
+function canEdit(city){
+  if(!city)return USER?.isAdmin||isRA()||false;
+  return USER?.isAdmin||inRegion(city)||(USER?.city||'').toUpperCase()===city.toUpperCase();
+}
 function onActChg(id,val,sel){
   const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
   const orig=o.currentAction||'';
@@ -1973,7 +1991,7 @@ async function openLossModal(){
   setHTML('loss-modal-body','<div class="emp"><div class="emp-i">&#8987;</div>Loading&hellip;</div>');
   const adminBtn=$('loss-admin-btn');
   if(adminBtn){
-    if(USER?.isAdmin){
+    if(USER?.isAdmin||isRA()){
       adminBtn.innerHTML=`<button onclick="viewRecoveredOrders()" style="padding:8px 18px;border-radius:7px;background:var(--purple);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;">&#128269; View Recovered</button>`;
     } else { adminBtn.innerHTML=''; }
   }
@@ -2005,7 +2023,7 @@ async function openLossModal(){
 function closeLossModal(){$('loss-modal').classList.add('hide');}
 
 async function viewRecoveredOrders(){
-  if(!USER?.isAdmin)return;
+  if(!USER?.isAdmin&&!isRA())return;
   setHTML('loss-modal-body','<div class="emp"><div class="emp-i">&#8987;</div>Loading recovered orders&hellip;</div>');
   try{
     const ep=API+'?action=getLossOrders&email='+encodeURIComponent(USER?.email||'')+'&view=recovered'+_cq();
