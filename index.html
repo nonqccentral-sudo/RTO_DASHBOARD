@@ -1039,15 +1039,37 @@ function _renderOrders(d){
 }
 
 /* ── APPLY FILTERS ──────────────────────────────────────────── */
+function _filterCacheKey(){
+  // Unique key for the current filter combination
+  return 'rto_f_'+btoa(encodeURIComponent((USER?.email||'')+'|'+_cq()+'|'+_fp())).slice(0,80);
+}
 function apF(){
   PG=1;_updFltDlBtn();
+  // Check filter-specific localStorage cache first
+  const fKey=_filterCacheKey();
+  try{
+    const raw=localStorage.getItem(fKey);
+    if(raw){
+      const{data,ts}=JSON.parse(raw);
+      if(Date.now()-ts<LC_TTL&&data&&data.success){
+        SUM=data;TRD=data.trend||[];
+        if(data.allActions&&data.allActions.length){ALL_ACTIONS=data.allActions;popFilters();}
+        rdKPI(data.kpi||{});rdAgeing(data.kpi||{});
+        rdCityCards(data.homepageCards||[]);
+        rdChartsKPI(data.kpi||{});
+        loadOrders();
+        return;
+      }
+    }
+  } catch(e){}
   showFSpin();showOv('Applying filters…','Recalculating KPIs');
-  // JS-07: single summary request; _cq() provides city, _fp() provides the rest
   const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq()+'&'+_fp();
   fetch(sumEp).then(r=>r.json()).then(p=>{
     hideFSpin();
     if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
     SUM=p;TRD=p.trend||[];
+    // Cache this filter result for 15 min
+    try{localStorage.setItem(fKey,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
     if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
     rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
     rdCityCards(p.homepageCards||[]);
@@ -1069,7 +1091,11 @@ function rstF(){
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   loadSummary();
 }
-function fref(){localStorage.removeItem(LC_KEY);PG=1;loadSummary();}
+function fref(){
+  // Clear main cache and all filter caches
+  Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
+  PG=1;loadSummary();
+}
 function onSearch(){PG=1;loadOrders();}
 function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));PG=1;apF();}
 function onCityFilter(){
@@ -1425,7 +1451,7 @@ async function saveAll(){
       const fail=res.results.filter(r=>!r.success).length;
       // Clear saved entries from CHANGES
       res.results.forEach(r=>{ if(r.success) delete CHANGES[r.orderId]; });
-      localStorage.removeItem(LC_KEY);
+      Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
       toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
       if(fail){
         // Show which ones failed
@@ -1624,7 +1650,7 @@ async function saveUploadChanges(){
       const ok    = res.results.filter(r=>r.success).length;
       const fail  = res.results.filter(r=>!r.success).length;
       toast(ok+' orders updated'+(fail?' · '+fail+' failed':''),'green');
-      localStorage.removeItem(LC_KEY);
+      Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
       // Instant in-place update — table and KPIs refresh without closing/reloading
       _patchOrdersAndRefreshUI(res.results, changeMap);
       // Update the upload modal result list: mark saved rows as done
