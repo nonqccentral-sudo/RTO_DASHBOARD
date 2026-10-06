@@ -1071,7 +1071,7 @@ function rstF(){
 }
 function fref(){localStorage.removeItem(LC_KEY);PG=1;loadSummary();}
 function onSearch(){PG=1;loadOrders();}
-function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));PG=1;apF();}
 function onCityFilter(){
   SCITY=$('f-city').value;
   CHANGES={};
