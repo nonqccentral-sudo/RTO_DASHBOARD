@@ -1947,33 +1947,24 @@ async function _doDownload(type,city){
     if(d.refRows&&d.refRows.length>1){
       const ws2=XLSX.utils.aoa_to_sheet(d.refRows);
       const refRange=XLSX.utils.decode_range(ws2['!ref']||'A1');
-      // Header styling
+      // Header row: dark blue bg, white bold text
       for(let c=refRange.s.c;c<=refRange.e.c;c++){
         const addr=XLSX.utils.encode_cell({r:0,c});
         if(!ws2[addr]) ws2[addr]={v:d.refRows[0][c]||''};
-        ws2[addr].s={font:{bold:true},fill:{fgColor:{rgb:'4C1D95'}},alignment:{horizontal:'center'}};
+        ws2[addr].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center',wrapText:false}};
       }
-      // Colour-band by Case ID
-      const caseColors={'C001':'EFF6FF','C002':'DBEAFE','C003':'FEF3C7','C004':'FDE68A',
-                        'C005':'D1FAE5','C006':'A7F3D0','C007':'FCE7F3','C008':'FBCFE8',
-                        'C009':'F3E8FF','C010':'E9D5FF'};
-      let lastCaseId='';
-      let altToggle=false;
+      // Data rows: alternate light grey / white; bold Action col (index 5), bold Update col (index 6)
       for(let ri=1;ri<d.refRows.length;ri++){
-        const cid=String(d.refRows[ri][0]||'').trim();
-        if(cid!==lastCaseId){altToggle=!altToggle;lastCaseId=cid;}
-        const bg=caseColors[cid]||(altToggle?'F9FAFB':'FFFFFF');
+        const bg=ri%2===0?'F5F7FA':'FFFFFF';
         for(let ci=refRange.s.c;ci<=refRange.e.c;ci++){
           const addr=XLSX.utils.encode_cell({r:ri,c:ci});
           if(!ws2[addr]) ws2[addr]={v:d.refRows[ri][ci]!==undefined?d.refRows[ri][ci]:''};
-          ws2[addr].s={fill:{fgColor:{rgb:bg}},alignment:{wrapText:false}};
+          const isBold=(ci===5||ci===6); // Action (5) and Update (6)
+          ws2[addr].s={fill:{fgColor:{rgb:bg}},font:{bold:isBold},alignment:{wrapText:false}};
         }
-        // Bold the Action column (col index 7)
-        const actAddr=XLSX.utils.encode_cell({r:ri,c:7});
-        if(ws2[actAddr]) ws2[actAddr].s={...ws2[actAddr].s,font:{bold:true}};
       }
-      // Column widths for reference tab
-      ws2['!cols']=[{wch:8},{wch:38},{wch:12},{wch:10},{wch:12},{wch:18},{wch:10},{wch:38},{wch:28},{wch:20},{wch:12},{wch:42}];
+      // Column widths: Partner | Store Type | Service Type | BU | Stage | Action | Update | Additional Details
+      ws2['!cols']=[{wch:12},{wch:14},{wch:14},{wch:18},{wch:12},{wch:40},{wch:32},{wch:30}];
       ws2['!freeze']={xSplit:0,ySplit:1};
       XLSX.utils.book_append_sheet(wb,ws2,'Action Reference');
     }
