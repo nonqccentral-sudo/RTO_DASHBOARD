@@ -353,7 +353,8 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   .cgrid{grid-template-columns:1fr;}.age-strip{grid-template-columns:1fr;}
 }
 </style>
-</head><body>
+</head>
+<body>
 <div id="login-screen">
   <div class="l-chip lc1"><div class="l-chip-dot red"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:32px"></div><div class="l-chip-line" style="width:22px"></div></div><div class="l-chip-lbl">High Ageing</div></div>
   <div class="l-chip lc2"><div class="l-chip-dot green"></div><div class="l-chip-lines"><div class="l-chip-line" style="width:28px"></div><div class="l-chip-line" style="width:18px"></div></div><div class="l-chip-lbl">COD Collected</div></div>
@@ -386,7 +387,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 <div class="edit-warn-popup hide" id="edit-warn"><span>&#9888;</span><span id="edit-warn-msg"></span></div>
-<!-- UPLOAD MODAL -->
 <div class="mbg hide" id="upload-modal" onclick="if(event.target===this)closeUpload()">
   <div class="umodal">
     <div class="mhdr"><h2 id="upload-title">Upload Results</h2><button class="mclose" onclick="closeUpload()">&#10005;</button></div>
@@ -409,7 +409,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-<!-- HISTORY MODAL -->
 <div class="mbg hide" id="hist-modal" onclick="if(event.target===this)closeHist()">
   <div class="hmod">
     <div class="mhdr"><h2>Order History <span id="hist-id"></span></h2><button class="mclose" onclick="closeHist()">&#10005;</button></div>
@@ -424,15 +423,12 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="ov-sub" id="ov-sub"></div>
   </div>
 </div>
-<!-- HA MODAL -->
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
   <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&ge;6 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
 </div>
-<!-- AP MODAL -->
 <div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
   <div class="modal" style="max-width:960px"><div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div><div class="mbody" id="ap-body"></div></div>
 </div>
-<!-- CLOSURE REMARKS MODAL -->
 <div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
   <div class="modal" style="max-width:860px">
     <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
@@ -446,7 +442,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-<!-- LOSS/LOST MODAL -->
 <div class="mbg hide" id="loss-modal" onclick="if(event.target===this)closeLossModal()">
   <div class="modal" style="max-width:680px">
     <div class="mhdr">
@@ -462,8 +457,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="mbody" id="loss-modal-body"><div class="emp"><div class="emp-i">&#8987;</div>Loading&hellip;</div></div>
   </div>
 </div>
-
-<!-- DL CONFIRM -->
 <div class="mbg hide" id="dl-modal" onclick="if(event.target===this)closeDlConf()">
   <div class="dlconf">
     <div class="mhdr"><h2>Confirm Download</h2><button class="mclose" onclick="closeDlConf()">&#10005;</button></div>
@@ -478,7 +471,6 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 </div>
 <button id="home-btn" onclick="goHome()">&#8593; Home</button>
 <button id="reopen-btn" onclick="reopenDet()" style="position:fixed;bottom:24px;left:24px;z-index:300;background:var(--blue);color:#fff;border:none;padding:9px 18px;border-radius:24px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);display:none;align-items:center;gap:5px;">&#8595; Open Orders</button>
-<!-- DASHBOARD -->
 <div id="dash" style="display:none">
   <div class="hdr">
     <div class="hdr-brand"><div class="hdr-icon">&#128667;</div><div class="hdr-title">RTO Operations</div><span class="live-pill">LIVE</span></div>
@@ -614,35 +606,16 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
-<script>
-/* ═══════════════════════════════════════════════════════════════
-   RTO OPERATIONS DASHBOARD – JS  (index_fixed_v2)
 
-   Frontend fixes applied (matching Code.gs v2):
-     JS-01  rdKPI: no longer overrides totalRTO from sheetRawTotal;
-            server now sends the correct value inside kpi.totalRTO.
-     JS-02  rdKPI subtitle text de-duplication.
-     JS-03  afterOrdersCity: uses .total (not .totalRTO) from cityCard.
-     JS-04  _renderCityPivot: uses server pivot=1 parameter; single
-            fetch with ps=1 instead of a second 2000-row request.
-     JS-05  openAPModal / CR modal: ps bumped to 2000.
-     JS-06  _fp(): does NOT add fCity; callers that need it add it
-            explicitly. This removes the double fCity send in apF().
-     JS-07  apF(): single sumEp already handles both city and filters.
-     JS-08  saveAll(): calls afterOrdersCity for all users when SCITY.
-     JS-09  _hasFilters(): correctly counts SCITY as a filter.
-     JS-10  Toast OK count guard (never shows "undefined saved").
-═══════════════════════════════════════════════════════════════ */
+<script>
 
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
 const LC_KEY='rto_sum_v2343';
 const LC_TTL=15*60*1000;
 const PAGE_SZ=100;
-// AUTO_REF removed — no automatic dashboard refreshes
 
 let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],_charts={},_uplBatch=null;
 
-/* ── helpers ─────────────────────────────────────────────────── */
 function $(id,v){if(v!=null){const el=document.getElementById(id);if(el)el.textContent=v;}else return document.getElementById(id);}
 function setHTML(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html;}
 function fmtN(n){if(!n&&n!==0)return '—';if(n>=1e7)return '₹'+(n/1e7).toFixed(2)+'Cr';if(n>=1e5)return '₹'+(n/1e5).toFixed(1)+'L';if(n>=1000)return '₹'+(n/1000).toFixed(1)+'K';return '₹'+n.toFixed(0);}
@@ -658,7 +631,6 @@ function togglePwd(id,btn){const el=$(id);el.type=el.type==='password'?'text':'p
 function showReset(){$('login-form').classList.add('hide');$('reset-form').classList.remove('hide');}
 function showLogin(){$('reset-form').classList.add('hide');$('login-form').classList.remove('hide');}
 
-/* ── AUTH ─────────────────────────────────────────────────────── */
 async function doLogin(){
   const email=($('l-email').value||'').trim().toLowerCase();
   const pwd=($('l-pwd').value||'').trim();
@@ -669,82 +641,51 @@ async function doLogin(){
     const res=await fetch(API+'?action=login&email='+encodeURIComponent(email)+'&pwd='+encodeURIComponent(pwd)).then(r=>r.json());
     if(res.success){
       USER=res;
-      // Normalise regionCities to uppercase Set for fast lookup
-      USER._regionSet = res.isRegionAdmin ? new Set((res.regionCities||[]).map(c=>c.toUpperCase())) : null;
+      USER._regionSet=res.isRegionAdmin?new Set((res.regionCities||[]).map(c=>c.toUpperCase())):null;
       localStorage.removeItem(LC_KEY);
       $('login-screen').classList.add('hide');
       $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
       initDash();
-    } else {
-      $('l-err',res.error||'Invalid credentials.');
-      $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
-    }
-  } catch(e){
-    $('l-err','Network error. Please retry.');
-    $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
-  }
+    }else{$('l-err',res.error||'Invalid credentials.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
+  }catch(e){$('l-err','Network error. Please retry.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
 }
 async function doReset(){
-  const email=($('r-email').value||'').trim().toLowerCase();
-  $('r-err','');
+  const email=($('r-email').value||'').trim().toLowerCase();$('r-err','');
   if(!email){$('r-err','Enter your email.');return;}
   $('r-btn').disabled=true;$('r-btn').textContent='Sending…';
-  try{
-    const res=await fetch(API+'?action=resetPassword&email='+encodeURIComponent(email)).then(r=>r.json());
-    if(res.success){toast('Password sent to '+email);showLogin();}
-    else{$('r-err',res.error||'Email not found.');}
-  } catch{$('r-err','Network error.');}
+  try{const res=await fetch(API+'?action=resetPassword&email='+encodeURIComponent(email)).then(r=>r.json());if(res.success){toast('Password sent to '+email);showLogin();}else{$('r-err',res.error||'Email not found.');}}catch{$('r-err','Network error.');}
   $('r-btn').disabled=false;$('r-btn').textContent='Send Password →';
 }
 function logout(){
   if(!confirm('Sign out?'))return;
   USER=null;SUM=null;ORDERS=[];CHANGES={};SCITY='';
-  $('dash').style.display='none';
-  $('login-screen').classList.remove('hide');
-  $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';
-  $('l-email').value='';$('l-pwd').value='';$('l-err','');
+  $('dash').style.display='none';$('login-screen').classList.remove('hide');
+  $('l-btn').disabled=false;$('l-btn').textContent='Sign In →';$('l-email').value='';$('l-pwd').value='';$('l-err','');
 }
 
-/* ── INIT ─────────────────────────────────────────────────────── */
 function initDash(){
   $('dash').style.display='block';
-  const ia=USER?.isAdmin;
-  const ra=isRA();
-  // Admin bar (downloads/refresh row) visible to admin and region admin
+  const ia=USER?.isAdmin;const ra=isRA();
   $('adl-bar').classList.toggle('hide',!ia&&!ra);
   $('fgact').style.display=(ia||ra)?'none':'flex';
-  $('qc-tabs').style.display=''; // show for all logins
-  // City performance grid visible to admin and region admin
+  $('qc-tabs').style.display='';
   $('city-perf-sec').style.display=(ia||ra)?'':'none';
   if(!ia&&!ra&&USER?.city){
-    // City user: fixed to their own city
-    SCITY=USER.city.toUpperCase();
-    $('kpi-ttl',(SCITY||'City')+' Overview');
-    const _cd=$('cdet');
-    if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
+    SCITY=USER.city.toUpperCase();$('kpi-ttl',(SCITY||'City')+' Overview');
+    const _cd=$('cdet');if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
     $('cd-ttl',USER.city+' Orders');
     const _dlD=$('cd-dl-btns');
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
   }
-  if(ra){
-    $('kpi-ttl',(USER.region||'Region')+' Overview');
-    $('upill',$('upill').textContent); // keep existing upill
-  }
+  if(ra)$('kpi-ttl',(USER.region||'Region')+' Overview');
   loadSummary();
 }
 
-/* ── FILTER PARAMS (JS-06: no fCity here; callers add it) ─────── */
 function _fp(){
   const ps=[];
-  const partner=$('f-partner')?.value;
-  const bu=$('f-bu')?.value;
-  const store=$('f-store')?.value;
-  const stage=$('f-stage')?.value;
-  const age=$('f-age')?.value;
-  const act=$('f-act')?.value;
-  const fr=$('f-from')?.value;
-  const to=$('f-to')?.value;
-  const sch=($('tsch')?.value||'').trim();
+  const partner=$('f-partner')?.value;const bu=$('f-bu')?.value;const store=$('f-store')?.value;
+  const stage=$('f-stage')?.value;const age=$('f-age')?.value;const act=$('f-act')?.value;
+  const fr=$('f-from')?.value;const to=$('f-to')?.value;const sch=($('tsch')?.value||'').trim();
   if(partner)ps.push('fPartner='+encodeURIComponent(partner));
   if(bu)ps.push('fBU='+encodeURIComponent(bu));
   if(store)ps.push('fStore='+encodeURIComponent(store));
@@ -758,21 +699,15 @@ function _fp(){
   if(GAP)ps.push('fAP=1');
   return ps.join('&');
 }
-
-/* Build city query string for requests that need the current city scope */
 function _cq(){return SCITY?'&fCity='+encodeURIComponent(SCITY):'';}
-
 function _hasFilters(){
-  if(QF!=='Overall')return true;
-  if(SCITY)return true; // JS-09
+  if(QF!=='Overall')return true;if(SCITY)return true;
   if(['f-partner','f-bu','f-store','f-stage','f-age','f-from','f-to'].some(id=>$(id)?.value))return true;
   if(!USER?.isAdmin&&!isRA()&&$('f-act')?.value)return true;
   return false;
 }
-function _updFltDlBtn(){
-  const dlb=$('dlbflt');
-  if(dlb)dlb.disabled=!_hasFilters();
-}
+function _updFltDlBtn(){const dlb=$('dlbflt');if(dlb)dlb.disabled=!_hasFilters();}
+
 function popFilters(){
   if(!USER?.isAdmin&&ALL_ACTIONS.length){
     const sel=$('f-act');if(!sel)return;
@@ -783,114 +718,60 @@ function popFilters(){
   if(citySel&&(USER?.isAdmin||isRA())&&SUM?.allCities){
     citySel.innerHTML='<option value="">All Cities</option>';
     let cityList=(SUM.allCities||[]).sort();
-    if(isRA()) cityList=cityList.filter(c=>inRegion(c));
+    if(isRA())cityList=cityList.filter(c=>inRegion(c));
     cityList.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;citySel.appendChild(o);});
   }
 }
 
-/* ── LOAD SUMMARY ─────────────────────────────────────────────── */
 function loadSummary(){
-  // Step 1: show cached data immediately if available — no overlay, no wait
   try{
     const raw=localStorage.getItem(LC_KEY);
-    if(raw){
-      const{data,ts}=JSON.parse(raw);
-      if(Date.now()-ts<LC_TTL&&data&&data.success){
-        SUM=data;TRD=data.trend||[];
-        _renderSummary(data);
-        loadOrders(); // fetch orders in background
-        return;
-      }
-    }
-  } catch(e){}
-  // Step 2: cache miss — fetch summary first, render KPIs as soon as it returns,
-  // then fetch orders separately so the overlay disappears after summary (not both)
+    if(raw){const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data&&data.success){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}
+  }catch(e){}
   showOv('Loading RTO data…','Please wait');
-  const ep=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq();
-  fetch(ep).then(r=>r.json()).then(sd=>{
-    hideOv();
-    if(!sd||!sd.success){toast('Failed to load summary','amber');return;}
+  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq()).then(r=>r.json()).then(sd=>{
+    hideOv();if(!sd||!sd.success){toast('Failed to load summary','amber');return;}
     SUM=sd;TRD=sd.trend||[];
     localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
-    _renderSummary(sd);
-    loadOrders(); // fetch orders separately — table loads in background
+    _renderSummary(sd);loadOrders();
   }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
 }
 
 function _renderSummary(sd){
   const _asofDate=sd.asOf?new Date(sd.asOf):new Date();
   const _minsAgo=Math.round((Date.now()-_asofDate.getTime())/60000);
-  const _ageStr=_minsAgo<=1?'just now':_minsAgo+' min ago';
-  $('asof','As of '+fmtD(sd.asOf||new Date().toISOString())+' · synced '+_ageStr);
+  $('asof','As of '+fmtD(sd.asOf||new Date().toISOString())+' · synced '+(_minsAgo<=1?'just now':_minsAgo+' min ago'));
   try{rdKPI(sd.kpi||{});}catch(e){console.error('rdKPI',e);}
   try{rdAgeing(sd.kpi||{});}catch(e){console.error('rdAgeing',e);}
   if(sd.allActions&&sd.allActions.length){ALL_ACTIONS=sd.allActions;popFilters();}
   if(sd.allCities&&sd.allCities.length){popFilters();}
-  try{
-    if(USER?.isAdmin||isRA())rdCityCards(sd.homepageCards||[]);
-    if(!USER?.isAdmin&&!isRA()){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}
-  }catch(e){console.error('rdCityCards',e);}
+  try{if(USER?.isAdmin||isRA())rdCityCards(sd.homepageCards||[]);if(!USER?.isAdmin&&!isRA()){const cps=$('city-perf-sec');if(cps)cps.style.display='none';}}catch(e){console.error('rdCityCards',e);}
   try{rdChartsKPI(sd.kpi||{});}catch(e){console.error('rdChartsKPI',e);}
   _updFltDlBtn();
 }
 
-/* ── RENDER KPI (JS-01: totalRTO comes directly from server) ──── */
 function rdKPI(k){
-  const _kTotal=k.totalRTO||0;
-  const _base=_kTotal||1;
-  const _srnN=k.srnCompleted||0;
-  const _crN=k.closureRemarks||0;
+  const _kTotal=k.totalRTO||0;const _base=_kTotal||1;
+  const _srnN=k.srnCompleted||0;const _crN=k.closureRemarks||0;
   const _apN=Math.max(0,_kTotal-_srnN-_crN);
-  const _apPct=parseFloat((_apN/_base*100).toFixed(1));
-  const _crPct=parseFloat((_crN/_base*100).toFixed(1));
-  const _srnPct=parseFloat((_srnN/_base*100).toFixed(1));
-  $('k-tot',_kTotal.toLocaleString('en-IN'));
-  $('k-tots',fmtN(k.totalAmount||0)+' total GMV');
-  $('k-gr',_srnPct+'%');
-  const _grs=document.getElementById('k-grs');
-  if(_grs)_grs.textContent='('+_srnN+' orders) · '+fmtN(k.srnAmt||0);
-  $('k-cr',_crPct+'%');
-  // Closure Remarks subtitle: SRN pending count (WH+Retail+3PL only)
-  const _srnPendCR = k.srnPendingCR || 0;
-  const _srnPendN  = k.srnPending   || 0;
-  $('k-crs','('+_crN+' total) · '+_srnPendCR+' SRN pending · '+fmtN(k.crAmt||0));
-  $('k-ap',_apPct+'%');
-  $('k-aps','('+_apN+' orders) · '+fmtN(k.apAmt||0));
-  // Loss card: show net loss (after recovery); click opens loss modal
-  const _lossGross = k.lossTotal || 0;
-  const _lossRec   = k.recoveredAmount || 0;
-  const _lossNet   = k.lossNetAmount   || _lossGross;
-  $('k-ls', _lossNet ? fmtN(_lossNet) : '₹0');
-  $('k-lss','Gross: '+fmtN(_lossGross)+(_lossRec?' · Rec: '+fmtN(_lossRec):''));
+  $('k-tot',_kTotal.toLocaleString('en-IN'));$('k-tots',fmtN(k.totalAmount||0)+' total GMV');
+  $('k-gr',parseFloat((_srnN/_base*100).toFixed(1))+'%');
+  const _grs=document.getElementById('k-grs');if(_grs)_grs.textContent='('+_srnN+' orders) · '+fmtN(k.srnAmt||0);
+  $('k-cr',parseFloat((_crN/_base*100).toFixed(1))+'%');
+  $('k-crs','('+_crN+' total) · '+(k.srnPendingCR||0)+' SRN pending · '+fmtN(k.crAmt||0));
+  $('k-ap',parseFloat((_apN/_base*100).toFixed(1))+'%');$('k-aps','('+_apN+' orders) · '+fmtN(k.apAmt||0));
+  const _lossNet=k.lossNetAmount||k.lossTotal||0;const _lossRec=k.recoveredAmount||0;
+  $('k-ls',_lossNet?fmtN(_lossNet):'₹0');$('k-lss','Gross: '+fmtN(k.lossTotal||0)+(_lossRec?' · Rec: '+fmtN(_lossRec):''));
   $('gapc',_apN);
-  // CR >10 days card
-  // crHighAgeing = WH+Retail orders with crAgeingDays > 10 (from Code.gs)
-  // crLowAgeing  = WH+Retail orders with crAgeingDays <= 10
-  // Show the card whenever there are any WH+Retail CR orders (crHighAgeing OR crLowAgeing > 0)
-  const crHACount = k.crHighAgeing || 0;
-  const crLACount = k.crLowAgeing  || 0;
-  const crWHRTTotal = crHACount + crLACount; // total WH+Retail CR orders
-  const crHACard=$('k-cr-ha-card');
-  if(crHACard){ crHACard.style.display=(crWHRTTotal>0||(k.srnPendingCR||0)>0)?'':'none'; }
-  // Show crHighAgeing as the main number; if cache is stale (=0) show total WH+Retail instead
-  $('k-cr-ha', crHACount > 0 ? crHACount : crWHRTTotal);
-  const crHASub=$('k-cr-ha-sub');
-  if(crHASub){
-    if(crHACount > 0 && crLACount > 0)
-      crHASub.textContent = crLACount+' orders \u226410 days';
-    else if(crHACount > 0)
-      crHASub.textContent = 'All WH/Retail CRs exceed 10 days';
-    else
-      crHASub.textContent = 'Bust cache to refresh ageing';
-  }
+  const crHACount=k.crHighAgeing||0;const crLACount=k.crLowAgeing||0;const crWHRTTotal=crHACount+crLACount;
+  const crHACard=$('k-cr-ha-card');if(crHACard)crHACard.style.display=(crWHRTTotal>0||(k.srnPendingCR||0)>0)?'':'none';
+  $('k-cr-ha',crHACount>0?crHACount:crWHRTTotal);
+  const crHASub=$('k-cr-ha-sub');if(crHASub){if(crHACount>0&&crLACount>0)crHASub.textContent=crLACount+' orders ≤10 days';else if(crHACount>0)crHASub.textContent='All WH/Retail CRs exceed 10 days';else crHASub.textContent='Bust cache to refresh ageing';}
 }
 
-/* ── RENDER AGEING ─────────────────────────────────────────────── */
 function rdAgeing(k){
-  const _apSum=(k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0);
-  const t=(k.actionPending>0?k.actionPending:_apSum)||1;
-  const _more2=(k.moreThan2||0)+(k.highAgeing||0);
-  const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
+  const t=(k.actionPending>0?k.actionPending:((k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0)))||1;
+  const _more2=(k.moreThan2||0)+(k.highAgeing||0);const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
   const pp=parseFloat(Math.min(100,(k.pending||0)/t*100).toFixed(1));
   const rp=parseFloat(Math.min(100,_more2/t*100).toFixed(1));
   const hp=parseFloat(Math.min(100,(k.highAgeing||0)/t*100).toFixed(1));
@@ -902,23 +783,26 @@ function rdAgeing(k){
   if($('ag-hb'))$('ag-hb').style.width=hp+'%';
 }
 
-/* ── CITY CARDS ──────────────────────────────────────────────── */
 function rdCityCards(cards){
   const grid=$('cgrid');if(!grid)return;
   if(!USER?.isAdmin&&!isRA()){grid.innerHTML='';return;}
-  // Region admin: filter to their region cities (server already does this but double-check)
   if(isRA()) cards=cards.filter(c=>inRegion(c.city));
-  const redCards=cards.filter(c=>c.isRed);
-  if(!redCards.length){grid.innerHTML='<div class="emp"><div class="emp-i">✅</div>No cities above threshold right now.</div>';return;}
-  grid.innerHTML=redCards.map(c=>{
+  // For region admin: show ALL cities with active orders (not just above-threshold)
+  // For full admin: show only above-threshold (red) cities
+  const visibleCards=isRA()?cards:cards.filter(c=>c.isRed);
+  if(!visibleCards.length){grid.innerHTML='<div class="emp"><div class="emp-i">✅</div>No active orders in your region right now.</div>';return;}
+  grid.innerHTML=visibleCards.map(c=>{
     const tot=c.active||1;
     const activePct=tot?((c.actionPending||0)/tot*100).toFixed(1):0;
     const p02Pct=tot?((c.pending02||c.pending||0)/tot*100).toFixed(1):0;
     const p35Pct=tot?((c.midAgeing35||c.moreThan2||0)/tot*100).toFixed(1):0;
     const ha6Pct=tot?((c.highAgeing6||c.highAgeing||0)/tot*100).toFixed(1):0;
-    return `<div class="ccard red" onclick="openDet('${c.city}')">
-      <div class="ctop"><div class="cname">${c.city}</div>
-      <div class="c-red-badge">▲ ${c.active||0} ACTIVE</div></div>
+    const cardClass=c.isRed?'ccard red':'ccard';
+    const badge=c.isRed
+      ?`<div class="c-red-badge">▲ ${c.active||0} ACTIVE</div>`
+      :`<div style="font-size:9px;font-weight:700;color:var(--green);background:var(--greenl);border:1px solid #A7F3D0;padding:1px 7px;border-radius:20px;">${c.active||0} active</div>`;
+    return `<div class="${cardClass}" onclick="openDet('${c.city}')">
+      <div class="ctop"><div class="cname">${c.city}</div>${badge}</div>
       <div class="cstats">
         <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
         <div class="cs p02"><div class="csl">Pending 0–2</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
@@ -933,23 +817,16 @@ function rdCityCards(cards){
   }).join('');
 }
 
-/* ── CITY DRILL DOWN ─────────────────────────────────────────── */
 function openDet(city){
-  SCITY=city;APF=false;GAP=false;
-  $('f-city').value=city;
-  $('gapbtn').classList.remove('on');
-  $('ap-tog')?.classList.remove('on');
-  $('cdet').classList.add('vis');
-  $('cdet').style.display='block';
+  SCITY=city;APF=false;GAP=false;$('f-city').value=city;
+  $('gapbtn').classList.remove('on');$('ap-tog')?.classList.remove('on');
+  $('cdet').classList.add('vis');$('cdet').style.display='block';
   $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
   const dlDiv=$('cd-dl-btns');
-  if(canEdit(city)){
-    dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;
-  } else {dlDiv.innerHTML='';}
+  if(canEdit(city)){dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">↓ Download</button>`;}else{dlDiv.innerHTML='';}
   $('upload-btn').style.display=canEdit(city)?'':'none';
   $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">⏳</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-  $('pivot-wrap').style.display='none';
-  $('ap-cnt','— pending');
+  $('pivot-wrap').style.display='none';$('ap-cnt','— pending');
   document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim()===city);});
   $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
   $('home-btn').classList.add('vis');
@@ -957,137 +834,78 @@ function openDet(city){
   PG=1;loadOrders();
 }
 function closeDet(){
-  const _lastCity = SCITY; // save before clearing
-  SCITY='';APF=false;GAP=false;
+  const _lastCity=SCITY;SCITY='';APF=false;GAP=false;
   if(USER?.isAdmin||isRA())$('f-city').value='';
-  $('gapbtn').classList.remove('on');
-  $('ap-tog')?.classList.remove('on');
-  $('cdet').classList.remove('vis');
-  $('cdet').style.display='none';
+  $('gapbtn').classList.remove('on');$('ap-tog')?.classList.remove('on');
+  $('cdet').classList.remove('vis');$('cdet').style.display='none';
   document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
   $('home-btn').classList.remove('vis');
-  // Show reopen button so user can get back to the orders section
-  const rb=$('reopen-btn');
-  if(rb){ rb.style.display='flex'; rb.dataset.city=_lastCity||''; }
-  PG=1;
-  SUM=null;
+  const rb=$('reopen-btn');if(rb){rb.style.display='flex';rb.dataset.city=_lastCity||'';}
+  PG=1;SUM=null;
   const raw=localStorage.getItem(LC_KEY);
   if(raw){try{const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}catch(e){}}
   loadSummary();
 }
-
 function reopenDet(){
-  const rb=$('reopen-btn');
-  const lastCity = rb ? rb.dataset.city : '';
-  if(rb) rb.style.display='none';
-  if(lastCity){
-    openDet(lastCity);
-  } else if(!USER?.isAdmin&&!isRA()&&USER?.city){
-    // City login — reopen their own city section and restore buttons
-    SCITY=USER.city.toUpperCase();
-    $('cd-ttl',USER.city+' Orders');
+  const rb=$('reopen-btn');const lastCity=rb?rb.dataset.city:'';if(rb)rb.style.display='none';
+  if(lastCity){openDet(lastCity);}
+  else if(!USER?.isAdmin&&!isRA()&&USER?.city){
+    SCITY=USER.city.toUpperCase();$('cd-ttl',USER.city+' Orders');
     const _dlD=$('cd-dl-btns');
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-    $('upload-btn').style.display='';
-    $('cdet').classList.add('vis');$('cdet').style.display='block';
-    $('home-btn').classList.add('vis');
-    loadOrders();
+    $('upload-btn').style.display='';$('cdet').classList.add('vis');$('cdet').style.display='block';$('home-btn').classList.add('vis');loadOrders();
   }
 }
 function goHome(){window.scrollTo({top:0,behavior:'smooth'});closeDet();}
-
 function openCityAP(city){
   if(SCITY!==city){
-    SCITY=city;APF=false;
-    $('f-city').value=city;
-    $('cdet').classList.add('vis');
-    $('cdet').style.display='block';
+    SCITY=city;APF=false;$('f-city').value=city;
+    $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('cd-ttl',city+(canEdit(city)?'':' — View Only'));
     const _dlDiv=$('cd-dl-btns');
-    if(canEdit(city)){
-      _dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
-    }else{_dlDiv.innerHTML='';}
+    if(canEdit(city)){_dlDiv.innerHTML=`<button onclick="triggerCityDl('${city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}else{_dlDiv.innerHTML='';}
     $('upload-btn').style.display=canEdit(city)?'':'none';
     $('cd-kpis').innerHTML='<div class="kpi ab"><div class="ki">&#8987;</div><div class="kl">Loading…</div><div class="kv">—</div></div>';
-    $('pivot-wrap').style.display='none';
-    $('ap-cnt','— pending');
+    $('pivot-wrap').style.display='none';$('ap-cnt','— pending');
     document.querySelectorAll('.ccard').forEach(el=>{const n=el.querySelector('.cname');el.classList.toggle('sel',n&&n.textContent.trim()===city);});
     $('cdet').scrollIntoView({behavior:'smooth',block:'start'});
   }
-  GAP=true;
-  $('gapbtn')?.classList.add('on');
-  $('ap-tog')?.classList.add('on');
+  GAP=true;$('gapbtn')?.classList.add('on');$('ap-tog')?.classList.add('on');
   PG=1;showFSpin();showOv('Filtering Action Pending orders…','Please wait');loadOrders();
   setTimeout(()=>document.querySelector('.twrap')?.scrollIntoView({behavior:'smooth',block:'start'}),400);
 }
 
-/* ── LOAD ORDERS ─────────────────────────────────────────────── */
 function loadOrders(){
-  if(ORDERS_LOADING)return;
-  ORDERS_LOADING=true;
-  $('tload').style.display='flex';
-  $('tbody').innerHTML='';
-  $('temp').style.display='none';
+  if(ORDERS_LOADING)return;ORDERS_LOADING=true;
+  $('tload').style.display='flex';$('tbody').innerHTML='';$('temp').style.display='none';
   let ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page='+PG+'&ps='+PAGE_SZ;
-  ep+=_cq(); // always send current city scope
-  ep+='&'+_fp();
+  ep+=_cq();ep+='&'+_fp();
   fetch(ep).then(r=>r.json()).then(d=>{
-    ORDERS_LOADING=false;
-    hideFSpin();hideOv();
-    $('tload').style.display='none';
+    ORDERS_LOADING=false;hideFSpin();hideOv();$('tload').style.display='none';
     if(!d||!d.success){toast(d?.error||'Failed to load orders','red');return;}
     _renderOrders(d);
   }).catch(e=>{ORDERS_LOADING=false;hideFSpin();hideOv();$('tload').style.display='none';toast('Network error: '+e.message,'red');});
 }
 function _renderOrders(d){
-  ORDERS_LOADING=false;
-  ORDERS=d.orders||[];
-  TOTAL_PGS=d.totalPages||1;
-  $('tcnt',(d.total||ORDERS.length)+' orders');
-  $('pgi','Page '+PG+' of '+TOTAL_PGS);
-  $('btn-pv').disabled=PG<=1;
-  $('btn-nx').disabled=PG>=TOTAL_PGS;
-  rdRows();
-  if(SCITY)afterOrdersCity();
+  ORDERS_LOADING=false;ORDERS=d.orders||[];TOTAL_PGS=d.totalPages||1;
+  $('tcnt',(d.total||ORDERS.length)+' orders');$('pgi','Page '+PG+' of '+TOTAL_PGS);
+  $('btn-pv').disabled=PG<=1;$('btn-nx').disabled=PG>=TOTAL_PGS;
+  rdRows();if(SCITY)afterOrdersCity();
 }
 
-/* ── APPLY FILTERS ──────────────────────────────────────────── */
-function _filterCacheKey(){
-  // Unique key for the current filter combination
-  return 'rto_f_'+btoa(encodeURIComponent((USER?.email||'')+'|'+_cq()+'|'+_fp())).slice(0,80);
-}
+function _filterCacheKey(){return 'rto_f_'+btoa(encodeURIComponent((USER?.email||'')+'|'+_cq()+'|'+_fp())).slice(0,80);}
 function apF(){
   PG=1;_updFltDlBtn();
-  // Check filter-specific localStorage cache first
   const fKey=_filterCacheKey();
-  try{
-    const raw=localStorage.getItem(fKey);
-    if(raw){
-      const{data,ts}=JSON.parse(raw);
-      if(Date.now()-ts<LC_TTL&&data&&data.success){
-        SUM=data;TRD=data.trend||[];
-        if(data.allActions&&data.allActions.length){ALL_ACTIONS=data.allActions;popFilters();}
-        rdKPI(data.kpi||{});rdAgeing(data.kpi||{});
-        rdCityCards(data.homepageCards||[]);
-        rdChartsKPI(data.kpi||{});
-        loadOrders();
-        return;
-      }
-    }
-  } catch(e){}
+  try{const raw=localStorage.getItem(fKey);if(raw){const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data&&data.success){SUM=data;TRD=data.trend||[];if(data.allActions&&data.allActions.length){ALL_ACTIONS=data.allActions;popFilters();}rdKPI(data.kpi||{});rdAgeing(data.kpi||{});rdCityCards(data.homepageCards||[]);rdChartsKPI(data.kpi||{});loadOrders();return;}}}catch(e){}
   showFSpin();showOv('Applying filters…','Recalculating KPIs');
   const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq()+'&'+_fp();
   fetch(sumEp).then(r=>r.json()).then(p=>{
-    hideFSpin();
-    if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
+    hideFSpin();if(!p||!p.success){hideOv();toast((p&&p.error)||'Filter failed','red');return;}
     SUM=p;TRD=p.trend||[];
-    // Cache this filter result for 15 min
     try{localStorage.setItem(fKey,JSON.stringify({data:p,ts:Date.now()}));}catch(e){}
     if(p.allActions&&p.allActions.length){ALL_ACTIONS=p.allActions;popFilters();}
-    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});
-    rdCityCards(p.homepageCards||[]);
-    rdChartsKPI(p.kpi||{});
-    loadOrders();
+    rdKPI(p.kpi||{});rdAgeing(p.kpi||{});rdCityCards(p.homepageCards||[]);rdChartsKPI(p.kpi||{});loadOrders();
   }).catch(e=>{hideFSpin();hideOv();toast('Filter failed: '+e.message,'red');});
 }
 function rstF(){
@@ -1095,163 +913,74 @@ function rstF(){
   if(USER?.isAdmin||isRA()){$('f-city').value='';SCITY='';}
   GAP=false;APF=false;QF='Overall';
   document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v==='Overall'));
-  $('gapbtn').classList.remove('on');
-  $('ap-tog')?.classList.remove('on');
-  PG=1;
-  _updFltDlBtn();
-  $('cdet').classList.remove('vis');
-  $('cdet').style.display='none';
-  document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));
-  loadSummary();
+  $('gapbtn').classList.remove('on');$('ap-tog')?.classList.remove('on');
+  PG=1;_updFltDlBtn();$('cdet').classList.remove('vis');$('cdet').style.display='none';
+  document.querySelectorAll('.ccard').forEach(el=>el.classList.remove('sel'));loadSummary();
 }
-function fref(){
-  // Clear main cache and all filter caches
-  Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
-  PG=1;loadSummary();
-}
+function fref(){Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));PG=1;loadSummary();}
 function onSearch(){PG=1;loadOrders();}
 function setQC(v){QF=v;document.querySelectorAll('.qc-tabs button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));PG=1;apF();}
 function onCityFilter(){
-  SCITY=$('f-city').value;
-  CHANGES={};
-  $('sbar').classList.add('hide');
+  SCITY=$('f-city').value;CHANGES={};$('sbar').classList.add('hide');
   if(SCITY){
     $('cdet').classList.add('vis');$('cdet').style.display='block';
     $('cd-ttl',SCITY+(canEdit(SCITY)?'':' — View Only'));
     const dlDiv=$('cd-dl-btns');
     if(canEdit(SCITY)){dlDiv.innerHTML=`<button onclick="triggerCityDl('${SCITY}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;}
-    $('upload-btn').style.display=canEdit(SCITY)?'':'none';
-    $('home-btn').classList.add('vis');
-  } else {
-    SCITY='';
-    $('cdet').classList.remove('vis');$('cdet').style.display='none';
-    $('home-btn').classList.remove('vis');
-  }
-  // Do NOT auto-apply — user clicks Submit to apply city + other filters together
+    $('upload-btn').style.display=canEdit(SCITY)?'':'none';$('home-btn').classList.add('vis');
+  }else{SCITY='';$('cdet').classList.remove('vis');$('cdet').style.display='none';$('home-btn').classList.remove('vis');}
   _updFltDlBtn();
 }
-function togAP(){
-  APF=!APF;
-  const t=$('ap-tog');if(t)t.classList.toggle('on',APF);
-  PG=1;loadOrders();
-}
-function togGAP(){
-  GAP=!GAP;
-  $('gapbtn').classList.toggle('on',GAP);
-  $('ap-tog')?.classList.toggle('on',GAP);
-  PG=1;loadOrders();
-}
+function togAP(){APF=!APF;const t=$('ap-tog');if(t)t.classList.toggle('on',APF);PG=1;loadOrders();}
+function togGAP(){GAP=!GAP;$('gapbtn').classList.toggle('on',GAP);$('ap-tog')?.classList.toggle('on',GAP);PG=1;loadOrders();}
 function chPg(d){PG=Math.max(1,Math.min(TOTAL_PGS,PG+d));loadOrders();}
 
-/* ── AFTER CITY ORDERS LOAD (JS-03: uses .total not .totalRTO) ── */
 function afterOrdersCity(){
-  const _cc=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);
-  const _sk=SUM&&SUM.kpi;
-  const ap  =_sk?(_sk.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
-  const lossT=(_sk&&_sk.lossTotal)||0;
-  const lossS=(_sk&&_sk.inhouseLoss)||0;
-  const pend02  =(_sk&&_sk.pending)||(_cc&&(_cc.pending02||_cc.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
+  const _cc=(SUM&&SUM.homepageCards||[]).find(c=>c.city===SCITY);const _sk=SUM&&SUM.kpi;
+  const ap=_sk?(_sk.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
+  const lossT=(_sk&&_sk.lossTotal)||0;const lossS=(_sk&&_sk.inhouseLoss)||0;
+  const pend02=(_sk&&_sk.pending)||(_cc&&(_cc.pending02||_cc.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
   const pendMore2=(_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||(_cc&&((_cc.midAgeing35||0)+(_cc.highAgeing6||0)))||ORDERS.filter(o=>!o.isPending&&o.actionPending).length;
-  const ha  =(_sk&&_sk.highAgeing)||(_cc&&(_cc.highAgeing6||_cc.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
-  const totAct=ap||1;
-
-  $('ap-cnt',ap+' action pending');
-
+  const ha=(_sk&&_sk.highAgeing)||(_cc&&(_cc.highAgeing6||_cc.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
+  const totAct=ap||1;$('ap-cnt',ap+' action pending');
   if(USER?.isAdmin||isRA()){
-    // JS-03: use _cc.total (not _cc.totalRTO which doesn't exist on cityCard)
-    const _kTot2=(_cc&&_cc.total)||(_sk&&_sk.totalRTO)||0;
-    const _b2=_kTot2||1;
-    const snr=(_sk&&_sk.srnCompleted)||0;
-    const cr=(_sk&&_sk.closureRemarks)||0;
-    const _apDer=Math.max(0,_kTot2-snr-cr);
-    const _apP=Math.round(_apDer/_b2*100);
-    const _crP=Math.round(cr/_b2*100);
-    const _snP=Math.round(snr/_b2*100);
+    const _kTot2=(_cc&&_cc.total)||(_sk&&_sk.totalRTO)||0;const _b2=_kTot2||1;
+    const snr=(_sk&&_sk.srnCompleted)||0;const cr=(_sk&&_sk.closureRemarks)||0;
+    const _apDer=Math.max(0,_kTot2-snr-cr);const _apP=Math.round(_apDer/_b2*100);
+    const _crP=Math.round(cr/_b2*100);const _snP=Math.round(snr/_b2*100);
     setHTML('cd-kpis',
-      `<div class="kpi ab"><div class="ki">📦</div>`
-        +`<div class="kl">Total RTO</div>`
-        +`<div class="kv">${_kTot2.toLocaleString('en-IN')}</div>`
-        +`<div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} GMV</div></div>`
-      +`<div class="kpi ag"><div class="ki">✅</div>`
-        +`<div class="kl">SRN Completed</div>`
-        +`<div class="kv">${_snP}%</div>`
-        +`<div class="ks">(${snr}) · Visible 24h</div></div>`
-      +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div>`
-        +`<div class="kl">Closure Remarks</div>`
-        +`<div class="kv">${_crP}%</div>`
-        +`<div class="ks">(${cr}) · Click to view</div></div>`
-      +`<div class="kpi aa"><div class="ki">⚠</div>`
-        +`<div class="kl">Action Pending</div>`
-        +`<div class="kv">${_apP}%</div>`
-        +`<div class="ks">(${_apDer}) · Needs update</div></div>`
-      +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')">`
-        +`<div class="ki">💰</div><div class="kl">Total Loss Amount</div>`
-        +`<div class="kv">${lossT?fmtN(lossT):'₹0'}</div>`
-        +`<div class="ks">In-house: ${lossS?fmtN(lossS):'0'}</div></div>`
+      `<div class="kpi ab"><div class="ki">📦</div><div class="kl">Total RTO</div><div class="kv">${_kTot2.toLocaleString('en-IN')}</div><div class="ks">${fmtN((_sk&&_sk.totalAmount)||0)} GMV</div></div>`
+      +`<div class="kpi ag"><div class="ki">✅</div><div class="kl">SRN Completed</div><div class="kv">${_snP}%</div><div class="ks">(${snr}) · Visible 24h</div></div>`
+      +`<div class="kpi pu click" onclick="openCRModal()"><div class="ki">📋</div><div class="kl">Closure Remarks</div><div class="kv">${_crP}%</div><div class="ks">(${cr}) · Click to view</div></div>`
+      +`<div class="kpi aa"><div class="ki">⚠</div><div class="kl">Action Pending</div><div class="kv">${_apP}%</div><div class="ks">(${_apDer}) · Needs update</div></div>`
+      +`<div class="kpi ap click" onclick="triggerCityDl('${SCITY}','loss')"><div class="ki">💰</div><div class="kl">Total Loss Amount</div><div class="kv">${lossT?fmtN(lossT):'₹0'}</div><div class="ks">In-house: ${lossS?fmtN(lossS):'0'}</div></div>`
     );
-
-    const t=totAct;
-    const pp=Math.min(100,Math.round(pend02/t*100));
-    const rp=Math.min(100,Math.round(pendMore2/t*100));
-    const hp=Math.min(100,Math.round(ha/t*100));
+    const t=totAct;const pp=Math.min(100,Math.round(pend02/t*100));const rp=Math.min(100,Math.round(pendMore2/t*100));const hp=Math.min(100,Math.round(ha/t*100));
     const ageEl=$('cd-age-strip');
-    if(ageEl){
-      ageEl.style.display='grid';
-      ageEl.innerHTML=
-        `<div class="age-card p"><div class="age-ring" style="background:var(--bluel);color:var(--blue)">${pp}%</div>`
-          +`<div class="age-info"><div class="age-lbl">0–2 Days</div>`
-          +`<div class="age-cnt" style="color:var(--blue)">${pend02}</div>`
-          +`<div class="age-bar"><div class="age-fill" style="width:${pp}%;background:var(--blue)"></div></div></div></div>`
-        +`<div class="age-card rv"><div class="age-ring" style="background:var(--amberl);color:var(--amber)">${rp}%</div>`
-          +`<div class="age-info"><div class="age-lbl">&gt;2 Days</div>`
-          +`<div class="age-cnt" style="color:var(--amber)">${pendMore2}</div>`
-          +`<div class="age-bar"><div class="age-fill" style="width:${rp}%;background:var(--amber)"></div></div></div></div>`
-        +`<div class="age-card ha" style="background:#FFF1F1"><div class="age-ring" style="background:var(--redl);color:var(--red)">${hp}%</div>`
-          +`<div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div>`
-          +`<div class="age-cnt" style="color:var(--red)">${ha}</div>`
-          +`<div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
-    }
+    if(ageEl){ageEl.style.display='grid';ageEl.innerHTML=
+      `<div class="age-card p"><div class="age-ring" style="background:var(--bluel);color:var(--blue)">${pp}%</div><div class="age-info"><div class="age-lbl">0–2 Days</div><div class="age-cnt" style="color:var(--blue)">${pend02}</div><div class="age-bar"><div class="age-fill" style="width:${pp}%;background:var(--blue)"></div></div></div></div>`
+      +`<div class="age-card rv"><div class="age-ring" style="background:var(--amberl);color:var(--amber)">${rp}%</div><div class="age-info"><div class="age-lbl">&gt;2 Days</div><div class="age-cnt" style="color:var(--amber)">${pendMore2}</div><div class="age-bar"><div class="age-fill" style="width:${rp}%;background:var(--amber)"></div></div></div></div>`
+      +`<div class="age-card ha" style="background:#FFF1F1"><div class="age-ring" style="background:var(--redl);color:var(--red)">${hp}%</div><div class="age-info"><div class="age-lbl">&gt;5 Days <small style="opacity:.6;font-size:9px">(subset)</small></div><div class="age-cnt" style="color:var(--red)">${ha}</div><div class="age-bar"><div class="age-fill" style="width:${hp}%;background:var(--red)"></div></div></div></div>`
+    ;}
   }
   _renderCityPivot();
 }
 
-/* Pivot: FC + Retail + 3PL/PMD = total AP (all three buckets reconcile) */
 async function _renderCityPivot(){
   const pvt=$('pivot-wrap');if(!pvt)return;
   pvt.style.display='block';
-  pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>Loading\u2026</span></div></div>`;
+  pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Action Pending Split — ${SCITY}</h3><span>Loading…</span></div></div>`;
   try{
-    const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')
-      +'&fAP=1&ps=1&page=1&pivot=1&fCity='+encodeURIComponent(SCITY);
+    const ep=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&fAP=1&ps=1&page=1&pivot=1&fCity='+encodeURIComponent(SCITY);
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success||!d.pivot){pvt.style.display='none';return;}
-    const {fc,retail,tpl,total}=d.pivot;
+    const{fc,retail,tpl,total}=d.pivot;
     if(!total){pvt.style.display='none';return;}
-    // Verify reconciliation
     const sum=(fc||0)+(retail||0)+(tpl||0);
-    pvt.innerHTML=`
-      <div class="pivot-section">
-        <div class="pivot-hdr"><h3>Action Pending Split \u2014 ${SCITY}</h3><span>${total} Action Pending orders${sum!==total?' \u26a0 check':''}  </span></div>
-        <table class="pivot-table">
-          <thead><tr><th>FC</th><th>RETAIL</th><th>3PL-PRE MDQ</th><th>Total Action Pending</th></tr></thead>
-          <tbody><tr>
-            <td class="pv-fc">${fc||0}</td>
-            <td class="pv-rt">${retail||0}</td>
-            <td class="pv-3pl">${tpl||0}</td>
-            <td class="pv-tot">${total}</td>
-          </tr>
-          <tr style="font-size:10px;color:var(--t3);">
-            <td>${fc?Math.round((fc||0)/total*100):0}%</td>
-            <td>${retail?Math.round((retail||0)/total*100):0}%</td>
-            <td>${tpl?Math.round((tpl||0)/total*100):0}%</td>
-            <td>FC+RETAIL+3PL = ${sum}</td>
-          </tr></tbody>
-        </table>
-      </div>`;
+    pvt.innerHTML=`<div class="pivot-section"><div class="pivot-hdr"><h3>Action Pending Split — ${SCITY}</h3><span>${total} Action Pending orders${sum!==total?' ⚠ check':''}</span></div><table class="pivot-table"><thead><tr><th>FC</th><th>RETAIL</th><th>3PL-PRE MDQ</th><th>Total Action Pending</th></tr></thead><tbody><tr><td class="pv-fc">${fc||0}</td><td class="pv-rt">${retail||0}</td><td class="pv-3pl">${tpl||0}</td><td class="pv-tot">${total}</td></tr><tr style="font-size:10px;color:var(--t3);"><td>${fc?Math.round((fc||0)/total*100):0}%</td><td>${retail?Math.round((retail||0)/total*100):0}%</td><td>${tpl?Math.round((tpl||0)/total*100):0}%</td><td>FC+RETAIL+3PL = ${sum}</td></tr></tbody></table></div>`;
   }catch(e){pvt.innerHTML=`<div class="emp">Could not load pivot: ${e.message}</div>`;}
 }
 
-/* ── ROW RENDERING ───────────────────────────────────────────── */
 function rdRows(){
   const tb=$('tbody');tb.innerHTML='';
   const canE=USER?.isAdmin?true:canEdit(SCITY||USER?.city||'');
@@ -1266,55 +995,36 @@ function rdRows(){
     const codAmt=ch.codAmount!==undefined?ch.codAmount:(o.codAmount||'');
     const isChg=ch.action!==undefined||ch.update!==undefined;
     const cl=o.isGreen?'tg':o.hasCODShortfall?'tl':o.actionMismatch?'tm':o.actionPending&&!isChg?'tr':'';
-    const aeLk=o.actionEditCount>=2;
-    const ueLk=o.updateEditCount>=2;
+    const aeLk=o.actionEditCount>=2;const ueLk=o.updateEditCount>=2;
     let actHtml='',updHtml='';
     if(!canE||aeLk){
-      actHtml=`<span class="ro">${curAct||'—'}</span>`
-          +(aeLk&&canE&&USER?.isAdmin?`<button onclick="adminResetEdit('${o.orderId}')" style="margin-left:6px;padding:2px 8px;border-radius:4px;border:1px solid #FECACA;background:var(--redl);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;">Reset</button>`:'<span class="lkchip" title="Max edits reached">✎✎</span>');
-    } else {
+      actHtml=`<span class="ro">${curAct||'—'}</span>`+(aeLk&&canE&&USER?.isAdmin?`<button onclick="adminResetEdit('${o.orderId}')" style="margin-left:6px;padding:2px 8px;border-radius:4px;border:1px solid #FECACA;background:var(--redl);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;">Reset</button>`:'<span class="lkchip" title="Max edits reached">✎✎</span>');
+    }else{
       const aOpts=(o.availableActions||[]);
-      // If the order has an existing VALID action (not mismatch, not from CHANGES), show it as "Filled Action" read-only text
-      // If mismatch: show dropdown with "Select" as first option (force user to pick correct action)
-      // If no existing action: show dropdown with "Select"
-      const hasExistingValidAction = curAct && !o.actionMismatch && ch.action === undefined;
+      const hasExistingValidAction=curAct&&!o.actionMismatch&&ch.action===undefined;
       if(hasExistingValidAction){
-        // Action already set and valid — show as filled (read-only label + edit button)
-        actHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">&#10003; ${curAct}</span><button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button><button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button></div>`;
-      } else if(aOpts.length){
-        // Mismatch or no action yet — dropdown starting with "Select"
-        const isMismatchRow = o.actionMismatch;
+        actHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">✓ ${curAct}</span><button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button><button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button></div>`;
+      }else if(aOpts.length){
+        const isMismatchRow=o.actionMismatch;
         const selectDefault=`<option value="" disabled${!curAct||isMismatchRow?' selected':''}>Select</option>`;
         const optsHtml=aOpts.map(a=>`<option value="${a}"${a===curAct&&!isMismatchRow?' selected':''}>${a}</option>`).join('');
         const selCls='isel'+(ch.action!==undefined?' ch':'')+(isMismatchRow?' isel-mismatch':'');
-        const aSelHtml=`<select class="${selCls}" onchange="onActChg('${o.orderId}',this.value,this)">${selectDefault}${optsHtml}</select>`;
-        actHtml=`<div class="ec">${aSelHtml}${curAct&&!aeLk&&!isMismatchRow?`<button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button>`:''}${curAct&&!isMismatchRow?`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button>`:''}</div>`;
-      } else {
-        actHtml=`<span class="ro">${curAct||'—'}</span>`;
-      }
+        actHtml=`<div class="ec"><select class="${selCls}" onchange="onActChg('${o.orderId}',this.value,this)">${selectDefault}${optsHtml}</select>${curAct&&!aeLk&&!isMismatchRow?`<button class="del-btn" onclick="delAct('${o.orderId}')" title="Clear action">✕</button>`:''}${curAct&&!isMismatchRow?`<button class="hist-btn" onclick="openHist('${o.orderId}')" title="History">H</button>`:''}</div>`;
+      }else{actHtml=`<span class="ro">${curAct||'—'}</span>`;}
     }
-    // Use the effective mismatch state: if user has already picked a new action in CHANGES,
-    // actionMismatch is cleared by onActChg, so we use the live o.actionMismatch flag.
-    const effectiveMismatch = o.actionMismatch && ch.action === undefined;
+    const effectiveMismatch=o.actionMismatch&&ch.action===undefined;
     const needUpd=curAct&&!effectiveMismatch&&(o.availableUpdates||[]).length>0;
-    if(!canE||ueLk){
-      updHtml=`<span class="ro">${curUpd||'—'}</span>`;
-    } else if(!curAct||effectiveMismatch){
-      // No action set or still-unresolved mismatch
-      updHtml=`<span class="lknote" style="color:var(--t3);">${!curAct?'Set action first':'Set correct action first'}</span>`;
-    } else if(!needUpd){
-      // SRN-only action (empty availableUpdates)
-      updHtml=`<span class="lknote">Awaiting SRN</span>`;
-    } else {
-      // Has valid updates for this action
+    if(!canE||ueLk){updHtml=`<span class="ro">${curUpd||'—'}</span>`;}
+    else if(!curAct||effectiveMismatch){updHtml=`<span class="lknote" style="color:var(--t3);">${!curAct?'Set action first':'Set correct action first'}</span>`;}
+    else if(!needUpd){updHtml=`<span class="lknote">Awaiting SRN</span>`;}
+    else{
       const uOpts=(o.availableUpdates||[]);
-      const hasValidExistingUpd = curUpd && uOpts.includes(curUpd) && ch.update===undefined;
+      const hasValidExistingUpd=curUpd&&uOpts.includes(curUpd)&&ch.update===undefined;
       if(hasValidExistingUpd){
-        updHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">&#10003; ${curUpd}</span></div>`;
-      } else {
+        updHtml=`<div class="ec"><span class="ro" style="color:var(--green);font-weight:700;">✓ ${curUpd}</span></div>`;
+      }else{
         const selectDefaultU=`<option value="" disabled${!curUpd||!uOpts.includes(curUpd)?' selected':''}>Select</option>`;
-        const uSelHtml=`<select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
-        updHtml=`<div class="ec">${uSelHtml}`;
+        updHtml=`<div class="ec"><select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
         if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
         if(curUpd==='COD Collected'){
           const existingCodSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
@@ -1327,204 +1037,123 @@ function rdRows(){
     const srnBadge=o.srnStatus?`<span class="b ${o.srnCompleted?'bg':'bs'}">${o.srnStatus}</span>`:'—';
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
     const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
-    const needsEmailSubject = (curAct === 'Connected to Warehouse \u2013 SRN Pending' || curAct === 'Connected to Retail \u2013 SRN Pending') && canE;
-    const existingSubj = ch.emailSubjectLine !== undefined ? ch.emailSubjectLine : (o.emailSubjectLine || '');
-    const emailSubjHtml = needsEmailSubject
-      ? `<div class="ec" style="margin-top:4px;"><span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required for this action…" value="${existingSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/></div>`
-      : '';
+    const needsEmailSubject=(curAct==='Connected to Warehouse \u2013 SRN Pending'||curAct==='Connected to Retail \u2013 SRN Pending')&&canE;
+    const existingSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
+    const emailSubjHtml=needsEmailSubject?`<div class="ec" style="margin-top:4px;"><span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required for this action…" value="${existingSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/></div>`:'';
     tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
       <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">Action Pending</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
-      <td>${o.city||'—'}</td>
-      <td>${fmtN(o.gmv||0)}</td>
+      <td>${o.city||'—'}</td><td>${fmtN(o.gmv||0)}</td>
       <td><span class="b bs">${o.storeType||'—'}</span></td>
       <td><span class="b ${o.partner==='INHOUSE'?'bb':'ba'}">${o.partner||'—'}</span></td>
       <td><span class="b bt">${o.bu||'—'}</span></td>
-      <td>${o.cancellationStage||'—'}</td>
-      <td>${srnBadge}</td>
-      <td>${svcBadge} ${ageBadge}</td>
-      <td>${actHtml}</td>
-      <td>${updHtml}${emailSubjHtml}</td>
+      <td>${o.cancellationStage||'—'}</td><td>${srnBadge}</td><td>${svcBadge} ${ageBadge}</td>
+      <td>${actHtml}</td><td>${updHtml}${emailSubjHtml}</td>
     </tr>`);
   });
 }
 
-/* ── EDIT HANDLERS ───────────────────────────────────────────── */
 function isRA(){return USER?.isRegionAdmin===true;}
 function inRegion(city){return USER?._regionSet?USER._regionSet.has((city||'').toUpperCase()):false;}
-function canEdit(city){
-  if(!city)return USER?.isAdmin||isRA()||false;
-  return USER?.isAdmin||inRegion(city)||(USER?.city||'').toUpperCase()===city.toUpperCase();
-}
+function canEdit(city){if(!city)return USER?.isAdmin||isRA()||false;return USER?.isAdmin||inRegion(city)||(USER?.city||'').toUpperCase()===city.toUpperCase();}
 function onActChg(id,val,sel){
   const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
   const orig=o.currentAction||'';
   if(val===orig){
-    delete(CHANGES[id]||{}).action;
-    delete(CHANGES[id]||{}).update; // clear pending update too when reverting
-    if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];
-    // Restore original available updates
-    const rules=_getClientActionRules();
-    const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+    if(CHANGES[id]){delete CHANGES[id].action;delete CHANGES[id].update;if(!Object.keys(CHANGES[id]).length)delete CHANGES[id];}
+    const rules=_getClientActionRules();const caseMap=rules&&o.caseId?rules[o.caseId]:null;
     if(caseMap&&caseMap[orig])o.availableUpdates=caseMap[orig].updates||[];
-  } else {
-    CHANGES[id]=CHANGES[id]||{};
-    CHANGES[id].action=val;
-    delete CHANGES[id].update; // clear stale update when action changes
-    // Immediately update available updates from actionMap for the new action
-    const rules=_getClientActionRules();
-    const caseMap=rules&&o.caseId?rules[o.caseId]:null;
-    if(caseMap&&caseMap[val]){
-      o.availableUpdates=caseMap[val].updates||[];
-    } else {
-      o.availableUpdates=[];
-    }
-    // Clear mismatch flag if user picked a valid action
-    if(caseMap&&caseMap[val]) o.actionMismatch=false;
+  }else{
+    CHANGES[id]=CHANGES[id]||{};CHANGES[id].action=val;delete CHANGES[id].update;
+    const rules=_getClientActionRules();const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+    if(caseMap&&caseMap[val]){o.availableUpdates=caseMap[val].updates||[];}else{o.availableUpdates=[];}
+    if(caseMap&&caseMap[val])o.actionMismatch=false;
   }
-  sel?.classList.toggle('ch',val!==orig);
-  updSbar();rdRows();
+  sel?.classList.toggle('ch',val!==orig);updSbar();rdRows();
 }
 function onUpdChg(id,val,sel){
   const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
   const orig=o.currentUpdate||'';
-  if(val===orig){delete(CHANGES[id]||{}).update;if(!Object.keys(CHANGES[id]||{}).length)delete CHANGES[id];}
+  if(val===orig){if(CHANGES[id]){delete CHANGES[id].update;if(!Object.keys(CHANGES[id]).length)delete CHANGES[id];}}
   else{CHANGES[id]=CHANGES[id]||{};CHANGES[id].update=val;}
-  sel?.classList.toggle('ch',val!==orig);
-  updSbar();rdRows();
+  sel?.classList.toggle('ch',val!==orig);updSbar();rdRows();
 }
 function onCN(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].cnNumber=val;updSbar();}
 function onRef(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].refNumber=val;updSbar();}
 function onCOD(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].codAmount=parseFloat(val)||0;updSbar();}
 function onEmailSubj(id,val){CHANGES[id]=CHANGES[id]||{};CHANGES[id].emailSubjectLine=val.trim();updSbar();}
 function delAct(id){const o=ORDERS.find(x=>x.orderId===id);if(!o)return;CHANGES[id]=CHANGES[id]||{};CHANGES[id].action='';CHANGES[id].update='';updSbar();rdRows();}
-function updSbar(){
-  const n=Object.keys(CHANGES).length;
-  $('sbar').classList.toggle('hide',n===0);
-  $('scnt',n+' change'+(n===1?'':'s')+' pending');
-  $('sst','');
-}
+function updSbar(){const n=Object.keys(CHANGES).length;$('sbar').classList.toggle('hide',n===0);$('scnt',n+' change'+(n===1?'':'s')+' pending');$('sst','');}
 function clearAll(){CHANGES={};updSbar();rdRows();}
 
-/* ── INSTANT IN-PLACE UPDATE ─────────────────────────────────────
-   Patches the live ORDERS array from batchSave results and
-   re-renders the table + KPI cards without a server round-trip.
-   A background cache-bust fires afterwards so the next natural
-   refresh picks up the persisted state.                         */
-function _patchOrdersAndRefreshUI(saveResults, changeMap){
-  const rules = _getClientActionRules();
+function _patchOrdersAndRefreshUI(saveResults,changeMap){
+  const rules=_getClientActionRules();
   saveResults.forEach(r=>{
-    if(!r.success) return;
-    const o = ORDERS.find(x => x.orderId === r.orderId);
-    if(!o) return;
-    const ch = changeMap[r.orderId] || {};
-    if(ch.action !== undefined){ o.currentAction = ch.action; o.actionEditCount = (o.actionEditCount||0)+1; }
-    if(ch.update !== undefined){ o.currentUpdate = ch.update; o.updateEditCount = (o.updateEditCount||0)+1; }
-    if(ch.cnNumber  !== undefined) o.cnNumber       = ch.cnNumber;
-    if(ch.refNumber !== undefined) o.referenceNumber= ch.refNumber;
-    if(ch.codAmount !== undefined) o.codAmount      = ch.codAmount;
-    // Recompute derived flags from the new action/update
-    const act = o.currentAction || '';
-    const upd = o.currentUpdate || '';
-    const srnOnly = new Set([
-      'Connected to Warehouse \u2013 SRN Pending',
-      'Connected to Retail \u2013 SRN Pending',
-      'Pending with 3PL',
-      'Order Lost/Rider Absconded',
-    ]);
-    const closing = new Set(['CN Received','COD Collected','Loss','Order Lost/Rider Absconded']);
-    o.isClosureRemark = srnOnly.has(act) || closing.has(upd);
-    const closingApplied = closing.has(upd) || act === 'Order Lost/Rider Absconded';
-    if(closingApplied || o.srnDone) o.isGreen = true;
-    if(r.closureStatus === 'CLOSED') { o.isGreen = true; o.actionPending = false; }
-    // Recompute actionPending
-    if(!o.isGreen && !o.srnCompleted && !o.isClosureRemark){
-      const caseMap = rules && o.caseId ? rules[o.caseId] : null;
-      if(!act){ o.actionPending = true; }
-      else if(caseMap){
-        const ae = caseMap[act];
-        o.actionPending = !ae || (ae.updates && ae.updates.length > 0 && !upd);
-        o.actionMismatch = !ae;
-      }
-    } else {
-      o.actionPending = false;
-      o.actionMismatch = false;
-    }
-    // Recompute available updates for the new action
-    const caseMap = rules && o.caseId ? rules[o.caseId] : null;
-    if(caseMap && act && caseMap[act]){
-      const freshUpds = caseMap[act].updates || [];
-      o.availableUpdates = freshUpds;
-    }
+    if(!r.success)return;
+    const o=ORDERS.find(x=>x.orderId===r.orderId);if(!o)return;
+    const ch=changeMap[r.orderId]||{};
+    if(ch.action!==undefined){o.currentAction=ch.action;o.actionEditCount=(o.actionEditCount||0)+1;}
+    if(ch.update!==undefined){o.currentUpdate=ch.update;o.updateEditCount=(o.updateEditCount||0)+1;}
+    if(ch.cnNumber!==undefined)o.cnNumber=ch.cnNumber;
+    if(ch.refNumber!==undefined)o.referenceNumber=ch.refNumber;
+    if(ch.codAmount!==undefined)o.codAmount=ch.codAmount;
+    const act=o.currentAction||'';const upd=o.currentUpdate||'';
+    const srnOnly=new Set(['Connected to Warehouse \u2013 SRN Pending','Connected to Retail \u2013 SRN Pending','Pending with 3PL','Order Lost/Rider Absconded']);
+    const closing=new Set(['CN Received','COD Collected','Loss','Order Lost/Rider Absconded']);
+    o.isClosureRemark=srnOnly.has(act)||closing.has(upd);
+    const closingApplied=closing.has(upd)||act==='Order Lost/Rider Absconded';
+    if(closingApplied||o.srnDone)o.isGreen=true;
+    if(r.closureStatus==='CLOSED'){o.isGreen=true;o.actionPending=false;}
+    if(!o.isGreen&&!o.srnCompleted&&!o.isClosureRemark){
+      const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+      if(!act){o.actionPending=true;}
+      else if(caseMap){const ae=caseMap[act];o.actionPending=!ae||(ae.updates&&ae.updates.length>0&&!upd);o.actionMismatch=!ae;}
+    }else{o.actionPending=false;o.actionMismatch=false;}
+    const caseMap=rules&&o.caseId?rules[o.caseId]:null;
+    if(caseMap&&act&&caseMap[act]){o.availableUpdates=caseMap[act].updates||[];}
   });
-  // Re-render table immediately (no server call)
-  rdRows();
-  // Recompute KPIs from patched in-memory data and refresh header cards
-  _refreshKPIFromMemory();
-  if(SCITY) afterOrdersCity();
+  rdRows();_refreshKPIFromMemory();if(SCITY)afterOrdersCity();
 }
 
-/* Lightweight client-side KPI recompute from the ORDERS array   */
 function _refreshKPIFromMemory(){
-  if(!SUM || !SUM.kpi) return;
-  // Recompute from patched ORDERS (which may be page-limited, so only
-  // update per-page-visible metrics. Summary KPIs refresh on next apF/fref.)
-  const ap  = ORDERS.filter(o => o.actionPending && !o.isGreen).length;
-  const srn = ORDERS.filter(o => o.srnCompleted).length;
-  const cr  = ORDERS.filter(o => o.isClosureRemark && !o.srnCompleted).length;
-  // Update the AP badge in the header (always accurate for current page)
-  $('gapc', ap);
-  if(SCITY) $('ap-cnt', ap + ' action pending');
+  if(!SUM||!SUM.kpi)return;
+  const ap=ORDERS.filter(o=>o.actionPending&&!o.isGreen).length;
+  $('gapc',ap);if(SCITY)$('ap-cnt',ap+' action pending');
 }
-
-/* Client-side action rules for instant recompute (mirrors server) */
-function _getClientActionRules(){
-  // Use the actionMap returned by the last getSummary call if available
-  if(SUM && SUM.actionMap) return SUM.actionMap;
-  return null;
-}
+function _getClientActionRules(){if(SUM&&SUM.actionMap)return SUM.actionMap;return null;}
 
 async function saveAll(){
   const entries=Object.entries(CHANGES).map(([id,c])=>({orderId:id,...c}));
   if(!entries.length)return;
   $('sbtn').disabled=true;$('sst','Saving…');
-  const changeSnapshot = Object.assign({}, CHANGES); // snapshot before clearing
+  const changeSnapshot=Object.assign({},CHANGES);
+  const _doSave=async()=>fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
+    let res;
+    try{res=await _doSave();}
+    catch(e1){
+      $('sst','Retrying…');
+      await new Promise(r=>setTimeout(r,1500));
+      try{res=await _doSave();}
+      catch(e2){toast('Network error — check connection and retry','red');$('sbtn').disabled=false;$('sst','');return;}
+    }
     if(res.success){
       const ok=res.results.filter(r=>r.success).length;
       const fail=res.results.filter(r=>!r.success).length;
-      // Clear saved entries from CHANGES
-      res.results.forEach(r=>{ if(r.success) delete CHANGES[r.orderId]; });
+      res.results.forEach(r=>{if(r.success)delete CHANGES[r.orderId];});
       Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
       toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
-      if(fail){
-        // Show which ones failed
-        const failIds=res.results.filter(r=>!r.success).map(r=>r.orderId+': '+(r.error||'failed')).join('\n');
-        console.warn('Save failures:\n'+failIds);
-      }
-      $('sst','');
-      updSbar();
-      // Instant patch — no server round-trip needed
-      _patchOrdersAndRefreshUI(res.results, changeSnapshot);
-      // Background: bust server cache so next full refresh is fresh
-      // (no await — fire and forget)
+      if(fail){const fIds=res.results.filter(r=>!r.success).map(r=>r.orderId+': '+(r.error||'failed')).join('\n');console.warn('Save failures:\n'+fIds);}
+      $('sst','');updSbar();
+      _patchOrdersAndRefreshUI(res.results,changeSnapshot);
       fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
-    } else {
-      toast(res.error||'Save failed','red');
-    }
-  } catch(e){toast('Network error: '+e.message,'red');}
+    }else{toast(res.error||'Save failed','red');}
+  }catch(e){toast('Save failed: '+e.message,'red');}
   $('sbtn').disabled=false;
 }
 
-/* ── UPLOAD ──────────────────────────────────────────────────── */
 function triggerUpload(){$('upload-file').click();}
-function closeUpload(){
-  $('upload-modal').classList.add('hide');
-  _uplBatch=null;
-  const badge=$('usave-badge');
-  if(badge) badge.style.display='none';
-}
+function closeUpload(){$('upload-modal').classList.add('hide');_uplBatch=null;const badge=$('usave-badge');if(badge)badge.style.display='none';}
 
 async function handleUpload(inp){
   const file=inp.files[0];if(!file)return;
@@ -1534,145 +1163,77 @@ async function handleUpload(inp){
   const sh=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true,defval:''});
   if(rows.length<2){hideOv();toast('Sheet empty or unreadable','red');inp.value='';return;}
-
-  // Find the header row by scanning up to the first 10 rows.
-  // The downloaded file has instruction rows prepended before the actual header,
-  // so rows[0] may be "⚠ INSTRUCTIONS..." rather than the column header row.
-  let hdrRowIdx = -1;
-  let hdr = [];
+  let hdrRowIdx=-1,hdr=[];
   for(let i=0;i<Math.min(10,rows.length);i++){
-    const candidate = rows[i].map(h=>String(h||'').toLowerCase().trim());
-    // The real header row contains 'order id' or 'shipment_order'
-    if(candidate.some(h=>h==='order id'||h.includes('shipment_order'))){
-      hdrRowIdx = i;
-      hdr = candidate;
-      break;
-    }
+    const candidate=rows[i].map(h=>String(h||'').toLowerCase().trim());
+    if(candidate.some(h=>h==='order id'||h.includes('shipment_order'))){hdrRowIdx=i;hdr=candidate;break;}
   }
-
-  if(hdrRowIdx<0){hideOv();toast('Cannot find Order ID column in the file. Make sure you are uploading a file downloaded from this dashboard.','red');inp.value='';return;}
-
+  if(hdrRowIdx<0){hideOv();toast('Cannot find Order ID column. Upload a file downloaded from this dashboard.','red');inp.value='';return;}
   const ci=hdr.findIndex(h=>h==='order id'||h.includes('shipment_order'));
-  const ai=hdr.findIndex(h=>h==='action'&&!h.includes('edit')&&!h.includes('valid')&&!h.includes('valid actions'));
+  const ai=hdr.findIndex(h=>h==='action'&&!h.includes('edit')&&!h.includes('valid actions'));
   const ui=hdr.findIndex(h=>h==='update'&&!h.includes('edit')&&!h.includes('valid'));
   const esi=hdr.findIndex(h=>h.includes('email subject'));
   const cni=hdr.findIndex(h=>h.includes('cn number')||h==='cn');
-  const rni=hdr.findIndex(h=>h==='reference number'||h==='ref number'||(h.includes('ref')&&!h.includes('valid')&&!h.includes('amount recovered')));
+  const rni=hdr.findIndex(h=>h==='reference number'||h==='ref number'||(h.includes('ref')&&!h.includes('valid')&&!h.includes('amount')));
   const codi=hdr.findIndex(h=>h==='cod amount'||(h.includes('cod')&&h.includes('amount')));
-
-  if(ai<0){hideOv();toast('Cannot find Action column in the file.','red');inp.value='';return;}
-
-  // Data rows start after the header row
+  if(ai<0){hideOv();toast('Cannot find Action column.','red');inp.value='';return;}
   const dataRows=rows.slice(hdrRowIdx+1).filter(r=>r[ci]&&String(r[ci]).trim());
-  if(!dataRows.length){hideOv();toast('No data rows found in file.','amber');inp.value='';return;}
-
+  if(!dataRows.length){hideOv();toast('No data rows found.','amber');inp.value='';return;}
   const data=dataRows.map(r=>({
-    orderId:String(r[ci]||'').trim(),
-    action: ai>=0?String(r[ai]||'').trim():'',
-    update: ui>=0?String(r[ui]||'').trim():'',
-    emailSubjectLine: esi>=0?String(r[esi]||'').trim():'',
-    cnNumber:  cni>=0?String(r[cni]||'').trim():'',
-    refNumber: rni>=0?String(r[rni]||'').trim():'',
-    codAmount: codi>=0?(parseFloat(r[codi])||0):0,
+    orderId:String(r[ci]||'').trim(),action:ai>=0?String(r[ai]||'').trim():'',
+    update:ui>=0?String(r[ui]||'').trim():'',emailSubjectLine:esi>=0?String(r[esi]||'').trim():'',
+    cnNumber:cni>=0?String(r[cni]||'').trim():'',refNumber:rni>=0?String(r[rni]||'').trim():'',
+    codAmount:codi>=0?(parseFloat(r[codi])||0):0,
   }));
-
-  if(!data.length){hideOv();toast('No data rows found in file','amber');inp.value='';return;}
-  hideOv();
-  showOv('Validating on server…','Checking '+data.length+' rows against backend');
-
+  if(!data.length){hideOv();toast('No data rows found','amber');inp.value='';return;}
+  hideOv();showOv('Validating on server…','Checking '+data.length+' rows against backend');
   try{
     const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
     hideOv();
     if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
     _uplBatch=res;
-
-    // Compute counts — same as before
-    const totalUploaded   = data.length;
-    const correctMatch    = res.results.filter(r=>r.valid&&!r.noChange).length;
-    const noChange        = res.results.filter(r=>r.valid&&r.noChange).length;
-    const mismatchAction  = res.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
-    const mismatchUpdate  = res.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
-    const actionNotMade   = res.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
-    const editLimitHit    = res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
-    const orderNotFound   = res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
-    const missingSubject  = res.results.filter(r=>!r.valid&&r.errorType==='missing_email_subject').length;
-    const otherFail       = res.results.filter(r=>!r.valid&&!r.errorType).length;
-    const totalMismatch   = mismatchAction + mismatchUpdate;
-    const totalInvalid    = res.results.filter(r=>!r.valid).length;
-
-    // ── Determine which scenario we are in ──────────────────────
-    // Scenario 1: valid file from dashboard, zero changes (all noChange, zero valid-with-change, zero invalid that are mismatch)
-    const isNoChangesScenario = (totalUploaded > 0) && (noChange === totalUploaded) && correctMatch === 0 && totalInvalid === 0;
-    // Scenario 3: some valid changes AND some mismatch errors
-    const hasMismatch = totalMismatch > 0;
-
-    $('upload-title', isNoChangesScenario
-      ? 'No Changes Found'
-      : 'Upload Validation — '+totalUploaded+' rows');
-
-    // ── Summary bar ─────────────────────────────────────────────
+    const totalUploaded=data.length;
+    const correctMatch=res.results.filter(r=>r.valid&&!r.noChange).length;
+    const noChange=res.results.filter(r=>r.valid&&r.noChange).length;
+    const mismatchAction=res.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
+    const mismatchUpdate=res.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+    const actionNotMade=res.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
+    const editLimitHit=res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
+    const orderNotFound=res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
+    const missingSubject=res.results.filter(r=>!r.valid&&r.errorType==='missing_email_subject').length;
+    const otherFail=res.results.filter(r=>!r.valid&&!r.errorType).length;
+    const totalMismatch=mismatchAction+mismatchUpdate;const totalInvalid=res.results.filter(r=>!r.valid).length;
+    const isNoChangesScenario=(totalUploaded>0)&&(noChange===totalUploaded)&&correctMatch===0&&totalInvalid===0;
+    const hasMismatch=totalMismatch>0;
+    $('upload-title',isNoChangesScenario?'No Changes Found':'Upload Validation — '+totalUploaded+' rows');
     if(isNoChangesScenario){
-      setHTML('usum',
-        `<div style="display:flex;align-items:center;gap:14px;padding:6px 0;">
-          <span style="font-size:26px;">&#8594;</span>
-          <div>
-            <div style="font-size:15px;font-weight:800;color:var(--t2);">No changes found in the file.</div>
-            <div style="font-size:12px;color:var(--t3);margin-top:2px;">${totalUploaded} rows checked &mdash; all values already match the dashboard. No records were updated.</div>
-          </div>
-        </div>`);
-    } else {
-      setHTML('usum',
-        `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
-          <div class="ustat tot"><b>${totalUploaded}</b>&nbsp;Uploaded</div>
-          ${correctMatch?`<div class="ustat ok">&#10003;&nbsp;<b>${correctMatch}</b>&nbsp;Ready to Save</div>`:''}
-          ${mismatchAction?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
-          ${mismatchUpdate?`<div class="ustat fail">&#10005;&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
-          ${missingSubject?`<div class="ustat fail">&#9993;&nbsp;<b>${missingSubject}</b>&nbsp;Email Subject Missing</div>`:''}
-          ${actionNotMade?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
-          ${editLimitHit?`<div class="ustat fail">&#128274;&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
-          ${noChange?`<div class="ustat tot">&#8594;&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
-          ${orderNotFound?`<div class="ustat fail">&#10005;&nbsp;<b>${orderNotFound}</b>&nbsp;Order Not Found</div>`:''}
-          ${otherFail?`<div class="ustat fail">&#10005;&nbsp;<b>${otherFail}</b>&nbsp;Other Error</div>`:''}
-        </div>`);
+      setHTML('usum',`<div style="display:flex;align-items:center;gap:14px;padding:6px 0;"><span style="font-size:26px;">→</span><div><div style="font-size:15px;font-weight:800;color:var(--t2);">No changes found in the file.</div><div style="font-size:12px;color:var(--t3);margin-top:2px;">${totalUploaded} rows checked — all values already match the dashboard.</div></div></div>`);
+    }else{
+      setHTML('usum',`<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
+        <div class="ustat tot"><b>${totalUploaded}</b>&nbsp;Uploaded</div>
+        ${correctMatch?`<div class="ustat ok">✓&nbsp;<b>${correctMatch}</b>&nbsp;Ready to Save</div>`:''}
+        ${mismatchAction?`<div class="ustat fail">✗&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
+        ${mismatchUpdate?`<div class="ustat fail">✗&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
+        ${missingSubject?`<div class="ustat fail">✉&nbsp;<b>${missingSubject}</b>&nbsp;Email Subject Missing</div>`:''}
+        ${actionNotMade?`<div class="ustat" style="color:var(--amber);">⚠&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
+        ${editLimitHit?`<div class="ustat fail">🔒&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
+        ${noChange?`<div class="ustat tot">→&nbsp;<b>${noChange}</b>&nbsp;No Change</div>`:''}
+        ${orderNotFound?`<div class="ustat fail">✗&nbsp;<b>${orderNotFound}</b>&nbsp;Order Not Found</div>`:''}
+        ${otherFail?`<div class="ustat fail">✗&nbsp;<b>${otherFail}</b>&nbsp;Other Error</div>`:''}
+      </div>`);
     }
-
-    // ── Central mismatch warning banner (Scenario 3) ─────────────
-    // Shown only when there are mismatch errors alongside valid rows.
-    const mismatchBanner = hasMismatch
-      ? `<div id="mismatch-banner" style="margin-bottom:14px;padding:16px 20px;border-radius:10px;background:#FFF3CD;border:2px solid #FFC107;display:flex;align-items:flex-start;gap:14px;">
-          <span style="font-size:24px;flex-shrink:0;">&#9888;</span>
-          <div style="flex:1;">
-            <div style="font-size:14px;font-weight:800;color:#856404;margin-bottom:6px;">Mismatched orders have been highlighted in your dashboard.</div>
-            <div style="font-size:12px;color:#856404;line-height:1.6;">
-              You can review them below and download the mismatched data to update it again using the standard remarks/actions.<br>
-              <b>Valid updates are shown in green and will be applied when you click Save. Mismatched rows are shown in red and will not be updated.</b>
-            </div>
-            <button onclick="downloadMismatchedOrders()" style="margin-top:10px;padding:6px 16px;border-radius:6px;background:#856404;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">&#11015; Download Mismatched Orders</button>
-          </div>
-        </div>`
-      : '';
-
-    // ── Row list ────────────────────────────────────────────────
-    const rowHtml = res.results.map(r=>{
-      if(r.valid&&!r.noChange)
-        return`<div class="ures ok"><span class="ui-icon">&#10003;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} &rarr; ${c.new}`).join(' &nbsp;&middot;&nbsp; '):'Ready'}</div></div>`;
-      if(r.valid&&r.noChange)
-        return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">&rarr;</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
-      // Mismatch row: red, but clearly labelled as mismatch (not a system/file failure)
-      const isMismatch = r.errorType==='mismatch_action'||r.errorType==='mismatch_update';
-      return`<div class="ures fail" style="${isMismatch?'border-color:#FFC107;background:#FFFDE7;':''}">`+
-        `<span class="ui-icon" style="${isMismatch?'color:#856404;':''}">&#10005;</span>`+
-        `<div class="ui-id">${r.orderId}</div>`+
-        `<div class="ui-msg" style="${isMismatch?'color:#856404;':''}">${r.error||'Unknown error'}</div></div>`;
+    const mismatchBanner=hasMismatch?`<div id="mismatch-banner" style="margin-bottom:14px;padding:16px 20px;border-radius:10px;background:#FFF3CD;border:2px solid #FFC107;display:flex;align-items:flex-start;gap:14px;"><span style="font-size:24px;flex-shrink:0;">⚠</span><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:#856404;margin-bottom:6px;">Mismatched orders have been highlighted.</div><div style="font-size:12px;color:#856404;line-height:1.6;"><b>Valid updates shown in green will be applied. Mismatched rows shown in red will not be updated.</b></div><button onclick="downloadMismatchedOrders()" style="margin-top:10px;padding:6px 16px;border-radius:6px;background:#856404;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">↓ Download Mismatched Orders</button></div></div>`:'';
+    const rowHtml=res.results.map(r=>{
+      if(r.valid&&!r.noChange)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'}</div></div>`;
+      if(r.valid&&r.noChange)return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
+      const isMismatch=r.errorType==='mismatch_action'||r.errorType==='mismatch_update';
+      return`<div class="ures fail" style="${isMismatch?'border-color:#FFC107;background:#FFFDE7;':''}">`+`<span class="ui-icon" style="${isMismatch?'color:#856404;':''}">✗</span>`+`<div class="ui-id">${r.orderId}</div>`+`<div class="ui-msg" style="${isMismatch?'color:#856404;':''}">${r.error||'Unknown error'}</div></div>`;
     }).join('');
-
-    setHTML('ubody', mismatchBanner + rowHtml);
-
-    // ── Save button: only for valid-with-changes rows ────────────
-    $('usave-btn').style.display = correctMatch > 0 ? '' : 'none';
+    setHTML('ubody',mismatchBanner+rowHtml);
+    $('usave-btn').style.display=correctMatch>0?'':'none';
     $('upload-modal').classList.remove('hide');
-  } catch(e){hideOv();toast('Upload error: '+e.message,'red');}
+  }catch(e){hideOv();toast('Upload error: '+e.message,'red');}
   inp.value='';
 }
 
@@ -1680,117 +1241,95 @@ async function saveUploadChanges(){
   if(!_uplBatch)return;
   const valid=_uplBatch.results.filter(r=>r.valid&&!r.noChange);
   if(!valid.length){toast('No changes to save','amber');return;}
-  // Build a changeMap so _patchOrdersAndRefreshUI knows what changed
-  const changeMap = {};
-  valid.forEach(r=>{
-    if(r.resolved) changeMap[r.orderId] = r.resolved;
-  });
-  showOv('Saving '+valid.length+' updates…','Writing to sheet');
+  const changeMap={};valid.forEach(r=>{if(r.resolved)changeMap[r.orderId]=r.resolved;});
+  const CHUNK=15;
+  const allChanges=valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}));
+  const allResults=[];
+  showOv('Saving '+valid.length+' updates…','Sending in chunks of '+CHUNK);
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',batchId:_uplBatch?.batchId||'',
-        changes:valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}))})}).then(r=>r.json());
-    hideOv();
-    if(res.success){
-      const ok    = res.results.filter(r=>r.success).length;
-      const fail  = res.results.filter(r=>!r.success).length;
-      toast(ok+' orders updated'+(fail?' · '+fail+' failed':''),'green');
-      Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
-      // Instant in-place update — table and KPIs refresh without closing/reloading
-      _patchOrdersAndRefreshUI(res.results, changeMap);
-      // Update the upload modal result list: mark saved rows as done
-      const savedIds = new Set(res.results.filter(r=>r.success).map(r=>r.orderId));
-      const failedSaves = res.results.filter(r=>!r.success);
-      // Update each row badge in the modal
-      _uplBatch.results.forEach(r=>{
-        if(savedIds.has(r.orderId)){
-          r._saved = true;
-        } else if(failedSaves.find(f=>f.orderId===r.orderId)){
-          r._saveFail = true;
-          r._saveError = (failedSaves.find(f=>f.orderId===r.orderId)||{}).error||'Save failed';
-        }
-      });
-      // Re-render modal body with saved/failed status
-      setHTML('ubody', _uplBatch.results.map(r=>{
-        if(r._saved)
-          return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="font-weight:700;color:var(--green)">Saved ✓ — now live on dashboard</div></div>`;
-        if(r._saveFail)
-          return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r._saveError}</div></div>`;
-        if(r.valid&&!r.noChange)
-          return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'}</div></div>`;
-        if(r.valid&&r.noChange)
-          return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change</div></div>`;
-        return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Invalid'}</div></div>`;
-      }).join(''));
-      // Update summary line with full breakdown
-      const totalProcessed = valid.length;
-      const mAct  = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
-      const mUpd  = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
-      const noAct = _uplBatch.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
-      setHTML('usum',
-        `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
-          <div class="ustat ok">&#10003;&nbsp;<b>${ok}</b>&nbsp;Saved &amp; Live</div>
-          ${fail?`<div class="ustat fail">&#10005;&nbsp;<b>${fail}</b>&nbsp;Save Failed</div>`:''}
-          ${mAct?`<div class="ustat fail">&#10005;&nbsp;<b>${mAct}</b>&nbsp;Mismatch Actions</div>`:''}
-          ${mUpd?`<div class="ustat fail">&#10005;&nbsp;<b>${mUpd}</b>&nbsp;Mismatch Updates</div>`:''}
-          ${noAct?`<div class="ustat" style="color:var(--amber);">&#9888;&nbsp;<b>${noAct}</b>&nbsp;Action Not Made</div>`:''}
-          <div class="ustat tot"><b>${_uplBatch.results.length}</b>&nbsp;Total Uploaded</div>
-        </div>`
-      );
-      $('usave-btn').style.display='none'; // already saved
-      // Show centred count badge
-      const badge=$('usave-badge'); const badgeCount=$('usave-badge-count');
-      if(badge&&badgeCount){ badgeCount.textContent=ok; badge.style.display='flex'; }
-      // Fire background cache bust
-      fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
-    } else {
-      toast(res.error||'Save failed','red');
+    for(let i=0;i<allChanges.length;i+=CHUNK){
+      const chunk=allChanges.slice(i,i+CHUNK);
+      $('ov-msg','Saving '+(i+1)+'–'+Math.min(i+CHUNK,allChanges.length)+' of '+allChanges.length+'…');
+      const _doChunk=async()=>fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',changes:chunk})}).then(r=>r.json());
+      let res;
+      try{res=await _doChunk();}
+      catch(e1){
+        await new Promise(r=>setTimeout(r,1500));
+        try{res=await _doChunk();}
+        catch(e2){hideOv();toast('Network error on batch '+(Math.floor(i/CHUNK)+1)+' — retry upload','red');return;}
+      }
+      if(res&&res.success)allResults.push(...(res.results||[]));
+      else{hideOv();toast((res&&res.error)||'Batch '+(Math.floor(i/CHUNK)+1)+' failed','red');return;}
     }
-  } catch(e){hideOv();toast('Network error: '+e.message,'red');}
+    hideOv();
+    const ok=allResults.filter(r=>r.success).length;
+    const fail=allResults.filter(r=>!r.success).length;
+    toast(ok+' orders updated'+(fail?' · '+fail+' failed':''),'green');
+    Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
+    _patchOrdersAndRefreshUI(allResults,changeMap);
+    if(SCITY)afterOrdersCity();
+    const savedIds=new Set(allResults.filter(r=>r.success).map(r=>r.orderId));
+    const failedSaves=allResults.filter(r=>!r.success);
+    _uplBatch.results.forEach(r=>{
+      if(savedIds.has(r.orderId)){r._saved=true;}
+      else if(failedSaves.find(f=>f.orderId===r.orderId)){r._saveFail=true;r._saveError=(failedSaves.find(f=>f.orderId===r.orderId)||{}).error||'Save failed';}
+    });
+    setHTML('ubody',_uplBatch.results.map(r=>{
+      if(r._saved)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="font-weight:700;color:var(--green)">Saved ✓ — now live on dashboard</div></div>`;
+      if(r._saveFail)return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r._saveError}</div></div>`;
+      if(r.valid&&!r.noChange)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'}</div></div>`;
+      if(r.valid&&r.noChange)return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
+      return`<div class="ures fail"><span class="ui-icon">✗</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.error||'Invalid'}</div></div>`;
+    }).join(''));
+    const mAct=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
+    const mUpd=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+    const noAct=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
+    setHTML('usum',`<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
+      <div class="ustat ok">✓&nbsp;<b>${ok}</b>&nbsp;Saved &amp; Live</div>
+      ${fail?`<div class="ustat fail">✗&nbsp;<b>${fail}</b>&nbsp;Save Failed</div>`:''} 
+      ${mAct?`<div class="ustat fail">✗&nbsp;<b>${mAct}</b>&nbsp;Mismatch Actions</div>`:''}
+      ${mUpd?`<div class="ustat fail">✗&nbsp;<b>${mUpd}</b>&nbsp;Mismatch Updates</div>`:''}
+      ${noAct?`<div class="ustat" style="color:var(--amber);">⚠&nbsp;<b>${noAct}</b>&nbsp;Action Not Made</div>`:''}
+      <div class="ustat tot"><b>${_uplBatch.results.length}</b>&nbsp;Total Uploaded</div>
+    </div>`);
+    $('usave-btn').style.display='none';
+    const badge=$('usave-badge');const badgeCount=$('usave-badge-count');
+    if(badge&&badgeCount){badgeCount.textContent=ok;badge.style.display='flex';}
+    fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
+  }catch(e){hideOv();toast('Error: '+e.message,'red');}
 }
 
-/* Download mismatched orders from the current upload batch as an Excel file.
-   Uses only the existing _uplBatch results — no server call, no new logic.   */
 function downloadMismatchedOrders(){
   if(!_uplBatch||!_uplBatch.results)return;
-  const mismatches=_uplBatch.results.filter(r=>
-    !r.valid&&(r.errorType==='mismatch_action'||r.errorType==='mismatch_update')
-  );
+  const mismatches=_uplBatch.results.filter(r=>!r.valid&&(r.errorType==='mismatch_action'||r.errorType==='mismatch_update'));
   if(!mismatches.length){toast('No mismatched orders found','amber');return;}
   const wb=XLSX.utils.book_new();
-  const hdr=['Order ID','Error Type','Error Detail'];
-  const dataRows=mismatches.map(r=>[
-    r.orderId,
-    r.errorType==='mismatch_action'?'Wrong Action':'Wrong Update',
-    r.error||''
-  ]);
-  const ws=XLSX.utils.aoa_to_sheet([hdr,...dataRows]);
+  const ws=XLSX.utils.aoa_to_sheet([['Order ID','Error Type','Error Detail'],...mismatches.map(r=>[r.orderId,r.errorType==='mismatch_action'?'Wrong Action':'Wrong Update',r.error||''])]);
   ws['!cols']=[{wch:22},{wch:16},{wch:80}];
   XLSX.utils.book_append_sheet(wb,ws,'Mismatched Orders');
   XLSX.writeFile(wb,'Mismatched_Orders_'+new Date().toISOString().slice(0,10)+'.xlsx');
   toast('Downloaded '+mismatches.length+' mismatched orders');
 }
+
 async function openHist(id){
   $('hist-id',id);setHTML('hist-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('hist-modal').classList.remove('hide');
   try{
     const r=await fetch(API+'?action=getHistory&email='+encodeURIComponent(USER?.email||'')+'&orderId='+encodeURIComponent(id)).then(r=>r.json());
     if(!r||!r.success||!r.history.length){setHTML('hist-body','<div class="emp"><div class="emp-i">📭</div>No history found.</div>');return;}
-    setHTML('hist-body',r.history.map(h=>`<div class="htx"><div class="htx-ts">${fmtD(h.ts||h.date)}</div><div class="htx-user">${h.user||'—'}</div><div class="htx-body"><b>${h.field||'action'}:</b> ${h.oldVal||'(none)'} → <b>${h.newVal||'(none)'}</b>${h.note?'<br><span style="color:var(--t3)">'+h.note+'</span>':''}</div></div>`).join(''));
-  } catch(e){setHTML('hist-body','<div class="emp"><div class="emp-i">⚠</div>'+e.message+'</div>');}
+    setHTML('hist-body',r.history.map(h=>`<div class="htx"><div class="htx-ts">${fmtD(h.ts||h.date)}</div><div class="htx-user">${h.user||'—'}</div><div class="htx-body"><b>${h.field||'action'}:</b> ${h.oldVal||'(none)'} → <b>${h.newVal||'(none)'}</b></div></div>`).join(''));
+  }catch(e){setHTML('hist-body','<div class="emp"><div class="emp-i">⚠</div>'+e.message+'</div>');}
 }
 function closeHist(){$('hist-modal').classList.add('hide');}
 
-/* ── HA / AP / CR MODALS ─────────────────────────────────────── */
 function openHA(){
-  const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen);
-  if(!ha.length){toast('No high ageing orders on this page','amber');return;}
+  const ha=ORDERS.filter(o=>o.isHighAgeing&&!o.isGreen);if(!ha.length){toast('No high ageing orders on this page','amber');return;}
   setHTML('ha-body',ha.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action'}</div><div class="mor-age">${o.ageingDays}d</div></div>`).join(''));
   $('ha-modal').classList.remove('hide');
 }
 function closeHA(){$('ha-modal').classList.add('hide');}
 
-/* JS-05: ps bumped to 2000 */
 async function openAPModal(){
   setHTML('ap-body','<div class="emp"><div class="emp-i">⏳</div>Loading AP queue…</div>');
   $('ap-modal').classList.remove('hide');
@@ -1800,70 +1339,50 @@ async function openAPModal(){
     if(!d||!d.success){setHTML('ap-body','<div class="emp">Failed to load.</div>');return;}
     const ords=d.orders||[];
     setHTML('ap-body',ords.length?'<div style="padding:10px 14px 6px;font-size:12px;font-weight:600;color:var(--t2);">'+ords.length+' orders action pending</div>'+ords.map(o=>`<div class="mor"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'No action set'}</div><div class="mor-age">${o.ageingDays||0}d</div></div>`).join(''):'<div class="emp"><div class="emp-i">🎉</div>No Action Pending orders!</div>');
-  } catch(e){setHTML('ap-body','<div class="emp">Error: '+e.message+'</div>');}
+  }catch(e){setHTML('ap-body','<div class="emp">Error: '+e.message+'</div>');}
 }
 function closeAP(){$('ap-modal').classList.add('hide');}
 
-/* JS-05: ps bumped to 2000 */
 async function openCRModal(){
   setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   $('cr-modal').classList.remove('hide');
-  const eml=encodeURIComponent(USER?.email||'');
-  const cq=_cq();
+  const eml=encodeURIComponent(USER?.email||'');const cq=_cq();
   const render=(rows,emptyMsg)=>{
     if(!rows||!rows.length)return '<div class="emp"><div class="emp-i">✅</div>'+emptyMsg+'</div>';
     const totalGmv=rows.reduce((acc,o)=>acc+(o.gmv||0),0);
-    return '<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--t2);">'
-      +'<span>'+rows.length+' orders</span>'
-      +'<span style="color:var(--red);">GMV: '+fmtN(totalGmv)+'</span></div>'
-      +rows.map(o=>'<div class="mor"><div class="mor-id">'+o.orderId+'</div>'
-        +'<div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+(o.currentUpdate?' / '+o.currentUpdate:'')+' · SRN:'+(o.srnStatus||'—')+'</div>'
-        +'<div class="mor-age">'+(o.ageingDays||0)+'d</div></div>').join('');
+    return '<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:600;color:var(--t2);">'+'<span>'+rows.length+' orders</span>'+'<span style="color:var(--red);">GMV: '+fmtN(totalGmv)+'</span></div>'
+      +rows.map(o=>'<div class="mor"><div class="mor-id">'+o.orderId+'</div><div class="mor-meta">'+o.city+' · '+fmtN(o.gmv||0)+' · '+(o.currentAction||'—')+(o.currentUpdate?' / '+o.currentUpdate:'')+' · SRN:'+(o.srnStatus||'—')+'</div><div class="mor-age">'+(o.ageingDays||0)+'d</div></div>').join('');
   };
   try{
-    const [d1,d2]=await Promise.all([
+    const[d1,d2]=await Promise.all([
       fetch(API+'?action=getOrders&email='+eml+'&fClosureRemark=1&ps=2000&page=1&slim=1'+cq).then(r=>r.json()),
       fetch(API+'?action=getOrders&email='+eml+'&fCODCN=1&ps=2000&page=1&slim=1'+cq).then(r=>r.json()),
     ]);
     setHTML('cr-pane-1',render(d1?.orders,'No closure remark or loss/lost orders.'));
     setHTML('cr-pane-2',render(d2?.orders,'No COD Collected or CN Received orders.'));
-  } catch(e){
+  }catch(e){
     setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
     setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⚠</div>Load failed: '+e.message+'</div>');
   }
 }
 function closeCR(){$('cr-modal').classList.add('hide');}
 function setCRTab(t){
-  $('cr-tab-1').style.borderBottomColor=t===1?'var(--blue)':'transparent';
-  $('cr-tab-1').style.color=t===1?'var(--blue)':'var(--t3)';
-  $('cr-tab-2').style.borderBottomColor=t===2?'var(--blue)':'transparent';
-  $('cr-tab-2').style.color=t===2?'var(--blue)':'var(--t3)';
-  $('cr-pane-1').style.display=t===1?'':'none';
-  $('cr-pane-2').style.display=t===2?'':'none';
+  $('cr-tab-1').style.borderBottomColor=t===1?'var(--blue)':'transparent';$('cr-tab-1').style.color=t===1?'var(--blue)':'var(--t3)';
+  $('cr-tab-2').style.borderBottomColor=t===2?'var(--blue)':'transparent';$('cr-tab-2').style.color=t===2?'var(--blue)':'var(--t3)';
+  $('cr-pane-1').style.display=t===1?'':'none';$('cr-pane-2').style.display=t===2?'':'none';
 }
 
-/* ── DOWNLOAD ────────────────────────────────────────────────── */
 async function triggerDl(type){
-  if(type==='panIndia'){ await _doDownload('complete',null); }
-  else if(type==='filtered'){ $('dlct','Filtered Download'); $('dlcm','Filtered view or full dataset.'); $('dl-modal').classList.remove('hide'); }
-  else if(type==='loss'){ await _doDownload('loss',null); }
-  else if(type==='ap'){ await _doDownload('ap', SCITY||null); }
+  if(type==='panIndia'){await _doDownload('complete',null);}
+  else if(type==='filtered'){$('dlct','Filtered Download');$('dlcm','Filtered view or full dataset.');$('dl-modal').classList.remove('hide');}
+  else if(type==='loss'){await _doDownload('loss',null);}
+  else if(type==='ap'){await _doDownload('ap',SCITY||null);}
 }
-function triggerCityDl(city,t){
-  $('dlct',city+' Download');
-  $('dlcm','Choose what to download for '+city+'.');
-  $('dl-modal').classList.remove('hide');
-  $('dl-modal').dataset.city=city;
-  $('dl-modal').dataset.t=t||'';
-}
+function triggerCityDl(city,t){$('dlct',city+' Download');$('dlcm','Choose what to download for '+city+'.');$('dl-modal').classList.remove('hide');$('dl-modal').dataset.city=city;$('dl-modal').dataset.t=t||'';}
 function closeDlConf(){$('dl-modal').classList.add('hide');}
-async function dlGo(mode){
-  const city=$('dl-modal').dataset.city||null;
-  const t=$('dl-modal').dataset.t||null;
-  closeDlConf();
-  await _doDownload(t==='loss'?'loss':mode, city);
-}
+async function dlGo(mode){const city=$('dl-modal').dataset.city||null;const t=$('dl-modal').dataset.t||null;closeDlConf();await _doDownload(t==='loss'?'loss':mode,city);}
+
 async function _doDownload(type,city){
   showOv('Preparing download…','Building dataset');
   try{
@@ -1871,143 +1390,53 @@ async function _doDownload(type,city){
     if(city)ep+='&fCity='+encodeURIComponent(city);
     if(type==='filtered')ep+=_cq()+'&'+_fp();
     const d=await fetch(ep).then(r=>r.json());
-    hideOv();
-    if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
-    const rows=d.rows||[];
-    if(!rows.length){toast('No data to download','amber');return;}
-
+    hideOv();if(!d||!d.success){toast(d?.error||'Download failed','red');return;}
+    const rows=d.rows||[];if(!rows.length){toast('No data to download','amber');return;}
     const wb=XLSX.utils.book_new();
-
-    /* ── Tab 1: fill-in sheet ─────────────────────────────────── */
-    // Prepend instruction rows before the data (if provided by server)
-    const instrRows=d.instrRows||[];
-    const allRows=[...instrRows,...rows];  // instructions + header + data rows
-    const instrCount=instrRows.length;     // how many rows to skip for data styling
+    const instrRows=d.instrRows||[];const allRows=[...instrRows,...rows];const instrCount=instrRows.length;
     const ws1=XLSX.utils.aoa_to_sheet(allRows);
-
-    // Column widths (based on header row column count)
-    const wscols=rows[0].map((_,i)=>({wch: i===0?22: i<=2?12: i<=9?14:20}));
-    ws1['!cols']=wscols;
-
-    // Freeze at the row AFTER instructions + header
+    ws1['!cols']=rows[0].map((_,i)=>({wch:i===0?22:i<=2?12:i<=9?14:20}));
     ws1['!freeze']={xSplit:0,ySplit:instrCount+1};
-
-    // Style instruction rows — per-row colours
-    // Row 0: Yellow bg + dark blue bold (title)
-    // Row 1-2: White bg + blue font (general rules)
-    // Row 3: Light yellow bg + red bold (FAKE REMARKS warning)
-    // Row 4: White bg + red font (edit limit warning)
-    // Row 5: blank — no style needed
-    const instrStyles = [
-      {fill:'FFF176', font:'1A237E', bold:true,  sz:11},  // row 0: yellow bg, dark blue bold
-      {fill:'FFFFFF', font:'1565C0', bold:false, sz:10},  // row 1: blue text
-      {fill:'FFFFFF', font:'1565C0', bold:false, sz:10},  // row 2: blue text
-      {fill:'FFFDE7', font:'B71C1C', bold:true,  sz:10},  // row 3: red bold (FAKE REMARKS)
-      {fill:'FFFFFF', font:'C62828', bold:false, sz:10},  // row 4: red text (edit limit)
-    ];
-    for(let ir=0;ir<instrCount;ir++){
-      const addr=XLSX.utils.encode_cell({r:ir,c:0});
-      if(ws1[addr]){
-        const st=instrStyles[ir];
-        if(st) ws1[addr].s={font:{bold:st.bold,color:{rgb:st.font},sz:st.sz},fill:{fgColor:{rgb:st.fill}}};
-      }
-    }
-
-    // Style header row (at instrCount offset)
+    const instrStyles=[{fill:'FFF176',font:'1A237E',bold:true,sz:11},{fill:'FFFFFF',font:'1565C0',bold:false,sz:10},{fill:'FFFFFF',font:'1565C0',bold:false,sz:10},{fill:'FFFDE7',font:'B71C1C',bold:true,sz:10},{fill:'FFFFFF',font:'C62828',bold:false,sz:10}];
+    for(let ir=0;ir<instrCount;ir++){const addr=XLSX.utils.encode_cell({r:ir,c:0});if(ws1[addr]){const st=instrStyles[ir];if(st)ws1[addr].s={font:{bold:st.bold,color:{rgb:st.font},sz:st.sz},fill:{fgColor:{rgb:st.fill}}};}}
     const range=XLSX.utils.decode_range(ws1['!ref']||'A1');
-    for(let c=range.s.c;c<=range.e.c;c++){
-      const addr=XLSX.utils.encode_cell({r:instrCount,c});
-      if(!ws1[addr]) ws1[addr]={v:rows[0][c]||''};
-      ws1[addr].s={font:{bold:true},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};
-    }
-
-    // Highlight mismatch rows (data rows start at instrCount+1)
-    const flags=d.mismatchFlags||[];
-    const actionColIdx=rows[0].indexOf('Action');
-    for(let ri=1;ri<rows.length;ri++){
-      const isMismatch=flags[ri]===true;
-      const sheetRow=instrCount+ri; // offset by instruction rows
-      for(let ci=range.s.c;ci<=range.e.c;ci++){
-        const addr=XLSX.utils.encode_cell({r:sheetRow,c:ci});
-        if(!ws1[addr]) ws1[addr]={v:rows[ri][ci]!==undefined?rows[ri][ci]:''};
-        if(isMismatch){
-          const isActCell=(ci===actionColIdx);
-          ws1[addr].s={fill:{fgColor:{rgb:isActCell?'C0392B':'F39C12'}},font:{color:{rgb:isActCell?'FFFFFF':'000000'},bold:isActCell}};
-        } else {
-          const bg=ri%2===0?'F5F7FA':'FFFFFF';
-          ws1[addr].s={fill:{fgColor:{rgb:bg}}};
-        }
-      }
-    }
-
+    for(let c=range.s.c;c<=range.e.c;c++){const addr=XLSX.utils.encode_cell({r:instrCount,c});if(!ws1[addr])ws1[addr]={v:rows[0][c]||''};ws1[addr].s={font:{bold:true},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};}
+    const flags=d.mismatchFlags||[];const actionColIdx=rows[0].indexOf('Action');
+    for(let ri=1;ri<rows.length;ri++){const isMismatch=flags[ri]===true;const sheetRow=instrCount+ri;for(let ci=range.s.c;ci<=range.e.c;ci++){const addr=XLSX.utils.encode_cell({r:sheetRow,c:ci});if(!ws1[addr])ws1[addr]={v:rows[ri][ci]!==undefined?rows[ri][ci]:''};if(isMismatch){const isActCell=(ci===actionColIdx);ws1[addr].s={fill:{fgColor:{rgb:isActCell?'C0392B':'F39C12'}},font:{color:{rgb:isActCell?'FFFFFF':'000000'},bold:isActCell}};}else{ws1[addr].s={fill:{fgColor:{rgb:ri%2===0?'F5F7FA':'FFFFFF'}}}}};}
     const mismatchCount=flags.filter(Boolean).length;
     XLSX.utils.book_append_sheet(wb,ws1,'RTO Data (Fill In)');
-
-    /* ── Tab 2: standardised action reference ─────────────────── */
     if(d.refRows&&d.refRows.length>1){
-      const ws2=XLSX.utils.aoa_to_sheet(d.refRows);
-      const refRange=XLSX.utils.decode_range(ws2['!ref']||'A1');
-      // Header row: dark blue bg, white bold text
-      for(let c=refRange.s.c;c<=refRange.e.c;c++){
-        const addr=XLSX.utils.encode_cell({r:0,c});
-        if(!ws2[addr]) ws2[addr]={v:d.refRows[0][c]||''};
-        ws2[addr].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center',wrapText:false}};
-      }
-      // Data rows: alternate light grey / white; bold Action col (index 5), bold Update col (index 6)
-      for(let ri=1;ri<d.refRows.length;ri++){
-        const bg=ri%2===0?'F5F7FA':'FFFFFF';
-        for(let ci=refRange.s.c;ci<=refRange.e.c;ci++){
-          const addr=XLSX.utils.encode_cell({r:ri,c:ci});
-          if(!ws2[addr]) ws2[addr]={v:d.refRows[ri][ci]!==undefined?d.refRows[ri][ci]:''};
-          const isBold=(ci===5||ci===6); // Action (5) and Update (6)
-          ws2[addr].s={fill:{fgColor:{rgb:bg}},font:{bold:isBold},alignment:{wrapText:false}};
-        }
-      }
-      // Column widths: Partner | Store Type | Service Type | BU | Stage | Action | Update | Additional Details
-      ws2['!cols']=[{wch:12},{wch:14},{wch:14},{wch:18},{wch:12},{wch:40},{wch:32},{wch:30}];
-      ws2['!freeze']={xSplit:0,ySplit:1};
+      const ws2=XLSX.utils.aoa_to_sheet(d.refRows);const refRange=XLSX.utils.decode_range(ws2['!ref']||'A1');
+      for(let c=refRange.s.c;c<=refRange.e.c;c++){const addr=XLSX.utils.encode_cell({r:0,c});if(!ws2[addr])ws2[addr]={v:d.refRows[0][c]||''};ws2[addr].s={font:{bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'1E3A5F'}},alignment:{horizontal:'center'}};}
+      for(let ri=1;ri<d.refRows.length;ri++){const bg=ri%2===0?'F5F7FA':'FFFFFF';for(let ci=refRange.s.c;ci<=refRange.e.c;ci++){const addr=XLSX.utils.encode_cell({r:ri,c:ci});if(!ws2[addr])ws2[addr]={v:d.refRows[ri][ci]!==undefined?d.refRows[ri][ci]:''};ws2[addr].s={fill:{fgColor:{rgb:bg}},font:{bold:(ci===5||ci===6)}};}}
+      ws2['!cols']=[{wch:12},{wch:14},{wch:14},{wch:18},{wch:12},{wch:40},{wch:32},{wch:30}];ws2['!freeze']={xSplit:0,ySplit:1};
       XLSX.utils.book_append_sheet(wb,ws2,'Action Reference');
     }
-
     const typeLabel=type==='ap'?'_AP':type==='corrective'?'_Corrective':type==='loss'?'_Loss':'';
-    const fname=(city||'PanIndia')+'_RTO'+typeLabel+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
-    XLSX.writeFile(wb,fname,{cellStyles:true});
+    XLSX.writeFile(wb,(city||'PanIndia')+'_RTO'+typeLabel+'_'+new Date().toISOString().slice(0,10)+'.xlsx',{cellStyles:true});
     toast('Downloaded '+(rows.length-1)+' orders'+(mismatchCount?' · '+mismatchCount+' mismatch rows highlighted':''),'green');
-  } catch(e){ hideOv(); toast('Download error: '+e.message,'red'); }
+  }catch(e){hideOv();toast('Download error: '+e.message,'red');}
 }
 
-/* ── LOSS / LOST MODAL ───────────────────────────────────────── */
 async function openLossModal(){
   $('loss-modal-count','');
-  setHTML('loss-modal-body','<div class="emp"><div class="emp-i">&#8987;</div>Loading&hellip;</div>');
+  setHTML('loss-modal-body','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   const adminBtn=$('loss-admin-btn');
-  if(adminBtn){
-    if(USER?.isAdmin||isRA()){
-      adminBtn.innerHTML=`<button onclick="viewRecoveredOrders()" style="padding:8px 18px;border-radius:7px;background:var(--purple);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;">&#128269; View Recovered</button>`;
-    } else { adminBtn.innerHTML=''; }
-  }
+  if(adminBtn){if(USER?.isAdmin||isRA()){adminBtn.innerHTML=`<button onclick="viewRecoveredOrders()" style="padding:8px 18px;border-radius:7px;background:var(--purple);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;">🔍 View Recovered</button>`;}else{adminBtn.innerHTML='';}}
   $('loss-modal').classList.remove('hide');
   try{
     const ep=API+'?action=getLossOrders&email='+encodeURIComponent(USER?.email||'')+_cq();
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success){setHTML('loss-modal-body','<div class="emp">Failed to load.</div>');return;}
-    const orders=d.orders||[];
-    $('loss-modal-count','('+orders.length+' orders)');
-    const pending=orders.filter(o=>o.recoveryStatus==='Pending');
-    const recovered=orders.filter(o=>o.recoveryStatus==='Recovered');
+    const orders=d.orders||[];$('loss-modal-count','('+orders.length+' orders)');
+    const pending=orders.filter(o=>o.recoveryStatus==='Pending');const recovered=orders.filter(o=>o.recoveryStatus==='Recovered');
     setHTML('loss-modal-body',
       `<div style="padding:10px 14px 6px;display:flex;gap:16px;font-size:12px;font-weight:700;color:var(--t2);">
         <span style="color:var(--red);">${pending.length} Pending Recovery</span>
         <span style="color:var(--green);">${recovered.length} Recovered</span>
         <span>Total GMV: ${fmtN(orders.reduce((s,o)=>s+(o.gmv||0),0))}</span>
       </div>`+
-      (orders.length?orders.map(o=>`<div class="mor" style="cursor:default;">
-        <div class="mor-id">${o.orderId}</div>
-        <div class="mor-meta">${o.city} \xb7 ${fmtN(o.gmv||0)} \xb7 ${o.currentAction||'\u2014'}${o.recoveredAmount?' \xb7 Rec: '+fmtN(o.recoveredAmount):''}</div>
-        <div class="mor-age" style="background:${o.recoveryStatus==='Recovered'?'var(--greenl)':'var(--redl)'};color:${o.recoveryStatus==='Recovered'?'var(--green)':'var(--red)'};border-color:${o.recoveryStatus==='Recovered'?'#A7F3D0':'#FECACA'};">
-          ${o.recoveryStatus==='Recovered'?'&#10003; Recovered':'Pending'}
-        </div>
-      </div>`).join(''):'<div class="emp"><div class="emp-i">&#10003;</div>No Loss/Lost orders.</div>')
+      (orders.length?orders.map(o=>`<div class="mor" style="cursor:default;"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · ${fmtN(o.gmv||0)} · ${o.currentAction||'—'}${o.recoveredAmount?' · Rec: '+fmtN(o.recoveredAmount):''}</div><div class="mor-age" style="background:${o.recoveryStatus==='Recovered'?'var(--greenl)':'var(--redl)'};color:${o.recoveryStatus==='Recovered'?'var(--green)':'var(--red)'};border-color:${o.recoveryStatus==='Recovered'?'#A7F3D0':'#FECACA'};">${o.recoveryStatus==='Recovered'?'✓ Recovered':'Pending'}</div></div>`).join(''):'<div class="emp"><div class="emp-i">✓</div>No Loss/Lost orders.</div>')
     );
   }catch(e){setHTML('loss-modal-body','<div class="emp">Error: '+e.message+'</div>');}
 }
@@ -2015,110 +1444,65 @@ function closeLossModal(){$('loss-modal').classList.add('hide');}
 
 async function viewRecoveredOrders(){
   if(!USER?.isAdmin&&!isRA())return;
-  setHTML('loss-modal-body','<div class="emp"><div class="emp-i">&#8987;</div>Loading recovered orders&hellip;</div>');
+  setHTML('loss-modal-body','<div class="emp"><div class="emp-i">⏳</div>Loading recovered orders…</div>');
   try{
     const ep=API+'?action=getLossOrders&email='+encodeURIComponent(USER?.email||'')+'&view=recovered'+_cq();
     const d=await fetch(ep).then(r=>r.json());
     if(!d||!d.success){setHTML('loss-modal-body','<div class="emp">Failed.</div>');return;}
-    const orders=d.orders||[];
-    $('loss-modal-count','('+orders.length+' recovered)');
-    setHTML('loss-modal-body',
-      `<div style="padding:10px 14px 6px;font-size:12px;font-weight:700;color:var(--green);">${orders.length} orders \xb7 Recovered: ${fmtN(orders.reduce((s,o)=>s+(o.recoveredAmount||0),0))}</div>`+
-      (orders.length?orders.map(o=>`<div class="mor" style="cursor:default;">
-        <div class="mor-id">${o.orderId}</div>
-        <div class="mor-meta">${o.city} \xb7 GMV: ${fmtN(o.gmv||0)} \xb7 Recovered: ${fmtN(o.recoveredAmount||0)}${o.recoveryRef?' \xb7 Ref: '+o.recoveryRef:''}</div>
-        <div class="mor-age" style="background:var(--greenl);color:var(--green);border-color:#A7F3D0;">&#10003; Done</div>
-      </div>`).join(''):'<div class="emp">No recovered orders yet.</div>')
-    );
+    const orders=d.orders||[];$('loss-modal-count','('+orders.length+' recovered)');
+    setHTML('loss-modal-body',`<div style="padding:10px 14px 6px;font-size:12px;font-weight:700;color:var(--green);">${orders.length} orders · Recovered: ${fmtN(orders.reduce((s,o)=>s+(o.recoveredAmount||0),0))}</div>`+(orders.length?orders.map(o=>`<div class="mor" style="cursor:default;"><div class="mor-id">${o.orderId}</div><div class="mor-meta">${o.city} · GMV: ${fmtN(o.gmv||0)} · Recovered: ${fmtN(o.recoveredAmount||0)}${o.recoveryRef?' · Ref: '+o.recoveryRef:''}</div><div class="mor-age" style="background:var(--greenl);color:var(--green);border-color:#A7F3D0;">✓ Done</div></div>`).join(''):'<div class="emp">No recovered orders yet.</div>'));
   }catch(e){setHTML('loss-modal-body','<div class="emp">Error: '+e.message+'</div>');}
 }
-
 function openLossRecoveryUpload(){$('loss-recovery-file').click();}
 
 async function handleLossRecovery(inp){
   const file=inp.files[0];if(!file)return;
-  showOv('Parsing recovery file\u2026','Reading Excel');
-  const ab=await file.arrayBuffer();
-  const wb=XLSX.read(ab,{type:'array'});
-  const sh=wb.Sheets[wb.SheetNames[0]];
+  showOv('Parsing recovery file…','Reading Excel');
+  const ab=await file.arrayBuffer();const wb=XLSX.read(ab,{type:'array'});const sh=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true,defval:''});
   if(rows.length<2){hideOv();toast('File empty','red');inp.value='';return;}
   const hdr=rows[0].map(h=>String(h||'').toLowerCase().trim());
-  const oi=hdr.findIndex(h=>h.includes('order'));
-  const ai=hdr.findIndex(h=>h.includes('amount')||h.includes('recovered'));
-  const ri=hdr.findIndex(h=>h.includes('ref'));
-  const di=hdr.findIndex(h=>h.includes('date'));
+  const oi=hdr.findIndex(h=>h.includes('order'));const ai=hdr.findIndex(h=>h.includes('amount')||h.includes('recovered'));
+  const ri=hdr.findIndex(h=>h.includes('ref'));const di=hdr.findIndex(h=>h.includes('date'));
   if(oi<0||ai<0){hideOv();toast('Cannot find Order ID or Recovered Amount column','red');inp.value='';return;}
-  const recoveryRows=rows.slice(1).filter(r=>r[oi]).map(r=>({
-    orderId:   String(r[oi]||'').trim(),
-    recoveredAmount: parseFloat(r[ai])||0,
-    recoveryRef:  ri>=0?String(r[ri]||'').trim():'',
-    recoveryDate: di>=0?String(r[di]||'').trim():'',
-  }));
-  hideOv();
-  if(!recoveryRows.length){toast('No data rows found','amber');inp.value='';return;}
-
-  // Validate: both Amount Recovered and Ref Number must be present in every row
-  const missingAmt = recoveryRows.filter(r=>!r.recoveredAmount||r.recoveredAmount<=0);
-  const missingRef = recoveryRows.filter(r=>!r.recoveryRef);
-  if(missingAmt.length){toast('Amount Recovered is missing or zero in '+missingAmt.length+' row(s). All rows must have a valid amount.','red');inp.value='';return;}
-  if(missingRef.length){toast('Ref Number is missing in '+missingRef.length+' row(s). All rows must have a Ref Number.','red');inp.value='';return;}
-  showOv('Uploading recovery data\u2026','Saving to backend');
+  const recoveryRows=rows.slice(1).filter(r=>r[oi]).map(r=>({orderId:String(r[oi]||'').trim(),recoveredAmount:parseFloat(r[ai])||0,recoveryRef:ri>=0?String(r[ri]||'').trim():'',recoveryDate:di>=0?String(r[di]||'').trim():''}));
+  hideOv();if(!recoveryRows.length){toast('No data rows found','amber');inp.value='';return;}
+  const missingAmt=recoveryRows.filter(r=>!r.recoveredAmount||r.recoveredAmount<=0);
+  const missingRef=recoveryRows.filter(r=>!r.recoveryRef);
+  if(missingAmt.length){toast('Amount Recovered missing or zero in '+missingAmt.length+' row(s)','red');inp.value='';return;}
+  if(missingRef.length){toast('Ref Number missing in '+missingRef.length+' row(s)','red');inp.value='';return;}
+  showOv('Uploading recovery data…','Saving to backend');
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'lossRecoveryUpload',email:USER?.email||'',rows:recoveryRows})}).then(r=>r.json());
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'lossRecoveryUpload',email:USER?.email||'',rows:recoveryRows})}).then(r=>r.json());
     hideOv();
-    if(res.success){
-      toast(res.saved+' recovery records saved'+(res.failed?' \xb7 '+res.failed+' failed':''),'green');
-      localStorage.removeItem(LC_KEY);
-      openLossModal(); // refresh the modal
-    } else { toast(res.error||'Upload failed','red'); }
+    if(res.success){toast(res.saved+' recovery records saved'+(res.failed?' · '+res.failed+' failed':''),'green');localStorage.removeItem(LC_KEY);openLossModal();}
+    else{toast(res.error||'Upload failed','red');}
   }catch(e){hideOv();toast('Network error: '+e.message,'red');}
   inp.value='';
 }
 
-/* AP queue download — full city-scoped AP list from server (not page-limited) */
-async function downloadAP(){
-  const city=SCITY||(USER?.isAdmin?'':USER?.city||'');
-  await _doDownload('ap', city||null);
-}
+async function downloadAP(){const city=SCITY||(USER?.isAdmin?'':USER?.city||'');await _doDownload('ap',city||null);}
+async function dlCRHighAgeing(){await _doDownload('crHighAgeing',SCITY||null);}
 
-/* CR >10 days download */
-async function dlCRHighAgeing(){
-  await _doDownload('crHighAgeing', SCITY||null);
-}
-
-/* ── CHARTS ──────────────────────────────────────────────────── */
 function rdChartsKPI(k){
   _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   _mkChart('ch-st','doughnut',['Action Pending','Closure Remark','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
-  if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){
-    const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);
-    _mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);
-  }
+  if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);_mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);}
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
 }
 function _mkChart(id,type,labels,data,colors){
   try{
-    const el=$(id);if(!el)return;
-    if(_charts[id])_charts[id].destroy();
+    const el=$(id);if(!el)return;if(_charts[id])_charts[id].destroy();
     const total=data.reduce((a,b)=>a+(b||0),0)||1;
-    const dlConfig=type==='doughnut'
-      ? {display:true,color:'#fff',font:{size:10,weight:'700'},formatter:function(v){return v>0?Math.round(v/total*100)+'%':null;}}
-      : {display:true,color:'#334155',font:{size:10,weight:'600'},anchor:'end',align:'top',offset:2,formatter:function(v){return v>0?v:null;}};
-    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:function(ctx){const val=type==='bar'?(typeof ctx.parsed==='object'&&ctx.parsed!==null?ctx.parsed.y:ctx.parsed):ctx.parsed;return (ctx.label||'')+': '+val;}}},datalabels:dlConfig}}});
-  } catch(e){}
+    const dlConfig=type==='doughnut'?{display:true,color:'#fff',font:{size:10,weight:'700'},formatter:function(v){return v>0?Math.round(v/total*100)+'%':null;}}:{display:true,color:'#334155',font:{size:10,weight:'600'},anchor:'end',align:'top',offset:2,formatter:function(v){return v>0?v:null;}};
+    _charts[id]=new Chart(el,{type,data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:type==='doughnut'?2:0,borderRadius:type==='bar'?4:0,borderColor:'#fff'}]},options:{responsive:true,plugins:{legend:{display:type==='doughnut',position:'bottom',labels:{font:{size:10},padding:8}},tooltip:{callbacks:{label:function(ctx){const val=type==='bar'?(typeof ctx.parsed==='object'&&ctx.parsed!==null?ctx.parsed.y:ctx.parsed):ctx.parsed;return(ctx.label||'')+': '+val;}}},datalabels:dlConfig}}});
+  }catch(e){}
+}
+async function adminResetEdit(orderId){
+  if(!USER?.isAdmin){toast('Admin only','red');return;}if(!confirm('Reset edit count for '+orderId+'?'))return;
+  try{const r=await fetch(API+'?action=resetEditCount&email='+encodeURIComponent(USER.email||'')+'&orderId='+encodeURIComponent(orderId)).then(r=>r.json());if(r.success){toast('Edit count reset for '+orderId);localStorage.removeItem(LC_KEY);loadOrders();}else toast(r.error||'Reset failed','red');}catch(e){toast('Network error','red');}
 }
 
-async function adminResetEdit(orderId){
-  if(!USER?.isAdmin){toast('Admin only','red');return;}
-  if(!confirm('Reset edit count for '+orderId+'?'))return;
-  try{
-    const r=await fetch(API+'?action=resetEditCount&email='+encodeURIComponent(USER.email||'')+'&orderId='+encodeURIComponent(orderId)).then(r=>r.json());
-    if(r.success){toast('Edit count reset for '+orderId);localStorage.removeItem(LC_KEY);loadOrders();}
-    else toast(r.error||'Reset failed','red');
-  } catch(e){toast('Network error','red');}
-}
 </script>
 </body>
 </html>
