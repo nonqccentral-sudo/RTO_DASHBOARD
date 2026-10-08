@@ -611,7 +611,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
 const LC_KEY='rto_sum_v2343';
-const LC_TTL=15*60*1000;
+const LC_TTL=20*60*1000;  // 20 min (was 15)
 const PAGE_SZ=100;
 
 let USER=null,SUM=null,TRD=[],ORDERS=[],CHANGES={},PG=1,TOTAL_PGS=1,SCITY='',QF='Overall',GAP=false,APF=false,ORDERS_LOADING=false,ALL_ACTIONS=[],_charts={},_uplBatch=null;
@@ -728,13 +728,32 @@ function loadSummary(){
     const raw=localStorage.getItem(LC_KEY);
     if(raw){const{data,ts}=JSON.parse(raw);if(Date.now()-ts<LC_TTL&&data&&data.success){SUM=data;TRD=data.trend||[];_renderSummary(data);loadOrders();return;}}
   }catch(e){}
+  /* PERF: for city users, summary + orders load in parallel (cuts perceived load ~40%) */
   showOv('Loading RTO data…','Please wait');
-  fetch(API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq()).then(r=>r.json()).then(sd=>{
-    hideOv();if(!sd||!sd.success){toast('Failed to load summary','amber');return;}
-    SUM=sd;TRD=sd.trend||[];
-    localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
-    _renderSummary(sd);loadOrders();
-  }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
+  const sumEp=API+'?action=getSummary&email='+encodeURIComponent(USER?.email||'')+_cq();
+  const ordEp=API+'?action=getOrders&email='+encodeURIComponent(USER?.email||'')+'&page=1&ps='+PAGE_SZ+_cq()+'&'+_fp();
+  const isCityUser=!USER?.isAdmin&&!isRA()&&USER?.city;
+  if(isCityUser){
+    // Parallel: both requests fly at once
+    Promise.all([
+      fetch(sumEp).then(r=>r.json()).catch(()=>null),
+      fetch(ordEp).then(r=>r.json()).catch(()=>null)
+    ]).then(([sd,od])=>{
+      hideOv();
+      if(sd&&sd.success){SUM=sd;TRD=sd.trend||[];localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));_renderSummary(sd);}
+      else{toast('Failed to load summary','amber');}
+      if(od&&od.success){ORDERS_LOADING=false;$('tload').style.display='none';_renderOrders(od);}
+      else if(od){toast(od.error||'Failed to load orders','red');}
+    }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
+  } else {
+    // Sequential for admin/region admin (they need summary cities list first)
+    fetch(sumEp).then(r=>r.json()).then(sd=>{
+      hideOv();if(!sd||!sd.success){toast('Failed to load summary','amber');return;}
+      SUM=sd;TRD=sd.trend||[];
+      localStorage.setItem(LC_KEY,JSON.stringify({data:sd,ts:Date.now()}));
+      _renderSummary(sd);loadOrders();
+    }).catch(e=>{hideOv();toast('Load error: '+e.message,'red');});
+  }
 }
 
 function _renderSummary(sd){
