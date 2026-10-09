@@ -644,7 +644,7 @@ async function doLogin(){
       USER._regionSet=res.isRegionAdmin?new Set((res.regionCities||[]).map(c=>c.toUpperCase())):null;
       localStorage.removeItem(LC_KEY);
       $('login-screen').classList.add('hide');
-      $('upill',(res.isAdmin?'Admin':res.city)+' · '+email.split('@')[0]);
+      $('upill',(res.isAdmin?'Admin':(res.cities&&res.cities.length>1?res.cities.join(' / '):res.city))+' · '+email.split('@')[0]);
       initDash();
     }else{$('l-err',res.error||'Invalid credentials.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
   }catch(e){$('l-err','Network error. Please retry.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
@@ -671,11 +671,13 @@ function initDash(){
   $('qc-tabs').style.display='';
   $('city-perf-sec').style.display=(ia||ra)?'':'none';
   if(!ia&&!ra&&USER?.city){
-    SCITY=USER.city.toUpperCase();$('kpi-ttl',(SCITY||'City')+' Overview');
+    const _primaryCity=USER.city; // first city (primary)
+    SCITY=_primaryCity.toUpperCase();$('kpi-ttl',(SCITY||'City')+' Overview');
     const _cd=$('cdet');if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
-    $('cd-ttl',USER.city+' Orders');
+    const _multiLabel=(USER.cities&&USER.cities.length>1)?USER.cities.join(' / '):_primaryCity;
+    $('cd-ttl',_multiLabel+' Orders');
     const _dlD=$('cd-dl-btns');
-    if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${USER.city}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+    if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${_primaryCity}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
   }
   if(ra)$('kpi-ttl',(USER.region||'Region')+' Overview');
   loadSummary();
@@ -1016,7 +1018,11 @@ function rdRows(){
     const cl=o.isGreen?'tg':o.hasCODShortfall?'tl':o.actionMismatch?'tm':o.actionPending&&!isChg?'tr':'';
     const aeLk=o.actionEditCount>=2;const ueLk=o.updateEditCount>=2;
     let actHtml='',updHtml='';
-    if(!canE||aeLk){
+    // SRN Completed orders: show read-only action, no editing allowed
+    if(o.isGreen&&o.srnCompleted){
+      actHtml=`<span class="ro" style="color:var(--green);font-weight:600;">✓ ${curAct||'—'}</span>`;
+      updHtml=`<span class="ro" style="color:var(--green);">${curUpd||'SRN Done'}</span>`;
+    }else if(!canE||aeLk){
       actHtml=`<span class="ro">${curAct||'—'}</span>`+(aeLk&&canE&&USER?.isAdmin?`<button onclick="adminResetEdit('${o.orderId}')" style="margin-left:6px;padding:2px 8px;border-radius:4px;border:1px solid #FECACA;background:var(--redl);color:var(--red);font-size:10px;font-weight:700;cursor:pointer;">Reset</button>`:'<span class="lkchip" title="Max edits reached">✎✎</span>');
     }else{
       const aOpts=(o.availableActions||[]);
@@ -1033,6 +1039,7 @@ function rdRows(){
     }
     const effectiveMismatch=o.actionMismatch&&ch.action===undefined;
     const needUpd=curAct&&!effectiveMismatch&&(o.availableUpdates||[]).length>0;
+    if(!(o.isGreen&&o.srnCompleted)){// skip update block for SRN-completed orders (already set above)
     if(!canE||ueLk){updHtml=`<span class="ro">${curUpd||'—'}</span>`;}
     else if(!curAct||effectiveMismatch){updHtml=`<span class="lknote" style="color:var(--t3);">${!curAct?'Set action first':'Set correct action first'}</span>`;}
     else if(!needUpd){updHtml=`<span class="lknote">Awaiting SRN</span>`;}
@@ -1053,6 +1060,7 @@ function rdRows(){
         updHtml+='</div>';
       }
     }
+    }// end non-SRN-completed block
     const srnBadge=o.srnStatus?`<span class="b ${o.srnCompleted?'bg':'bs'}">${o.srnStatus}</span>`:'—';
     const svcBadge=o.serviceFlag?`<span class="b bt">${o.serviceFlag}</span>`:'—';
     const ageBadge=o.isHighAgeing?`<span class="b br">${o.ageingDays}d HA</span>`:o.isMidAgeing?`<span class="b ba">${o.ageingDays}d</span>`:`<span class="b bs">${o.ageingDays||0}d</span>`;
@@ -1073,7 +1081,7 @@ function rdRows(){
 
 function isRA(){return USER?.isRegionAdmin===true;}
 function inRegion(city){return USER?._regionSet?USER._regionSet.has((city||'').toUpperCase()):false;}
-function canEdit(city){if(!city)return USER?.isAdmin||isRA()||false;return USER?.isAdmin||inRegion(city)||(USER?.city||'').toUpperCase()===city.toUpperCase();}
+function canEdit(city){if(!city)return USER?.isAdmin||isRA()||false;if(USER?.isAdmin||inRegion(city))return true;if(USER?.cities&&USER.cities.length>1)return USER.cities.some(c=>c.toUpperCase()===city.toUpperCase());return(USER?.city||'').toUpperCase()===city.toUpperCase();}
 function onActChg(id,val,sel){
   const o=ORDERS.find(x=>x.orderId===id);if(!o)return;
   const orig=o.currentAction||'';
@@ -1143,30 +1151,45 @@ function _getClientActionRules(){if(SUM&&SUM.actionMap)return SUM.actionMap;retu
 async function saveAll(){
   const entries=Object.entries(CHANGES).map(([id,c])=>({orderId:id,...c}));
   if(!entries.length)return;
-  $('sbtn').disabled=true;$('sst','Saving…');
+  $('sbtn').disabled=true;
   const changeSnapshot=Object.assign({},CHANGES);
-  const _doSave=async()=>fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:entries})}).then(r=>r.json());
+  const SAVE_CHUNK=4; // max 4 orders per GAS call — keeps execution well under timeout
+  const allResults=[];
+  const _doPost=async(chunk)=>fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({action:'batchSave',email:USER?.email||'',changes:chunk})}).then(r=>r.json());
   try{
-    let res;
-    try{res=await _doSave();}
-    catch(e1){
-      $('sst','Retrying…');
-      await new Promise(r=>setTimeout(r,1500));
-      try{res=await _doSave();}
-      catch(e2){toast('Network error — check connection and retry','red');$('sbtn').disabled=false;$('sst','');return;}
+    for(let i=0;i<entries.length;i+=SAVE_CHUNK){
+      const chunk=entries.slice(i,i+SAVE_CHUNK);
+      const total=entries.length; const done=Math.min(i+SAVE_CHUNK,total);
+      $('sst',total>SAVE_CHUNK?'Saving '+( i+1)+'–'+done+' of '+total+'…':'Saving…');
+      let res;
+      try{res=await _doPost(chunk);}
+      catch(e1){
+        $('sst','Retrying…');
+        await new Promise(r=>setTimeout(r,3000)); // wait 3s before retry
+        try{res=await _doPost(chunk);}
+        catch(e2){
+          toast('Network error — check connection and retry','red');
+          $('sbtn').disabled=false;$('sst','');return;
+        }
+      }
+      if(res&&res.success){
+        allResults.push(...(res.results||[]));
+        (res.results||[]).forEach(r=>{if(r.success)delete CHANGES[r.orderId];});
+      } else {
+        toast((res&&res.error)||'Save failed','red');
+        $('sbtn').disabled=false;$('sst','');return;
+      }
     }
-    if(res.success){
-      const ok=res.results.filter(r=>r.success).length;
-      const fail=res.results.filter(r=>!r.success).length;
-      res.results.forEach(r=>{if(r.success)delete CHANGES[r.orderId];});
-      Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
-      toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
-      if(fail){const fIds=res.results.filter(r=>!r.success).map(r=>r.orderId+': '+(r.error||'failed')).join('\n');console.warn('Save failures:\n'+fIds);}
-      $('sst','');updSbar();
-      _patchOrdersAndRefreshUI(res.results,changeSnapshot);
-      fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
-    }else{toast(res.error||'Save failed','red');}
+    // All chunks done
+    const ok=allResults.filter(r=>r.success).length;
+    const fail=allResults.filter(r=>!r.success).length;
+    Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
+    toast((ok>0?ok+' saved':'No changes saved')+(fail?' · '+fail+' failed':''),'green');
+    if(fail){const fIds=allResults.filter(r=>!r.success).map(r=>r.orderId+': '+(r.error||'failed')).join('\n');console.warn('Save failures:\n'+fIds);}
+    $('sst','');updSbar();
+    _patchOrdersAndRefreshUI(allResults,changeSnapshot);
+    fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
   }catch(e){toast('Save failed: '+e.message,'red');}
   $('sbtn').disabled=false;
 }
@@ -1205,10 +1228,19 @@ async function handleUpload(inp){
     codAmount:codi>=0?(parseFloat(r[codi])||0):0,
   }));
   if(!data.length){hideOv();toast('No data rows found','amber');inp.value='';return;}
-  hideOv();showOv('Validating on server…','Checking '+data.length+' rows against backend');
+  hideOv();showOv('Validating on server…','Checking '+data.length+' rows — this may take ~15s if data is loading');
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
+    // validation is read-only — retry once with longer implicit timeout
+    let res;
+    try{
+      res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
+    }catch(ev1){
+      $('ov-msg','Server loading data, retrying in 5s…');
+      await new Promise(r=>setTimeout(r,5000));
+      res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data})}).then(r=>r.json());
+    }
     hideOv();
     if(!res||!res.success){toast(res?.error||'Validation failed','red');inp.value='';return;}
     _uplBatch=res;
@@ -1252,7 +1284,7 @@ async function handleUpload(inp){
     setHTML('ubody',mismatchBanner+rowHtml);
     $('usave-btn').style.display=correctMatch>0?'':'none';
     $('upload-modal').classList.remove('hide');
-  }catch(e){hideOv();toast('Upload error: '+e.message,'red');}
+  }catch(e){hideOv();toast('Validation failed — server may be loading data. Wait 30s and retry upload.','red');}
   inp.value='';
 }
 
@@ -1261,7 +1293,7 @@ async function saveUploadChanges(){
   const valid=_uplBatch.results.filter(r=>r.valid&&!r.noChange);
   if(!valid.length){toast('No changes to save','amber');return;}
   const changeMap={};valid.forEach(r=>{if(r.resolved)changeMap[r.orderId]=r.resolved;});
-  const CHUNK=15;
+  const CHUNK=4; // reduced from 15 — prevents GAS timeout on bulk upload
   const allChanges=valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}));
   const allResults=[];
   showOv('Saving '+valid.length+' updates…','Sending in chunks of '+CHUNK);
