@@ -671,13 +671,16 @@ function initDash(){
   $('qc-tabs').style.display='';
   $('city-perf-sec').style.display=(ia||ra)?'':'none';
   if(!ia&&!ra&&USER?.city){
-    const _primaryCity=USER.city; // first city (primary)
-    SCITY=_primaryCity.toUpperCase();$('kpi-ttl',(SCITY||'City')+' Overview');
+    const _isMulti=USER.cities&&USER.cities.length>1;
+    const _primaryCity=USER.city;
+    SCITY=_isMulti?'':_primaryCity.toUpperCase();
+    const _multiLabel=_isMulti?USER.cities.join(' / '):_primaryCity;
+    $('kpi-ttl',_multiLabel+' Overview');
     const _cd=$('cdet');if(_cd){_cd.classList.add('vis');_cd.style.display='block';}
-    const _multiLabel=(USER.cities&&USER.cities.length>1)?USER.cities.join(' / '):_primaryCity;
     $('cd-ttl',_multiLabel+' Orders');
     const _dlD=$('cd-dl-btns');
     if(_dlD)_dlD.innerHTML=`<button onclick="triggerCityDl('${_primaryCity}')" style="padding:6px 14px;border-radius:var(--rs);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #BFDBFE;background:var(--bluel);color:var(--blue);">&#11015; Download</button>`;
+    if(_isMulti){const citySel=$('f-city');if(citySel){citySel.innerHTML='<option value="">All Cities</option>';USER.cities.forEach(c=>{const o=document.createElement('option');o.value=c.toUpperCase();o.textContent=c;citySel.appendChild(o);});}}
   }
   if(ra)$('kpi-ttl',(USER.region||'Region')+' Overview');
   loadSummary();
