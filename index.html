@@ -502,7 +502,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   <div class="fbar">
     <div class="fg"><label>City</label><select id="f-city" onchange="onCityFilter()"><option value="">All Cities</option></select></div>
     <div class="fg"><label>Partner</label><select id="f-partner"><option value="">All</option><option value="INHOUSE">INHOUSE</option><option value="3PL">3PL</option></select></div>
-    <div class="fg"><label>Rider Type</label><select id="f-rider"><option value="">All</option><option value="1mg">1mg</option><option value="3P">3P</option></select></div>
+    <div class="fg"><label>Rider Type</label><select id="f-rider"><option value="">All</option><option value="1mg">1mg</option><option value="3P">3P</option><option value="REVIEW">Review Required</option></select></div>
     <div class="fg"><label>BU</label><select id="f-bu"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
     <div class="fg"><label>Store</label><select id="f-store"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
@@ -612,7 +612,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 
 <script>
 
-const API='https://script.google.com/macros/s/AKfycbzE2AR4lwSguuTdao2dV19AovJbaZbZwh4_T6AO-npbD_hbzkAMlJRsLnLeWw0ju-Vycg/exec';
+const API='https://script.google.com/macros/s/AKfycbx4jCnvEdVSiqXF4WHqz1HmMysR6pBORfqPyijCWcHQnhyB0xmoo1kMZ_gQHbNwtFPq/exec';
 const LC_KEY='rto_sum_v2343';
 const LC_TTL=20*60*1000;  // 20 min (was 15)
 const PAGE_SZ=100;
@@ -647,7 +647,7 @@ async function doLogin(){
       USER._regionSet=res.isRegionAdmin?new Set((res.regionCities||[]).map(c=>c.toUpperCase())):null;
       localStorage.removeItem(LC_KEY);
       $('login-screen').classList.add('hide');
-      $('upill',(res.isAdmin?'Admin':(res.cities&&res.cities.length>1?res.cities.join(' / '):res.city))+' · '+email.split('@')[0]);
+      $('upill',(res.isAdmin?'Admin':(res.isRegionAdmin?('Region Admin · '+(res.region||'')):(res.isViewOnly?'VIEW_ONLY':(res.cities&&res.cities.length>1?res.cities.join(' / '):res.city))))+' · '+email.split('@')[0]);
       initDash();
     }else{$('l-err',res.error||'Invalid credentials.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
   }catch(e){$('l-err','Network error. Please retry.');$('l-btn').disabled=false;$('l-btn').textContent='Sign In →';}
@@ -1096,7 +1096,7 @@ function rdRows(){
 
 
     tb.insertAdjacentHTML('beforeend',`<tr class="${cl}">
-      <td class="td-id">${o.orderId}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">Action Pending</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
+      <td class="td-id">${o.orderId}${o.riderTypeReview?'<br><span class="b ba" title="Unknown last_MDQ value — review classification" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ RIDER REVIEW</span>':''}${o.actionMismatch?'<br><span class="b ba" style="background:#FFF3CD;color:#856404;border-color:#FFECB5;font-size:9px">⚠ MISMATCH</span>':''}${o.actionPending&&!isChg&&!o.actionMismatch?'<br><span class="b br flash">Action Pending</span>':''}${o.isGreen?'<br><span class="b bg">✓ SRN/Closed</span>':''}</td>
       <td>${o.city||'—'}</td><td>${fmtN(o.gmv||0)}</td>
       <td><span class="b bs">${o.storeType||'—'}</span></td>
       <td><span class="b ${o.partner==='INHOUSE'?'bb':'ba'}">${o.partner||'—'}</span></td>
