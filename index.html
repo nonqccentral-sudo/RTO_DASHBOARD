@@ -424,7 +424,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
   </div>
 </div>
 <div class="mbg hide" id="ha-modal" onclick="if(event.target===this)closeHA()">
-  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&gt;5 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
+  <div class="modal"><div class="mhdr"><h2>High Ageing <span>(&ge;6 days)</span></h2><button class="mclose" onclick="closeHA()">&#10005;</button></div><div class="mbody" id="ha-body"></div></div>
 </div>
 <div class="mbg hide" id="ap-modal" onclick="if(event.target===this)closeAP()">
   <div class="modal" style="max-width:960px"><div class="mhdr"><h2>Action Pending Queue</h2><button class="mclose" onclick="closeAP()">&#10005;</button></div><div class="mbody" id="ap-body"></div></div>
@@ -506,7 +506,7 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     <div class="fg"><label>BU</label><select id="f-bu"><option value="">All</option><option>E-Pharma</option><option>PSP</option></select></div>
     <div class="fg"><label>Store</label><select id="f-store"><option value="">All</option><option value="WAREHOUSE">Warehouse</option><option value="RETAIL">Retail</option></select></div>
     <div class="fg"><label>Stage</label><select id="f-stage"><option value="">All</option><option>Pre MDQ</option><option>Post MDQ</option></select></div>
-    <div class="fg"><label>Ageing</label><select id="f-age"><option value="">All</option><option value="Pending">0&ndash;2 Days</option><option value="Recoverable">&gt;2 Days</option><option value="High Ageing">High Ageing &gt;5d</option></select></div>
+    <div class="fg"><label>Ageing</label><select id="f-age"><option value="">All</option><option value="Pending">0&ndash;2 Days</option><option value="Recoverable">3&ndash;5 Days</option><option value="High Ageing">High Ageing &ge;6d</option></select></div>
     <div class="fg" id="fgact"><label>Action</label><select id="f-act"><option value="">All</option></select></div>
     <div class="fdiv"></div>
     <div class="fg"><label>From</label><input type="date" id="f-from"/></div>
@@ -809,8 +809,8 @@ function rdKPI(k){
 }
 
 function rdAgeing(k){
-  const t=(k.actionPending>0?k.actionPending:((k.pending||0)+(k.moreThan2||0)))||1;
-  const _more2=(k.moreThan2||0);const _more2Amt=(k.moreThan2Amt||0);
+  const t=(k.actionPending>0?k.actionPending:((k.pending||0)+(k.moreThan2||0)+(k.highAgeing||0)))||1;
+  const _more2=(k.moreThan2||0)+(k.highAgeing||0);const _more2Amt=(k.moreThan2Amt||0)+(k.highAgeingAmt||0);
   const pp=parseFloat(Math.min(100,(k.pending||0)/t*100).toFixed(1));
   const rp=parseFloat(Math.min(100,_more2/t*100).toFixed(1));
   const hp=parseFloat(Math.min(100,(k.highAgeing||0)/t*100).toFixed(1));
@@ -845,8 +845,8 @@ function rdCityCards(cards){
       <div class="cstats">
         <div class="cs aa"><div class="csl">Action Pending</div><div class="csv">${activePct}% <span class="csv-sm">(${c.actionPending||0})</span></div></div>
         <div class="cs p02"><div class="csl">Pending 0–2</div><div class="csv">${p02Pct}% <span class="csv-sm">(${c.pending02||c.pending||0})</span></div></div>
-        <div class="cs p35"><div class="csl">Recoverable &gt;2</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
-        <div class="cs ha6"><div class="csl">High Ageing &gt;5</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
+        <div class="cs p35"><div class="csl">Pending 2–5</div><div class="csv">${p35Pct}% <span class="csv-sm">(${c.midAgeing35||c.moreThan2||0})</span></div></div>
+        <div class="cs ha6"><div class="csl">Pending >5</div><div class="csv">${ha6Pct}% <span class="csv-sm">(${c.highAgeing6||c.highAgeing||0})</span></div></div>
       </div>
       <div class="cbtns">
         <button class="cbtn cb-dl" onclick="event.stopPropagation();triggerCityDl('${c.city}')">&#11015; Download</button>
@@ -982,7 +982,7 @@ function afterOrdersCity(){
   const ap=_sk?(_sk.actionPending||0):ORDERS.filter(o=>o.actionPending).length;
   const lossT=(_sk&&_sk.lossTotal)||0;const lossS=(_sk&&_sk.inhouseLoss)||0;
   const pend02=(_sk&&_sk.pending)||(_cc&&(_cc.pending02||_cc.pending))||ORDERS.filter(o=>o.isPending&&o.actionPending).length;
-  const pendMore2=(_sk&&(_sk.moreThan2||0))||(_cc&&( _cc.midAgeing35||0))||ORDERS.filter(o=>o.isRecoverable&&o.actionPending).length;
+  const pendMore2=(_sk&&((_sk.moreThan2||0)+(_sk.highAgeing||0)))||(_cc&&((_cc.midAgeing35||0)+(_cc.highAgeing6||0)))||ORDERS.filter(o=>!o.isPending&&o.actionPending).length;
   const ha=(_sk&&_sk.highAgeing)||(_cc&&(_cc.highAgeing6||_cc.highAgeing))||ORDERS.filter(o=>o.isHighAgeing&&o.actionPending).length;
   const totAct=ap||1;$('ap-cnt',ap+' action pending');
   if(USER?.isAdmin||isRA()){
@@ -1027,10 +1027,11 @@ async function _renderCityPivot(){
 
 function rdRows(){
   const tb=$('tbody');tb.innerHTML='';
-  const canE=USER?.isAdmin?true:canEdit(SCITY||USER?.city||'');
   if(!ORDERS.length){$('temp').style.display='block';return;}
   $('temp').style.display='none';
   ORDERS.forEach(o=>{
+    // Check permission against each order's mapped city to avoid a global city mismatch.
+    const canE=USER?.isAdmin?true:canEdit(o.city||SCITY||USER?.city||'');
     const ch=CHANGES[o.orderId]||{};
     const curAct=ch.action!==undefined?ch.action:o.currentAction||'';
     const curUpd=ch.update!==undefined?ch.update:o.currentUpdate||'';
@@ -1078,10 +1079,6 @@ function rdRows(){
         const selectDefaultU=`<option value="" disabled${!curUpd||!uOpts.includes(curUpd)?' selected':''}>Select</option>`;
         updHtml=`<div class="ec"><select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
         if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
-        if(curUpd==='CN Received'||curUpd==='CN Requested'){
-          const existingCnSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
-          updHtml+=`<span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required…" value="${existingCnSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/>`;
-        }
         if(curUpd==='COD Collected'){
           const existingCodSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
           updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}<span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required…" value="${existingCodSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/>`;
@@ -1613,7 +1610,7 @@ async function downloadAP(){const city=SCITY||(USER?.isAdmin?'':USER?.city||'');
 async function dlCRHighAgeing(){await _doDownload('crHighAgeing',SCITY||null);}
 
 function rdChartsKPI(k){
-  _mkChart('ch-ag','bar',['0–2 Days','Recoverable >2 Days','High Ageing >5 Days (subset)'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
+  _mkChart('ch-ag','bar',['0-2 Days','2-5 Days','>5 Days'],[k.pending||0,k.moreThan2||0,k.highAgeing||0],['#2563EB','#D97706','#DC2626']);
   _mkChart('ch-st','doughnut',['Action Pending','Closure Remark','SRN Done'],[k.actionPending||0,k.closureRemarks||0,k.srnCompleted||0],['#D97706','#7C3AED','#059669']);
   if(k.actionBreakdown&&Object.keys(k.actionBreakdown).length){const _acts=Object.entries(k.actionBreakdown).sort((a,b)=>b[1]-a[1]).slice(0,8);_mkChart('ch-ac','bar',_acts.map(e=>e[0].replace('Connected to ','→ ').replace('Pending with ','Pending/')),_acts.map(e=>e[1]),['#2563EB']);}
   if(k.qcBreakdown)_mkChart('ch-qc','doughnut',Object.keys(k.qcBreakdown),Object.values(k.qcBreakdown),['#2563EB','#D97706','#DC2626']);
