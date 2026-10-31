@@ -1078,10 +1078,13 @@ function rdRows(){
       }else{
         const selectDefaultU=`<option value="" disabled${!curUpd||!uOpts.includes(curUpd)?' selected':''}>Select</option>`;
         updHtml=`<div class="ec"><select class="isel${ch.update!==undefined?' ch':''}" onchange="onUpdChg('${o.orderId}',this.value,this)">${selectDefaultU}${uOpts.map(u=>`<option value="${u}"${u===curUpd?' selected':''}>${u}</option>`).join('')}</select>`;
-        if(curUpd==='CN Received'){updHtml+=`<span class="cn-lbl">CN Number</span><input class="cn-inp" type="text" placeholder="CN123…" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/>`;}
+        if(curUpd==='CN Received'){
+          const existingCNSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
+          updHtml+=`<span class="cn-lbl" style="font-weight:700;">CN Number OR Email Subject (one required)</span><input class="cn-inp" type="text" placeholder="CN Number" value="${cnNum}" onchange="onCN('${o.orderId}',this.value)"/><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Email Subject Line" value="${existingCNSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/>`;
+        }
         if(curUpd==='COD Collected'){
           const existingCodSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
-          updHtml+=`<span class="ref-lbl">Ref No.</span><input class="ref-inp" type="text" placeholder="REF…" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}<span class="cn-lbl" style="color:var(--red);font-weight:700;">* Email Subject</span><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Required…" value="${existingCodSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/>`;
+          updHtml+=`<span class="ref-lbl" style="font-weight:700;">Reference Number OR Email Subject (one required)</span><input class="ref-inp" type="text" placeholder="Reference Number" value="${refNum}" onchange="onRef('${o.orderId}',this.value)"/><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Email Subject Line" value="${existingCodSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/><span class="ref-lbl" style="color:var(--amber);">COD Amount ₹</span><input class="cod-inp" type="number" placeholder="0" value="${codAmt}" onchange="onCOD('${o.orderId}',this.value)"/>${o.hasCODShortfall?'<div class="cod-warn">⚠ COD shortfall detected</div>':''}`;
         }
         if(curUpd==='Loss'){updHtml+=`<span class="loss-disp">GMV: ${fmtN(o.gmv||0)}</span>`;}
         updHtml+='</div>';
