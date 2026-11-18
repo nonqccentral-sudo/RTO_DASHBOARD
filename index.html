@@ -1317,6 +1317,7 @@ async function handleUpload(inp){
     const noChange=res.results.filter(r=>r.valid&&r.noChange).length;
     const mismatchAction=res.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
     const mismatchUpdate=res.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+    const needsUpdateWarn=res.results.filter(r=>r.valid&&r.needsUpdate).length;
     const actionNotMade=res.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
     const editLimitHit=res.results.filter(r=>!r.valid&&r.errorType==='edit_limit').length;
     const orderNotFound=res.results.filter(r=>!r.valid&&r.errorType==='not_found').length;
@@ -1334,6 +1335,7 @@ async function handleUpload(inp){
         ${correctMatch?`<div class="ustat ok">✓&nbsp;<b>${correctMatch}</b>&nbsp;Ready to Save</div>`:''}
         ${mismatchAction?`<div class="ustat fail">✗&nbsp;<b>${mismatchAction}</b>&nbsp;Wrong Action</div>`:''}
         ${mismatchUpdate?`<div class="ustat fail">✗&nbsp;<b>${mismatchUpdate}</b>&nbsp;Wrong Update</div>`:''}
+        ${needsUpdateWarn?`<div class="ustat" style="color:#856404;background:#FFFDE7;border-color:#FFC107;">⚠&nbsp;<b>${needsUpdateWarn}</b>&nbsp;Update Still Needed</div>`:''}
         ${missingSubject?`<div class="ustat fail">✉&nbsp;<b>${missingSubject}</b>&nbsp;Email Subject Missing</div>`:''}
         ${actionNotMade?`<div class="ustat" style="color:var(--amber);">⚠&nbsp;<b>${actionNotMade}</b>&nbsp;Action Not Made</div>`:''}
         ${editLimitHit?`<div class="ustat fail">🔒&nbsp;<b>${editLimitHit}</b>&nbsp;Edit Limit Reached</div>`:''}
@@ -1344,6 +1346,7 @@ async function handleUpload(inp){
     }
     const mismatchBanner=hasMismatch?`<div id="mismatch-banner" style="margin-bottom:14px;padding:16px 20px;border-radius:10px;background:#FFF3CD;border:2px solid #FFC107;display:flex;align-items:flex-start;gap:14px;"><span style="font-size:24px;flex-shrink:0;">⚠</span><div style="flex:1;"><div style="font-size:14px;font-weight:800;color:#856404;margin-bottom:6px;">Mismatched orders have been highlighted.</div><div style="font-size:12px;color:#856404;line-height:1.6;"><b>Valid updates shown in green will be applied. Mismatched rows shown in red will not be updated.</b></div><button onclick="downloadMismatchedOrders()" style="margin-top:10px;padding:6px 16px;border-radius:6px;background:#856404;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">↓ Download Mismatched Orders</button></div></div>`:'';
     const rowHtml=res.results.map(r=>{
+      if(r.valid&&!r.noChange&&r.needsUpdate)return`<div class="ures ok" style="border-color:#FFC107;background:#FFFDE7;"><span class="ui-icon" style="color:#856404;">⚠</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:#856404;">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'} · <b>Still pending — add Update: ${(r.needsUpdateOptions||[]).join(' | ')}</b></div></div>`;
       if(r.valid&&!r.noChange)return`<div class="ures ok"><span class="ui-icon">✓</span><div class="ui-id">${r.orderId}</div><div class="ui-msg">${r.changes?r.changes.map(c=>`<b>${c.field}</b>: ${c.old} → ${c.new}`).join(' · '):'Ready'}</div></div>`;
       if(r.valid&&r.noChange)return`<div class="ures ok" style="opacity:.6"><span class="ui-icon">→</span><div class="ui-id">${r.orderId}</div><div class="ui-msg" style="color:var(--t3)">No change (values already match)</div></div>`;
       const isMismatch=r.errorType==='mismatch_action'||r.errorType==='mismatch_update';
@@ -1363,16 +1366,17 @@ async function saveUploadChanges(){
   const valid=_uplBatch.results.filter(r=>r.valid&&!r.noChange);
   if(!valid.length){toast('No changes to save','amber');return;}
   const changeMap={};valid.forEach(r=>{if(r.resolved)changeMap[r.orderId]=r.resolved;});
-  const CHUNK=4; // reduced from 15 — prevents GAS timeout on bulk upload
+  const CHUNK=25; // gzip cache = fast reads; 25 rows/call is safe (was 4 — caused 93 round-trips + bustCache per call = 2h)
   const allChanges=valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}));
   const allResults=[];
-  showOv('Saving '+valid.length+' updates…','Sending in chunks of '+CHUNK);
+  showOv('Saving '+valid.length+' updates…','Sending in batches of '+CHUNK);
   try{
     for(let i=0;i<allChanges.length;i+=CHUNK){
       const chunk=allChanges.slice(i,i+CHUNK);
       $('ov-msg','Saving '+(i+1)+'–'+Math.min(i+CHUNK,allChanges.length)+' of '+allChanges.length+'…');
+      // skipCacheBust=true: defer cache invalidation until all chunks done (massive speed-up)
       const _doChunk=async()=>fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
-        body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',changes:chunk})}).then(r=>r.json());
+        body:JSON.stringify({action:'batchSave',email:USER?.email||'',source:'upload',changes:chunk,skipCacheBust:true})}).then(r=>r.json());
       let res=null;
       for(let att=0;att<3;att++){
         try{res=await _doChunk();if(res&&res.success)break;}
@@ -1384,6 +1388,13 @@ async function saveUploadChanges(){
         chunk.forEach(ch=>allResults.push({orderId:ch.orderId,success:false,error:(res&&res.error)||'Batch failed — retry'}));
         console.warn('Chunk '+(Math.floor(i/CHUNK)+1)+' failed:',(res&&res.error)||'network error');
       }
+    }
+    // All chunks done — now do ONE bust+rebuild instead of one per chunk
+    if(allResults.some(r=>r.success)){
+      $('ov-msg','Refreshing dashboard data…');
+      try{await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
+        body:JSON.stringify({action:'bustCache',email:USER?.email||''})}).then(r=>r.json());}
+      catch(e){console.warn('Cache bust failed (non-critical):',e);}
     }
     hideOv();
     const ok=allResults.filter(r=>r.success).length;
@@ -1407,12 +1418,14 @@ async function saveUploadChanges(){
     }).join(''));
     const mAct=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_action').length;
     const mUpd=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='mismatch_update').length;
+    const mMissUpd=_uplBatch.results.filter(r=>r.valid&&r.needsUpdate).length;
     const noAct=_uplBatch.results.filter(r=>!r.valid&&r.errorType==='action_not_made').length;
     setHTML('usum',`<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:4px 0;">
       <div class="ustat ok">✓&nbsp;<b>${ok}</b>&nbsp;Saved &amp; Live</div>
-      ${fail?`<div class="ustat fail">✗&nbsp;<b>${fail}</b>&nbsp;Save Failed</div>`:''} 
-      ${mAct?`<div class="ustat fail">✗&nbsp;<b>${mAct}</b>&nbsp;Mismatch Actions</div>`:''}
-      ${mUpd?`<div class="ustat fail">✗&nbsp;<b>${mUpd}</b>&nbsp;Mismatch Updates</div>`:''}
+      ${fail?`<div class="ustat fail">✗&nbsp;<b>${fail}</b>&nbsp;Save Failed</div>`:''}
+      ${mAct?`<div class="ustat fail">✗&nbsp;<b>${mAct}</b>&nbsp;Wrong Action</div>`:''}
+      ${mUpd?`<div class="ustat fail">✗&nbsp;<b>${mUpd}</b>&nbsp;Wrong Update</div>`:''}
+      ${mMissUpd?`<div class="ustat" style="color:#856404;background:#FFFDE7;border-color:#FFC107;">⚠&nbsp;<b>${mMissUpd}</b>&nbsp;Update Still Needed</div>`:''}
       ${noAct?`<div class="ustat" style="color:var(--amber);">⚠&nbsp;<b>${noAct}</b>&nbsp;Action Not Made</div>`:''}
       <div class="ustat tot"><b>${_uplBatch.results.length}</b>&nbsp;Total Uploaded</div>
     </div>`);
