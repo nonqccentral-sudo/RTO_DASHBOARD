@@ -1465,7 +1465,7 @@ async function saveUploadChanges(){
   // Progress overlay updates after every chunk so user sees progress
   // even on tab-switch. Cache bust only on the final chunk.
   const CHUNK=10; // 10 orders × ~9 writes = ~90 Sheets calls ≈ 30s — fits old backend within 180s
-  const FETCH_TIMEOUT=180000; // 180s — covers cold getRTOData + per-order writes on old backend
+  const FETCH_TIMEOUT=300000; // 180s — covers cold getRTOData + per-order writes on old backend
   const chunks=[];
   for(let i=0;i<allChanges.length;i+=CHUNK)chunks.push(allChanges.slice(i,i+CHUNK));
   const total=allChanges.length;
