@@ -1464,8 +1464,8 @@ async function saveUploadChanges(){
   // Split into chunks of 50 → each chunk is one batchSave GAS call.
   // Progress overlay updates after every chunk so user sees progress
   // even on tab-switch. Cache bust only on the final chunk.
-  const CHUNK=20; // 20 orders × ~9 writes = ~180 Sheets calls, comfortably under 45s
-  const FETCH_TIMEOUT=50000; // 50s hard timeout per chunk — kills before CDN drops it
+  const CHUNK=10; // 10 orders × ~9 writes = ~90 Sheets calls ≈ 30s — fits old backend within 180s
+  const FETCH_TIMEOUT=180000; // 180s — covers cold getRTOData + per-order writes on old backend
   const chunks=[];
   for(let i=0;i<allChanges.length;i+=CHUNK)chunks.push(allChanges.slice(i,i+CHUNK));
   const total=allChanges.length;
