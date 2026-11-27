@@ -727,7 +727,7 @@ function logout(){
 function initDash(){
   $('dash').style.display='block';
   const ia=USER?.isAdmin;const ra=isRA();
-  $('adl-bar').classList.toggle('hide',!ia&&!ra);
+  $('adl-bar').classList.toggle('hide',!ia&&!ra&&!USER?.isGlobalViewer);
   // Region Admins get the same visible download/upload controls as Admins,
   // while backend authorization continues to restrict them to mapped region cities.
   const canUploadRole = !USER?.isViewOnly && !USER?.isGlobalViewer && (ia || ra || !!USER?.city || (USER?.cities||[]).length > 0);
@@ -861,7 +861,7 @@ function rdKPI(k){
   $('k-cr',(_crPctRaw>0&&_crPctRaw<0.1?_crPctRaw.toFixed(2):_crPctRaw.toFixed(1))+'%');
   $('k-crs','('+_crN+' total) · '+(k.srnPendingCR||0)+' SRN pending · '+fmtN(k.crAmt||0));
   $('k-ap',parseFloat((_apN/_base*100).toFixed(1))+'%');$('k-aps','('+_apN+' orders) · '+fmtN(k.apAmt||0));
-  const _lossNet=k.lossNetAmount||k.lossTotal||0;const _lossRec=k.recoveredAmount||0;
+  const _lossNet=(k.lossNetAmount!=null)?k.lossNetAmount:(k.lossTotal||0);const _lossRec=k.recoveredAmount||0;
   $('k-ls',_lossNet?fmtN(_lossNet):'₹0');$('k-lss','Gross: '+fmtN(k.lossTotal||0)+(_lossRec?' · Rec: '+fmtN(_lossRec):''));
   $('gapc',_apN);
   const crHACount=k.crHighAgeing||0;const crLACount=k.crLowAgeing||0;const crWHRTTotal=crHACount+crLACount;
