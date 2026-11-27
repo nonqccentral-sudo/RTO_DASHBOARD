@@ -300,6 +300,28 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 .ures{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:12px;border:1px solid;}
 .ures.ok{background:#F0FDF4;border-color:#A7F3D0;}
 .ures.fail{background:var(--redl);border-color:#FECACA;}
+/* ── Save chip (non-blocking floating progress) ───────────────── */
+.save-chip{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--surface);border-radius:14px;box-shadow:0 8px 32px rgba(0,0,0,.18),0 0 0 1.5px rgba(0,0,0,.07);padding:14px 20px;min-width:260px;max-width:340px;display:flex;flex-direction:column;gap:8px;transition:opacity .3s;}
+.save-chip.hide{display:none;}
+.save-chip-row{display:flex;align-items:center;gap:10px;}
+.save-chip-spin{width:18px;height:18px;border:2.5px solid #E2E8F0;border-top-color:var(--blue);border-radius:50%;animation:spin .75s linear infinite;flex-shrink:0;}
+.save-chip-title{font-size:13px;font-weight:700;color:var(--t1);flex:1;}
+.save-chip-sub{font-size:11px;color:var(--t3);font-weight:500;padding-left:28px;}
+.save-chip-bar{height:4px;border-radius:2px;background:#E2E8F0;overflow:hidden;margin-top:2px;}
+.save-chip-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s ease;}
+/* ── Save completion popup ─────────────────────────────────────── */
+.save-popup-bg{position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;}
+.save-popup-bg.hide{display:none;}
+.save-popup{background:var(--surface);border-radius:18px;box-shadow:0 24px 80px rgba(0,0,0,.28);padding:32px 36px;min-width:320px;max-width:440px;display:flex;flex-direction:column;gap:18px;}
+.sp-title{font-size:18px;font-weight:800;color:var(--t1);}
+.sp-stats{display:flex;flex-wrap:wrap;gap:10px;}
+.sp-stat{padding:10px 16px;border-radius:10px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.sp-stat.ok{background:#F0FDF4;color:var(--green);}
+.sp-stat.fail{background:var(--redl);color:var(--red);}
+.sp-stat.warn{background:#FFFDE7;color:#856404;}
+.sp-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
+.sp-dl{padding:9px 18px;border-radius:8px;background:var(--blue);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;flex:1;}
+.sp-close{padding:9px 18px;border-radius:8px;background:var(--surf2);color:var(--t2);border:1.5px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;flex:1;}
 .ui-icon{font-size:16px;flex-shrink:0;}
 .ui-id{font-weight:700;font-size:12px;min-width:140px;font-family:monospace;color:var(--blue);}
 .ui-msg{color:var(--t2);flex:1;line-height:1.5;}
@@ -386,6 +408,26 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
     </div>
   </div>
 </div>
+<!-- Save progress chip (non-blocking) -->
+<div class="save-chip hide" id="save-chip">
+  <div class="save-chip-row">
+    <div class="save-chip-spin" id="sc-spin"></div>
+    <div class="save-chip-title" id="sc-title">Saving…</div>
+  </div>
+  <div class="save-chip-sub" id="sc-sub"></div>
+  <div class="save-chip-bar"><div class="save-chip-fill" id="sc-fill" style="width:0%"></div></div>
+</div>
+<!-- Save completion popup -->
+<div class="save-popup-bg hide" id="save-popup-bg">
+  <div class="save-popup">
+    <div class="sp-title">Upload Complete</div>
+    <div class="sp-stats" id="sp-stats"></div>
+    <div class="sp-btns">
+      <button class="sp-dl hide" id="sp-dl-btn" onclick="_dlMismatched()">⬇ Download Mismatched</button>
+      <button class="sp-close" onclick="_closeSavePopup()">Close</button>
+    </div>
+  </div>
+</div>
 <div class="edit-warn-popup hide" id="edit-warn"><span>&#9888;</span><span id="edit-warn-msg"></span></div>
 <div class="mbg hide" id="upload-modal" onclick="if(event.target===this)closeUpload()">
   <div class="umodal">
@@ -433,6 +475,20 @@ td{padding:12px 14px;color:var(--t1);vertical-align:middle;white-space:nowrap;}
 <div class="mbg hide" id="cr-modal" onclick="if(event.target===this)closeCR()">
   <div class="modal" style="max-width:860px">
     <div class="mhdr"><h2>Closure Remarks Breakdown</h2><button class="mclose" onclick="closeCR()">&#10005;</button></div>
+    <!-- Admin-only: CN / COD Collected bulk closure upload -->
+    <div id="cr-admin-bar" style="display:none;gap:8px;padding:12px 22px;border-bottom:1px solid var(--border);background:var(--surf2);flex-wrap:wrap;align-items:center;">
+      <span style="font-size:12px;font-weight:700;color:var(--t2);">Admin Upload:</span>
+      <button onclick="openCNClosureUpload('CN Received')"
+        style="padding:7px 16px;border-radius:7px;background:#0EA5E9;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">
+        &#11014; CN Received
+      </button>
+      <button onclick="openCNClosureUpload('COD Collected')"
+        style="padding:7px 16px;border-radius:7px;background:#10B981;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;">
+        &#11014; COD Collected
+      </button>
+      <input type="file" id="cn-closure-file" accept=".xlsx,.xls" style="display:none"
+        onchange="handleCNClosureUpload(this)"/>
+    </div>
     <div class="mbody" id="cr-body">
       <div style="display:flex;gap:0;margin-bottom:16px;border-bottom:2px solid var(--border);">
         <button id="cr-tab-1" onclick="setCRTab(1)" style="padding:8px 20px;font-size:12px;font-weight:700;border:none;background:none;cursor:pointer;border-bottom:2px solid var(--blue);color:var(--blue);margin-bottom:-2px;">SRN Pending – Warehouse/Retail</button>
@@ -1097,6 +1153,12 @@ function rdRows(){
       }
     }
     }// end non-SRN-completed block
+    // CN Received as action: show mandatory CN Number / Email Subject inputs in the update column
+    if(curAct==='CN Received' && canE && !(o.isGreen&&o.srnCompleted)){
+      const existingCNSubj=ch.emailSubjectLine!==undefined?ch.emailSubjectLine:(o.emailSubjectLine||'');
+      const hasCNData=!!(cnNum||existingCNSubj);
+      updHtml=`<div class="ec"><span class="cn-lbl" style="font-weight:700;color:${hasCNData?'var(--green)':'var(--red)'};">${hasCNData?'✓ ':'* '}CN Number OR Email Subject (one required)</span><input class="cn-inp" type="text" placeholder="CN Number" value="${cnNum.replace(/"/g,'&quot;')}" onchange="onCN('${o.orderId}',this.value)"/><input class="cn-inp" style="min-width:180px;" type="text" placeholder="Email Subject Line" value="${existingCNSubj.replace(/"/g,'&quot;')}" onchange="onEmailSubj('${o.orderId}',this.value)"/></div>`;
+    }
     if(curAct==='Marked delivered on THOR but cancelled on admin' || curAct==='Marked delivered on THOR but cancelled on ADMIN' || curAct==='Marked Delivered on THOR but Cancelled on Admin'){
       const proofUrl=ch.thorProofUrl||o.thorProofUrl||'';
       updHtml += `<div class="ec" style="margin-top:6px;display:block;"><span class="ref-lbl" style="color:var(--red);font-weight:700;">* Image proof required</span><input type="file" accept="image/*" capture="environment" onchange="uploadTHORProofForOrder('${o.orderId}',this)" style="max-width:220px;font-size:11px;"/><span id="thor-proof-${o.orderId}" class="hint" style="color:${proofUrl?'var(--green)':'var(--red)'}">${proofUrl?'✓ Proof attached':'Attach proof before saving'}</span></div>`;
@@ -1256,6 +1318,8 @@ async function saveAll(){
     fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).then(()=>{
       fetch(API+'?action=warmCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
     }).catch(()=>{});
+    // V2-23: refresh KPI/overview cards so Action Pending count updates without full reload
+    if(ok>0){setTimeout(()=>{localStorage.removeItem(LC_KEY);loadSummary();},1500);}
   }catch(e){toast('Save failed: '+e.message,'red');}
   $('sbtn').disabled=false;
 }
@@ -1383,43 +1447,57 @@ async function handleUpload(inp){
     $('upload-title','Upload — '+data.length+' rows (loading rules…)');
   }
 
-  // ── Phase 2: Background server validation ─────────────────────────
-  // Send ALL action-pending rows in one single request.
-  // Modal stays open; user is already reviewing local errors above.
+  // ── Phase 2: Chunked background server validation ─────────────────
+  // Split into chunks of 100 so GAS never gets a giant request.
+  // Modal stays open; user reviews local errors while server validates.
   inp.value='';
   const pendingData=data.filter(d=>initResults.find(r=>r.orderId===d.orderId&&r._pending));
   if(!pendingData.length){
-    // Nothing pending (all locally flagged) — finalise immediately
     _uplRefreshSummary(_uplBatch.results,0);
-    $('usave-btn').style.display='none'; // nothing valid to save if all locally invalid
+    $('usave-btn').style.display='none';
     return;
   }
+  const VCHUNK=100; // validate 100 rows per GAS call — well within 6-min limit
+  const vChunks=[];
+  for(let i=0;i<pendingData.length;i+=VCHUNK)vChunks.push(pendingData.slice(i,i+VCHUNK));
+  const allSrvRows=[];
   try{
-    let vRes=null;
-    for(let attempt=0;attempt<3;attempt++){
-      try{
-        vRes=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
-          body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data:pendingData})}).then(r=>r.json());
-        if(vRes&&vRes.success)break;
-      }catch(ve){
-        if(attempt<2)await new Promise(r=>setTimeout(r,(attempt===0?10:15)*1000));
+    for(let vi=0;vi<vChunks.length;vi++){
+      const vChunk=vChunks[vi];
+      const valDone=allSrvRows.length;
+      const valTotal=pendingData.length;
+      // Update title with chunked progress
+      $('upload-title','Validating '+valDone+' / '+valTotal+' orders…');
+      _uplRefreshSummary(_uplBatch.results, valTotal-valDone);
+
+      let vRes=null;
+      for(let attempt=0;attempt<3;attempt++){
+        try{
+          vRes=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},
+            body:JSON.stringify({action:'validateUpload',email:USER?.email||'',data:vChunk})}).then(r=>r.json());
+          if(vRes&&vRes.success)break;
+        }catch(ve){
+          if(attempt<2)await new Promise(r=>setTimeout(r,(attempt===0?8:12)*1000));
+        }
+      }
+      const chunkRows=vRes&&vRes.success?(vRes.results||[]):
+        vChunk.map(d=>({orderId:d.orderId,valid:false,error:(vRes&&vRes.error)||'Server error — retry',errorType:'server_error'}));
+      allSrvRows.push(...chunkRows);
+
+      // Live-update DOM rows as each chunk validates
+      const ubody=document.getElementById('ubody');
+      if(ubody){
+        chunkRows.forEach(sr=>{
+          const el=ubody.querySelector('[data-rid="'+sr.orderId+'"]');
+          if(el){const tmp=document.createElement('div');tmp.innerHTML=_uplRowHtml(sr);const newEl=tmp.firstChild;if(newEl)el.replaceWith(newEl);}
+        });
       }
     }
-    const srvRows=vRes&&vRes.success?(vRes.results||[]):
-      pendingData.map(d=>({orderId:d.orderId,valid:false,error:(vRes&&vRes.error)||'Server error — retry',errorType:'server_error'}));
-
-    // Merge into _uplBatch.results
-    const serverMap=new Map(srvRows.map(r=>[r.orderId,r]));
+    // Merge all validated rows into _uplBatch.results
+    const serverMap=new Map(allSrvRows.map(r=>[r.orderId,r]));
     _uplBatch.results=initResults.map(r=>serverMap.has(r.orderId)?serverMap.get(r.orderId):r);
 
-    // Update DOM rows that changed
-    const ubody=document.getElementById('ubody');
-    if(ubody){
-      srvRows.forEach(sr=>{
-        const el=ubody.querySelector('[data-rid="'+sr.orderId+'"]');
-        if(el){const tmp=document.createElement('div');tmp.innerHTML=_uplRowHtml(sr);const newEl=tmp.firstChild;if(newEl)el.replaceWith(newEl);}
-      });
-    }
+    $('upload-title','Upload Results');
     const {isNoChangesScenario,correctMatch,tot,totalInvalid}=_uplRefreshSummary(_uplBatch.results,0);
     const canSave=!isNoChangesScenario&&correctMatch>0;
     $('usave-btn').style.display=canSave?'':'none';
@@ -1427,8 +1505,7 @@ async function handleUpload(inp){
     if(noneMsg){
       if(!canSave){
         const checked=tot-((_uplBatch.results||[]).filter(r=>r._pending).length);
-        const inv=totalInvalid;
-        noneMsg.textContent=checked+' orders checked'+(inv?' · '+inv+' invalid':'')+' · nothing to save';
+        noneMsg.textContent=checked+' orders checked'+(totalInvalid?' · '+totalInvalid+' invalid':'')+' · nothing to save';
         noneMsg.style.display='';
       }else{noneMsg.style.display='none';}
     }
@@ -1452,6 +1529,48 @@ async function _notifyUploadDone(ok,fail){
   }catch(e){/* silent — tab-title badge is enough */}
 }
 
+/* ── Save chip helpers ───────────────────────────────────────────── */
+function _showSaveChip(title,sub=''){
+  const c=$('save-chip');if(!c)return;
+  $('sc-title',title);$('sc-sub',sub);
+  $('sc-fill').style.width='0%';
+  c.classList.remove('hide');
+}
+function _updateSaveChip(saved,total,sub){
+  const pct=total>0?Math.round(saved/total*100):0;
+  $('sc-title','Saving '+saved+' / '+total+' orders…');
+  if(sub)$('sc-sub',sub);
+  const f=$('sc-fill');if(f)f.style.width=pct+'%';
+}
+function _hideSaveChip(){const c=$('save-chip');if(c)c.classList.add('hide');}
+
+/* ── Completion popup ────────────────────────────────────────────── */
+let _mismatchedRows=[];
+function _showSavePopup(ok,fail,failedRows){
+  _mismatchedRows=failedRows||[];
+  let html='';
+  if(ok) html+=`<div class="sp-stat ok">✓ <b>${ok}</b> Saved &amp; Live</div>`;
+  if(fail) html+=`<div class="sp-stat fail">✗ <b>${fail}</b> Failed</div>`;
+  const needsUpd=(_uplBatch&&_uplBatch.results||[]).filter(r=>r.valid&&r.needsUpdate).length;
+  if(needsUpd) html+=`<div class="sp-stat warn">⚠ <b>${needsUpd}</b> Need Update Still</div>`;
+  if(!ok&&!fail) html+=`<div class="sp-stat warn">Nothing saved</div>`;
+  setHTML('sp-stats',html);
+  const dlBtn=$('sp-dl-btn');
+  if(dlBtn){dlBtn.classList.toggle('hide',!_mismatchedRows.length);}
+  const bg=$('save-popup-bg');if(bg)bg.classList.remove('hide');
+}
+function _closeSavePopup(){const bg=$('save-popup-bg');if(bg)bg.classList.add('hide');}
+function _dlMismatched(){
+  if(!_mismatchedRows.length)return;
+  const hdr=['Order ID','Error','Error Type'];
+  const rows=_mismatchedRows.map(r=>[r.orderId,'"'+(r.error||'').replace(/"/g,'""')+'"',r.errorType||'']);
+  const csv=[hdr.join(','),...rows.map(r=>r.join(','))].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='mismatched_orders_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
 async function saveUploadChanges(){
   if(!_uplBatch)return;
   const valid=_uplBatch.results.filter(r=>r.valid&&!r.noChange);
@@ -1460,27 +1579,26 @@ async function saveUploadChanges(){
   const allChanges=valid.map(r=>({orderId:r.orderId,...(r.resolved||{})}));
   const allResults=[];
 
-  // ── Chunked save with live progress ──────────────────────────────
-  // Split into chunks of 50 → each chunk is one batchSave GAS call.
-  // Progress overlay updates after every chunk so user sees progress
-  // even on tab-switch. Cache bust only on the final chunk.
-  const CHUNK=10; // 10 orders × ~9 writes = ~90 Sheets calls ≈ 30s — fits old backend within 180s
-  const FETCH_TIMEOUT=300000; // 180s — covers cold getRTOData + per-order writes on old backend
+  // ── Chunked save with non-blocking progress chip ─────────────────
+  // CHUNK=50: V2-23 batch writes are fast enough — 50 orders ≈ 30-40s per chunk.
+  // Uses floating chip instead of full-screen overlay so dashboard stays usable.
+  // Cache bust only on the final chunk.
+  const CHUNK=50; // 50 orders × batch writes — well within 180s
+  const FETCH_TIMEOUT=180000;
   const chunks=[];
   for(let i=0;i<allChanges.length;i+=CHUNK)chunks.push(allChanges.slice(i,i+CHUNK));
   const total=allChanges.length;
   let saved=0;
-  const _ovSub=()=>{
-    const rem=total-saved;
-    if(saved===0)return'You can switch tabs — we\'ll notify you when done';
-    if(rem<=0)return'Finalising… almost there!';
-    return`Saved ${saved} ✓ — saving ${Math.min(CHUNK,rem)} more…`;
-  };
-  showOv('Saving 0 / '+total+' updates…',_ovSub());
+  _showSaveChip('Saving 0 / '+total+' orders…','Dashboard stays usable — saving in background');
   // Request notification permission proactively.
   if('Notification' in window && Notification.permission==='default'){
     Notification.requestPermission().catch(()=>{});
   }
+  // V2-23: Session keepalive — ping GAS every 60s to prevent OAuth session expiry during long saves.
+  // GAS sessions can time out after ~60-90s of inactivity, causing mid-process logout.
+  const _kaIv=setInterval(()=>{
+    fetch(API+'?action=ping&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
+  },60000);
   try{
     for(let ci=0;ci<chunks.length;ci++){
       const chunk=chunks[ci];
@@ -1512,19 +1630,24 @@ async function saveUploadChanges(){
         chunk.forEach(ch=>allResults.push({orderId:ch.orderId,success:false,error:(res&&res.error)||'Save failed — retry'}));
         saved+=chunk.length;
       }
-      // Update progress overlay
-      $('ov-msg','Saving '+saved+' / '+total+' updates…');
-      $('ov-sub',_ovSub());
+      // Update progress chip
+      const rem=total-saved;
+      _updateSaveChip(saved,total,rem>0?`${Math.min(CHUNK,rem)} more orders in next batch…`:'Finalising…');
     }
-    hideOv();
+    clearInterval(_kaIv);
+    _hideSaveChip();
     const ok=allResults.filter(r=>r.success).length;
     const fail=allResults.filter(r=>!r.success).length;
+    const failedRows=allResults.filter(r=>!r.success);
     // Notify even if user has switched tabs — tab title badge + desktop notification
     _notifyUploadDone(ok,fail);
-    toast(ok+' orders updated'+(fail?' · '+fail+' failed':''),'green');
+    // Show completion popup with summary + Download Mismatched button
+    _showSavePopup(ok,fail,failedRows);
     Object.keys(localStorage).filter(k=>k.startsWith('rto_f_')||k===LC_KEY).forEach(k=>localStorage.removeItem(k));
     _patchOrdersAndRefreshUI(allResults,changeMap);
     if(SCITY)afterOrdersCity();
+    // V2-23: refresh KPI cards (Action Pending count etc.) without full page reload
+    if(ok>0){setTimeout(()=>{localStorage.removeItem(LC_KEY);loadSummary();},2000);}
     const savedIds=new Set(allResults.filter(r=>r.success).map(r=>r.orderId));
     const failedSaves=allResults.filter(r=>!r.success);
     _uplBatch.results.forEach(r=>{
@@ -1557,7 +1680,7 @@ async function saveUploadChanges(){
     fetch(API+'?action=bustCache&email='+encodeURIComponent(USER?.email||'')).then(()=>{
       fetch(API+'?action=warmCache&email='+encodeURIComponent(USER?.email||'')).catch(()=>{});
     }).catch(()=>{});
-  }catch(e){hideOv();toast('Error: '+e.message,'red');}
+  }catch(e){clearInterval(_kaIv);_hideSaveChip();toast('Error: '+e.message,'red');}
 }
 
 function confirmUploadSave(){
@@ -1624,6 +1747,9 @@ function closeAP(){$('ap-modal').classList.add('hide');}
 async function openCRModal(){
   setHTML('cr-pane-1','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
   setHTML('cr-pane-2','<div class="emp"><div class="emp-i">⏳</div>Loading…</div>');
+  // Show admin upload bar only for admins
+  const adminBar=$('cr-admin-bar');
+  if(adminBar) adminBar.style.display=USER?.isAdmin?'flex':'none';
   $('cr-modal').classList.remove('hide');
   const eml=encodeURIComponent(USER?.email||'');const cq=_cq();
   const render=(rows,emptyMsg)=>{
@@ -1732,6 +1858,63 @@ async function viewRecoveredOrders(){
   }catch(e){setHTML('loss-modal-body','<div class="emp">Error: '+e.message+'</div>');}
 }
 function openLossRecoveryUpload(){$('loss-recovery-file').click();}
+
+/* ── CN / COD Collected closure upload (admin-only) ─────────────────────── */
+let _cnClosureType='CN Received';
+function openCNClosureUpload(type){
+  if(!USER?.isAdmin){toast('Admin access required','red');return;}
+  _cnClosureType=type||'CN Received';
+  $('cn-closure-file').click();
+}
+
+async function handleCNClosureUpload(inp){
+  const file=inp.files[0];if(!file)return;
+  showOv('Parsing '+_cnClosureType+' file…','Reading Excel');
+  const ab=await file.arrayBuffer();
+  const wb=XLSX.read(ab,{type:'array'});
+  const sh=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(sh,{header:1,raw:true,defval:''});
+  if(rows.length<2){hideOv();toast('File is empty','red');inp.value='';return;}
+
+  const hdr=rows[0].map(h=>String(h||'').toLowerCase().trim());
+  const oi=hdr.findIndex(h=>h.includes('order'));
+  const ci=hdr.findIndex(h=>h.includes('cn')||h.includes('consignment'));
+  if(oi<0){hideOv();toast('Cannot find Order ID column','red');inp.value='';return;}
+
+  const uploadRows=rows.slice(1)
+    .filter(r=>String(r[oi]||'').trim())
+    .map(r=>({
+      orderId:String(r[oi]||'').trim(),
+      cnNumber:ci>=0?String(r[ci]||'').trim():''
+    }));
+
+  hideOv();
+  if(!uploadRows.length){toast('No data rows found','amber');inp.value='';return;}
+
+  if(!confirm('Mark '+uploadRows.length+' orders as closed via '+_cnClosureType+'?\nThis will remove them from the dashboard.'))
+    {inp.value='';return;}
+
+  showOv('Uploading '+_cnClosureType+' closure…','Saving to backend ('+uploadRows.length+' orders)');
+  try{
+    const res=await fetch(API,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=UTF-8'},
+      body:JSON.stringify({action:'cnClosureUpload',email:USER?.email||'',closureType:_cnClosureType,rows:uploadRows})
+    }).then(r=>r.json());
+    hideOv();
+    if(res.success){
+      const msg=res.saved+' orders archived to "'+_cnClosureType+'" tab'+(res.failed?' · '+res.failed+' IDs not found':'');
+      toast(msg,'green');
+      localStorage.removeItem(LC_KEY);
+      setTimeout(()=>{loadSummary();loadOrders();},1500);
+      if(!$('cr-modal').classList.contains('hide'))openCRModal();
+      if(res.sheetUrl)console.log('Archive sheet:',res.sheetUrl);
+    } else {
+      toast(res.error||'Upload failed','red');
+    }
+  }catch(e){hideOv();toast('Network error: '+e.message,'red');}
+  inp.value='';
+}
 
 async function handleLossRecovery(inp){
   const file=inp.files[0];if(!file)return;
